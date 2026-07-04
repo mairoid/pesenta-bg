@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600" role="img" aria-label="Обложка: За теб, брате Влади">
+  <defs>
+    <linearGradient id="bgv" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0E3320"/>
+      <stop offset="1" stop-color="#0B0A1A"/>
+    </linearGradient>
+    <linearGradient id="acv" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#4ADE80"/>
+      <stop offset="1" stop-color="#FACC15"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="600" fill="url(#bgv)"/>
+  <path d="M0 360 Q50 300 100 360 T200 360 T300 360 T400 360 T500 360 T600 360"
+        fill="none" stroke="url(#acv)" stroke-width="7" stroke-linecap="round" opacity="0.9"/>
+  <path d="M0 400 Q50 360 100 400 T200 400 T300 400 T400 400 T500 400 T600 400"
+        fill="none" stroke="url(#acv)" stroke-width="3" stroke-linecap="round" opacity="0.4"/>
+  <g transform="translate(300 235)">
+    <circle r="86" fill="none" stroke="#4ADE80" stroke-width="6" opacity="0.9"/>
+    <path d="M-30 -6 l18 22 42 -44" fill="none" stroke="#FACC15" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g fill="#FACC15" opacity="0.7">
+    <circle cx="110" cy="130" r="4"/>
+    <circle cx="500" cy="150" r="5"/>
+    <circle cx="530" cy="470" r="4"/>
+  </g>
+  <text x="60" y="110" font-family="'Unbounded','Segoe UI',sans-serif" font-size="44" font-weight="800" fill="#F4F2FF">За теб, брате</text>
+  <text x="60" y="500" font-family="'Unbounded','Segoe UI',sans-serif" font-size="56" font-weight="800" fill="#4ADE80">Влади</text>
+  <text x="62" y="538" font-family="'Manrope','Segoe UI',sans-serif" font-size="22" fill="#A9D9B8">песен-послание</text>
+</svg>

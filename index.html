@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Песен по поръчка | Персонализирана песен за подарък – Pesenta.bg</title>
-  <meta name="description" content="Подари песен по поръчка с авторски текст по твоята история. Избор от 18+ музикални стила, готова до 48 часа, слушаш демо и плащаш след одобрение. Поръчай сега!">
+  <title>Песен по поръчка от 9,90 € | Персонализирана песен за подарък – Pesenta.bg</title>
+  <meta name="description" content="Песен по поръчка с авторски текст по твоята история — от 9,90 €. Комбинирай стилове, избери от 15 езика, чуй демо и плати чак след одобрение. Готова до 48 часа.">
   <link rel="canonical" href="https://pesenta.bg/">
   <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
 
@@ -13,7 +13,7 @@
   <meta property="og:locale" content="bg_BG">
   <meta property="og:site_name" content="Песента">
   <meta property="og:title" content="Песен по поръчка | Твоята история, превърната в песен">
-  <meta property="og:description" content="Авторски текст по твоята история, 18+ стила, готова до 48 часа. Плащаш чак след като одобриш песента.">
+  <meta property="og:description" content="Авторски текст по твоята история, песни от 9,90 €, на 15 езика. Плащаш чак след като одобриш песента.">
   <meta property="og:url" content="https://pesenta.bg/">
   <meta property="og:image" content="https://pesenta.bg/assets/img/og-image.png">
   <meta property="og:image:width" content="1200">
@@ -22,7 +22,7 @@
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Песен по поръчка | Pesenta.bg">
-  <meta name="twitter:description" content="Твоята история, превърната в песен. Готова до 48 часа.">
+  <meta name="twitter:description" content="Твоята история, превърната в песен. От 9,90 €, готова до 48 часа.">
   <meta name="twitter:image" content="https://pesenta.bg/assets/img/og-image.png">
 
   <!-- Шрифтове -->
@@ -60,14 +60,15 @@
         "serviceType": "Персонализирана песен за подарък",
         "provider": { "@id": "https://pesenta.bg/#org" },
         "areaServed": "BG",
-        "description": "Авторска персонализирана песен по твоята история: текст, композиция и продукция. Избор от 18+ музикални стила, доставка до 48 часа.",
+        "description": "Авторска персонализирана песен по твоята история: текст, композиция и продукция. Комбинирай стилове, песни на 15 езика, доставка до 48 часа.",
         "hasOfferCatalog": {
           "@type": "OfferCatalog",
           "name": "Пакети",
           "itemListElement": [
-            { "@type": "Offer", "name": "Соло", "price": "34.90", "priceCurrency": "EUR" },
-            { "@type": "Offer", "name": "Хит", "price": "54.90", "priceCurrency": "EUR" },
-            { "@type": "Offer", "name": "Спектакъл", "price": "89.90", "priceCurrency": "EUR" }
+            { "@type": "Offer", "name": "Мини", "price": "9.90", "priceCurrency": "EUR" },
+            { "@type": "Offer", "name": "Соло", "price": "24.90", "priceCurrency": "EUR" },
+            { "@type": "Offer", "name": "Хит", "price": "39.90", "priceCurrency": "EUR" },
+            { "@type": "Offer", "name": "Спектакъл", "price": "69.90", "priceCurrency": "EUR" }
           ]
         }
       },
@@ -86,13 +87,18 @@
           },
           {
             "@type": "Question",
+            "name": "На какъв език може да бъде песента?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Български, английски, немски, френски, италиански, испански, гръцки, сръбски, македонски, румънски, турски, руски, украински, арабски — или комбинация от тях." }
+          },
+          {
+            "@type": "Question",
             "name": "Мога ли да избера повече от един музикален стил?",
             "acceptedAnswer": { "@type": "Answer", "text": "Да. Във формата за поръчка избираш колкото стила искаш, а в пакетите Хит и Спектакъл получаваш версии на песента в различни стилове." }
           },
           {
             "@type": "Question",
             "name": "Какво става, ако песента не ми хареса?",
-            "acceptedAnswer": { "@type": "Answer", "text": "Всеки пакет включва безплатни корекции. Не плащаш нищо, докато не кажеш „да“ на финалната версия." }
+            "acceptedAnswer": { "@type": "Answer", "text": "Пакетите Соло, Хит и Спектакъл включват безплатни корекции. Не плащаш нищо, докато не кажеш „да“ на финалната версия." }
           }
         ]
       }
@@ -109,9 +115,9 @@
     </a>
     <button class="nav-toggle" aria-label="Меню" aria-expanded="false">☰</button>
     <nav class="main-nav" aria-label="Основна навигация">
-      <a href="#kak-raboti">Как работи</a>
       <a href="#demo">Демо песни</a>
-      <a href="#stilove">Стилове</a>
+      <a href="#povodi">Поводи</a>
+      <a href="#kak-raboti">Как работи</a>
       <a href="#ceni">Цени</a>
       <a href="#vaprosi">Въпроси</a>
       <a class="btn btn-primary" href="poruchka.html">Поръчай песен</a>
@@ -127,16 +133,16 @@
       <div>
         <span class="kicker">Песен по поръчка за всеки повод</span>
         <h1>Твоята история, превърната в <span class="grad-text">песен</span></h1>
-        <p class="lead">Разкажи ни за човека и повода — ние написваме авторски текст, композираме музиката и ти изпращаме песен, която ще помнят с години. Плащаш чак когато е готова.</p>
+        <p class="lead">Разказваш ни за човека и повода. Ние пишем текста, композираме музиката и ти пращаме песен, която ще се пуска на всяко събиране — години наред. Плащаш чак когато е готова и ти хареса.</p>
         <div class="hero-ctas">
-          <a class="btn btn-primary btn-lg" href="poruchka.html">Поръчай песен сега</a>
+          <a class="btn btn-primary btn-lg" href="poruchka.html">Поръчай песен от 9,90 €</a>
           <a class="btn btn-ghost btn-lg" href="#demo">Чуй примери</a>
         </div>
         <div class="hero-badges">
-          <span class="badge">✍️ 100% авторски текст</span>
-          <span class="badge">⚡ Готова до 48 часа</span>
-          <span class="badge">🎧 Демо преди плащане</span>
-          <span class="badge">🎼 18+ музикални стила</span>
+          <span class="badge">Авторски текст по твоята история</span>
+          <span class="badge">Готова до 48 часа</span>
+          <span class="badge">Демо преди плащане</span>
+          <span class="badge">Песни на 15 езика</span>
         </div>
       </div>
       <div class="hero-visual" aria-hidden="true">
@@ -157,26 +163,9 @@
       <div class="section-head reveal">
         <span class="kicker">Чуй сам</span>
         <h2>Песни, които вече зарадваха някого</h2>
-        <p>Истински песни, създадени по същата методология — история, стил, емоция. Пусни и си представи каква би била твоята.</p>
+        <p>Всяка от тези песни е правена за истински човек — приятел, брат, колега. Пусни ги и си представи каква би била твоята.</p>
       </div>
       <div class="tracks-grid">
-        <article class="track-card reveal">
-          <div class="track-cover">
-            <img src="assets/img/cover-ergensko.svg" alt="Обложка: Краят на ергенското" loading="lazy">
-            <span class="track-tag">Ергенско парти</span>
-          </div>
-          <div class="track-body">
-            <h3>Краят на ергенското</h3>
-            <p class="muted">за брат ми Руси</p>
-            <div class="player" data-src="assets/audio/kraqt-na-ergenskoto.mp3">
-              <button class="play-btn" aria-label="Пусни Краят на ергенското">
-                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-              </button>
-              <div class="progress" role="slider" aria-label="Прогрес"><div class="progress-fill"></div></div>
-              <span class="time">0:00</span>
-            </div>
-          </div>
-        </article>
         <article class="track-card reveal">
           <div class="track-cover">
             <img src="assets/img/cover-habibi.svg" alt="Обложка: Habibi Rusi" loading="lazy">
@@ -196,14 +185,82 @@
         </article>
         <article class="track-card reveal">
           <div class="track-cover">
-            <img src="assets/img/cover-tutso.svg" alt="Обложка: За теб, брате Тууцо" loading="lazy">
+            <img src="assets/img/cover-rosen-abi.svg" alt="Обложка: Rosen Abi" loading="lazy">
+            <span class="track-tag">Турски вайб</span>
+          </div>
+          <div class="track-body">
+            <h3>Rosen Abi</h3>
+            <p class="muted">песен за приятел</p>
+            <div class="player" data-src="assets/audio/rosen-abi.mp3">
+              <button class="play-btn" aria-label="Пусни Rosen Abi">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+              <div class="progress" role="slider" aria-label="Прогрес"><div class="progress-fill"></div></div>
+              <span class="time">0:00</span>
+            </div>
+          </div>
+        </article>
+        <article class="track-card reveal">
+          <div class="track-cover">
+            <img src="assets/img/cover-kat2.svg" alt="Обложка: КАТ 2" loading="lazy">
+            <span class="track-tag">Шега</span>
+          </div>
+          <div class="track-body">
+            <h3>КАТ 2</h3>
+            <p class="muted">шофьорски приключения</p>
+            <div class="player" data-src="assets/audio/kat-2.mp3">
+              <button class="play-btn" aria-label="Пусни КАТ 2">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+              <div class="progress" role="slider" aria-label="Прогрес"><div class="progress-fill"></div></div>
+              <span class="time">0:00</span>
+            </div>
+          </div>
+        </article>
+        <article class="track-card reveal">
+          <div class="track-cover">
+            <img src="assets/img/cover-rocco.svg" alt="Обложка: Rocco di Catania" loading="lazy">
+            <span class="track-tag">Италиански вайб</span>
+          </div>
+          <div class="track-body">
+            <h3>Rocco di Catania</h3>
+            <p class="muted">серенада с усмивка</p>
+            <div class="player" data-src="assets/audio/rocco-di-catania.mp3">
+              <button class="play-btn" aria-label="Пусни Rocco di Catania">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+              <div class="progress" role="slider" aria-label="Прогрес"><div class="progress-fill"></div></div>
+              <span class="time">0:00</span>
+            </div>
+          </div>
+        </article>
+        <article class="track-card reveal">
+          <div class="track-cover">
+            <img src="assets/img/cover-vladi.svg" alt="Обложка: За теб, брате Влади" loading="lazy">
             <span class="track-tag">За приятел</span>
           </div>
           <div class="track-body">
-            <h3>За теб, брате Тууцо</h3>
+            <h3>За теб, брате Влади</h3>
             <p class="muted">песен-послание</p>
-            <div class="player" data-src="assets/audio/za-teb-brate-tutso.mp3">
-              <button class="play-btn" aria-label="Пусни За теб, брате Тууцо">
+            <div class="player" data-src="assets/audio/za-teb-brate-vladi.mp3">
+              <button class="play-btn" aria-label="Пусни За теб, брате Влади">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+              <div class="progress" role="slider" aria-label="Прогрес"><div class="progress-fill"></div></div>
+              <span class="time">0:00</span>
+            </div>
+          </div>
+        </article>
+        <article class="track-card reveal">
+          <div class="track-cover">
+            <img src="assets/img/cover-napipay.svg" alt="Обложка: Напипай го, Влади" loading="lazy">
+            <span class="track-tag">Парти парче</span>
+          </div>
+          <div class="track-body">
+            <h3>Напипай го, Влади</h3>
+            <p class="muted">за купона</p>
+            <div class="player" data-src="assets/audio/napipay-go-vladi.mp3">
+              <button class="play-btn" aria-label="Пусни Напипай го, Влади">
                 <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
               </button>
               <div class="progress" role="slider" aria-label="Прогрес"><div class="progress-fill"></div></div>
@@ -232,6 +289,61 @@
     </div>
   </section>
 
+  <!-- ПОВОДИ -->
+  <section class="section" id="povodi">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="kicker">За какво се поръчва песен</span>
+        <h2>Има повод? Има песен.</h2>
+        <p>Най-честите случаи — но сме писали песни и за изгубени басове, спечелени мачове и котки с характер.</p>
+      </div>
+      <div class="povodi-grid">
+        <a class="povod-card reveal" href="poruchka.html?povod=rojden-den">
+          <img src="assets/img/povod-rojden-den.svg" alt="Песен за рожден ден" loading="lazy">
+          <div class="povod-body">
+            <h3>Рожден ден</h3>
+            <p>Вместо още един парфюм — песен с неговото име в припева.</p>
+          </div>
+        </a>
+        <a class="povod-card reveal" href="poruchka.html?povod=svatba">
+          <img src="assets/img/povod-svatba.svg" alt="Песен за сватба" loading="lazy">
+          <div class="povod-body">
+            <h3>Сватба</h3>
+            <p>Първият танц — но на песен, която разказва вашата история.</p>
+          </div>
+        </a>
+        <a class="povod-card reveal" href="poruchka.html?povod=ergensko">
+          <img src="assets/img/povod-ergensko.svg" alt="Песен за ергенско парти" loading="lazy">
+          <div class="povod-body">
+            <h3>Ергенско / Моминско</h3>
+            <p>Химнът на последната свободна нощ. С всички компромати в текста.</p>
+          </div>
+        </a>
+        <a class="povod-card reveal" href="poruchka.html?povod=godishnina">
+          <img src="assets/img/povod-godishnina.svg" alt="Песен за годишнина" loading="lazy">
+          <div class="povod-body">
+            <h3>Годишнина</h3>
+            <p>Думите, които все не намираш — този път с мелодия.</p>
+          </div>
+        </a>
+        <a class="povod-card reveal" href="poruchka.html?povod=bebe">
+          <img src="assets/img/povod-bebe.svg" alt="Приспивна песен за бебе" loading="lazy">
+          <div class="povod-body">
+            <h3>Бебе / Кръщене</h3>
+            <p>Приспивна песен с неговото име — подарък за цял живот.</p>
+          </div>
+        </a>
+        <a class="povod-card reveal" href="poruchka.html?povod=firmeno">
+          <img src="assets/img/povod-firmeno.svg" alt="Песен за фирмено събитие" loading="lazy">
+          <div class="povod-body">
+            <h3>Фирмено събитие</h3>
+            <p>Тиймбилдинг химн или песен за колегата, който напуска. Незабравимо.</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
   <!-- КАК РАБОТИ -->
   <section class="section" id="kak-raboti">
     <div class="container">
@@ -244,12 +356,12 @@
         <div class="step-card reveal">
           <span class="step-num">1</span>
           <h3>Разказваш историята</h3>
-          <p>Попълваш нашия въпросник: човекът, поводът, смешките, вътрешните шеги, любимите фрази. Колкото повече детайли — толкова по-лична песента.</p>
+          <p>Кратка форма — 5 минути. Човекът, поводът, смешките, вътрешните шеги. Колкото повече детайли, толкова по-лична песента.</p>
         </div>
         <div class="step-card reveal">
           <span class="step-num">2</span>
           <h3>Пишем и композираме</h3>
-          <p>Създаваме авторски текст по твоята история и композираме музиката в избраните от теб стилове. Всяка песен минава през човешка редакция.</p>
+          <p>Правим авторски текст по твоята история и композираме в избраните от теб стилове. Всяка песен минава през човек, не през конвейер.</p>
         </div>
         <div class="step-card reveal">
           <span class="step-num">3</span>
@@ -270,8 +382,8 @@
     <div class="container">
       <div class="section-head reveal">
         <span class="kicker">Ти избираш звука</span>
-        <h2>18+ музикални стила — избери повече от един</h2>
-        <p>Балада за мама, рап за най-добрия приятел или кючек за ергенското? Комбинирай стилове и получи различни версии на своята песен.</p>
+        <h2>19 стила, 15 езика — комбинирай свободно</h2>
+        <p>Балада за мама, рап за най-добрия приятел или кючек за ергенското? Може и песен на турски, гръцки, сръбски или италиански — а защо не и смес.</p>
       </div>
       <div class="styles-cloud reveal">
         <span class="style-chip">Поп</span>
@@ -307,78 +419,89 @@
       </div>
       <div class="pricing-grid">
         <div class="price-card reveal">
+          <h3>Мини</h3>
+          <div class="price-line"><span class="amount">€9,90</span></div>
+          <div class="price-bgn">≈ 19,36 лв.</div>
+          <ul>
+            <li>Кратка песен до 2 мин</li>
+            <li>Текст по твоята идея</li>
+            <li>1 стил, 1 версия</li>
+            <li>MP3 файл</li>
+            <li>Готова до 48 часа</li>
+          </ul>
+          <a class="btn btn-ghost" href="poruchka.html?plan=mini">Избери Мини</a>
+        </div>
+        <div class="price-card reveal">
           <h3>Соло</h3>
-          <div class="price-line"><span class="amount">€34,90</span></div>
-          <div class="price-bgn">≈ 68,26 лв.</div>
+          <div class="price-line"><span class="amount">€24,90</span></div>
+          <div class="price-bgn">≈ 48,70 лв.</div>
           <ul>
             <li>1 песен до 3:30 мин</li>
             <li>Авторски текст по твоята история</li>
             <li>2 версии — избираш финалната</li>
             <li>1 безплатна корекция</li>
             <li>MP3 + текст на песента</li>
-            <li>Готова до 48 часа</li>
           </ul>
           <a class="btn btn-ghost" href="poruchka.html?plan=solo">Избери Соло</a>
         </div>
         <div class="price-card featured reveal">
           <span class="plan-flag">Най-избиран</span>
           <h3>Хит</h3>
-          <div class="price-line"><span class="amount">€54,90</span></div>
-          <div class="price-bgn">≈ 107,38 лв.</div>
+          <div class="price-line"><span class="amount">€39,90</span></div>
+          <div class="price-bgn">≈ 78,04 лв.</div>
           <ul>
             <li>Всичко от „Соло“</li>
             <li>2 различни музикални стила</li>
             <li>До 4 версии на песента</li>
             <li>Лирик видео (MP4) за споделяне</li>
             <li>3 безплатни корекции</li>
-            <li>Приоритетна изработка</li>
           </ul>
           <a class="btn btn-primary" href="poruchka.html?plan=hit">Избери Хит</a>
         </div>
         <div class="price-card reveal">
           <h3>Спектакъл</h3>
-          <div class="price-line"><span class="amount">€89,90</span></div>
-          <div class="price-bgn">≈ 175,83 лв.</div>
+          <div class="price-line"><span class="amount">€69,90</span></div>
+          <div class="price-bgn">≈ 136,71 лв.</div>
           <ul>
             <li>Всичко от „Хит“</li>
             <li>3 музикални стила по избор</li>
             <li>2 варианта на текста</li>
             <li>Лично съгласуване на текста</li>
-            <li>Идеален за сватби и фирмени събития</li>
-            <li>Специална визия за видеото</li>
+            <li>За сватби и фирмени събития</li>
           </ul>
           <a class="btn btn-ghost" href="poruchka.html?plan=spektakal">Избери Спектакъл</a>
         </div>
       </div>
       <div class="pricing-note reveal">
-        <strong>Работим на заявки:</strong> поръчката е безплатна и необвързваща. Плащане и фактура — чак след като чуеш и одобриш песента си. Експресна изработка до 24 ч: <strong>+€14,90</strong>. Имаш промо код? Въведи го на стъпка 4 от поръчката. Онлайн плащане с карта — очаквайте скоро.
+        <strong>Работим на заявки:</strong> поръчката е безплатна и необвързваща. Плащане и фактура — чак след като чуеш и одобриш песента си. Експресна изработка до 24 ч: <strong>+€9,90</strong>. Имаш промо код? Въведи го на последната стъпка от поръчката. Онлайн плащане с карта — очаквайте скоро.
       </div>
     </div>
   </section>
 
-  <!-- ОТЗИВИ -->
-  <section class="section" id="otzivi">
+  <!-- ИСТОРИИ -->
+  <section class="section" id="istorii">
     <div class="container">
       <div class="section-head reveal">
-        <span class="kicker">Реакциите</span>
-        <h2>Моментът, в който я чуят за първи път</h2>
+        <span class="kicker">Зад кулисите</span>
+        <h2>Как се раждат песните</h2>
+        <p>Песента тръгна като подарък за приятели — после приятелите на приятелите започнаха да питат „а за нас може ли?“. Може.</p>
       </div>
-      <!-- TODO: заменете с реални отзиви от клиенти -->
+      <!-- TODO: допълни истинските истории зад песните / добави реални отзиви, когато дойдат -->
       <div class="quotes-grid">
         <div class="quote-card reveal">
           <div class="quote-mark">“</div>
-          <p>Цялата маса плака от смях, а накрая — от умиление. Никой подарък не е предизвиквал такава реакция.</p>
-          <div class="who">Ергенско парти, В. Търново</div>
+          <p>„Habibi Rusi“ се роди от една вътрешна шега — от онези, които никой външен не разбира, а масата пада от смях. Сега се пуска на всяко събиране.</p>
+          <div class="who">Шега, станала химн</div>
         </div>
         <div class="quote-card reveal">
           <div class="quote-mark">“</div>
-          <p>Песента събра всички вътрешни шеги от 20 години приятелство в 3 минути. Слушаме я и до днес.</p>
-          <div class="who">Подарък за приятел</div>
+          <p>„КАТ 2“ е доказателството, че и от най-абсурдната случка на пътя става песен. Колкото по-конкретни са детайлите, толкова по-силен е ефектът.</p>
+          <div class="who">Историята прави песента</div>
         </div>
         <div class="quote-card reveal">
           <div class="quote-mark">“</div>
-          <p>Изпратих историята вечерта, на следващия ден песента беше готова. Точно каквото исках да ѝ кажа, но по-красиво.</p>
-          <div class="who">Годишнина от сватба</div>
+          <p>„За теб, брате“ песните са най-честата поръчка — нещата, които мъжете не си казват на глас, но могат да си ги изпеят. Работи безотказно.</p>
+          <div class="who">Класика в жанра</div>
         </div>
       </div>
     </div>
@@ -398,7 +521,11 @@
         </details>
         <details class="faq-item">
           <summary>Как се плаща?</summary>
-          <div class="faq-body">В момента работим на заявки: поръчваш безплатно, слушаш демо и одобряваш. Фактура получаваш след завършване на поръчката, с данни за банков превод. Онлайн плащане с карта (Stripe) идва съвсем скоро.</div>
+          <div class="faq-body">В момента работим на заявки: поръчваш безплатно, слушаш демо и одобряваш. Фактура получаваш след завършване на поръчката, с данни за банков превод. Онлайн плащане с карта идва съвсем скоро.</div>
+        </details>
+        <details class="faq-item">
+          <summary>На какъв език може да бъде песента?</summary>
+          <div class="faq-body">Български, английски, немски, френски, италиански, испански, гръцки, сръбски, македонски, румънски, турски, руски, украински, арабски — или комбинация („смесен“ е сред най-търсените варианти за шеговити песни). Ако искаш друг език, пиши го в бележките.</div>
         </details>
         <details class="faq-item">
           <summary>Мога ли да избера повече от един музикален стил?</summary>
@@ -406,19 +533,15 @@
         </details>
         <details class="faq-item">
           <summary>Какво става, ако песента не ми хареса?</summary>
-          <div class="faq-body">Всеки пакет включва безплатни корекции — казваш какво да променим в текста или звука и го правим. Не плащаш нищо, докато не кажеш „да“ на финалната версия.</div>
+          <div class="faq-body">Пакетите „Соло“, „Хит“ и „Спектакъл“ включват безплатни корекции — казваш какво да променим в текста или звука и го правим. Не плащаш нищо, докато не кажеш „да“ на финалната версия.</div>
         </details>
         <details class="faq-item">
           <summary>Каква информация да подготвя за поръчката?</summary>
-          <div class="faq-body">Най-ценни са личните детайли: как се запознахте, смешни случки, вътрешни шеги, прякори, любими места и фрази. Нашият въпросник те води стъпка по стъпка — отнема около 10 минути, а резултатът е песен, която звучи като написана „отвътре“.</div>
+          <div class="faq-body">Най-ценни са личните детайли: смешни случки, вътрешни шеги, прякори, любими места и фрази. Формата отнема 5 минути, а колкото повече ни дадеш, толкова по-лична става песента. Ако бързаш — стигат повод и няколко изречения.</div>
         </details>
         <details class="faq-item">
           <summary>Може ли песента да е изненада?</summary>
           <div class="faq-body">Разбира се — пълна конфиденциалност. Песента и цялата комуникация остават само между нас до момента, в който ти решиш да я подариш.</div>
-        </details>
-        <details class="faq-item">
-          <summary>На какъв език може да бъде песента?</summary>
-          <div class="faq-body">Български, английски или смесен текст — ти избираш. Можем да вплетем и отделни думи на друг език (например прякор или любима фраза).</div>
         </details>
         <details class="faq-item">
           <summary>Какви права имам върху песента?</summary>
@@ -433,7 +556,7 @@
     <div class="container">
       <div class="cta-band reveal">
         <h2>Подари нещо, което не се забравя</h2>
-        <p>Цветята увяхват, ваучерите изтичат. Песента остава завинаги — и се пуска на всяко семейно събиране.</p>
+        <p>Цветята увяхват, ваучерите изтичат. Песента остава — и се пуска на всяко семейно събиране.</p>
         <a class="btn btn-primary btn-lg" href="poruchka.html">Поръчай песен сега</a>
       </div>
     </div>
@@ -457,10 +580,10 @@
       </div>
       <div class="footer-col">
         <h3>Поводи</h3>
-        <a href="poruchka.html">Песен за рожден ден</a>
-        <a href="poruchka.html">Песен за сватба</a>
-        <a href="poruchka.html">Песен за ергенско парти</a>
-        <a href="poruchka.html">Песен за годишнина</a>
+        <a href="poruchka.html?povod=rojden-den">Песен за рожден ден</a>
+        <a href="poruchka.html?povod=svatba">Песен за сватба</a>
+        <a href="poruchka.html?povod=ergensko">Песен за ергенско парти</a>
+        <a href="poruchka.html?povod=godishnina">Песен за годишнина</a>
       </div>
       <div class="footer-col">
         <h3>Контакти</h3>

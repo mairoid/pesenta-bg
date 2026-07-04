@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="300" viewBox="0 0 480 300" role="img" aria-label="Сватба — двойка танцува първия си танц">
+  <rect width="480" height="300" fill="#2A0E3F"/>
+  <circle cx="240" cy="70" r="34" fill="#FFD36E" opacity="0.9"/>
+  <g fill="#F4F2FF" opacity="0.15">
+    <circle cx="70" cy="220" r="40"/>
+    <circle cx="420" cy="120" r="26"/>
+  </g>
+  <!-- двойката -->
+  <g transform="translate(150 120)">
+    <!-- тя -->
+    <circle cx="30" cy="20" r="22" fill="#FFB08A"/>
+    <path d="M2 48 h56 l24 96 h-104 z" fill="#F4F2FF"/>
+    <path d="M14 6 q16 -20 34 -2" fill="none" stroke="#7C5CFF" stroke-width="8" stroke-linecap="round"/>
+    <!-- той -->
+    <circle cx="150" cy="20" r="22" fill="#E8A06A"/>
+    <rect x="122" y="46" width="56" height="100" rx="16" fill="#33415E"/>
+    <rect x="144" y="46" width="12" height="52" fill="#FF4D8D"/>
+    <!-- хванати ръце -->
+    <path d="M58 70 q30 -24 64 0" fill="none" stroke="#FFB08A" stroke-width="12" stroke-linecap="round"/>
+  </g>
+  <!-- пръстен и ноти -->
+  <g transform="translate(370 210)">
+    <circle r="20" fill="none" stroke="#FFD36E" stroke-width="7"/>
+    <path d="M-8 -26 l8 -12 8 12 z" fill="#4DD6FF"/>
+  </g>
+  <path d="M90 100 q12 -18 4 -34 M116 114 q12 -18 4 -34" fill="none" stroke="#FF9ECD" stroke-width="6" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="300" viewBox="0 0 480 300" role="img" aria-label="Фирмено парти — лаптоп, китара и конфети">
+  <rect width="480" height="300" fill="#0F1F3D"/>
+  <!-- бюро -->
+  <rect x="60" y="190" width="360" height="16" rx="8" fill="#33415E"/>
+  <!-- лаптоп с еквалайзер -->
+  <g transform="translate(120 110)">
+    <rect x="0" y="0" width="120" height="76" rx="8" fill="#4A5B80"/>
+    <rect x="8" y="8" width="104" height="60" rx="4" fill="#0B0A1A"/>
+    <g fill="#4ADE80">
+      <rect x="24" y="40" width="8" height="20" rx="4"/>
+      <rect x="40" y="28" width="8" height="32" rx="4"/>
+      <rect x="56" y="36" width="8" height="24" rx="4"/>
+      <rect x="72" y="22" width="8" height="38" rx="4"/>
+      <rect x="88" y="34" width="8" height="26" rx="4"/>
+    </g>
+    <path d="M-10 76 h140 l10 14 h-160 z" fill="#5B6C94"/>
+  </g>
+  <!-- китара, подпряна на бюрото -->
+  <g transform="translate(330 90) rotate(12)">
+    <rect x="-6" y="-50" width="12" height="90" rx="6" fill="#FFA14D"/>
+    <rect x="-10" y="-58" width="20" height="14" rx="4" fill="#FFD36E"/>
+    <ellipse cx="0" cy="72" rx="42" ry="48" fill="#FF4D8D"/>
+    <ellipse cx="0" cy="60" rx="30" ry="32" fill="#E8356F"/>
+    <circle cx="0" cy="62" r="12" fill="#12081F"/>
+    <line x1="0" y1="-50" x2="0" y2="62" stroke="#F4F2FF" stroke-width="2" opacity="0.8"/>
+  </g>
+  <!-- конфети -->
+  <g>
+    <rect x="80" y="50" width="10" height="10" rx="2" fill="#FFD36E" transform="rotate(20 85 55)"/>
+    <rect x="200" y="36" width="10" height="10" rx="2" fill="#4DD6FF" transform="rotate(-15 205 41)"/>
+    <rect x="280" y="60" width="10" height="10" rx="2" fill="#4ADE80" transform="rotate(30 285 65)"/>
+    <rect x="410" y="44" width="10" height="10" rx="2" fill="#FF4D8D" transform="rotate(-25 415 49)"/>
+    <circle cx="150" cy="70" r="5" fill="#FF9ECD"/>
+    <circle cx="360" cy="150" r="5" fill="#FFD36E"/>
+    <circle cx="440" cy="120" r="4" fill="#4DD6FF"/>
+  </g>
+  <path d="M60 140 q12 -18 4 -34" fill="none" stroke="#FF9ECD" stroke-width="6" stroke-linecap="round"/>
+</svg>

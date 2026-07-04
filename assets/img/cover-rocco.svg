@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600" role="img" aria-label="Обложка: Rocco di Catania">
+  <defs>
+    <linearGradient id="bgc" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0B2740"/>
+      <stop offset="0.65" stop-color="#12507A"/>
+      <stop offset="0.65" stop-color="#0E3A57"/>
+      <stop offset="1" stop-color="#0B2740"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="600" fill="url(#bgc)"/>
+  <!-- слънце и море -->
+  <circle cx="300" cy="390" r="120" fill="#FFB84D"/>
+  <rect y="390" width="600" height="210" fill="#0E3A57"/>
+  <g stroke="#4DD6FF" stroke-width="5" stroke-linecap="round" opacity="0.6">
+    <path d="M60 440 q30 -14 60 0 t60 0"/>
+    <path d="M380 470 q30 -14 60 0 t60 0"/>
+    <path d="M180 520 q30 -14 60 0 t60 0"/>
+  </g>
+  <!-- Етна силует -->
+  <path d="M380 390 L470 250 L500 285 L520 260 L600 390 Z" fill="#123152"/>
+  <path d="M468 254 q16 -22 34 -8 q14 -20 30 -6" fill="none" stroke="#FF4D8D" stroke-width="7" stroke-linecap="round"/>
+  <!-- лимони -->
+  <g transform="translate(120 470)">
+    <ellipse cx="0" cy="0" rx="34" ry="24" fill="#FFD36E" transform="rotate(-20)"/>
+    <ellipse cx="52" cy="18" rx="30" ry="22" fill="#FACC15" transform="rotate(15 52 18)"/>
+    <path d="M-6 -30 q10 -14 24 -10" fill="none" stroke="#4ADE80" stroke-width="6" stroke-linecap="round"/>
+  </g>
+  <g fill="#FFF3DC">
+    <path d="M472 470c0-13 11-13 11-22v-36l28-7v36c0 9 11 9 11 22a11 11 0 1 1-11-11v-30l-17 4v38a11 11 0 1 1-22 6z" opacity="0.95"/>
+  </g>
+  <text x="60" y="100" font-family="'Unbounded','Segoe UI',sans-serif" font-size="44" font-weight="800" fill="#FFF3DC">Rocco</text>
+  <text x="60" y="152" font-family="'Unbounded','Segoe UI',sans-serif" font-size="34" font-weight="700" fill="#FFB84D">di Catania</text>
+  <text x="62" y="188" font-family="'Manrope','Segoe UI',sans-serif" font-size="21" fill="#8FD9E8">италианска серенада</text>
+</svg>

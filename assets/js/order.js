@@ -9,11 +9,22 @@
   var BGN_RATE = 1.95583;
 
   var PLANS = {
-    solo: { label: "Соло", price: 34.9, desc: "1 песен, 1 стил, 2 версии, 1 корекция" },
-    hit: { label: "Хит", price: 54.9, desc: "2 стила, до 4 версии, лирик видео, 3 корекции" },
-    spektakal: { label: "Спектакъл", price: 89.9, desc: "3 стила, 2 варианта на текста, лично съгласуване" }
+    mini: { label: "Мини", price: 9.9, desc: "кратка песен до 2 мин, 1 стил, 1 версия, MP3" },
+    solo: { label: "Соло", price: 24.9, desc: "1 песен, 1 стил, 2 версии, 1 корекция" },
+    hit: { label: "Хит", price: 39.9, desc: "2 стила, до 4 версии, лирик видео, 3 корекции" },
+    spektakal: { label: "Спектакъл", price: 69.9, desc: "3 стила, 2 варианта на текста, лично съгласуване" }
   };
-  var EXPRESS_PRICE = 14.9;
+  var EXPRESS_PRICE = 9.9;
+
+  /* Повод от URL (?povod=...) → чип във формата */
+  var POVOD_MAP = {
+    "rojden-den": "Рожден ден",
+    "svatba": "Сватба",
+    "ergensko": "Ергенско / Моминско",
+    "godishnina": "Годишнина",
+    "bebe": "Бебе / Кръщене",
+    "firmeno": "Фирмено събитие"
+  };
 
   /* Промо кодове: код → процент отстъпка */
   var PROMOS = {
@@ -30,7 +41,7 @@
     promoCode: null,
     promoPct: 0
   };
-  var TOTAL_STEPS = 5;
+  var TOTAL_STEPS = 3;
 
   var form = document.getElementById("order-form");
   var errBox = document.getElementById("form-error");
@@ -191,26 +202,19 @@
       seg.classList.toggle("active", Number(seg.getAttribute("data-seg")) <= step);
     });
     btnBack.style.visibility = step === 1 ? "hidden" : "visible";
-    btnNext.textContent = step === TOTAL_STEPS ? "Изпрати заявката 🎶" : "Напред →";
+    btnNext.textContent = step === TOTAL_STEPS ? "Изпрати заявката" : "Напред →";
     clearError();
-    if (step === 4) renderSummary();
-    if (step === 5) renderReview();
+    if (step === 3) {
+      renderSummary();
+      renderReview();
+    }
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+  /* Задължителни са само име, имейл и съгласие — всичко останало е по желание */
   function validateStep(step) {
-    if (step === 1) {
-      if (chipValues("occasion-chips").length === 0) return "Избери повод за песента.";
-      if (!val("recipient")) return "Напиши името или прякора на получателя.";
-    }
-    if (step === 2) {
-      if (val("story").length < 30) return "Разкажи ни поне няколко изречения за историята — тя е сърцето на песента.";
-    }
     if (step === 3) {
-      if (chipValues("style-chips").length === 0) return "Избери поне един музикален стил.";
-    }
-    if (step === 5) {
-      if (!val("cust-name")) return "Напиши името си.";
+      if (!val("cust-name")) return "Напиши името си — трябва ни за фактурата и демото.";
       var email = val("cust-email");
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return "Въведи валиден имейл — там ще получиш демото.";
       if (!document.getElementById("consent").checked) return "Моля, потвърди съгласието си, за да изпратим заявката.";
@@ -268,10 +272,10 @@
     var d = collectData();
     var t = calcTotal();
     var rows = [
-      ["Повод", d.occasion],
-      ["За", d.recipient + (d.relation ? " (" + d.relation + ")" : "")],
+      ["Повод", d.occasion || "—"],
+      ["За", (d.recipient || "—") + (d.relation ? " (" + d.relation + ")" : "")],
       ["Събитие", d.event_date || "—"],
-      ["Стилове", d.styles.join(", ")],
+      ["Стилове", d.styles.join(", ") || "по препоръка на продуцента"],
       ["Настроение", d.mood || "—"],
       ["Вокал", d.voice || "—"],
       ["Пакет", PLANS[state.plan].label + (state.express ? " + Експрес 24ч" : "")],
@@ -293,12 +297,12 @@
       "# Бриф за песен — " + orderNo,
       "",
       "## Повод и получател",
-      "- Повод: " + d.occasion,
-      "- Получател: " + d.recipient + (d.relation ? " (" + d.relation + " на клиента)" : ""),
+      "- Повод: " + (d.occasion || "не е посочен"),
+      "- Получател: " + (d.recipient || "не е посочен") + (d.relation ? " (" + d.relation + " на клиента)" : ""),
       "- Дата на събитието: " + (d.event_date || "не е посочена"),
       "",
       "## Историята",
-      d.story,
+      d.story || "—",
       "",
       "## Качества и навици",
       d.qualities || "—",
@@ -313,7 +317,7 @@
       d.avoid || "—",
       "",
       "## Музикални указания",
-      "- Стилове: " + d.styles.join(", "),
+      "- Стилове: " + (d.styles.join(", ") || "по преценка на продуцента"),
       "- Настроение: " + (d.mood || "по преценка"),
       "- Темпо: " + (d.tempo || "по преценка"),
       "- Вокал: " + (d.voice || "по преценка"),
@@ -350,16 +354,16 @@
     var brief = buildBrief(d, orderNo);
 
     var payload = {
-      _subject: "🎵 Нова заявка за песен — " + orderNo,
+      _subject: "Нова заявка за песен — " + orderNo,
       _template: "box",
       "Номер на заявка": orderNo,
       "Клиент": d.name,
       "Имейл": d.email,
       "Телефон": d.phone || "—",
-      "Повод": d.occasion,
-      "Получател": d.recipient + (d.relation ? " (" + d.relation + ")" : ""),
+      "Повод": d.occasion || "—",
+      "Получател": (d.recipient || "—") + (d.relation ? " (" + d.relation + ")" : ""),
       "Дата на събитието": d.event_date || "—",
-      "Стилове": d.styles.join(", "),
+      "Стилове": d.styles.join(", ") || "по преценка",
       "Настроение / Темпо / Вокал": (d.mood || "—") + " / " + (d.tempo || "—") + " / " + (d.voice || "—"),
       "Език": d.language,
       "Референция": d.reference || "—",
@@ -388,7 +392,7 @@
       .catch(function () {
         /* Резервен вариант: имейл клиент с попълнен бриф */
         btnNext.disabled = false;
-        btnNext.textContent = "Изпрати заявката 🎶";
+        btnNext.textContent = "Изпрати заявката";
         var mailto =
           "mailto:" + ORDER_EMAIL +
           "?subject=" + encodeURIComponent("Нова заявка за песен — " + orderNo) +
@@ -491,11 +495,16 @@
 
   /* ============ Инициализация ============ */
 
-  /* предизбран план от URL: poruchka.html?plan=hit */
+  /* предизбрани план и повод от URL: poruchka.html?plan=hit&povod=svatba */
   var params = new URLSearchParams(window.location.search);
   var urlPlan = params.get("plan");
+  var urlPovod = params.get("povod");
 
   restoreDraft();
+  if (urlPovod && POVOD_MAP[urlPovod] && chipValues("occasion-chips").length === 0) {
+    var povodChip = document.querySelector('#occasion-chips .chip[data-value="' + POVOD_MAP[urlPovod] + '"]');
+    if (povodChip) povodChip.classList.add("selected");
+  }
   selectPlan(urlPlan && PLANS[urlPlan] ? urlPlan : state.plan);
   renderSummary();
   renderMyOrders();

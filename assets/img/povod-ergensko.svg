@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="300" viewBox="0 0 480 300" role="img" aria-label="Ергенско — стол, балони и микрофон">
+  <rect width="480" height="300" fill="#12081F"/>
+  <!-- балони -->
+  <g>
+    <ellipse cx="110" cy="80" rx="30" ry="38" fill="#FF4D8D"/>
+    <path d="M110 118 l-6 12 h12 z" fill="#FF4D8D"/>
+    <path d="M110 130 q-8 40 6 80" fill="none" stroke="#F4F2FF" stroke-width="3" opacity="0.6"/>
+    <ellipse cx="180" cy="56" rx="26" ry="34" fill="#FFD36E"/>
+    <path d="M180 90 l-6 12 h12 z" fill="#FFD36E"/>
+    <path d="M180 102 q10 44 -4 96" fill="none" stroke="#F4F2FF" stroke-width="3" opacity="0.6"/>
+    <ellipse cx="66" cy="140 " rx="22" ry="28" fill="#4DD6FF"/>
+    <path d="M66 168 l-5 10 h10 z" fill="#4DD6FF"/>
+  </g>
+  <!-- столът на виновника -->
+  <g transform="translate(280 110)">
+    <rect x="0" y="0" width="90" height="16" rx="8" fill="#7C5CFF"/>
+    <rect x="0" y="-84" width="16" height="90" rx="8" fill="#7C5CFF"/>
+    <rect x="6" y="16" width="12" height="80" rx="6" fill="#5B44BF"/>
+    <rect x="72" y="16" width="12" height="80" rx="6" fill="#5B44BF"/>
+    <!-- вратовръзка на облегалката -->
+    <path d="M8 -80 l12 20 -6 34 -12 0 -6 -34 z" fill="#FF4D8D" transform="translate(0 6)"/>
+  </g>
+  <!-- микрофон -->
+  <g transform="translate(410 180) rotate(20)">
+    <rect x="-9" y="0" width="18" height="64" rx="9" fill="#33415E"/>
+    <circle cy="-14" r="22" fill="#FFA14D"/>
+    <g stroke="#12081F" stroke-width="2.5" opacity="0.4">
+      <line x1="-16" y1="-22" x2="16" y2="-22"/>
+      <line x1="-20" y1="-14" x2="20" y2="-14"/>
+      <line x1="-16" y1="-6" x2="16" y2="-6"/>
+    </g>
+  </g>
+  <path d="M220 210 q12 -18 4 -34 M246 224 q12 -18 4 -34" fill="none" stroke="#4ADE80" stroke-width="6" stroke-linecap="round"/>
+  <g fill="#FFD36E" opacity="0.9">
+    <path d="M420 60l5 13 13 5-13 5-5 13-5-13-13-5 13-5z"/>
+    <path d="M50 250l4 10 10 4-10 4-4 10-4-10-10-4 10-4z"/>
+  </g>
+</svg>

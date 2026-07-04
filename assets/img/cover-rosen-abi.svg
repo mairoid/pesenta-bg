@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600" role="img" aria-label="Обложка: Rosen Abi">
+  <defs>
+    <linearGradient id="bgr" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4A1020"/>
+      <stop offset="1" stop-color="#1A0B12"/>
+    </linearGradient>
+    <linearGradient id="tea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E8563F"/>
+      <stop offset="1" stop-color="#9E2B1F"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="600" fill="url(#bgr)"/>
+  <g opacity="0.14" fill="#FFD36E">
+    <circle cx="90" cy="470" r="60"/>
+    <circle cx="510" cy="120" r="80"/>
+    <circle cx="480" cy="500" r="40"/>
+  </g>
+  <path d="M420 90a46 46 0 1 0 30 82 54 54 0 1 1-30-82z" fill="#FFD36E" opacity="0.95"/>
+  <circle cx="470" cy="132" r="7" fill="#FFD36E"/>
+  <!-- турска чаша чай -->
+  <g transform="translate(230 250)">
+    <path d="M0 0 h140 l-14 60 q-6 44 -56 44 t-56 -44 z" fill="url(#tea)"/>
+    <ellipse cx="70" cy="0" rx="70" ry="14" fill="#FFB08A"/>
+    <path d="M-18 130 h176 l-10 26 h-156 z" fill="#FFD36E"/>
+    <path d="M28 -40 q6 -16 0 -30 M70 -44 q6 -16 0 -30 M112 -40 q6 -16 0 -30" fill="none" stroke="#FFD36E" stroke-width="6" stroke-linecap="round" opacity="0.8"/>
+  </g>
+  <g fill="#FFF3DC">
+    <path d="M470 320c0-15 13-15 13-26v-42l32-8v42c0 11 13 11 13 26a13 13 0 1 1-13-13v-36l-19 5v44a13 13 0 1 1-26 8z" opacity="0.9"/>
+  </g>
+  <text x="60" y="110" font-family="'Unbounded','Segoe UI',sans-serif" font-size="56" font-weight="800" fill="#FFF3DC">Rosen Abi</text>
+  <text x="62" y="148" font-family="'Manrope','Segoe UI',sans-serif" font-size="22" fill="#FFB08A">чай, уважение и бас</text>
+</svg>

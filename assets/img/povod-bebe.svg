@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="300" viewBox="0 0 480 300" role="img" aria-label="Бебе — количка и приспивни ноти">
+  <rect width="480" height="300" fill="#1B1145"/>
+  <!-- луна -->
+  <path d="M400 50a38 38 0 1 0 26 66 44 44 0 1 1-26-66z" fill="#FFD36E" opacity="0.95"/>
+  <g fill="#F4F2FF" opacity="0.7">
+    <circle cx="70" cy="60" r="4"/>
+    <circle cx="140" cy="40" r="3"/>
+    <circle cx="330" cy="80" r="3"/>
+    <circle cx="420" cy="180" r="4"/>
+  </g>
+  <!-- количка -->
+  <g transform="translate(140 130)">
+    <path d="M0 0 h150 v34 q0 46 -50 46 h-50 q-50 0 -50 -46 z" fill="#7C5CFF"/>
+    <path d="M0 0 q-4 -56 56 -60 l6 60 z" fill="#FF4D8D"/>
+    <circle cx="34" cy="102" r="20" fill="#33415E"/>
+    <circle cx="34" cy="102" r="8" fill="#F4F2FF"/>
+    <circle cx="116" cy="102" r="20" fill="#33415E"/>
+    <circle cx="116" cy="102" r="8" fill="#F4F2FF"/>
+    <path d="M150 6 q28 -8 36 -34" fill="none" stroke="#7C5CFF" stroke-width="9" stroke-linecap="round"/>
+    <!-- бебе лице -->
+    <circle cx="36" cy="-18" r="15" fill="#FFB08A"/>
+    <path d="M30 -18 q6 8 12 0" fill="none" stroke="#12081F" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+  <!-- приспивни ноти -->
+  <g fill="none" stroke="#4DD6FF" stroke-width="6" stroke-linecap="round">
+    <path d="M330 190 q12 -18 4 -34"/>
+    <path d="M356 204 q12 -18 4 -34"/>
+    <path d="M100 90 q12 -18 4 -34"/>
+  </g>
+  <text x="330" y="240" font-family="'Manrope','Segoe UI',sans-serif" font-size="30" font-weight="800" fill="#FFD36E">zzz…</text>
+</svg>
