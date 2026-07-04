@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Поръчай песен по поръчка | Pesenta.bg</title>
+  <meta name="description" content="Поръчай персонализирана песен за 10 минути: разкажи историята, избери стилове и настроение. Безплатна необвързваща заявка — плащаш след одобрение.">
+  <link rel="canonical" href="https://pesenta.bg/poruchka.html">
+  <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="bg_BG">
+  <meta property="og:title" content="Поръчай песен по поръчка | Pesenta.bg">
+  <meta property="og:description" content="Разкажи историята, избери стилове — получи песен до 48 часа.">
+  <meta property="og:url" content="https://pesenta.bg/poruchka.html">
+  <meta property="og:image" content="https://pesenta.bg/assets/img/og-image.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Manrope:wght@400;600;700;800&display=swap&subset=cyrillic" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-in">
+    <a class="logo" href="index.html" aria-label="Песента — начало">
+      <img src="assets/img/logo.svg" alt="Песента — песен по поръчка" width="190" height="44">
+    </a>
+    <nav class="main-nav open" aria-label="Основна навигация" style="display:flex;position:static;padding:0;background:none;border:none;">
+      <a href="index.html#ceni">Цени</a>
+      <a href="index.html#vaprosi">Въпроси</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container order-wrap">
+
+  <div class="order-head">
+    <span class="kicker">Безплатна и необвързваща заявка</span>
+    <h1>Поръчай своята <span class="grad-text">песен</span></h1>
+    <p>Отнема около 10 минути. Колкото повече детайли ни дадеш, толкова по-лична и точна ще бъде песента.</p>
+  </div>
+
+  <div class="wizard-progress" aria-hidden="true">
+    <div class="seg active" data-seg="1"></div>
+    <div class="seg" data-seg="2"></div>
+    <div class="seg" data-seg="3"></div>
+    <div class="seg" data-seg="4"></div>
+    <div class="seg" data-seg="5"></div>
+  </div>
+
+  <form id="order-form" novalidate>
+
+    <!-- СТЪПКА 1: Повод и получател -->
+    <section class="wizard-step current" data-step="1">
+      <h2 class="step-title">За кого е песента?</h2>
+      <p class="step-sub">Стъпка 1 от 5 — поводът и човекът, който ще я получи.</p>
+
+      <div class="field">
+        <label>Повод *</label>
+        <div class="chips" id="occasion-chips" data-single>
+          <span class="chip" data-value="Рожден ден">🎂 Рожден ден</span>
+          <span class="chip" data-value="Сватба">💍 Сватба</span>
+          <span class="chip" data-value="Ергенско / Моминско">🎉 Ергенско / Моминско</span>
+          <span class="chip" data-value="Годишнина">❤️ Годишнина</span>
+          <span class="chip" data-value="Юбилей">🥂 Юбилей</span>
+          <span class="chip" data-value="Бебе / Кръщене">👶 Бебе / Кръщене</span>
+          <span class="chip" data-value="Признание в любов">🌹 Признание в любов</span>
+          <span class="chip" data-value="За приятел">🤝 За приятел</span>
+          <span class="chip" data-value="Фирмено събитие">🏢 Фирмено събитие</span>
+          <span class="chip" data-value="Дипломиране">🎓 Дипломиране</span>
+          <span class="chip" data-value="Шега / Изненада">😄 Шега / Изненада</span>
+          <span class="chip" data-value="Друго">✨ Друго</span>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="recipient">Име или прякор на получателя *
+            <span class="hint">Така, както искаш да звучи в песента</span>
+          </label>
+          <input type="text" id="recipient" name="recipient" autocomplete="off" placeholder="напр. Руси, брат ми Тууцо…">
+        </div>
+        <div class="field">
+          <label for="relation">Какъв ти е този човек?</label>
+          <select id="relation" name="relation">
+            <option value="">Избери…</option>
+            <option>Приятел / Приятелка</option>
+            <option>Брат / Сестра</option>
+            <option>Половинка / Партньор</option>
+            <option>Майка / Баща</option>
+            <option>Син / Дъщеря</option>
+            <option>Баба / Дядо</option>
+            <option>Колега</option>
+            <option>Шеф</option>
+            <option>Песента е за мен</option>
+            <option>Друго</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="event-date">Кога е събитието?
+          <span class="hint">За да сме сигурни, че песента ще е готова навреме</span>
+        </label>
+        <input type="date" id="event-date" name="event_date">
+      </div>
+    </section>
+
+    <!-- СТЪПКА 2: Историята -->
+    <section class="wizard-step" data-step="2">
+      <h2 class="step-title">Разкажи историята</h2>
+      <p class="step-sub">Стъпка 2 от 5 — това е сърцето на песента. Пиши свободно, ние ще го превърнем в текст.</p>
+
+      <div class="field">
+        <label for="story">Историята ви *
+          <span class="hint">Как се запознахте? Какво преживяхте заедно? Кой е този човек за теб? Минимум няколко изречения.</span>
+        </label>
+        <textarea id="story" name="story" placeholder="Разкажи като на приятел — без да мислиш за рими и структура…"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="qualities">Качества и навици
+          <span class="hint">Какъв е човекът? Какво го прави уникален? Какви са типичните му лафове и навици?</span>
+        </label>
+        <textarea id="qualities" name="qualities" placeholder="напр. винаги закъснява, но винаги идва; смее се гръмко; прави най-добрата скара…"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="jokes">Смешни случки и вътрешни шеги
+          <span class="hint">Точно те правят песента незабравима — моменти, които само вие си знаете</span>
+        </label>
+        <textarea id="jokes" name="jokes" placeholder="напр. онзи път на морето, когато…"></textarea>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="must-have">Задължителни думи и имена
+            <span class="hint">Прякори, места, фрази, които ТРЯБВА да се чуят</span>
+          </label>
+          <textarea id="must-have" name="must_have" placeholder="напр. „Хабиби“, Велико Търново, „брат ми е №1“…"></textarea>
+        </div>
+        <div class="field">
+          <label for="avoid">Какво да избегнем
+            <span class="hint">Теми или думи, които не искаш в песента</span>
+          </label>
+          <textarea id="avoid" name="avoid" placeholder="напр. без спомени за бившата…"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- СТЪПКА 3: Музиката -->
+    <section class="wizard-step" data-step="3">
+      <h2 class="step-title">Как да звучи?</h2>
+      <p class="step-sub">Стъпка 3 от 5 — избери стилове и настроение. Може повече от един стил!</p>
+
+      <div class="field">
+        <label>Музикални стилове * <span class="hint">Избери един или повече — при пакетите „Хит“ и „Спектакъл“ получаваш версии в различни стилове</span></label>
+        <div class="chips" id="style-chips">
+          <span class="chip" data-value="Поп">Поп</span>
+          <span class="chip" data-value="Балада">Балада</span>
+          <span class="chip" data-value="Рок">Рок</span>
+          <span class="chip" data-value="Рап / Хип-хоп">Рап / Хип-хоп</span>
+          <span class="chip" data-value="Поп-фолк / Чалга">Поп-фолк / Чалга</span>
+          <span class="chip" data-value="Кючек">Кючек</span>
+          <span class="chip" data-value="Народна музика">Народна музика</span>
+          <span class="chip" data-value="Диско / Ретро">Диско / Ретро</span>
+          <span class="chip" data-value="EDM / Денс">EDM / Денс</span>
+          <span class="chip" data-value="R&B / Соул">R&amp;B / Соул</span>
+          <span class="chip" data-value="Джаз / Суинг">Джаз / Суинг</span>
+          <span class="chip" data-value="Кънтри">Кънтри</span>
+          <span class="chip" data-value="Латино / Регетон">Латино / Регетон</span>
+          <span class="chip" data-value="Ориенталски">Ориенталски</span>
+          <span class="chip" data-value="Акустична китара">Акустична китара</span>
+          <span class="chip" data-value="Метъл">Метъл</span>
+          <span class="chip" data-value="Детска песен">Детска песен</span>
+          <span class="chip" data-value="Естрада / Шансон">Естрада / Шансон</span>
+          <span class="chip" data-value="Кино / Епично">Кино / Епично</span>
+        </div>
+        <div class="count-note" id="style-count">Избрани стилове: 0</div>
+      </div>
+
+      <div class="field">
+        <label>Настроение</label>
+        <div class="chips" id="mood-chips" data-single>
+          <span class="chip" data-value="Весело и енергично">Весело и енергично</span>
+          <span class="chip" data-value="Трогателно">Трогателно</span>
+          <span class="chip" data-value="Романтично">Романтично</span>
+          <span class="chip" data-value="Шеговито">Шеговито</span>
+          <span class="chip" data-value="Епично">Епично</span>
+          <span class="chip" data-value="Носталгично">Носталгично</span>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Темпо</label>
+          <div class="chips" id="tempo-chips" data-single>
+            <span class="chip" data-value="Бавно">Бавно</span>
+            <span class="chip" data-value="Средно">Средно</span>
+            <span class="chip" data-value="Бързо">Бързо</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Вокал</label>
+          <div class="chips" id="voice-chips" data-single>
+            <span class="chip" data-value="Мъжки">Мъжки</span>
+            <span class="chip" data-value="Женски">Женски</span>
+            <span class="chip" data-value="Дует">Дует</span>
+            <span class="chip" data-value="Без значение">Без значение</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="language">Език на песента</label>
+          <select id="language" name="language">
+            <option>Български</option>
+            <option>Английски</option>
+            <option>Смесен (български + английски)</option>
+            <option>Друг (уточни в бележките)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="reference">Референтна песен или изпълнител
+            <span class="hint">„Да звучи като…“ (по избор)</span>
+          </label>
+          <input type="text" id="reference" name="reference" placeholder="напр. като ранния Слави / Ed Sheeran…">
+        </div>
+      </div>
+    </section>
+
+    <!-- СТЪПКА 4: Пакет и цена -->
+    <section class="wizard-step" data-step="4">
+      <h2 class="step-title">Избери пакет</h2>
+      <p class="step-sub">Стъпка 4 от 5 — плащане и фактура чак след като одобриш готовата песен.</p>
+
+      <div class="plan-pick" id="plan-pick">
+        <div class="plan-option" data-plan="solo" role="button" tabindex="0">
+          <h3>Соло</h3>
+          <div class="p-price">€34,90 <span class="muted" style="font-size:0.8rem;">/ 68,26 лв.</span></div>
+          <div class="p-desc">1 песен, 1 стил, 2 версии, 1 корекция, MP3 + текст</div>
+        </div>
+        <div class="plan-option" data-plan="hit" role="button" tabindex="0">
+          <h3>Хит ⭐</h3>
+          <div class="p-price">€54,90 <span class="muted" style="font-size:0.8rem;">/ 107,38 лв.</span></div>
+          <div class="p-desc">2 стила, до 4 версии, лирик видео, 3 корекции, приоритет</div>
+        </div>
+        <div class="plan-option" data-plan="spektakal" role="button" tabindex="0" style="grid-column: 1 / -1;">
+          <h3>Спектакъл</h3>
+          <div class="p-price">€89,90 <span class="muted" style="font-size:0.8rem;">/ 175,83 лв.</span></div>
+          <div class="p-desc">3 стила, 2 варианта на текста, лично съгласуване — за сватби и фирмени събития</div>
+        </div>
+      </div>
+
+      <div class="toggle-row">
+        <label for="express">⚡ Експресна изработка до 24 часа
+          <span class="hint">+€14,90 (29,14 лв.)</span>
+        </label>
+        <input type="checkbox" id="express" name="express">
+      </div>
+
+      <div class="field">
+        <label for="promo">Промо код</label>
+        <div class="promo-row">
+          <input type="text" id="promo" name="promo" autocomplete="off" placeholder="Въведи код…" style="text-transform:uppercase;">
+          <button type="button" class="btn btn-ghost" id="promo-apply">Приложи</button>
+        </div>
+        <div class="promo-msg" id="promo-msg" role="status"></div>
+      </div>
+
+      <div class="order-summary" id="order-summary" aria-live="polite">
+        <!-- попълва се от order.js -->
+      </div>
+    </section>
+
+    <!-- СТЪПКА 5: Контакти и преглед -->
+    <section class="wizard-step" data-step="5">
+      <h2 class="step-title">Почти готово!</h2>
+      <p class="step-sub">Стъпка 5 от 5 — къде да ти пратим демото?</p>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="cust-name">Твоето име *</label>
+          <input type="text" id="cust-name" name="name" autocomplete="name" placeholder="Име и фамилия">
+        </div>
+        <div class="field">
+          <label for="cust-email">Имейл *</label>
+          <input type="email" id="cust-email" name="email" autocomplete="email" placeholder="ti@primer.bg">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="cust-phone">Телефон <span class="hint">По избор — за по-бърза връзка при уточнения</span></label>
+        <input type="tel" id="cust-phone" name="phone" autocomplete="tel" placeholder="+359 …">
+      </div>
+
+      <div class="field">
+        <label for="notes">Още нещо, което да знаем?</label>
+        <textarea id="notes" name="notes" placeholder="Специални желания, въпроси…" style="min-height:80px;"></textarea>
+      </div>
+
+      <div class="review-box" id="review-box">
+        <!-- попълва се от order.js -->
+      </div>
+
+      <label class="consent">
+        <input type="checkbox" id="consent">
+        <span>Съгласен съм данните от тази форма да бъдат използвани за изготвяне на песента и връзка с мен. Заявката е безплатна и необвързваща — плащане се дължи само след одобрена финална версия.</span>
+      </label>
+    </section>
+
+    <div class="form-error" id="form-error" role="alert"></div>
+
+    <div class="wizard-nav">
+      <button type="button" class="btn btn-ghost" id="btn-back" style="visibility:hidden;">← Назад</button>
+      <button type="button" class="btn btn-primary" id="btn-next">Напред →</button>
+    </div>
+  </form>
+
+  <!-- УСПЕХ -->
+  <div class="success-box" id="success-box" hidden>
+    <div class="check">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#16091c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+    </div>
+    <h2>Заявката е приета! 🎶</h2>
+    <div class="order-no" id="success-no">PSN-000000-0000</div>
+    <p>Благодарим ти! До няколко часа ще получиш имейл с потвърждение, а до <strong id="success-eta">48 часа</strong> — демо на твоята песен. Плащане и фактура — чак след като я одобриш.</p>
+    <p style="margin-top:1rem;"><a class="btn btn-ghost" href="index.html">← Обратно към началото</a></p>
+  </div>
+
+  <!-- МОИТЕ ЗАЯВКИ -->
+  <section class="my-orders" id="my-orders" hidden>
+    <h2>Моите заявки</h2>
+    <div id="orders-list"></div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-bottom" style="border:none;">
+    © <span id="year">2026</span> Pesenta.bg — Песен по поръчка · <a href="mailto:rusev.miro@gmail.com">rusev.miro@gmail.com</a>
+  </div>
+</footer>
+
+<script src="assets/js/order.js" defer></script>
+</body>
+</html>

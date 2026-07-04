@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Песен по поръчка | Персонализирана песен за подарък – Pesenta.bg</title>
+  <meta name="description" content="Подари песен по поръчка с авторски текст по твоята история. Избор от 18+ музикални стила, готова до 48 часа, слушаш демо и плащаш след одобрение. Поръчай сега!">
+  <link rel="canonical" href="https://pesenta.bg/">
+  <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="bg_BG">
+  <meta property="og:site_name" content="Песента">
+  <meta property="og:title" content="Песен по поръчка | Твоята история, превърната в песен">
+  <meta property="og:description" content="Авторски текст по твоята история, 18+ стила, готова до 48 часа. Плащаш чак след като одобриш песента.">
+  <meta property="og:url" content="https://pesenta.bg/">
+  <meta property="og:image" content="https://pesenta.bg/assets/img/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Песен по поръчка | Pesenta.bg">
+  <meta name="twitter:description" content="Твоята история, превърната в песен. Готова до 48 часа.">
+  <meta name="twitter:image" content="https://pesenta.bg/assets/img/og-image.png">
+
+  <!-- Шрифтове -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Manrope:wght@400;600;700;800&display=swap&subset=cyrillic" rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/css/style.css">
+
+  <!-- Structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://pesenta.bg/#org",
+        "name": "Песента",
+        "url": "https://pesenta.bg/",
+        "logo": "https://pesenta.bg/assets/img/og-image.png",
+        "email": "rusev.miro@gmail.com",
+        "description": "Персонализирани песни по поръчка за всеки повод — рожден ден, сватба, ергенско парти, годишнина."
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://pesenta.bg/#site",
+        "url": "https://pesenta.bg/",
+        "name": "Pesenta.bg — песен по поръчка",
+        "inLanguage": "bg",
+        "publisher": { "@id": "https://pesenta.bg/#org" }
+      },
+      {
+        "@type": "Service",
+        "name": "Песен по поръчка",
+        "serviceType": "Персонализирана песен за подарък",
+        "provider": { "@id": "https://pesenta.bg/#org" },
+        "areaServed": "BG",
+        "description": "Авторска персонализирана песен по твоята история: текст, композиция и продукция. Избор от 18+ музикални стила, доставка до 48 часа.",
+        "hasOfferCatalog": {
+          "@type": "OfferCatalog",
+          "name": "Пакети",
+          "itemListElement": [
+            { "@type": "Offer", "name": "Соло", "price": "34.90", "priceCurrency": "EUR" },
+            { "@type": "Offer", "name": "Хит", "price": "54.90", "priceCurrency": "EUR" },
+            { "@type": "Offer", "name": "Спектакъл", "price": "89.90", "priceCurrency": "EUR" }
+          ]
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Колко време отнема създаването на песен по поръчка?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Стандартно песента е готова до 48 часа след като получим твоята история. С експресната опция — до 24 часа." }
+          },
+          {
+            "@type": "Question",
+            "name": "Как се плаща?",
+            "acceptedAnswer": { "@type": "Answer", "text": "В момента работим на заявки: поръчваш безплатно, слушаш демо и одобряваш. Фактурата получаваш след завършване на поръчката. Онлайн плащане с карта идва скоро." }
+          },
+          {
+            "@type": "Question",
+            "name": "Мога ли да избера повече от един музикален стил?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Да. Във формата за поръчка избираш колкото стила искаш, а в пакетите Хит и Спектакъл получаваш версии на песента в различни стилове." }
+          },
+          {
+            "@type": "Question",
+            "name": "Какво става, ако песента не ми хареса?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Всеки пакет включва безплатни корекции. Не плащаш нищо, докато не кажеш „да“ на финалната версия." }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-in">
+    <a class="logo" href="/" aria-label="Песента — начало">
+      <img src="assets/img/logo.svg" alt="Песента — песен по поръчка" width="190" height="44">
+    </a>
+    <button class="nav-toggle" aria-label="Меню" aria-expanded="false">☰</button>
+    <nav class="main-nav" aria-label="Основна навигация">
+      <a href="#kak-raboti">Как работи</a>
+      <a href="#demo">Демо песни</a>
+      <a href="#stilove">Стилове</a>
+      <a href="#ceni">Цени</a>
+      <a href="#vaprosi">Въпроси</a>
+      <a class="btn btn-primary" href="poruchka.html">Поръчай песен</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- ХЕРО -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <span class="kicker">Песен по поръчка за всеки повод</span>
+        <h1>Твоята история, превърната в <span class="grad-text">песен</span></h1>
+        <p class="lead">Разкажи ни за човека и повода — ние написваме авторски текст, композираме музиката и ти изпращаме песен, която ще помнят с години. Плащаш чак когато е готова.</p>
+        <div class="hero-ctas">
+          <a class="btn btn-primary btn-lg" href="poruchka.html">Поръчай песен сега</a>
+          <a class="btn btn-ghost btn-lg" href="#demo">Чуй примери</a>
+        </div>
+        <div class="hero-badges">
+          <span class="badge">✍️ 100% авторски текст</span>
+          <span class="badge">⚡ Готова до 48 часа</span>
+          <span class="badge">🎧 Демо преди плащане</span>
+          <span class="badge">🎼 18+ музикални стила</span>
+        </div>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="eq-bar"></div>
+        <div class="eq-bar"></div>
+        <div class="eq-bar"></div>
+        <div class="eq-bar"></div>
+        <div class="eq-bar"></div>
+        <div class="eq-bar"></div>
+        <div class="eq-bar"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ДЕМО ПЕСНИ -->
+  <section class="section" id="demo">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="kicker">Чуй сам</span>
+        <h2>Песни, които вече зарадваха някого</h2>
+        <p>Истински песни, създадени по същата методология — история, стил, емоция. Пусни и си представи каква би била твоята.</p>
+      </div>
+      <div class="tracks-grid">
+        <article class="track-card reveal">
+          <div class="track-cover">
+            <img src="assets/img/cover-ergensko.svg" alt="Обложка: Краят на ергенското" loading="lazy">
+            <span class="track-tag">Ергенско парти</span>
+          </div>
+          <div class="track-body">
+            <h3>Краят на ергенското</h3>
+            <p class="muted">за брат ми Руси</p>
+            <div class="player" data-src="assets/audio/kraqt-na-ergenskoto.mp3">
+              <button class="play-btn" aria-label="Пусни Краят на ергенското">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+              <div class="progress" role="slider" aria-label="Прогрес"><div class="progress-fill"></div></div>
+              <span class="time">0:00</span>
+            </div>
+          </div>
+        </article>
+        <article class="track-card reveal">
+          <div class="track-cover">
+            <img src="assets/img/cover-habibi.svg" alt="Обложка: Habibi Rusi" loading="lazy">
+            <span class="track-tag">Шега за приятел</span>
+          </div>
+          <div class="track-body">
+            <h3>Habibi Rusi</h3>
+            <p class="muted">ориенталски вайб</p>
+            <div class="player" data-src="assets/audio/habibi-rusi.mp3">
+              <button class="play-btn" aria-label="Пусни Habibi Rusi">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+              <div class="progress" role="slider" aria-label="Прогрес"><div class="progress-fill"></div></div>
+              <span class="time">0:00</span>
+            </div>
+          </div>
+        </article>
+        <article class="track-card reveal">
+          <div class="track-cover">
+            <img src="assets/img/cover-tutso.svg" alt="Обложка: За теб, брате Тууцо" loading="lazy">
+            <span class="track-tag">За приятел</span>
+          </div>
+          <div class="track-body">
+            <h3>За теб, брате Тууцо</h3>
+            <p class="muted">песен-послание</p>
+            <div class="player" data-src="assets/audio/za-teb-brate-tutso.mp3">
+              <button class="play-btn" aria-label="Пусни За теб, брате Тууцо">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+              <div class="progress" role="slider" aria-label="Прогрес"><div class="progress-fill"></div></div>
+              <span class="time">0:00</span>
+            </div>
+          </div>
+        </article>
+        <article class="track-card reveal">
+          <div class="track-cover">
+            <img src="assets/img/cover-api.svg" alt="Обложка: АПИ" loading="lazy">
+            <span class="track-tag">Вътрешна шега</span>
+          </div>
+          <div class="track-body">
+            <h3>АПИ</h3>
+            <p class="muted">песен за приятел</p>
+            <div class="player" data-src="assets/audio/api.mp3">
+              <button class="play-btn" aria-label="Пусни АПИ">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+              <div class="progress" role="slider" aria-label="Прогрес"><div class="progress-fill"></div></div>
+              <span class="time">0:00</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- КАК РАБОТИ -->
+  <section class="section" id="kak-raboti">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="kicker">Простичко е</span>
+        <h2>Как работи</h2>
+        <p>От твоята история до готова песен — четири стъпки, нула главоболия.</p>
+      </div>
+      <div class="steps-grid">
+        <div class="step-card reveal">
+          <span class="step-num">1</span>
+          <h3>Разказваш историята</h3>
+          <p>Попълваш нашия въпросник: човекът, поводът, смешките, вътрешните шеги, любимите фрази. Колкото повече детайли — толкова по-лична песента.</p>
+        </div>
+        <div class="step-card reveal">
+          <span class="step-num">2</span>
+          <h3>Пишем и композираме</h3>
+          <p>Създаваме авторски текст по твоята история и композираме музиката в избраните от теб стилове. Всяка песен минава през човешка редакция.</p>
+        </div>
+        <div class="step-card reveal">
+          <span class="step-num">3</span>
+          <h3>Слушаш и одобряваш</h3>
+          <p>Получаваш демо. Ако нещо не е точно — казваш и коригираме. Не плащаш нищо, докато не кажеш „да“.</p>
+        </div>
+        <div class="step-card reveal">
+          <span class="step-num">4</span>
+          <h3>Получаваш песента</h3>
+          <p>Финалната песен пристига на имейла ти в MP3 (и видео при избран пакет), заедно с текста. Фактурата — след завършена поръчка.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- СТИЛОВЕ -->
+  <section class="section" id="stilove">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="kicker">Ти избираш звука</span>
+        <h2>18+ музикални стила — избери повече от един</h2>
+        <p>Балада за мама, рап за най-добрия приятел или кючек за ергенското? Комбинирай стилове и получи различни версии на своята песен.</p>
+      </div>
+      <div class="styles-cloud reveal">
+        <span class="style-chip">Поп</span>
+        <span class="style-chip">Балада</span>
+        <span class="style-chip">Рок</span>
+        <span class="style-chip">Рап / Хип-хоп</span>
+        <span class="style-chip">Поп-фолк / Чалга</span>
+        <span class="style-chip">Кючек</span>
+        <span class="style-chip">Народна музика</span>
+        <span class="style-chip">Диско / Ретро</span>
+        <span class="style-chip">EDM / Денс</span>
+        <span class="style-chip">R&amp;B / Соул</span>
+        <span class="style-chip">Джаз / Суинг</span>
+        <span class="style-chip">Кънтри</span>
+        <span class="style-chip">Латино / Регетон</span>
+        <span class="style-chip">Ориенталски</span>
+        <span class="style-chip">Акустична китара</span>
+        <span class="style-chip">Метъл</span>
+        <span class="style-chip">Детска песен</span>
+        <span class="style-chip">Естрада / Шансон</span>
+        <span class="style-chip">Кино / Епично</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ЦЕНИ -->
+  <section class="section" id="ceni">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="kicker">Прозрачни цени</span>
+        <h2>Избери своя пакет</h2>
+        <p>Без скрити такси. Поръчваш безплатно, плащаш след като одобриш песента.</p>
+      </div>
+      <div class="pricing-grid">
+        <div class="price-card reveal">
+          <h3>Соло</h3>
+          <div class="price-line"><span class="amount">€34,90</span></div>
+          <div class="price-bgn">≈ 68,26 лв.</div>
+          <ul>
+            <li>1 песен до 3:30 мин</li>
+            <li>Авторски текст по твоята история</li>
+            <li>2 версии — избираш финалната</li>
+            <li>1 безплатна корекция</li>
+            <li>MP3 + текст на песента</li>
+            <li>Готова до 48 часа</li>
+          </ul>
+          <a class="btn btn-ghost" href="poruchka.html?plan=solo">Избери Соло</a>
+        </div>
+        <div class="price-card featured reveal">
+          <span class="plan-flag">Най-избиран</span>
+          <h3>Хит</h3>
+          <div class="price-line"><span class="amount">€54,90</span></div>
+          <div class="price-bgn">≈ 107,38 лв.</div>
+          <ul>
+            <li>Всичко от „Соло“</li>
+            <li>2 различни музикални стила</li>
+            <li>До 4 версии на песента</li>
+            <li>Лирик видео (MP4) за споделяне</li>
+            <li>3 безплатни корекции</li>
+            <li>Приоритетна изработка</li>
+          </ul>
+          <a class="btn btn-primary" href="poruchka.html?plan=hit">Избери Хит</a>
+        </div>
+        <div class="price-card reveal">
+          <h3>Спектакъл</h3>
+          <div class="price-line"><span class="amount">€89,90</span></div>
+          <div class="price-bgn">≈ 175,83 лв.</div>
+          <ul>
+            <li>Всичко от „Хит“</li>
+            <li>3 музикални стила по избор</li>
+            <li>2 варианта на текста</li>
+            <li>Лично съгласуване на текста</li>
+            <li>Идеален за сватби и фирмени събития</li>
+            <li>Специална визия за видеото</li>
+          </ul>
+          <a class="btn btn-ghost" href="poruchka.html?plan=spektakal">Избери Спектакъл</a>
+        </div>
+      </div>
+      <div class="pricing-note reveal">
+        <strong>Работим на заявки:</strong> поръчката е безплатна и необвързваща. Плащане и фактура — чак след като чуеш и одобриш песента си. Експресна изработка до 24 ч: <strong>+€14,90</strong>. Имаш промо код? Въведи го на стъпка 4 от поръчката. Онлайн плащане с карта — очаквайте скоро.
+      </div>
+    </div>
+  </section>
+
+  <!-- ОТЗИВИ -->
+  <section class="section" id="otzivi">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="kicker">Реакциите</span>
+        <h2>Моментът, в който я чуят за първи път</h2>
+      </div>
+      <!-- TODO: заменете с реални отзиви от клиенти -->
+      <div class="quotes-grid">
+        <div class="quote-card reveal">
+          <div class="quote-mark">“</div>
+          <p>Цялата маса плака от смях, а накрая — от умиление. Никой подарък не е предизвиквал такава реакция.</p>
+          <div class="who">Ергенско парти, В. Търново</div>
+        </div>
+        <div class="quote-card reveal">
+          <div class="quote-mark">“</div>
+          <p>Песента събра всички вътрешни шеги от 20 години приятелство в 3 минути. Слушаме я и до днес.</p>
+          <div class="who">Подарък за приятел</div>
+        </div>
+        <div class="quote-card reveal">
+          <div class="quote-mark">“</div>
+          <p>Изпратих историята вечерта, на следващия ден песента беше готова. Точно каквото исках да ѝ кажа, но по-красиво.</p>
+          <div class="who">Годишнина от сватба</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="vaprosi">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="kicker">Питай смело</span>
+        <h2>Често задавани въпроси</h2>
+      </div>
+      <div class="faq-list reveal">
+        <details class="faq-item">
+          <summary>Колко време отнема създаването на песента?</summary>
+          <div class="faq-body">Стандартно песента е готова до 48 часа след като получим твоята история. С експресната опция — до 24 часа. За сватбени и фирмени поръчки препоръчваме да поръчаш поне седмица предварително, за да има време за спокойни корекции.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Как се плаща?</summary>
+          <div class="faq-body">В момента работим на заявки: поръчваш безплатно, слушаш демо и одобряваш. Фактура получаваш след завършване на поръчката, с данни за банков превод. Онлайн плащане с карта (Stripe) идва съвсем скоро.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Мога ли да избера повече от един музикален стил?</summary>
+          <div class="faq-body">Да — това е една от най-обичаните ни опции. Във формата отбелязваш колкото стила искаш. В пакет „Хит“ получаваш песента в 2 различни стила, а в „Спектакъл“ — в 3.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Какво става, ако песента не ми хареса?</summary>
+          <div class="faq-body">Всеки пакет включва безплатни корекции — казваш какво да променим в текста или звука и го правим. Не плащаш нищо, докато не кажеш „да“ на финалната версия.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Каква информация да подготвя за поръчката?</summary>
+          <div class="faq-body">Най-ценни са личните детайли: как се запознахте, смешни случки, вътрешни шеги, прякори, любими места и фрази. Нашият въпросник те води стъпка по стъпка — отнема около 10 минути, а резултатът е песен, която звучи като написана „отвътре“.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Може ли песента да е изненада?</summary>
+          <div class="faq-body">Разбира се — пълна конфиденциалност. Песента и цялата комуникация остават само между нас до момента, в който ти решиш да я подариш.</div>
+        </details>
+        <details class="faq-item">
+          <summary>На какъв език може да бъде песента?</summary>
+          <div class="faq-body">Български, английски или смесен текст — ти избираш. Можем да вплетем и отделни думи на друг език (например прякор или любима фраза).</div>
+        </details>
+        <details class="faq-item">
+          <summary>Какви права имам върху песента?</summary>
+          <div class="faq-body">Песента е твоя за лична употреба без ограничения — подарявай, споделяй в социалните мрежи, пускай на събития. За комерсиална употреба (реклами, монетизирано съдържание) се свържи с нас за индивидуални условия.</div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-band reveal">
+        <h2>Подари нещо, което не се забравя</h2>
+        <p>Цветята увяхват, ваучерите изтичат. Песента остава завинаги — и се пуска на всяко семейно събиране.</p>
+        <a class="btn btn-primary btn-lg" href="poruchka.html">Поръчай песен сега</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-col" style="max-width: 320px;">
+        <img src="assets/img/logo.svg" alt="Песента" width="160" style="margin-bottom: 1rem;">
+        <p>Персонализирани песни по поръчка за всеки повод. Твоята история, нашата музика.</p>
+      </div>
+      <div class="footer-col">
+        <h3>Навигация</h3>
+        <a href="#kak-raboti">Как работи</a>
+        <a href="#demo">Демо песни</a>
+        <a href="#ceni">Цени</a>
+        <a href="poruchka.html">Поръчай песен</a>
+      </div>
+      <div class="footer-col">
+        <h3>Поводи</h3>
+        <a href="poruchka.html">Песен за рожден ден</a>
+        <a href="poruchka.html">Песен за сватба</a>
+        <a href="poruchka.html">Песен за ергенско парти</a>
+        <a href="poruchka.html">Песен за годишнина</a>
+      </div>
+      <div class="footer-col">
+        <h3>Контакти</h3>
+        <a href="mailto:rusev.miro@gmail.com">rusev.miro@gmail.com</a>
+        <a href="poruchka.html">Направи запитване</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © <span id="year">2026</span> Pesenta.bg — Песен по поръчка. Всички права запазени.
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/main.js" defer></script>
+</body>
+</html>

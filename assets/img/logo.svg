@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="190" height="44" viewBox="0 0 190 44" role="img" aria-label="Песента">
+  <defs>
+    <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FF4D8D"/>
+      <stop offset="1" stop-color="#FFA14D"/>
+    </linearGradient>
+  </defs>
+  <g>
+    <rect x="2" y="2" width="40" height="40" rx="12" fill="url(#lg)"/>
+    <g fill="#0B0A1A">
+      <rect x="12" y="18" width="4" height="14" rx="2"/>
+      <rect x="20" y="12" width="4" height="20" rx="2"/>
+      <rect x="28" y="22" width="4" height="10" rx="2"/>
+    </g>
+    <text x="52" y="30" font-family="'Unbounded','Segoe UI',sans-serif" font-size="20" font-weight="700" fill="#F4F2FF">Песента</text>
+  </g>
+</svg>
