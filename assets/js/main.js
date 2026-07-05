@@ -88,7 +88,8 @@
 
     btn.addEventListener("click", function () {
       if (audio.paused) {
-        // спри всички останали
+        // спри всички останали (и музикалния поздрав)
+        if (window.__pesentaIntroStop) window.__pesentaIntroStop();
         players.forEach(function (p) { if (p.audio !== audio) p.pause(); });
         audio.play();
         btn.innerHTML = ICON_PAUSE;
@@ -104,4 +105,110 @@
       audio.currentTime = Math.max(0, Math.min(1, pct)) * audio.duration;
     });
   });
+})();
+
+/* ---------- Музикален поздрав: тих припев на началната страница ----------
+   Браузърите блокират звук без взаимодействие — пробваме автоматично,
+   а при отказ тръгва при първия клик/докосване. „✕“ го спира завинаги
+   (запомня се в localStorage: pesenta_intro_off).                        */
+(function () {
+  "use strict";
+
+  var INTRO = {
+    enabled: true,
+    src: "assets/audio/za-teb-brate-vladi.mp3",
+    start: 62,      // секундата, от която почва припевът — нагласи при нужда
+    duration: 26,   // колко секунди да свири
+    volume: 0.18,   // тихо: 0–1
+    delayMs: 3500   // пауза след отваряне на страницата
+  };
+
+  if (!INTRO.enabled) return;
+  if (!document.querySelector(".hero")) return; // само на началната страница
+  try { if (localStorage.getItem("pesenta_intro_off") === "1") return; } catch (e) {}
+
+  var audio = new Audio(INTRO.src);
+  audio.preload = "auto";
+  var pill = null;
+  var fadeTimer = null;
+  var stopTimer = null;
+  var started = false;
+  var ended = false;
+
+  function fadeTo(target, ms, done) {
+    clearInterval(fadeTimer);
+    var steps = 20, i = 0, from = audio.volume;
+    fadeTimer = setInterval(function () {
+      i++;
+      audio.volume = Math.max(0, Math.min(1, from + (target - from) * (i / steps)));
+      if (i >= steps) { clearInterval(fadeTimer); if (done) done(); }
+    }, ms / steps);
+  }
+
+  function stopIntro(remember) {
+    if (ended) return;
+    ended = true;
+    clearTimeout(stopTimer);
+    fadeTo(0, 700, function () { audio.pause(); });
+    if (pill) {
+      pill.classList.add("hide");
+      setTimeout(function () { if (pill) { pill.remove(); pill = null; } }, 600);
+    }
+    if (remember) { try { localStorage.setItem("pesenta_intro_off", "1"); } catch (e) {} }
+    window.__pesentaIntroStop = null;
+  }
+
+  window.__pesentaIntroStop = function () { stopIntro(false); };
+
+  function showPill() {
+    pill = document.createElement("div");
+    pill.className = "intro-pill";
+    pill.innerHTML =
+      '<span class="intro-eq" aria-hidden="true"><i></i><i></i><i></i></span>' +
+      "<span>„За теб, брате Влади“</span>" +
+      '<button type="button" class="intro-stop" aria-label="Спри музиката" title="Спри">✕</button>';
+    pill.querySelector(".intro-stop").addEventListener("click", function () { stopIntro(true); });
+    document.body.appendChild(pill);
+  }
+
+  function begin() {
+    if (started || ended) return;
+    started = true;
+    function go() {
+      try { audio.currentTime = INTRO.start; } catch (e) {}
+      audio.volume = 0;
+      var p = audio.play();
+      if (p && p.then) {
+        p.then(function () {
+          showPill();
+          fadeTo(INTRO.volume, 1500);
+          stopTimer = setTimeout(function () { stopIntro(false); }, INTRO.duration * 1000);
+        }).catch(function () {
+          /* autoplay блокиран — чакаме първото взаимодействие */
+          started = false;
+          armGesture();
+        });
+      }
+    }
+    if (audio.readyState >= 1) go();
+    else audio.addEventListener("loadedmetadata", go, { once: true });
+  }
+
+  var armed = false;
+  function armGesture() {
+    if (armed) return;
+    armed = true;
+    var kick = function (e) {
+      document.removeEventListener("pointerdown", kick);
+      document.removeEventListener("keydown", kick);
+      armed = false; /* позволи повторно въоръжаване, ако play() пак бъде отказан */
+      /* ако първото докосване е върху плейър — човекът сам си пуска музика */
+      if (e && e.target && e.target.closest && e.target.closest(".player")) return;
+      begin();
+    };
+    document.addEventListener("pointerdown", kick);
+    document.addEventListener("keydown", kick);
+  }
+
+  setTimeout(begin, INTRO.delayMs);
 })();
