@@ -217,7 +217,8 @@
       if (!val("cust-name")) return "Напиши името си — трябва ни за фактурата и демото.";
       var email = val("cust-email");
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return "Въведи валиден имейл — там ще получиш демото.";
-      if (!document.getElementById("consent").checked) return "Моля, потвърди съгласието си, за да изпратим заявката.";
+      if (!document.getElementById("consent").checked) return "Моля, потвърди, че си запознат с Общите условия.";
+      if (!document.getElementById("consent-digital").checked) return "Моля, потвърди изричното съгласие за започване на изпълнението (загуба на правото на отказ) — без него не можем да стартираме поръчката.";
     }
     return null;
   }
@@ -255,6 +256,7 @@
       voice: chipValues("voice-chips")[0] || "",
       language: val("language"),
       reference: val("reference"),
+      explicit: document.getElementById("explicit").checked,
       name: val("cust-name"),
       email: val("cust-email"),
       phone: val("cust-phone"),
@@ -278,6 +280,7 @@
       ["Стилове", d.styles.join(", ") || "по препоръка на продуцента"],
       ["Настроение", d.mood || "—"],
       ["Вокал", d.voice || "—"],
+      ["Нецензурни изрази", d.explicit ? "разрешени (18+)" : "не"],
       ["Пакет", PLANS[state.plan].label + (state.express ? " + Експрес 24ч" : "")],
       ["Общо", eur(t.total) + " (" + bgn(t.total) + ")" + (state.promoCode ? " с код " + state.promoCode : "")]
     ];
@@ -323,6 +326,7 @@
       "- Вокал: " + (d.voice || "по преценка"),
       "- Език: " + d.language,
       "- Референция: " + (d.reference || "—"),
+      "- Нецензурни изрази: " + (d.explicit ? "РАЗРЕШЕНИ (клиентът е дал изрично съгласие, 18+)" : "НЕ — текстът да е напълно цензурен"),
       "",
       "## Пакет",
       "- " + PLANS[state.plan].label + " (" + PLANS[state.plan].desc + ")" + (state.express ? " + Експрес 24ч" : ""),
@@ -367,6 +371,9 @@
       "Настроение / Темпо / Вокал": (d.mood || "—") + " / " + (d.tempo || "—") + " / " + (d.voice || "—"),
       "Език": d.language,
       "Референция": d.reference || "—",
+      "Нецензурни изрази (18+)": d.explicit ? "ДА — разрешени" : "не",
+      "Съгласие чл. 57 ЗЗП (без право на отказ)": "потвърдено",
+      "Линк за плащане (изпрати след одобрение)": "https://pesenta.bg/plati.html?order=" + orderNo + "&plan=" + state.plan + (state.express ? "&express=1" : ""),
       "Пакет": PLANS[state.plan].label + (state.express ? " + Експрес 24ч" : ""),
       "Промо код": state.promoCode ? state.promoCode + " (−" + state.promoPct + "%)" : "—",
       "Обща цена": eur(t.total) + " / " + bgn(t.total),
@@ -459,7 +466,7 @@
 
   function saveDraft() {
     try {
-      var draft = { fields: {}, chips: {}, plan: state.plan, express: state.express };
+      var draft = { fields: {}, chips: {}, plan: state.plan, express: state.express, explicit: document.getElementById("explicit").checked };
       DRAFT_FIELDS.forEach(function (id) { draft.fields[id] = val(id); });
       CHIP_GROUPS.forEach(function (id) { draft.chips[id] = chipValues(id); });
       localStorage.setItem("pesenta_draft", JSON.stringify(draft));
@@ -487,6 +494,7 @@
         state.express = true;
         document.getElementById("express").checked = true;
       }
+      if (draft.explicit) document.getElementById("explicit").checked = true;
       updateStyleCount();
     } catch (e) { /* повредена чернова — игнорирай */ }
   }

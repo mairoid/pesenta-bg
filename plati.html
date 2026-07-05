@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Плащане на поръчка | Pesenta.bg</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Manrope:wght@400;600;700&display=swap&subset=cyrillic" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-in">
+    <a class="logo" href="index.html" aria-label="Песента — начало">
+      <img src="assets/img/logo.svg" alt="Песента — песен по поръчка" width="190" height="44">
+    </a>
+  </div>
+</header>
+
+<main class="container order-wrap">
+  <div class="order-head">
+    <span class="kicker">Финалната стъпка</span>
+    <h1>Плащане на <span class="grad-text">поръчка</span></h1>
+    <p>Ти одобри песента си — остана само плащането, и файловете тръгват към теб заедно с фактурата.</p>
+  </div>
+
+  <div class="order-summary" id="pay-summary" style="max-width:520px;margin:0 auto;">
+    <!-- попълва се от скрипта -->
+  </div>
+
+  <div style="text-align:center;margin-top:2rem;">
+    <div id="pay-active" hidden>
+      <a class="btn btn-primary btn-lg" id="pay-btn" href="#">Плати с карта</a>
+      <p class="muted" style="font-size:0.85rem;margin-top:1rem;">Сигурно плащане чрез Stripe. Ще получиш електронен документ за продажбата на имейла си.</p>
+    </div>
+    <div id="pay-inactive" hidden>
+      <div class="pricing-note" style="text-align:left;">
+        <strong>Плащането с карта се активира съвсем скоро.</strong> Междувременно ще получиш по имейл фактура с банкови данни за превод. Песента ти пътува веднага след постъпване на плащането.
+      </div>
+      <p style="margin-top:1.5rem;"><a class="btn btn-ghost" href="index.html">← Обратно към началото</a></p>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-bottom" style="border:none;">
+    © <span id="year">2026</span> Pesenta.bg — „БАУФИЗИК“ ЕООД · <a href="usloviya.html">Общи условия</a>
+  </div>
+</footer>
+
+<script src="assets/js/payments.js"></script>
+<script>
+(function () {
+  "use strict";
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  var cfg = window.PESENTA_PAYMENTS;
+  var params = new URLSearchParams(window.location.search);
+  var planKey = params.get("plan") || "";
+  var orderNo = params.get("order") || "";
+  var express = params.get("express") === "1";
+
+  var plan = cfg.plans[planKey];
+  var box = document.getElementById("pay-summary");
+
+  function eur(n) { return "€" + n.toFixed(2).replace(".", ","); }
+  function bgn(n) { return (n * cfg.bgnRate).toFixed(2).replace(".", ",") + " лв."; }
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  }
+
+  if (!plan) {
+    box.innerHTML = '<div class="row"><span>Линкът за плащане е непълен — пиши ни на rusev.miro@gmail.com и ще ти изпратим нов.</span></div>';
+    return;
+  }
+
+  var total = plan.price + (express ? cfg.expressPrice : 0);
+  var html = "";
+  if (orderNo) html += '<div class="row"><span>Поръчка</span><span>' + esc(orderNo) + "</span></div>";
+  html += '<div class="row"><span>Пакет „' + esc(plan.label) + '“</span><span>' + eur(plan.price) + "</span></div>";
+  if (express) html += '<div class="row"><span>Експресна изработка (24 ч)</span><span>' + eur(cfg.expressPrice) + "</span></div>";
+  html += '<div class="row total"><span>Общо</span><span>' + eur(total) + ' <small style="color:var(--muted);font-size:0.75em;font-weight:400;">(' + bgn(total) + ")</small></span></div>";
+  box.innerHTML = html;
+
+  var linkKey = express ? planKey + "_express" : planKey;
+  var link = cfg.paymentLinks[linkKey];
+
+  if (cfg.enabled && link) {
+    var url = link + (link.indexOf("?") === -1 ? "?" : "&") + "client_reference_id=" + encodeURIComponent(orderNo || "direct");
+    document.getElementById("pay-btn").href = url;
+    document.getElementById("pay-active").hidden = false;
+  } else {
+    document.getElementById("pay-inactive").hidden = false;
+  }
+})();
+</script>
+</body>
+</html>

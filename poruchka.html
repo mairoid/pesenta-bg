@@ -226,6 +226,13 @@
           <input type="text" id="reference" name="reference" placeholder="напр. като ранния Слави / Ed Sheeran…">
         </div>
       </div>
+
+      <div class="toggle-row">
+        <label for="explicit">Разрешавам нецензурни изрази в текста
+          <span class="hint">Само за аудитория 18+. Без отметка песента е 100% цензурна.</span>
+        </label>
+        <input type="checkbox" id="explicit" name="explicit">
+      </div>
     </section>
 
     <!-- СТЪПКА 3: Пакет и контакти -->
@@ -304,7 +311,11 @@
 
       <label class="consent">
         <input type="checkbox" id="consent">
-        <span>Съгласен съм данните от тази форма да бъдат използвани за изготвяне на песента и връзка с мен. Заявката е безплатна и необвързваща — плащане се дължи само след одобрена финална версия.</span>
+        <span>Запознах се с <a href="usloviya.html" target="_blank" style="color:var(--orange);text-decoration:underline;">Общите условия</a> и се съгласявам данните от формата да бъдат използвани за изработката на песента и връзка с мен. Заявката е безплатна и необвързваща — плащане се дължи само след одобрена финална версия.</span>
+      </label>
+      <label class="consent">
+        <input type="checkbox" id="consent-digital">
+        <span>Изрично се съгласявам изпълнението да започне веднага и потвърждавам, че <strong>губя 14-дневното право на отказ</strong> по чл. 50 ЗЗП (основание чл. 57, т. 3 и т. 13 ЗЗП) — песента е цифрово съдържание, изработено лично за мен, и не подлежи на връщане. Плащам едва след като одобря демото.</span>
       </label>
     </section>
 
@@ -337,7 +348,7 @@
 
 <footer class="site-footer">
   <div class="container footer-bottom" style="border:none;">
-    © <span id="year">2026</span> Pesenta.bg — Песен по поръчка · <a href="mailto:rusev.miro@gmail.com">rusev.miro@gmail.com</a>
+    © <span id="year">2026</span> Pesenta.bg — „БАУФИЗИК“ ЕООД · <a href="usloviya.html">Общи условия</a> · <a href="mailto:rusev.miro@gmail.com">rusev.miro@gmail.com</a>
   </div>
 </footer>
 

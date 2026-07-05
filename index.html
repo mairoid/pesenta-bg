@@ -99,6 +99,11 @@
             "@type": "Question",
             "name": "Какво става, ако песента не ми хареса?",
             "acceptedAnswer": { "@type": "Answer", "text": "Пакетите Соло, Хит и Спектакъл включват безплатни корекции. Не плащаш нищо, докато не кажеш „да“ на финалната версия." }
+          },
+          {
+            "@type": "Question",
+            "name": "Мога ли да върна готовата песен и да си поискам парите?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Не — персонализираната песен е цифрово съдържание по индивидуална поръчка и за нея не важи 14-дневното право на отказ (чл. 57 ЗЗП). Плащаш обаче чак след като чуеш демото и одобриш песента." }
           }
         ]
       }
@@ -168,6 +173,23 @@
       <div class="tracks-grid">
         <article class="track-card reveal">
           <div class="track-cover">
+            <img src="assets/img/cover-vladi.svg" alt="Обложка: За теб, брате Влади" loading="lazy">
+            <span class="track-tag">За приятел</span>
+          </div>
+          <div class="track-body">
+            <h3>За теб, брате Влади</h3>
+            <p class="muted">песен-послание</p>
+            <div class="player" data-src="assets/audio/za-teb-brate-vladi.mp3">
+              <button class="play-btn" aria-label="Пусни За теб, брате Влади">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+              <div class="progress" role="slider" aria-label="Прогрес"><div class="progress-fill"></div></div>
+              <span class="time">0:00</span>
+            </div>
+          </div>
+        </article>
+        <article class="track-card reveal">
+          <div class="track-cover">
             <img src="assets/img/cover-habibi.svg" alt="Обложка: Habibi Rusi" loading="lazy">
             <span class="track-tag">Шега за приятел</span>
           </div>
@@ -202,23 +224,6 @@
         </article>
         <article class="track-card reveal">
           <div class="track-cover">
-            <img src="assets/img/cover-kat2.svg" alt="Обложка: КАТ 2" loading="lazy">
-            <span class="track-tag">Шега</span>
-          </div>
-          <div class="track-body">
-            <h3>КАТ 2</h3>
-            <p class="muted">шофьорски приключения</p>
-            <div class="player" data-src="assets/audio/kat-2.mp3">
-              <button class="play-btn" aria-label="Пусни КАТ 2">
-                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-              </button>
-              <div class="progress" role="slider" aria-label="Прогрес"><div class="progress-fill"></div></div>
-              <span class="time">0:00</span>
-            </div>
-          </div>
-        </article>
-        <article class="track-card reveal">
-          <div class="track-cover">
             <img src="assets/img/cover-rocco.svg" alt="Обложка: Rocco di Catania" loading="lazy">
             <span class="track-tag">Италиански вайб</span>
           </div>
@@ -236,23 +241,6 @@
         </article>
         <article class="track-card reveal">
           <div class="track-cover">
-            <img src="assets/img/cover-vladi.svg" alt="Обложка: За теб, брате Влади" loading="lazy">
-            <span class="track-tag">За приятел</span>
-          </div>
-          <div class="track-body">
-            <h3>За теб, брате Влади</h3>
-            <p class="muted">песен-послание</p>
-            <div class="player" data-src="assets/audio/za-teb-brate-vladi.mp3">
-              <button class="play-btn" aria-label="Пусни За теб, брате Влади">
-                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-              </button>
-              <div class="progress" role="slider" aria-label="Прогрес"><div class="progress-fill"></div></div>
-              <span class="time">0:00</span>
-            </div>
-          </div>
-        </article>
-        <article class="track-card reveal">
-          <div class="track-cover">
             <img src="assets/img/cover-napipay.svg" alt="Обложка: Напипай го, Влади" loading="lazy">
             <span class="track-tag">Парти парче</span>
           </div>
@@ -261,23 +249,6 @@
             <p class="muted">за купона</p>
             <div class="player" data-src="assets/audio/napipay-go-vladi.mp3">
               <button class="play-btn" aria-label="Пусни Напипай го, Влади">
-                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-              </button>
-              <div class="progress" role="slider" aria-label="Прогрес"><div class="progress-fill"></div></div>
-              <span class="time">0:00</span>
-            </div>
-          </div>
-        </article>
-        <article class="track-card reveal">
-          <div class="track-cover">
-            <img src="assets/img/cover-api.svg" alt="Обложка: АПИ" loading="lazy">
-            <span class="track-tag">Вътрешна шега</span>
-          </div>
-          <div class="track-body">
-            <h3>АПИ</h3>
-            <p class="muted">песен за приятел</p>
-            <div class="player" data-src="assets/audio/api.mp3">
-              <button class="play-btn" aria-label="Пусни АПИ">
                 <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
               </button>
               <div class="progress" role="slider" aria-label="Прогрес"><div class="progress-fill"></div></div>
@@ -473,7 +444,7 @@
         </div>
       </div>
       <div class="pricing-note reveal">
-        <strong>Работим на заявки:</strong> поръчката е безплатна и необвързваща. Плащане и фактура — чак след като чуеш и одобриш песента си. Експресна изработка до 24 ч: <strong>+€9,90</strong>. Имаш промо код? Въведи го на последната стъпка от поръчката. Онлайн плащане с карта — очаквайте скоро.
+        <strong>Поръчката е безплатна и необвързваща.</strong> Плащане (с карта или по банков път) и фактура — чак след като чуеш и одобриш песента си. Всички цени са с включен ДДС. Експресна изработка до 24 ч: <strong>+€9,90</strong>. Имаш промо код? Въведи го на последната стъпка от поръчката.
       </div>
     </div>
   </section>
@@ -536,6 +507,10 @@
           <div class="faq-body">Пакетите „Соло“, „Хит“ и „Спектакъл“ включват безплатни корекции — казваш какво да променим в текста или звука и го правим. Не плащаш нищо, докато не кажеш „да“ на финалната версия.</div>
         </details>
         <details class="faq-item">
+          <summary>Мога ли да върна готовата песен и да си поискам парите?</summary>
+          <div class="faq-body">Не — песента е цифрово съдържание, изработено по твоя индивидуална поръчка, и за нея не важи 14-дневното право на отказ (чл. 57, т. 3 и т. 13 от Закона за защита на потребителите). Затова процесът е обърнат в твоя полза: плащаш чак <strong>след</strong> като чуеш демото и одобриш песента, с включени корекции според пакета. Ако демото не ти хареса — не одобряваш и не дължиш нищо. Подробности в <a href="usloviya.html" style="color:var(--orange);">Общите условия</a>.</div>
+        </details>
+        <details class="faq-item">
           <summary>Каква информация да подготвя за поръчката?</summary>
           <div class="faq-body">Най-ценни са личните детайли: смешни случки, вътрешни шеги, прякори, любими места и фрази. Формата отнема 5 минути, а колкото повече ни дадеш, толкова по-лична става песента. Ако бързаш — стигат повод и няколко изречения.</div>
         </details>
@@ -589,10 +564,11 @@
         <h3>Контакти</h3>
         <a href="mailto:rusev.miro@gmail.com">rusev.miro@gmail.com</a>
         <a href="poruchka.html">Направи запитване</a>
+        <a href="usloviya.html">Общи условия</a>
       </div>
     </div>
     <div class="footer-bottom">
-      © <span id="year">2026</span> Pesenta.bg — Песен по поръчка. Всички права запазени.
+      © <span id="year">2026</span> Pesenta.bg — „БАУФИЗИК“ ЕООД, ЕИК 207427793. Всички права запазени.
     </div>
   </div>
 </footer>
