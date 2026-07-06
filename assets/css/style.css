@@ -588,6 +588,35 @@ h3 { font-size: 1.1rem; font-weight: 600; }
 
 .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 
+/* Гласово съобщение */
+
+.voice-box {
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.02);
+  padding: 1rem 1.2rem;
+  margin-bottom: 1.4rem;
+}
+.voice-row { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.voice-btn { padding: 0.65rem 1.3rem; font-size: 0.93rem; gap: 0.5rem; }
+.voice-btn.recording {
+  border-color: #ff5b5b;
+  color: #ff8080;
+}
+.voice-btn.recording svg { animation: voicepulse 1.2s ease-in-out infinite; }
+@keyframes voicepulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+.voice-status { color: var(--muted); font-size: 0.85rem; flex: 1; min-width: 200px; }
+.voice-status.err { color: #ff8080; }
+.voice-status.rec { color: #ff8080; }
+.voice-play { display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; margin-top: 0.9rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .voice-btn.recording svg { animation: none; }
+}
+
 /* Разгъващи се допълнителни полета */
 
 .more-fields {

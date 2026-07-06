@@ -43,6 +43,9 @@
   };
   var TOTAL_STEPS = 3;
 
+  /* Записано гласово съобщение (Blob) — прикача се към заявката */
+  var voiceBlob = null;
+
   var form = document.getElementById("order-form");
   var errBox = document.getElementById("form-error");
   var btnNext = document.getElementById("btn-next");
@@ -281,6 +284,7 @@
       ["Настроение", d.mood || "—"],
       ["Вокал", d.voice || "—"],
       ["Нецензурни изрази", d.explicit ? "разрешени (18+)" : "не"],
+      ["Гласово съобщение", voiceBlob ? "приложено ✓" : "не"],
       ["Пакет", PLANS[state.plan].label + (state.express ? " + Експрес 24ч" : "")],
       ["Общо", eur(t.total) + " (" + bgn(t.total) + ")" + (state.promoCode ? " с код " + state.promoCode : "")]
     ];
@@ -291,6 +295,128 @@
     html += "</dl>";
     document.getElementById("review-box").innerHTML = html;
   }
+
+  /* ============ Гласово въвеждане на историята ============ */
+  /* Диктовка на български (Web Speech API) + запис на гласа (MediaRecorder).
+     Текстът се появява в полето „История“, а самият запис пътува със заявката. */
+  (function initVoice() {
+    var recBtn = document.getElementById("voice-rec");
+    if (!recBtn) return;
+    var label = document.getElementById("voice-btn-label");
+    var statusEl = document.getElementById("voice-status");
+    var playWrap = document.getElementById("voice-play");
+    var audioEl = document.getElementById("voice-audio");
+    var delBtn = document.getElementById("voice-del");
+    var storyEl = document.getElementById("story");
+
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    var recognition = null;
+    var mediaRecorder = null;
+    var chunks = [];
+    var stream = null;
+    var recording = false;
+    var storyBase = "";
+    var finalText = "";
+
+    if (!navigator.mediaDevices || !window.MediaRecorder) {
+      /* съвсем стар браузър — скрий бутона, полето за писане остава */
+      document.getElementById("voice-box").style.display = "none";
+      return;
+    }
+
+    function setStatus(msg, cls) {
+      statusEl.textContent = msg;
+      statusEl.className = "voice-status" + (cls ? " " + cls : "");
+    }
+
+    function stopEverything() {
+      recording = false;
+      recBtn.classList.remove("recording");
+      label.textContent = voiceBlob ? "Запиши наново" : "Разкажи с глас";
+      if (recognition) { try { recognition.stop(); } catch (e) {} }
+      if (mediaRecorder && mediaRecorder.state !== "inactive") { try { mediaRecorder.stop(); } catch (e) {} }
+      if (stream) { stream.getTracks().forEach(function (t) { t.stop(); }); stream = null; }
+      if (recording === false && statusEl.classList.contains("rec")) {
+        setStatus("Готово. Прегледай текста горе — можеш да го дописваш свободно.", null);
+      }
+    }
+
+    function startRecording() {
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(function (s) {
+        stream = s;
+        chunks = [];
+        try {
+          mediaRecorder = new MediaRecorder(stream);
+        } catch (e) { mediaRecorder = null; }
+
+        if (mediaRecorder) {
+          mediaRecorder.ondataavailable = function (ev) { if (ev.data && ev.data.size) chunks.push(ev.data); };
+          mediaRecorder.onstop = function () {
+            if (!chunks.length) return;
+            var type = chunks[0].type || "audio/webm";
+            voiceBlob = new Blob(chunks, { type: type });
+            if (audioEl.src) URL.revokeObjectURL(audioEl.src);
+            audioEl.src = URL.createObjectURL(voiceBlob);
+            playWrap.hidden = false;
+            var kb = Math.round(voiceBlob.size / 1024);
+            setStatus("Записът е готов (" + kb + " KB) и ще пристигне със заявката.", null);
+          };
+          mediaRecorder.start();
+        }
+
+        /* диктовка */
+        storyBase = storyEl.value ? storyEl.value.replace(/\s+$/, "") + " " : "";
+        finalText = "";
+        if (SR) {
+          recognition = new SR();
+          recognition.lang = "bg-BG";
+          recognition.continuous = true;
+          recognition.interimResults = true;
+          recognition.onresult = function (ev) {
+            var interim = "";
+            for (var i = ev.resultIndex; i < ev.results.length; i++) {
+              var tr = ev.results[i][0].transcript;
+              if (ev.results[i].isFinal) finalText += tr + " ";
+              else interim += tr;
+            }
+            storyEl.value = (storyBase + finalText + interim).replace(/[ \t]+/g, " ");
+            saveDraft();
+          };
+          recognition.onerror = function (ev) {
+            if (ev.error === "not-allowed" || ev.error === "service-not-allowed") {
+              setStatus("Диктовката не е разрешена, но записът се прави. Или пиши ръчно.", "err");
+            }
+          };
+          recognition.onend = function () {
+            if (recording) { try { recognition.start(); } catch (e) {} }
+          };
+          try { recognition.start(); } catch (e) {}
+          setStatus("Слушам… говори спокойно на български. Натисни „Спри записа“, щом свършиш.", "rec");
+        } else {
+          setStatus("Записвам гласа ти. За автоматичен текст използвай Chrome — или напиши историята ръчно.", "rec");
+        }
+
+        recording = true;
+        recBtn.classList.add("recording");
+        label.textContent = "Спри записа";
+      }).catch(function () {
+        setStatus("Няма достъп до микрофона. Разреши го от браузъра или напиши историята ръчно.", "err");
+      });
+    }
+
+    recBtn.addEventListener("click", function () {
+      if (recording) stopEverything();
+      else startRecording();
+    });
+
+    delBtn.addEventListener("click", function () {
+      voiceBlob = null;
+      if (audioEl.src) { URL.revokeObjectURL(audioEl.src); audioEl.removeAttribute("src"); }
+      playWrap.hidden = true;
+      label.textContent = "Разкажи с глас";
+      setStatus("Записът е изтрит. Можеш да запишеш наново или да пишеш ръчно.", null);
+    });
+  })();
 
   /* ============ Claude бриф (за композиране на текста и стила) ============ */
 
@@ -306,6 +432,7 @@
       "",
       "## Историята",
       d.story || "—",
+      (voiceBlob ? "\n(!) Клиентът е приложил и ГЛАСОВ запис на историята — виж прикачения файл glasovo-" + orderNo + "." : ""),
       "",
       "## Качества и навици",
       d.qualities || "—",
@@ -349,7 +476,7 @@
   }
 
   function submitOrder() {
-    var err = validateStep(5);
+    var err = validateStep(TOTAL_STEPS);
     if (err) { showError(err); return; }
 
     var d = collectData();
@@ -372,6 +499,7 @@
       "Език": d.language,
       "Референция": d.reference || "—",
       "Нецензурни изрази (18+)": d.explicit ? "ДА — разрешени" : "не",
+      "Гласово съобщение": voiceBlob ? "ДА — приложено като прикачен файл" : "не",
       "Съгласие чл. 57 ЗЗП (без право на отказ)": "потвърдено",
       "Линк за плащане (изпрати след одобрение)": "https://pesenta.bg/plati.html?order=" + orderNo + "&plan=" + state.plan + (state.express ? "&express=1" : ""),
       "Пакет": PLANS[state.plan].label + (state.express ? " + Експрес 24ч" : ""),
@@ -384,11 +512,24 @@
     btnNext.disabled = true;
     btnNext.textContent = "Изпращане…";
 
-    fetch(FORM_ENDPOINT, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Accept": "application/json" },
-      body: JSON.stringify(payload)
-    })
+    var fetchOpts;
+    if (voiceBlob) {
+      /* Има гласов запис → multipart, за да мине като прикачен файл.
+         Не задаваме Content-Type — браузърът слага multipart boundary. */
+      var fd = new FormData();
+      Object.keys(payload).forEach(function (k) { fd.append(k, payload[k]); });
+      var ext = voiceBlob.type.indexOf("ogg") > -1 ? "ogg" : (voiceBlob.type.indexOf("mp4") > -1 ? "mp4" : "webm");
+      fd.append("attachment", voiceBlob, "glasovo-" + orderNo + "." + ext);
+      fetchOpts = { method: "POST", headers: { "Accept": "application/json" }, body: fd };
+    } else {
+      fetchOpts = {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(payload)
+      };
+    }
+
+    fetch(FORM_ENDPOINT, fetchOpts)
       .then(function (res) {
         if (!res.ok) throw new Error("HTTP " + res.status);
         return res.json();
@@ -407,6 +548,12 @@
         showError("Няма връзка със сървъра за заявки. Данните ти са запазени на това устройство — можеш да опиташ пак след минута.");
         errBox.innerHTML +=
           ' <a href="' + mailto + '" style="color:#ffd36e;font-weight:700;">Или изпрати заявката през имейл приложението си →</a>';
+        if (voiceBlob) {
+          var vurl = URL.createObjectURL(voiceBlob);
+          errBox.innerHTML +=
+            '<br><a href="' + vurl + '" download="glasovo-' + orderNo +
+            '.webm" style="color:#ffd36e;font-weight:700;">Свали гласовото съобщение, за да го изпратиш ръчно →</a>';
+        }
       });
   }
 

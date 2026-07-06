@@ -98,9 +98,23 @@
 
       <div class="field">
         <label for="story">Историята
-          <span class="hint">Как се запознахте? Какво преживяхте? Пиши свободно, като на приятел — ние ще го превърнем в текст.</span>
+          <span class="hint">Как се запознахте? Какво преживяхте? Пиши свободно — или просто го разкажи с глас.</span>
         </label>
         <textarea id="story" name="story" placeholder="Разкажи каквото ти дойде — случки, лафове, спомени…"></textarea>
+      </div>
+
+      <div class="voice-box" id="voice-box">
+        <div class="voice-row">
+          <button type="button" class="btn btn-ghost voice-btn" id="voice-rec">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg>
+            <span id="voice-btn-label">Разкажи с глас</span>
+          </button>
+          <span class="voice-status" id="voice-status">Говори на български — думите ти се появяват в полето горе, а записът пътува със заявката.</span>
+        </div>
+        <div class="voice-play" id="voice-play" hidden>
+          <audio controls id="voice-audio" style="height:40px;max-width:100%;"></audio>
+          <button type="button" class="btn btn-ghost" id="voice-del" style="padding:0.5rem 1rem;font-size:0.85rem;">Изтрий записа</button>
+        </div>
       </div>
 
       <details class="more-fields">
