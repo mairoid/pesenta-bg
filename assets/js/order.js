@@ -5,7 +5,7 @@
   /* ============ Конфигурация (редактирай тук) ============ */
 
   var FORM_ENDPOINT = "https://formsubmit.co/ajax/rusev.miro@gmail.com";
-  var ORDER_EMAIL = "rusev.miro@gmail.com";
+  var ORDER_EMAIL = "sales@pesenta.bg";
   var BGN_RATE = 1.95583;
 
   var PLANS = {

@@ -18,7 +18,7 @@ window.PESENTA_LEGAL = {
   },
 
   contacts: {
-    site: "rusev.miro@gmail.com",
+    site: "sales@pesenta.bg",
     company: "bauphysik@russev.net"
   },
 
