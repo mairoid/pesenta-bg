@@ -220,8 +220,7 @@
       if (!val("cust-name")) return "Напиши името си — трябва ни за фактурата и демото.";
       var email = val("cust-email");
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return "Въведи валиден имейл — там ще получиш демото.";
-      if (!document.getElementById("consent").checked) return "Моля, потвърди, че си запознат с Общите условия.";
-      if (!document.getElementById("consent-digital").checked) return "Моля, потвърди изричното съгласие за започване на изпълнението (загуба на правото на отказ) — без него не можем да стартираме поръчката.";
+      if (!document.getElementById("consent").checked) return "Моля, потвърди съгласието с Общите условия, за да изпратим заявката.";
     }
     return null;
   }
@@ -508,8 +507,8 @@
       var email = document.getElementById("fast-email").value.trim();
       if (!name) { fail("Напиши името си."); return; }
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { fail("Въведи валиден имейл — там ще получиш демото."); return; }
-      if (!document.getElementById("fast-consent").checked || !document.getElementById("fast-consent-digital").checked) {
-        fail("Моля, потвърди двете съгласия."); return;
+      if (!document.getElementById("fast-consent").checked) {
+        fail("Моля, потвърди съгласието с Общите условия."); return;
       }
 
       var orderNo = genOrderNo();
