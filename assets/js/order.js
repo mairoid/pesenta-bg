@@ -418,6 +418,150 @@
     });
   })();
 
+  /* ============ Гласова бърза поръчка: всичко в един запис ============ */
+  (function initFastVoice() {
+    var recBtn = document.getElementById("fast-rec");
+    if (!recBtn) return;
+    var label = document.getElementById("fast-rec-label");
+    var statusEl = document.getElementById("fast-status");
+    var playWrap = document.getElementById("fast-play");
+    var audioEl = document.getElementById("fast-audio");
+    var delBtn = document.getElementById("fast-del");
+    var sendBtn = document.getElementById("fast-send");
+    var errEl = document.getElementById("fast-error");
+    var card = document.getElementById("glas");
+
+    var MAX_SEC = 180;
+    var blob = null;
+    var mediaRecorder = null;
+    var chunks = [];
+    var stream = null;
+    var recording = false;
+    var maxTimer = null;
+
+    if (!navigator.mediaDevices || !window.MediaRecorder) {
+      card.style.display = "none"; /* без микрофон API — остава класическата форма */
+      return;
+    }
+
+    function setStatus(msg, cls) {
+      statusEl.textContent = msg;
+      statusEl.className = "voice-status" + (cls ? " " + cls : "");
+    }
+    function fail(msg) { errEl.textContent = msg; errEl.classList.add("show"); }
+    function clearFail() { errEl.textContent = ""; errEl.classList.remove("show"); }
+
+    function stopRec() {
+      recording = false;
+      clearTimeout(maxTimer);
+      recBtn.classList.remove("recording");
+      if (mediaRecorder && mediaRecorder.state !== "inactive") { try { mediaRecorder.stop(); } catch (e) {} }
+      if (stream) { stream.getTracks().forEach(function (t) { t.stop(); }); stream = null; }
+      label.textContent = blob ? "Запиши наново" : "Запиши поръчката си";
+    }
+
+    function startRec() {
+      clearFail();
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(function (s) {
+        stream = s;
+        chunks = [];
+        try { mediaRecorder = new MediaRecorder(stream); } catch (e) {
+          setStatus("Записът не тръгна на този браузър — ползвай формата долу.", "err");
+          return;
+        }
+        mediaRecorder.ondataavailable = function (ev) { if (ev.data && ev.data.size) chunks.push(ev.data); };
+        mediaRecorder.onstop = function () {
+          if (!chunks.length) return;
+          blob = new Blob(chunks, { type: chunks[0].type || "audio/webm" });
+          if (audioEl.src) URL.revokeObjectURL(audioEl.src);
+          audioEl.src = URL.createObjectURL(blob);
+          playWrap.hidden = false;
+          label.textContent = "Запиши наново";
+          setStatus("Записът е готов (" + Math.round(blob.size / 1024) + " KB). Прослушай го — или направо го изпрати.", null);
+        };
+        mediaRecorder.start();
+        recording = true;
+        recBtn.classList.add("recording");
+        label.textContent = "Спри записа";
+        setStatus("Слушам… кажи за кого е песента, повода, историята и стила. Натисни „Спри записа“, щом свършиш.", "rec");
+        maxTimer = setTimeout(stopRec, MAX_SEC * 1000);
+      }).catch(function () {
+        setStatus("Няма достъп до микрофона — разреши го от браузъра или ползвай формата долу.", "err");
+      });
+    }
+
+    recBtn.addEventListener("click", function () { if (recording) stopRec(); else startRec(); });
+
+    delBtn.addEventListener("click", function () {
+      blob = null;
+      if (audioEl.src) { URL.revokeObjectURL(audioEl.src); audioEl.removeAttribute("src"); }
+      playWrap.hidden = true;
+      label.textContent = "Запиши поръчката си";
+      setStatus("Записът е изтрит — можеш да запишеш наново.", null);
+    });
+
+    sendBtn.addEventListener("click", function () {
+      clearFail();
+      if (recording) stopRec();
+      if (!blob) { fail("Първо запиши гласовото си съобщение."); return; }
+      var name = document.getElementById("fast-name").value.trim();
+      var email = document.getElementById("fast-email").value.trim();
+      if (!name) { fail("Напиши името си."); return; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { fail("Въведи валиден имейл — там ще получиш демото."); return; }
+      if (!document.getElementById("fast-consent").checked || !document.getElementById("fast-consent-digital").checked) {
+        fail("Моля, потвърди двете съгласия."); return;
+      }
+
+      var orderNo = genOrderNo();
+      var ext = blob.type.indexOf("ogg") > -1 ? "ogg" : (blob.type.indexOf("mp4") > -1 ? "mp4" : "webm");
+      var fd = new FormData();
+      fd.append("_subject", "ГЛАСОВА заявка за песен — " + orderNo);
+      fd.append("_template", "box");
+      fd.append("Номер на заявка", orderNo);
+      fd.append("Тип", "Гласова бърза поръчка — цялата информация е в прикачения запис");
+      fd.append("Клиент", name);
+      fd.append("Имейл", email);
+      fd.append("Съгласие чл. 57 ЗЗП (без право на отказ)", "потвърдено");
+      fd.append("CLAUDE BRIEF",
+        "# Гласова поръчка — " + orderNo + "\n\nКлиент: " + name + " <" + email + ">\n\n" +
+        "Цялата информация е в прикачения запис glasovo-" + orderNo + "." + ext +
+        " — чуй го и извлечи: получател, повод, история, детайли, стилове, настроение, език.");
+      fd.append("attachment", blob, "glasovo-" + orderNo + "." + ext);
+
+      sendBtn.disabled = true;
+      sendBtn.textContent = "Изпращане…";
+
+      fetch(FORM_ENDPOINT, { method: "POST", headers: { "Accept": "application/json" }, body: fd })
+        .then(function (res) {
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          return res.json();
+        })
+        .then(function () {
+          try {
+            var orders = JSON.parse(localStorage.getItem("pesenta_orders") || "[]");
+            orders.unshift({ no: orderNo, date: new Date().toISOString().slice(0, 10), plan: "Гласова поръчка", total: "—", status: "Приета" });
+            localStorage.setItem("pesenta_orders", JSON.stringify(orders));
+          } catch (e) { /* ок */ }
+          card.innerHTML =
+            '<div class="success-box" style="padding:1.5rem 1rem;">' +
+            '<div class="check"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#16091c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></div>' +
+            "<h2>Гласовата поръчка е приета!</h2>" +
+            '<div class="order-no">' + esc(orderNo) + "</div>" +
+            "<p>Ще чуем записа ти и до 48 часа ще получиш демо и цена на имейла. Плащаш чак след като одобриш песента.</p>" +
+            "</div>";
+          renderMyOrders();
+          card.scrollIntoView({ behavior: "smooth" });
+        })
+        .catch(function () {
+          sendBtn.disabled = false;
+          sendBtn.textContent = "Изпрати гласовата поръчка";
+          var vurl = URL.createObjectURL(blob);
+          fail("Няма връзка със сървъра за заявки — опитай пак след минута, записът ти е запазен тук. ");
+          errEl.innerHTML += '<a href="' + vurl + '" download="glasovo-' + orderNo + '.' + ext + '" style="color:#ffd36e;font-weight:700;">Или свали записа и ни го прати на sales@pesenta.bg →</a>';
+        });
+    });
+  })();
+
   /* ============ Claude бриф (за композиране на текста и стила) ============ */
 
   function buildBrief(d, orderNo) {

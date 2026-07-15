@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600" role="img" aria-label="Обложка: Вече няма кой да крещи Тук-щак-щак">
+  <defs>
+    <linearGradient id="bgvn" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#101A33"/>
+      <stop offset="1" stop-color="#0B0A1A"/>
+    </linearGradient>
+    <linearGradient id="roadvn" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1C2A45"/>
+      <stop offset="1" stop-color="#141C30"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="600" fill="url(#bgvn)"/>
+  <!-- луна и звезди -->
+  <circle cx="470" cy="110" r="42" fill="#E8EDF7" opacity="0.9"/>
+  <circle cx="455" cy="100" r="10" fill="#C6CFDF" opacity="0.5"/>
+  <circle cx="484" cy="122" r="7" fill="#C6CFDF" opacity="0.45"/>
+  <g fill="#E8EDF7" opacity="0.55">
+    <circle cx="90" cy="90" r="3"/>
+    <circle cx="180" cy="60" r="2.5"/>
+    <circle cx="300" cy="120" r="2.5"/>
+    <circle cx="540" cy="230" r="3"/>
+    <circle cx="70" cy="220" r="2.5"/>
+  </g>
+  <!-- пуст път в нощта -->
+  <path d="M0 600 L240 320 L360 320 L600 600 Z" fill="url(#roadvn)"/>
+  <g fill="#8FA3C8" opacity="0.7">
+    <rect x="292" y="350" width="10" height="34" rx="5"/>
+    <rect x="294" y="420" width="12" height="44" rx="6"/>
+    <rect x="296" y="500" width="14" height="56" rx="7"/>
+  </g>
+  <!-- заглъхващо ехо -->
+  <text x="60" y="250" font-family="'Unbounded','Segoe UI',sans-serif" font-size="30" font-weight="800" fill="#F4F2FF" opacity="0.85">тук-щак-щак</text>
+  <text x="120" y="290" font-family="'Unbounded','Segoe UI',sans-serif" font-size="24" font-weight="700" fill="#F4F2FF" opacity="0.45">тук-щак-щак</text>
+  <text x="180" y="322" font-family="'Unbounded','Segoe UI',sans-serif" font-size="18" font-weight="700" fill="#F4F2FF" opacity="0.22">тук-щак-щак…</text>
+  <text x="60" y="110" font-family="'Unbounded','Segoe UI',sans-serif" font-size="34" font-weight="800" fill="#F4F2FF">Вече няма кой</text>
+  <text x="60" y="152" font-family="'Manrope','Segoe UI',sans-serif" font-size="22" fill="#8FA3C8">да крещи „Тук-щак-щак“</text>
+</svg>

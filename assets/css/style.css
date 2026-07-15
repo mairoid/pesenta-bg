@@ -588,6 +588,41 @@ h3 { font-size: 1.1rem; font-weight: 600; }
 
 .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 
+/* Гласова бърза поръчка */
+
+.fast-voice {
+  position: relative;
+  padding: 1.8rem 1.8rem 1.4rem;
+  border-radius: var(--radius);
+  background: linear-gradient(160deg, rgba(255, 77, 141, 0.1), rgba(124, 92, 255, 0.08)), var(--surface);
+  border: 1px solid rgba(255, 77, 141, 0.4);
+  box-shadow: var(--shadow);
+  margin-bottom: 2.6rem;
+}
+.fast-voice-head h2 { margin-bottom: 0.3rem; font-size: 1.4rem; }
+.fast-voice-head p { color: var(--muted); font-size: 0.97rem; margin: 0 0 1.4rem; }
+
+.fast-or {
+  text-align: center;
+  margin-top: 1.6rem;
+  position: relative;
+}
+.fast-or::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  border-top: 1px dashed var(--border);
+}
+.fast-or span {
+  position: relative;
+  padding: 0 1rem;
+  background: #17142e;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
 /* Гласово съобщение */
 
 .voice-box {

@@ -114,11 +114,21 @@
 (function () {
   "use strict";
 
+  /* Плейлист за поздрава: при всяко отваряне се избира СЛУЧАЙНА песен.
+     start = секундата, от която почва припевът — нагласи по ухо за всяка. */
+  var INTRO_PLAYLIST = [
+    { src: "assets/audio/za-teb-brate-vladi.mp3", title: "„За теб, брате Влади“",  start: 79,  duration: 26 },
+    { src: "assets/audio/habibi-rusi.mp3",        title: "„Habibi Rusi“",          start: 35,  duration: 26 },
+    { src: "assets/audio/rosen-abi.mp3",          title: "„Rosen Abi“",            start: 55,  duration: 26 },
+    { src: "assets/audio/rocco-di-catania.mp3",   title: "„Rocco di Catania“",     start: 70,  duration: 26 },
+    { src: "assets/audio/napipay-go-vladi.mp3",   title: "„Напипай го, Влади“",    start: 100, duration: 26 },
+    { src: "assets/audio/api.mp3",                title: "„АПИ“",                  start: 0,   duration: 26 },
+    { src: "assets/audio/za-teb-brate-tutso.mp3", title: "„За теб, брате Туцо“",   start: 46,  duration: 26 },
+    { src: "assets/audio/veche-nyama-koy.mp3",    title: "„Вече няма кой…“",       start: 24,  duration: 26 }
+  ];
+
   var INTRO = {
     enabled: true,
-    src: "assets/audio/za-teb-brate-vladi.mp3",
-    start: 62,      // секундата, от която почва припевът — нагласи при нужда
-    duration: 26,   // колко секунди да свири
     volume: 0.18,   // тихо: 0–1
     delayMs: 3500   // пауза след отваряне на страницата
   };
@@ -127,7 +137,10 @@
   if (!document.querySelector(".hero")) return; // само на началната страница
   try { if (localStorage.getItem("pesenta_intro_off") === "1") return; } catch (e) {}
 
-  var audio = new Audio(INTRO.src);
+  var track = INTRO_PLAYLIST[Math.floor(Math.random() * INTRO_PLAYLIST.length)];
+  window.__pesentaIntroTrack = track.title; // за диагностика
+
+  var audio = new Audio(track.src);
   audio.preload = "auto";
   var pill = null;
   var fadeTimer = null;
@@ -165,8 +178,9 @@
     pill.className = "intro-pill";
     pill.innerHTML =
       '<span class="intro-eq" aria-hidden="true"><i></i><i></i><i></i></span>' +
-      "<span>„За теб, брате Влади“</span>" +
+      "<span></span>" +
       '<button type="button" class="intro-stop" aria-label="Спри музиката" title="Спри">✕</button>';
+    pill.querySelector("span + span").textContent = track.title;
     pill.querySelector(".intro-stop").addEventListener("click", function () { stopIntro(true); });
     document.body.appendChild(pill);
   }
@@ -175,14 +189,14 @@
     if (started || ended) return;
     started = true;
     function go() {
-      try { audio.currentTime = INTRO.start; } catch (e) {}
+      try { audio.currentTime = track.start; } catch (e) {}
       audio.volume = 0;
       var p = audio.play();
       if (p && p.then) {
         p.then(function () {
           showPill();
           fadeTo(INTRO.volume, 1500);
-          stopTimer = setTimeout(function () { stopIntro(false); }, INTRO.duration * 1000);
+          stopTimer = setTimeout(function () { stopIntro(false); }, track.duration * 1000);
         }).catch(function () {
           /* autoplay блокиран — чакаме първото взаимодействие */
           started = false;

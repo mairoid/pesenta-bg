@@ -40,6 +40,54 @@
     <p>Три стъпки, около 5 минути. Задължителни са само името и имейлът ти — но колкото повече ни разкажеш, толкова по-лична става песента.</p>
   </div>
 
+  <!-- ГЛАСОВА БЪРЗА ПОРЪЧКА -->
+  <section class="fast-voice" id="glas">
+    <div class="fast-voice-head">
+      <span class="kicker">Най-бързият начин</span>
+      <h2>Гласова поръчка <span class="grad-text">за 2 минути</span></h2>
+      <p>Натисни записа и кажи всичко наведнъж: <strong>за кого е песента, какъв е поводът, историята ви и какъв стил искаш</strong>. Говори свободно, като на приятел — ние ще извадим детайлите от записа и ще ти отговорим с демо.</p>
+    </div>
+
+    <div class="voice-box" style="margin-bottom:1.2rem;">
+      <div class="voice-row">
+        <button type="button" class="btn btn-ghost voice-btn" id="fast-rec">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg>
+          <span id="fast-rec-label">Запиши поръчката си</span>
+        </button>
+        <span class="voice-status" id="fast-status">До 3 минути запис. Микрофонът пита за разрешение само първия път.</span>
+      </div>
+      <div class="voice-play" id="fast-play" hidden>
+        <audio controls id="fast-audio" style="height:40px;max-width:100%;"></audio>
+        <button type="button" class="btn btn-ghost" id="fast-del" style="padding:0.5rem 1rem;font-size:0.85rem;">Изтрий</button>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="fast-name">Твоето име *</label>
+        <input type="text" id="fast-name" autocomplete="name" placeholder="Име и фамилия">
+      </div>
+      <div class="field">
+        <label for="fast-email">Имейл *</label>
+        <input type="email" id="fast-email" autocomplete="email" placeholder="ti@primer.bg">
+      </div>
+    </div>
+
+    <label class="consent">
+      <input type="checkbox" id="fast-consent">
+      <span>Запознах се с <a href="usloviya.html" target="_blank" style="color:var(--orange);text-decoration:underline;">Общите условия</a> и <a href="poveritelnost.html" target="_blank" style="color:var(--orange);text-decoration:underline;">Политиката за поверителност</a> и се съгласявам записът и данните ми да бъдат използвани за изработката на песента и връзка с мен.</span>
+    </label>
+    <label class="consent">
+      <input type="checkbox" id="fast-consent-digital">
+      <span>Изрично се съгласявам изпълнението да започне веднага и потвърждавам, че <strong>губя 14-дневното право на отказ</strong> (чл. 57 ЗЗП) — песента се изработва лично за мен. Плащам едва след като одобря демото.</span>
+    </label>
+
+    <div class="form-error" id="fast-error" role="alert"></div>
+    <button type="button" class="btn btn-primary btn-lg" id="fast-send" style="width:100%;margin-top:0.8rem;">Изпрати гласовата поръчка</button>
+
+    <div class="fast-or"><span>или попълни формата стъпка по стъпка</span></div>
+  </section>
+
   <div class="wizard-progress" aria-hidden="true">
     <div class="seg active" data-seg="1"></div>
     <div class="seg" data-seg="2"></div>

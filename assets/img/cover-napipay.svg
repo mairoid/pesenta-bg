@@ -38,4 +38,8 @@
   </g>
   <text x="60" y="500" font-family="'Unbounded','Segoe UI',sans-serif" font-size="42" font-weight="800" fill="#F4F2FF">Напипай го,</text>
   <text x="60" y="552" font-family="'Unbounded','Segoe UI',sans-serif" font-size="52" font-weight="800" fill="#C084FC">Влади</text>
+  <g>
+    <circle cx="536" cy="64" r="36" fill="#E11D48" stroke="#FFF3F3" stroke-width="4"/>
+    <text x="536" y="76" text-anchor="middle" font-family="'Manrope','Segoe UI',sans-serif" font-size="28" font-weight="800" fill="#FFFFFF">18+</text>
+  </g>
 </svg>
