@@ -32,6 +32,12 @@
   </url>
   <!-- NOVINI:SITEMAP — новите статии се добавят непосредствено под този ред -->
   <url>
+    <loc>https://pesenta.bg/novini/dudamel-venezuela-tribyut-mondial-2026.html</loc>
+    <lastmod>2026-07-17</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://pesenta.bg/novini/bob-dylan-uk-turne-2026.html</loc>
     <lastmod>2026-07-16</lastmod>
     <changefreq>yearly</changefreq>
