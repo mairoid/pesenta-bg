@@ -1,17 +1,29 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="190" height="44" viewBox="0 0 190 44" role="img" aria-label="Песента">
   <defs>
-    <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
+    <linearGradient id="lg" gradientUnits="userSpaceOnUse" x1="30" y1="0" x2="600" y2="0">
       <stop offset="0" stop-color="#FF4D8D"/>
       <stop offset="1" stop-color="#FFA14D"/>
     </linearGradient>
   </defs>
-  <g>
-    <rect x="2" y="2" width="40" height="40" rx="12" fill="url(#lg)"/>
-    <g fill="#0B0A1A">
-      <rect x="12" y="18" width="4" height="14" rx="2"/>
-      <rect x="20" y="12" width="4" height="20" rx="2"/>
-      <rect x="28" y="22" width="4" height="10" rx="2"/>
+  <g transform="translate(2 5) scale(0.085)">
+    <g fill="none" stroke="url(#lg)" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke-width="30" d="M30 232 H82
+        C92 232 94 198 104 198
+        S118 262 128 262
+        S142 120 158 120
+        S180 330 198 330
+        S220 130 238 130
+        S258 296 274 296
+        S292 196 306 196
+        S322 258 336 258
+        S352 216 366 216
+        S382 246 396 246
+        S416 236 430 240
+        C446 244 460 246 474 246"/>
+      <path stroke-width="28" d="M529 232 V92"/>
+      <path stroke-width="26" d="M529 92 C563 100 585 122 587 156"/>
     </g>
-    <text x="52" y="30" font-family="'Unbounded','Segoe UI',sans-serif" font-size="20" font-weight="700" fill="#F4F2FF">Песента</text>
+    <ellipse cx="500" cy="246" rx="32" ry="26" fill="url(#lg)"/>
   </g>
+  <text x="60" y="30" font-family="'Unbounded','Segoe UI',sans-serif" font-size="19" font-weight="700" fill="#F4F2FF">Песента</text>
 </svg>
