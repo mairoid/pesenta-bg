@@ -9,10 +9,7 @@
   var BGN_RATE = 1.95583;
 
   var PLANS = {
-    mini: { label: "Мини", price: 9.9, desc: "кратка песен до 2 мин, 1 стил, 1 версия, MP3" },
-    solo: { label: "Соло", price: 24.9, desc: "1 песен, 1 стил, 2 версии, 1 корекция" },
-    hit: { label: "Хит", price: 39.9, desc: "2 стила, до 4 версии, лирик видео, 3 корекции" },
-    spektakal: { label: "Спектакъл", price: 69.9, desc: "3 стила, 2 варианта на текста, лично съгласуване" }
+    pesen: { label: "Песен по поръчка", price: 19.9, desc: "авторски текст, до 3:30 мин, 2 версии, безплатна корекция, MP3 + текст" }
   };
   var EXPRESS_PRICE = 9.9;
 
@@ -36,7 +33,7 @@
 
   var state = {
     step: 1,
-    plan: "hit",
+    plan: "pesen",
     express: false,
     promoCode: null,
     promoPct: 0
@@ -102,31 +99,7 @@
     if (el) el.textContent = "Избрани стилове: " + n;
   }
 
-  /* ============ Пакети ============ */
-
-  var planPick = document.getElementById("plan-pick");
-
-  function selectPlan(plan) {
-    if (!PLANS[plan]) return;
-    state.plan = plan;
-    planPick.querySelectorAll(".plan-option").forEach(function (opt) {
-      opt.classList.toggle("selected", opt.getAttribute("data-plan") === plan);
-    });
-    renderSummary();
-    saveDraft();
-  }
-
-  planPick.addEventListener("click", function (e) {
-    var opt = e.target.closest(".plan-option");
-    if (opt) selectPlan(opt.getAttribute("data-plan"));
-  });
-  planPick.addEventListener("keydown", function (e) {
-    var opt = e.target.closest(".plan-option");
-    if (opt && (e.key === "Enter" || e.key === " ")) {
-      e.preventDefault();
-      selectPlan(opt.getAttribute("data-plan"));
-    }
-  });
+  /* ============ Продукт: един — „Песен по поръчка“ ============ */
 
   document.getElementById("express").addEventListener("change", function (e) {
     state.express = e.target.checked;
@@ -182,7 +155,7 @@
     var box = document.getElementById("order-summary");
     var t = calcTotal();
     var html = "";
-    html += '<div class="row"><span>Пакет „' + PLANS[state.plan].label + '“</span><span>' + eur(t.base) + "</span></div>";
+    html += '<div class="row"><span>' + PLANS[state.plan].label + "</span><span>" + eur(t.base) + "</span></div>";
     if (t.express) {
       html += '<div class="row"><span>Експресна изработка (24 ч)</span><span>' + eur(t.express) + "</span></div>";
     }
@@ -793,17 +766,16 @@
 
   /* ============ Инициализация ============ */
 
-  /* предизбрани план и повод от URL: poruchka.html?plan=hit&povod=svatba */
+  /* предизбран повод от URL: poruchka.html?povod=svatba */
   var params = new URLSearchParams(window.location.search);
-  var urlPlan = params.get("plan");
   var urlPovod = params.get("povod");
 
   restoreDraft();
+  state.plan = "pesen";
   if (urlPovod && POVOD_MAP[urlPovod] && chipValues("occasion-chips").length === 0) {
     var povodChip = document.querySelector('#occasion-chips .chip[data-value="' + POVOD_MAP[urlPovod] + '"]');
     if (povodChip) povodChip.classList.add("selected");
   }
-  selectPlan(urlPlan && PLANS[urlPlan] ? urlPlan : state.plan);
   renderSummary();
   renderMyOrders();
 

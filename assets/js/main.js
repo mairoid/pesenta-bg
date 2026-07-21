@@ -64,6 +64,20 @@
     function pause() {
       audio.pause();
       btn.innerHTML = ICON_PLAY;
+      wrap.classList.remove("playing");
+    }
+
+    function toggle() {
+      if (audio.paused) {
+        // спри всички останали (и музикалния поздрав)
+        if (window.__pesentaIntroStop) window.__pesentaIntroStop();
+        players.forEach(function (p) { if (p.audio !== audio) p.pause(); });
+        audio.play();
+        btn.innerHTML = ICON_PAUSE;
+        wrap.classList.add("playing");
+      } else {
+        pause();
+      }
     }
 
     players.push({ audio: audio, pause: pause });
@@ -86,15 +100,15 @@
       time.textContent = fmt(audio.duration);
     });
 
-    btn.addEventListener("click", function () {
-      if (audio.paused) {
-        // спри всички останали (и музикалния поздрав)
-        if (window.__pesentaIntroStop) window.__pesentaIntroStop();
-        players.forEach(function (p) { if (p.audio !== audio) p.pause(); });
-        audio.play();
-        btn.innerHTML = ICON_PAUSE;
-      } else {
-        pause();
+    /* целият ред е бутон: клик или Enter/Space пуска и спира песента */
+    wrap.addEventListener("click", function (e) {
+      if (e.target.closest(".progress")) return;
+      toggle();
+    });
+    wrap.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
+        e.preventDefault();
+        toggle();
       }
     });
 
