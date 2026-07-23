@@ -32,6 +32,12 @@
   </url>
   <!-- NOVINI:SITEMAP — новите статии се добавят непосредствено под този ред -->
   <url>
+    <loc>https://pesenta.bg/novini/rolling-stones-foreign-tongues-rekord.html</loc>
+    <lastmod>2026-07-23</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://pesenta.bg/novini/fiki-storaro-tebe-dokato-ne-te-vidyah.html</loc>
     <lastmod>2026-07-22</lastmod>
     <changefreq>yearly</changefreq>
