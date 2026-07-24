@@ -383,13 +383,5 @@
 </footer>
 
 <script src="assets/js/order.js" defer></script>
-<script type="module">
-  /* Само внасяме функцията тук — самото ѝ извикване (WebGL контекст + rAF цикъл)
-     е отложено до реалния старт на записа (виж order.js), не при зареждане на
-     страницата. Гласово-реактивната сфера е украса: при грешка формата работи
-     без нея. */
-  import { createVoiceOrb } from "./assets/js/voice-orb.js";
-  window.__pesentaCreateVoiceOrb = createVoiceOrb;
-</script>
 </body>
 </html>

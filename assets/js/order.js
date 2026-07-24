@@ -459,12 +459,15 @@
         mediaRecorder.start();
         recording = true;
         recBtn.classList.add("recording");
-        if (orbEl && window.__pesentaCreateVoiceOrb) {
-          try {
-            orb = window.__pesentaCreateVoiceOrb(orbEl, { hue: 60 });
+        if (orbEl) {
+          /* Динамичен import: ~120KB WebGL код се тегли едва сега, при реален
+             клик върху записа — не при зареждане на страницата. */
+          import("./voice-orb.js").then(function (mod) {
+            if (!recording) return; /* потребителят вече спря, докато файлът се тегли */
+            orb = mod.createVoiceOrb(orbEl, { hue: 60 });
             orb.startWithStream(stream); /* същият микрофонен stream — без втора getUserMedia заявка */
             orbEl.classList.add("active");
-          } catch (e) { orb = null; /* orb-ът е украса — записът продължава без него */ }
+          }).catch(function () { /* orb-ът е украса — записът продължава без него */ });
         }
         label.textContent = "Спри записа";
         setStatus("Слушам… кажи за кого е песента, повода, историята и стила. Натисни „Спри записа“, щом свършиш.", "rec");
