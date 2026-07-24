@@ -50,6 +50,7 @@
 
     <div class="voice-box" style="margin-bottom:1.2rem;">
       <div class="voice-row">
+        <div class="voice-orb" id="fast-orb" aria-hidden="true"></div>
         <button type="button" class="btn btn-primary voice-btn" id="fast-rec">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg>
           <span id="fast-rec-label">Запиши поръчката си</span>
@@ -382,5 +383,13 @@
 </footer>
 
 <script src="assets/js/order.js" defer></script>
+<script type="module">
+  /* Само внасяме функцията тук — самото ѝ извикване (WebGL контекст + rAF цикъл)
+     е отложено до реалния старт на записа (виж order.js), не при зареждане на
+     страницата. Гласово-реактивната сфера е украса: при грешка формата работи
+     без нея. */
+  import { createVoiceOrb } from "./assets/js/voice-orb.js";
+  window.__pesentaCreateVoiceOrb = createVoiceOrb;
+</script>
 </body>
 </html>
