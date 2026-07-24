@@ -154,8 +154,11 @@
   var track = INTRO_PLAYLIST[Math.floor(Math.random() * INTRO_PLAYLIST.length)];
   window.__pesentaIntroTrack = track.title; // за диагностика
 
-  var audio = new Audio(track.src);
-  audio.preload = "auto";
+  /* Без src при създаването: preload="auto" + src веднага сваляше половин песен
+     още при отваряне на страницата (замерено: ~5MB, извън критичния път на зареждане).
+     src се присвоява едва в go(), точно когато реално ще пуснем звука. */
+  var audio = new Audio();
+  audio.preload = "none";
   var pill = null;
   var fadeTimer = null;
   var stopTimer = null;
@@ -202,7 +205,7 @@
   function begin() {
     if (started || ended) return;
     started = true;
-    function go() {
+    function playFromStart() {
       try { audio.currentTime = track.start; } catch (e) {}
       audio.volume = 0;
       var p = audio.play();
@@ -218,8 +221,11 @@
         });
       }
     }
-    if (audio.readyState >= 1) go();
-    else audio.addEventListener("loadedmetadata", go, { once: true });
+    /* src се присвоява точно тук — заявката за файла тръгва едва сега,
+       не при зареждане на страницата (виж бележката горе при audio.preload). */
+    audio.src = track.src;
+    if (audio.readyState >= 1) playFromStart();
+    else audio.addEventListener("loadedmetadata", playFromStart, { once: true });
   }
 
   var armed = false;
