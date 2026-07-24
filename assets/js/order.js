@@ -423,15 +423,10 @@
     function fail(msg) { errEl.textContent = msg; errEl.classList.add("show"); }
     function clearFail() { errEl.textContent = ""; errEl.classList.remove("show"); }
 
-    var orbEl = document.getElementById("fast-orb");
-    var orb = null; /* създава се лениво, само при реален запис — виж startRec() */
-
     function stopRec() {
       recording = false;
       clearTimeout(maxTimer);
       recBtn.classList.remove("recording");
-      if (orbEl) orbEl.classList.remove("active");
-      if (orb) { orb.destroy(); orb = null; } /* пълно спиране на WebGL/rAF между записите, не само пауза */
       if (mediaRecorder && mediaRecorder.state !== "inactive") { try { mediaRecorder.stop(); } catch (e) {} }
       if (stream) { stream.getTracks().forEach(function (t) { t.stop(); }); stream = null; }
       label.textContent = blob ? "Запиши наново" : "Запиши поръчката си";
@@ -459,13 +454,6 @@
         mediaRecorder.start();
         recording = true;
         recBtn.classList.add("recording");
-        if (orbEl && window.__pesentaCreateVoiceOrb) {
-          try {
-            orb = window.__pesentaCreateVoiceOrb(orbEl, { hue: 60 });
-            orb.startWithStream(stream); /* същият микрофонен stream — без втора getUserMedia заявка */
-            orbEl.classList.add("active");
-          } catch (e) { orb = null; /* orb-ът е украса — записът продължава без него */ }
-        }
         label.textContent = "Спри записа";
         setStatus("Слушам… кажи за кого е песента, повода, историята и стила. Натисни „Спри записа“, щом свършиш.", "rec");
         maxTimer = setTimeout(stopRec, MAX_SEC * 1000);
