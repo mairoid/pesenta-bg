@@ -51,10 +51,22 @@
 
   var players = [];
 
-  document.querySelectorAll(".player[data-src]").forEach(function (wrap) {
+  document.querySelectorAll(".player[data-src]").forEach(function (wrap, i) {
     var audio = new Audio();
-    audio.preload = "metadata";
-    audio.src = wrap.getAttribute("data-src");
+    audio.preload = "none";
+    var srcUrl = wrap.getAttribute("data-src");
+    var srcAssigned = false;
+    function ensureSrc() {
+      if (srcAssigned) return;
+      srcAssigned = true;
+      audio.preload = "metadata";
+      audio.src = srcUrl;
+    }
+    /* Разсредоточено зареждане на метаданните (продължителност), извън критичния
+       път на зареждане — 8-те едновременни заявки опашкуваха браузъра (замерено:
+       loadEvent 3.3s дори при малки файлове). При клик src се задава веднага. */
+    var idle = window.requestIdleCallback || function (fn) { setTimeout(fn, 300); };
+    idle(function () { setTimeout(ensureSrc, i * 120); });
 
     var btn = wrap.querySelector(".play-btn");
     var bar = wrap.querySelector(".progress");
@@ -103,11 +115,13 @@
     /* целият ред е бутон: клик или Enter/Space пуска и спира песента */
     wrap.addEventListener("click", function (e) {
       if (e.target.closest(".progress")) return;
+      ensureSrc();
       toggle();
     });
     wrap.addEventListener("keydown", function (e) {
       if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
         e.preventDefault();
+        ensureSrc();
         toggle();
       }
     });
