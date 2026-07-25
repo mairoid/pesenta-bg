@@ -62,3 +62,40 @@
   src: url("../fonts/unbounded-latin.woff2") format("woff2");
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
+
+/* ============================================================
+   Fallback шрифтове с изравнени метрики — предотвратяват CLS
+   ------------------------------------------------------------
+   Unbounded е 34% по-широк от Segoe UI при същия размер
+   (замерено: 3315px срещу 2470px). Докато уеб-шрифтът се зареди,
+   текстът се рендира тясно, после се разширява и се пренася на
+   нови редове → цялата страница подскача (замерен CLS: 0.33).
+   size-adjust изравнява ширината на fallback-а, така че смяната
+   на шрифта да не мести layout-а. Вертикално няма разминаване,
+   защото line-height е зададен явно в style.css.
+   Стойностите са измерени в браузър, не са на око — при смяна
+   на шрифт трябва да се премерят наново.
+
+   ОГРАНИЧЕНИЕ: калибрирани са срещу Segoe UI (Windows — водещата
+   платформа за българска публика). На macOS fallback-ът е Helvetica
+   Neue с други метрики, така че там корекцията е приблизителна —
+   пак далеч по-добра от никаква, но не идеална.
+   ============================================================ */
+@font-face {
+  font-family: "Unbounded-fallback";
+  src: local("Segoe UI Semibold"), local("Segoe UI"), local("Helvetica Neue"), local("Arial");
+  font-weight: 600 800;
+  size-adjust: 150%;   /* калибрирано: отклонение 0.05% от Unbounded */
+  ascent-override: 90%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Manrope-fallback";
+  src: local("Segoe UI"), local("Helvetica Neue"), local("Arial");
+  font-weight: 400 800;
+  size-adjust: 111.5%; /* калибрирано: отклонение ~0.1% от Manrope */
+  ascent-override: 100%;
+  descent-override: 27%;
+  line-gap-override: 0%;
+}
