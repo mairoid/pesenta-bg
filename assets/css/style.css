@@ -185,6 +185,11 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
    смъкваше размера му от 16px на 15px. Правилото важи за връзки, не за бутони. */
 .main-nav a:not(.btn) { color: var(--muted); font-weight: 600; font-size: var(--fs-md); transition: color var(--dur-fast) var(--ease); }
 .main-nav a:not(.btn):hover { color: var(--text); }
+/* Двусловните етикети („Демо песни“, „Как работи“) се чупеха на два реда,
+   щом мястото свърши — вдигаха хедъра вместо да пренесат менюто.
+   Прагът е решен на 960px по-долу; това е предпазна мрежа, ако
+   някой ден се добави още една връзка. */
+.main-nav a { white-space: nowrap; }
 
 .nav-toggle {
   display: none;
@@ -861,11 +866,13 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
    ------------------------------------------------------------
    Всеки праг е тук по конкретна причина, не по кръгло число:
      960px — двуколонният hero и четириколонните решетки спират
-             да дишат; минават на 1 / 2 колони
+             да дишат; минават на 1 / 2 колони. Тук навигацията
+             става падащо меню: 6-те връзки + CTA-то искат 944px,
+             за да стоят на един ред (замерено), а под това се
+             пренасяха на два реда и вдигаха хедъра от 67 на 104px
      860px — hero видеото вече е твърде малко, за да носи смисъл;
              скрива се (и не се тегли — виж main.js)
-     640px — класически телефон: всичко на една колона,
-             навигацията става падащо меню
+     640px — класически телефон: решетките минават на една колона
      560px — тесен телефон: скриваме прогреса на плейъра
              и разпъваме бутоните по цялата ширина
    Прагът за пръст е отделен (pointer: coarse), защото зависи от
@@ -881,18 +888,6 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   .steps-grid { grid-template-columns: repeat(2, 1fr); }
   .pricing-grid { grid-template-columns: repeat(2, 1fr); }
   .quotes-grid { grid-template-columns: 1fr; max-width: 560px; }
-}
-
-@media (max-width: 860px) {
-  .hero-photo { display: none; }
-}
-
-@media (max-width: 640px) {
-  .section { padding: var(--sp-16) 0; }
-  .hero { padding: var(--sp-16) 0 var(--sp-12); }
-  .steps-grid { grid-template-columns: 1fr; }
-  .pricing-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
-  .field-row { grid-template-columns: 1fr; }
   .main-nav {
     display: none;
     position: absolute;
@@ -909,6 +904,18 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   }
   .main-nav.open { display: flex; }
   .nav-toggle { display: block; }
+}
+
+@media (max-width: 860px) {
+  .hero-photo { display: none; }
+}
+
+@media (max-width: 640px) {
+  .section { padding: var(--sp-16) 0; }
+  .hero { padding: var(--sp-16) 0 var(--sp-12); }
+  .steps-grid { grid-template-columns: 1fr; }
+  .pricing-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
+  .field-row { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 560px) {
