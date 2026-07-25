@@ -139,7 +139,14 @@
         <p class="hero-sub">Песен за 19,90 € · Демо преди плащане · Готова до 48 часа</p>
       </div>
       <div class="hero-photo">
-        <img src="assets/img/hero-pesen-podarak.webp" alt="Двойка на дивана слуша своята песен по поръчка на телефона" width="1600" height="900" fetchpriority="high">
+        <!-- Poster-ът се показва веднага (39 KB); самото видео (266 KB) се зарежда
+             СЛЕД load event и само на desktop — виж main.js. При изключени анимации
+             (prefers-reduced-motion) остава само poster-ът. -->
+        <video class="hero-video" muted loop playsinline preload="none"
+               data-poster="assets/img/hero-poster-ergensko.webp"
+               data-src="assets/video/hero-ergensko.mp4"
+               width="800" height="800"
+               aria-label="Приятели на ергенско парти слушат песен по поръчка за младоженеца"></video>
       </div>
     </div>
   </section>

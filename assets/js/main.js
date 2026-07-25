@@ -19,6 +19,35 @@
   var yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
+  /* ---------- Hero видео ----------
+     Само на desktop: под 860px .hero-photo е display:none, а браузърът тегли
+     poster атрибута независимо от CSS — затова и poster-ът, и видеото се
+     задават от JS, за да не хабят трафик на мобилни.
+     Poster (39 KB) се задава веднага, видеото (266 KB) чак след load event,
+     за да остане извън критичния път. При prefers-reduced-motion остава
+     само неподвижният poster. */
+  var heroVideo = document.querySelector(".hero-video[data-src]");
+  if (heroVideo && window.matchMedia("(min-width: 861px)").matches) {
+    heroVideo.poster = heroVideo.getAttribute("data-poster");
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      var playHeroVideo = function () {
+        var p = heroVideo.play();
+        /* autoplay на muted видео е разрешено, но при отказ остава poster-ът */
+        if (p && p.catch) p.catch(function () {});
+      };
+      var startHeroVideo = function () {
+        heroVideo.src = heroVideo.getAttribute("data-src");
+        playHeroVideo();
+        /* Браузърът паузира видео в скрит таб — възобновяваме при връщане */
+        document.addEventListener("visibilitychange", function () {
+          if (!document.hidden && heroVideo.paused) playHeroVideo();
+        });
+      };
+      if (document.readyState === "complete") startHeroVideo();
+      else window.addEventListener("load", startHeroVideo, { once: true });
+    }
+  }
+
   /* ---------- Scroll reveal ---------- */
   var revealEls = document.querySelectorAll(".reveal");
   if ("IntersectionObserver" in window && revealEls.length) {
