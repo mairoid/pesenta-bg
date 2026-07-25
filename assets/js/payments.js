@@ -40,7 +40,7 @@ window.PESENTA_PAYMENTS = {
     pesen: "https://buy.stripe.com/8x25kEf5e92r9h81Rh9IQ00",
     /* Песен + Експресна изработка — 29,80 €, два line item-а
        (plink_1TxA8FJi5XII3dF8AoDMUL21) */
-    pesen_express: "https://buy.stripe.com/dRmfZi1eobaz5O57bB9IQ01"
+    pesen_express: "https://buy.stripe.com/dRmfZi1eobaz50S7bB9IQ01"
   },
 
   /* Показни данни за страницата за плащане */
