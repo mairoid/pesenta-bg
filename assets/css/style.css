@@ -18,6 +18,9 @@
   --pink: #ff4d8d;
   --orange: #ffa14d;
   --grad: linear-gradient(100deg, var(--pink), var(--orange));
+  /* Мастило за текст ВЪРХУ градиента — тъмно, защото розовото и
+     оранжевото са светли. Беше hardcode-нато на 4 места. */
+  --ink: #16091c;
   --radius: 20px;
   --radius-sm: 12px;
   --shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
@@ -138,7 +141,7 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 
 .btn-primary {
   background: var(--grad);
-  color: #16091c;
+  color: var(--ink);
   box-shadow: 0 10px 30px rgba(255, 77, 141, 0.35);
 }
 .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(255, 77, 141, 0.45); }
@@ -176,8 +179,12 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 .logo img { height: 38px; width: auto; }
 
 .main-nav { display: flex; align-items: center; gap: var(--sp-6); }
-.main-nav a { color: var(--muted); font-weight: 600; font-size: var(--fs-md); transition: color var(--dur-fast) var(--ease); }
-.main-nav a:hover { color: var(--text); }
+/* :not(.btn) — CTA-то „Поръчай песен“ живее вътре в навигацията, но е бутон.
+   Без изключението --muted гасеше тъмното мастило върху светлия градиент
+   (замерен контраст 1.18:1 върху оранжевото — текстът се четеше едвам) и
+   смъкваше размера му от 16px на 15px. Правилото важи за връзки, не за бутони. */
+.main-nav a:not(.btn) { color: var(--muted); font-weight: 600; font-size: var(--fs-md); transition: color var(--dur-fast) var(--ease); }
+.main-nav a:not(.btn):hover { color: var(--text); }
 
 .nav-toggle {
   display: none;
@@ -233,7 +240,7 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   border-radius: 50%;
   border: none;
   background: var(--grad);
-  color: #16091c;
+  color: var(--ink);
   display: grid;
   place-items: center;
   cursor: pointer;
@@ -283,7 +290,7 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   height: 44px;
   border-radius: 14px;
   background: var(--grad);
-  color: #16091c;
+  color: var(--ink);
   font-family: var(--font-display);
   font-weight: 800;
   font-size: var(--fs-xl);
@@ -609,7 +616,7 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 .chip.selected {
   background: var(--grad);
   border-color: transparent;
-  color: #16091c;
+  color: var(--ink);
   font-weight: 700;
 }
 
