@@ -48,13 +48,30 @@
     }
   }
 
-  /* ---------- Scroll reveal ---------- */
+  /* ---------- Scroll reveal ----------
+     Елементи в една група (8-те песни, 4-те стъпки, отзивите) се появяват
+     последователно, а не наведнъж — по 45ms един след друг, с таван 270ms,
+     за да не се чака дълго при по-дълъг списък. */
   var revealEls = document.querySelectorAll(".reveal");
+  var STAGGER_MS = 45, STAGGER_MAX = 270;
+
+  function staggerDelay(el) {
+    var parent = el.parentElement;
+    if (!parent) return 0;
+    var group = Array.prototype.filter.call(parent.children, function (c) {
+      return c.classList && c.classList.contains("reveal");
+    });
+    if (group.length < 2) return 0; /* самотен елемент — без закъснение */
+    return Math.min(group.indexOf(el) * STAGGER_MS, STAGGER_MAX);
+  }
+
   if ("IntersectionObserver" in window && revealEls.length) {
     var io = new IntersectionObserver(
       function (entries) {
         entries.forEach(function (entry) {
           if (entry.isIntersecting) {
+            var d = staggerDelay(entry.target);
+            if (d) entry.target.style.transitionDelay = d + "ms";
             entry.target.classList.add("in");
             io.unobserve(entry.target);
           }
