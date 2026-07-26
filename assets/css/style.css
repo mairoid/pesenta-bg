@@ -205,6 +205,46 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 .btn-lg { padding: var(--sp-4) var(--sp-8); font-size: var(--fs-lg); }
 .btn[disabled] { opacity: 0.55; cursor: not-allowed; transform: none !important; }
 
+/* ============================================================
+   Микрофонът в бутона + пулсиращ ореол
+   ------------------------------------------------------------
+   Пулсът не е декорация — казва „това говори, натисни и говори“.
+   Затова спира при hover: поканата вече е приета и продължаването
+   е само шум. Бавен е (2,4 s), защото бърз пулс се чете като
+   нотификация, тоест тревога, а смисълът тук е „готов съм да те чуя“.
+   Рингът е currentColor, тоест --ink върху розовия бутон — замерен
+   контраст 6.15, вижда се ясно.
+   ============================================================ */
+.mic {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  flex: none;
+}
+.mic svg { position: relative; z-index: 1; }
+
+@keyframes mic-ring {
+  0%   { transform: scale(0.7); opacity: 0.5; }
+  70%  { transform: scale(1.9); opacity: 0; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+.mic-pulse::before,
+.mic-pulse::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  animation: mic-ring 2.4s var(--ease-reveal) infinite;
+}
+/* вторият ринг тръгва на половин цикъл — усеща се като дишане, не като мигане */
+.mic-pulse::after { animation-delay: 1.2s; }
+.btn:hover .mic-pulse::before,
+.btn:hover .mic-pulse::after { animation-play-state: paused; opacity: 0; }
+
 /* ---------- Хедър ---------- */
 
 .site-header {
@@ -981,6 +1021,10 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .reveal { opacity: 1; transform: none; transition: none; }
+  /* Пулсът спира, но формата остава — един неподвижен ореол вместо
+     два движещи се, за да не изчезне указанието „това говори“. */
+  .mic-pulse::before { animation: none; opacity: 0.3; transform: scale(1.35); }
+  .mic-pulse::after { display: none; }
 }
 
 /* ---------- One-pager редизайн (21.07.2026) ---------- */
