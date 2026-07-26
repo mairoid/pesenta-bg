@@ -163,7 +163,7 @@
       html += '<div class="row discount"><span>Промо код ' + state.promoCode + " (−" + state.promoPct + "%)</span><span>−" + eur(t.discount) + "</span></div>";
     }
     html += '<div class="row total"><span>Общо</span><span>' + eur(t.total) + " <small style=\"color:var(--muted);font-size:0.75em;font-weight:400;\">(" + bgn(t.total) + ")</small></span></div>";
-    html += '<div class="row" style="font-size:0.85rem;"><span>Плащане след одобрение — фактура при завършена поръчка</span><span></span></div>';
+    html += '<div class="row" style="font-size:0.85rem;"><span>Плаща се при поръчката — фактура веднага</span><span></span></div>';
     box.innerHTML = html;
   }
 
@@ -519,7 +519,7 @@
             '<div class="check"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#16091c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></div>' +
             "<h2>Гласовата поръчка е приета!</h2>" +
             '<div class="order-no">' + esc(orderNo) + "</div>" +
-            "<p>Ще чуем записа ти и до 48 часа ще получиш демо и цена на имейла. Плащаш чак след като одобриш песента.</p>" +
+            "<p>Ще чуем записа ти и до няколко часа получаваш имейл с потвърждение и фактура. Щом плащането постъпи, песента е готова до 48 часа.</p>" +
             "</div>";
           renderMyOrders();
           card.scrollIntoView({ behavior: "smooth" });
@@ -617,7 +617,7 @@
       "Нецензурни изрази (18+)": d.explicit ? "ДА — разрешени" : "не",
       "Гласово съобщение": voiceBlob ? "ДА — приложено като прикачен файл" : "не",
       "Съгласие чл. 57 ЗЗП (без право на отказ)": "потвърдено",
-      "Линк за плащане (изпрати след одобрение)": "https://pesenta.bg/plati.html?order=" + orderNo + "&plan=" + state.plan + (state.express ? "&express=1" : ""),
+      "Линк за плащане (изпрати веднага)": "https://pesenta.bg/plati.html?order=" + orderNo + "&plan=" + state.plan + (state.express ? "&express=1" : ""),
       "Пакет": PLANS[state.plan].label + (state.express ? " + Експрес 24ч" : ""),
       "Промо код": state.promoCode ? state.promoCode + " (−" + state.promoPct + "%)" : "—",
       "Обща цена": eur(t.total) + " / " + bgn(t.total),

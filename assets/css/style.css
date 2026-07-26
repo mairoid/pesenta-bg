@@ -325,7 +325,9 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 
 .steps-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  /* 3 стъпки от 26.07.2026 — плащането влезе в първата стъпка и
+     „Слушаш и одобряваш“ отпадна (няма демо преди плащане) */
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--sp-6);
 }
 
