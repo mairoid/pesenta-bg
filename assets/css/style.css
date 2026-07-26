@@ -646,6 +646,25 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   font-size: var(--fs-sm);
 }
 
+/* Изход към писмената форма, ГОРЕ до гласовия бутон.
+   Разделителят .fast-or стои между двете форми, но на телефон е на
+   1720px от началото — замерено при 390px екран, гласовата секция е
+   1306px висока. Тоест човек, дошъл от бутона „Поръчай“ на началната
+   страница, вижда само гласовата и трябва да скролва 876px, за да
+   разбере, че има и писмена. Затова указанието е и тук, отгоре.
+   Дискретно е нарочно — не бива да се бори с гласовия бутон. */
+.prefer-write {
+  margin-top: var(--sp-3);
+  font-size: var(--fs-sm);
+  color: var(--muted);
+}
+.prefer-write a {
+  color: var(--orange);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.prefer-write a:hover { color: var(--text); }
+
 /* Гласово съобщение */
 
 .voice-box {
