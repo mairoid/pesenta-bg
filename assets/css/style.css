@@ -186,7 +186,11 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 
 .sec-no {
   font-family: var(--font-display);
-  font-size: clamp(1.6rem, 3.2vw, 2.3rem);
+  /* Мерено, не на око: h2 е clamp(1.5rem, 3vw, 2.2rem). Първата версия беше
+     clamp(1.6rem, 3.2vw, 2.3rem) — 36.8px срещу 35.2px на десктоп и 25.6
+     срещу 24 на телефон, тоест 1.07x. Ориентирът беше по-едър от заглавието,
+     което трябва да води. Тази стойност дава 0.90-0.91x в целия диапазон. */
+  font-size: clamp(1.35rem, 2.7vw, 2rem);
   font-weight: 800;
   line-height: 1;
   letter-spacing: -0.02em;
@@ -196,6 +200,12 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   color: transparent;
   -webkit-text-stroke: 1.4px rgba(255, 77, 141, 0.55);
   paint-order: stroke fill;
+}
+
+/* Един и същ контур изглежда по-дебел върху по-малка буква — на телефон
+   1.4px върху 21.6px глиф затлачва броенето. */
+@media (max-width: 640px) {
+  .sec-no { -webkit-text-stroke-width: 1.1px; }
 }
 
 /* Без text-stroke цифрата би била невидима (color: transparent).
