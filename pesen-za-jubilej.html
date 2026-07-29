@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <!-- resizes-content: при отворена клавиатура layout-ът се свива, вместо да се
+       скролва — фиксираните елементи сядат НАД клавиатурата, не под нея.
+       Безопасно е: в style.css няма нито една vh-базирана височина. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
+  <meta name="theme-color" content="#0b0a1a">
+  <meta name="application-name" content="Песента">
+  <meta name="apple-mobile-web-app-title" content="Песента">
+  <title>Песен за юбилей по поръчка | 19,90 € | Pesenta.bg</title>
+  <meta name="description" content="Песен за юбилей по поръчка — за кръгла годишнина, семеен или фирмен повод. По вашата история, 19,90 €, готова до 48 часа.">
+  <link rel="canonical" href="https://pesenta.bg/pesen-za-jubilej.html">
+  <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="bg_BG">
+  <meta property="og:site_name" content="Песента">
+  <meta property="og:title" content="Песен за юбилей по поръчка | Pesenta.bg">
+  <meta property="og:description" content="Авторска песен по случай юбилей — 19,90 €, готова до 48 часа.">
+  <meta property="og:url" content="https://pesenta.bg/pesen-za-jubilej.html">
+  <meta property="og:image" content="https://pesenta.bg/assets/img/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:type" content="image/jpeg">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Песен за юбилей по поръчка | Pesenta.bg">
+  <meta name="twitter:description" content="Историята на юбиляря, превърната в песен. За 19,90 €, готова до 48 часа.">
+  <meta name="twitter:image" content="https://pesenta.bg/assets/img/og-image.jpg">
+
+  <!-- Шрифтове -->
+  <!-- Критичните (кирилски) шрифтове тръгват веднага, вместо да чакат CSS-а -->
+  <link rel="preload" href="assets/fonts/unbounded-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <!-- Латинските подмножества се теглят на ВСЯКА страница: запетаята, точката,
+       тирето, кавичките и цифрите живеят в тях, не в кирилските. Без preload
+       браузърът ги открива чак след като разбере CSS-а — цял round-trip по-късно,
+       заради което пунктуацията в заглавията за миг е с резервния шрифт. -->
+  <link rel="preload" href="assets/fonts/unbounded-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/fonts.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+
+  <!-- Structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "serviceType": "Песен за юбилей по поръчка",
+    "name": "Песен за юбилей",
+    "description": "Песен по поръчка за юбилей — кръгла годишнина, семеен или фирмен повод, разказана като лична история.",
+    "provider": {
+      "@type": "Organization",
+      "name": "Песента",
+      "url": "https://pesenta.bg/",
+      "email": "sales@pesenta.bg"
+    },
+    "areaServed": "BG",
+    "audience": {
+      "@type": "Audience",
+      "audienceType": "Близки и колеги, подготвящи юбилей"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "19.90",
+      "priceCurrency": "EUR",
+      "url": "https://pesenta.bg/poruchka.html?povod=jubilej",
+      "availability": "https://schema.org/InStock"
+    }
+  }
+  </script>
+  <!-- Plausible analytics — без бисквитки -->
+  <script defer data-domain="pesenta.bg" src="https://plausible.io/js/script.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Към съдържанието</a>
+
+<header class="site-header">
+  <div class="container header-in">
+    <a class="logo" href="index.html" aria-label="Песента — начало">
+      <img src="assets/img/logo.svg" alt="Песента — песен по поръчка" width="190" height="44">
+    </a>
+    <nav class="main-nav open" aria-label="Основна навигация" style="display:flex;position:static;padding:0;background:none;border:none;box-shadow:none;">
+      <a href="index.html">Начало</a>
+      <a class="btn btn-primary" href="poruchka.html?povod=jubilej">Поръчай песен</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <article class="article" style="padding-bottom:0;">
+    <span class="kicker">Едно голямо число, една песен</span>
+    <h1>Песен за <span class="grad-text">юбилей</span> по поръчка</h1>
+
+    <p>50 години живот, 25 години брак, 30 години във фирмата — юбилеите носят числа, които звучат внушително на хартия, но истинската им тежест е в историята зад тях. Песен по поръчка разказва точно тази история — не абстрактно число, а конкретен път.</p>
+
+    <p>Разкажи ни за юбиляря — какво е постигнал, през какво е преминал, какво го определя като личност. Може да е за родител на кръгла годишнина, за колега на юбилей във фирмата, за баба и дядо на голяма семейна дата. От тези детайли пишем текст, който звучи като признание, не като поздравителна картичка.</p>
+
+    <p>Стилът може да е тържествен и епичен за официално събитие, или топъл и семеен за домашно тържество — избираш според случая. Може да включим и конкретни имена на близки, деца, внуци, ако искаш песента да бъде и семейна снимка в звук.</p>
+
+    <p>Готова до 48 часа — стигаш навреме за тържеството, речта или семейната вечеря, на която юбилярят ще чуе цялата зала да пее неговата собствена история.</p>
+
+    <div class="article-cta">
+      <p><strong>Едно число се празнува веднъж на десетилетие. Песента остава завинаги.</strong></p>
+      <a class="btn btn-primary" href="poruchka.html?povod=jubilej">Поръчай песен за юбилей — 19,90 €</a>
+    </div>
+  </article>
+
+  <!-- ДЕМО ПЕСНИ -->
+  <section class="section" id="demo">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="kicker">Чуй сам</span>
+        <h2>Песни с тежест и топлина</h2>
+        <p>Точно такъв тон работи за юбилей — сериозен, но искрен, изпят от сърце.</p>
+      </div>
+      <div class="tracks-list">
+        <div class="track-row player reveal" data-src="assets/audio/za-teb-brate-tutso.mp3" role="button" tabindex="0" aria-label="Пусни „За теб, брате Туцо“">
+          <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+          <img class="track-thumb" src="assets/img/cover-tutso.svg" alt="" loading="lazy" width="48" height="48">
+          <div class="track-info">
+            <h3>За теб, брате Туцо</h3>
+            <span>За приятел · песен-послание</span>
+          </div>
+          <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
+          <span class="time">5:06</span>
+        </div>
+        <div class="track-row player reveal" data-src="assets/audio/rocco-di-catania.mp3" role="button" tabindex="0" aria-label="Пусни „Rocco di Catania“">
+          <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+          <img class="track-thumb" src="assets/img/cover-rocco.svg" alt="" loading="lazy" width="48" height="48">
+          <div class="track-info">
+            <h3>Rocco di Catania</h3>
+            <span>Италиански вайб · серенада с усмивка</span>
+          </div>
+          <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
+          <span class="time">3:34</span>
+        </div>
+        <div class="track-row player reveal" data-src="assets/audio/rosen-abi.mp3" role="button" tabindex="0" aria-label="Пусни „Rosen Abi“">
+          <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+          <img class="track-thumb" src="assets/img/cover-rosen-abi.svg" alt="" loading="lazy" width="48" height="48">
+          <div class="track-info">
+            <h3>Rosen Abi</h3>
+            <span>Турски вайб · песен за приятел</span>
+          </div>
+          <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
+          <span class="time">3:18</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="vaprosi">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="kicker">Питай смело</span>
+        <h2>Често задавани въпроси</h2>
+      </div>
+      <div class="faq-list reveal">
+        <details class="faq-item">
+          <summary>Подходяща ли е песента за официално тържество с реч?</summary>
+          <div class="faq-body">Да — много клиенти пускат песента точно преди или след официалната реч, като кулминация на вечерта. Можем да композираме в по-тържествен, епичен стил, ако случаят го изисква.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Може ли да споменем децата и внуците в текста?</summary>
+          <div class="faq-body">Разбира се — имена на деца, внуци, съпруг/а, дори конкретни спомени от годините, ако искаш песента да звучи като семейна история, разказана на глас.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Юбилеят е фирмен — може ли да получим фактура на компанията?</summary>
+          <div class="faq-body">Да — при поръчката посочваш данните за фактуриране на фирмата в бележките, а ние издаваме документ на нейно име.</div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-band reveal">
+        <h2>Почетете юбилея с песен, която разказва цялата история</h2>
+        <p>Тортата се изяжда за вечерта. Песента остава запис на цял един път.</p>
+        <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+          <a class="btn btn-primary btn-lg" href="poruchka.html?povod=jubilej">Поръчай сега — 19,90 €</a>
+          <a class="btn btn-ghost btn-lg" href="poruchka.html">Всички поводи</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-bottom" style="border:none;">
+    © <span id="year">2026</span> Pesenta.bg — „БАУФИЗИК“ ЕООД · <a href="usloviya.html">Общи условия</a> · <a href="poveritelnost.html">Поверителност</a>
+  </div>
+</footer>
+
+<script src="assets/js/main.js" defer></script>
+</body>
+</html>
