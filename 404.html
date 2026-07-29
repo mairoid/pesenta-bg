@@ -15,6 +15,12 @@
   <!-- Критичните (кирилски) шрифтове тръгват веднага, вместо да чакат CSS-а -->
   <link rel="preload" href="assets/fonts/unbounded-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <!-- Латинските подмножества се теглят на ВСЯКА страница: запетаята, точката,
+       тирето, кавичките и цифрите живеят в тях, не в кирилските. Без preload
+       браузърът ги открива чак след като разбере CSS-а — цял round-trip по-късно,
+       заради което пунктуацията в заглавията за миг е с резервния шрифт. -->
+  <link rel="preload" href="assets/fonts/unbounded-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/css/fonts.css">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
