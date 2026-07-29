@@ -2,7 +2,13 @@
 <html lang="bg">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- resizes-content: при отворена клавиатура layout-ът се свива, вместо да се
+       скролва — фиксираните елементи сядат НАД клавиатурата, не под нея.
+       Безопасно е: в style.css няма нито една vh-базирана височина. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
+  <meta name="theme-color" content="#0b0a1a">
+  <meta name="application-name" content="Песента">
+  <meta name="apple-mobile-web-app-title" content="Песента">
   <title>Музикални новини | Pesenta.bg</title>
   <meta name="description" content="Ежедневни музикални новини от света и индустрията — премиери, турнета, награди и анализи. Блогът на Pesenta.bg — платформата за песен по поръчка.">
   <link rel="canonical" href="https://pesenta.bg/novini/">
@@ -12,12 +18,114 @@
   <meta property="og:title" content="Музикални новини | Pesenta.bg">
   <meta property="og:description" content="Ежедневни музикални новини — премиери, турнета, награди и индустриални анализи.">
   <meta property="og:url" content="https://pesenta.bg/novini/">
-  <meta property="og:image" content="https://pesenta.bg/assets/img/og-image.png">
+  <meta property="og:image" content="https://pesenta.bg/assets/img/og-image.jpg">
   <!-- Критичните (кирилски) шрифтове тръгват веднага, вместо да чакат CSS-а -->
   <link rel="preload" href="../assets/fonts/unbounded-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="../assets/fonts/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../assets/css/fonts.css">
   <link rel="stylesheet" href="../assets/css/style.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Blog",
+        "@id": "https://pesenta.bg/novini/#blog",
+        "url": "https://pesenta.bg/novini/",
+        "name": "Музикални новини — Песента",
+        "description": "Ежедневни музикални новини от света и индустрията — премиери, турнета, награди и анализи.",
+        "inLanguage": "bg",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Песента",
+          "url": "https://pesenta.bg/"
+        },
+        "blogPost": [
+          {
+            "@type": "BlogPosting",
+            "headline": "Тайла разгръща поп-амапиано вселена с втория си албум „A*Pop“",
+            "url": "https://pesenta.bg/novini/tyla-a-pop-vtori-albom.html",
+            "datePublished": "2026-07-26",
+            "image": "https://pesenta.bg/assets/img/novini/tyla-a-pop.jpg"
+          },
+          {
+            "@type": "BlogPosting",
+            "headline": "Charli xcx смени синтезаторите с китари в новия си албум „Music, Fashion, Film“",
+            "url": "https://pesenta.bg/novini/charli-xcx-music-fashion-film-albom.html",
+            "datePublished": "2026-07-25",
+            "image": "https://pesenta.bg/assets/img/novini/charli-xcx-music-fashion-film.jpg"
+          },
+          {
+            "@type": "BlogPosting",
+            "headline": "Arca се завръща с албума „XXXXX“ след пет години мълчание",
+            "url": "https://pesenta.bg/novini/arca-xxxxx-diva-experimental.html",
+            "datePublished": "2026-07-24",
+            "image": "https://pesenta.bg/assets/img/novini/arca-xxxxx.jpg"
+          },
+          {
+            "@type": "BlogPosting",
+            "headline": "„Foreign Tongues“ носи на The Rolling Stones двоен чартов рекорд — и изравняване с The Beatles",
+            "url": "https://pesenta.bg/novini/rolling-stones-foreign-tongues-rekord.html",
+            "datePublished": "2026-07-23",
+            "image": "https://pesenta.bg/assets/img/novini/rolling-stones-foreign-tongues-rekord.jpg"
+          },
+          {
+            "@type": "BlogPosting",
+            "headline": "Оазис избират сцената пред студиото: Лиъм Галахър отваря вратата за концерти през 2027 г.",
+            "url": "https://pesenta.bg/novini/oasis-liam-gallagher-2027-koncerti.html",
+            "datePublished": "2026-07-22",
+            "image": "https://pesenta.bg/assets/img/novini/oasis-liam-gallagher-2027-koncerti.jpg"
+          },
+          {
+            "@type": "BlogPosting",
+            "headline": "Фики Стораро показа първи кадри от новия сингъл „Тебе докато не те видях“",
+            "url": "https://pesenta.bg/novini/fiki-storaro-tebe-dokato-ne-te-vidyah.html",
+            "datePublished": "2026-07-22",
+            "image": "https://pesenta.bg/assets/img/og-image.jpg"
+          },
+          {
+            "@type": "BlogPosting",
+            "headline": "Густаво Дудамел ще обедини Ню Йорк и Венецуела на финала на Мондиал 2026",
+            "url": "https://pesenta.bg/novini/dudamel-venezuela-tribyut-mondial-2026.html",
+            "datePublished": "2026-07-17",
+            "image": "https://pesenta.bg/assets/img/novini/dudamel-venezuela-tribyut-mondial-2026.jpg"
+          },
+          {
+            "@type": "BlogPosting",
+            "headline": "Наследството е песен: Iron Maiden продадоха половината от музикалната си империя на създателите на ABBA Voyage",
+            "url": "https://pesenta.bg/novini/iron-maiden-pophouse-sdelka.html",
+            "datePublished": "2026-07-16",
+            "image": "https://pesenta.bg/assets/img/novini/iron-maiden-pophouse.jpg"
+          },
+          {
+            "@type": "BlogPosting",
+            "headline": "Гласът на поколенията се завръща: Боб Дилън обяви турне в Обединеното кралство за 2026 с петдневна резиденция в Лондон",
+            "url": "https://pesenta.bg/novini/bob-dylan-uk-turne-2026.html",
+            "datePublished": "2026-07-16",
+            "image": "https://pesenta.bg/assets/img/novini/bob-dylan-uk-turne-2026.jpg"
+          }
+        ]
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Начало",
+            "item": "https://pesenta.bg/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Музикални новини",
+            "item": "https://pesenta.bg/novini/"
+          }
+        ]
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
   <a class="skip-link" href="#main">Към съдържанието</a>

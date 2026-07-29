@@ -2,7 +2,13 @@
 <html lang="bg">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- resizes-content: при отворена клавиатура layout-ът се свива, вместо да се
+       скролва — фиксираните елементи сядат НАД клавиатурата, не под нея.
+       Безопасно е: в style.css няма нито една vh-базирана височина. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
+  <meta name="theme-color" content="#0b0a1a">
+  <meta name="application-name" content="Песента">
+  <meta name="apple-mobile-web-app-title" content="Песента">
   <title>Песен по поръчка за 19,90 € | Персонализирана песен за подарък – Pesenta.bg</title>
   <meta name="description" content="Песен по поръчка с авторски текст по твоята история — за 19,90 €. Комбинирай стилове, избери от 15 езика. Плащаш при поръчката, песента е готова до 48 часа.">
   <link rel="canonical" href="https://pesenta.bg/">
@@ -15,15 +21,16 @@
   <meta property="og:title" content="Песен по поръчка | Твоята история, превърната в песен">
   <meta property="og:description" content="Авторски текст по твоята история, песен за 19,90 €, на 15 езика. Готова до 48 часа.">
   <meta property="og:url" content="https://pesenta.bg/">
-  <meta property="og:image" content="https://pesenta.bg/assets/img/og-image.png">
+  <meta property="og:image" content="https://pesenta.bg/assets/img/og-image.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
+  <meta property="og:image:type" content="image/jpeg">
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Песен по поръчка | Pesenta.bg">
   <meta name="twitter:description" content="Твоята история, превърната в песен. За 19,90 €, готова до 48 часа.">
-  <meta name="twitter:image" content="https://pesenta.bg/assets/img/og-image.png">
+  <meta name="twitter:image" content="https://pesenta.bg/assets/img/og-image.jpg">
 
   <!-- Шрифтове -->
   <!-- Критичните (кирилски) шрифтове тръгват веднага, вместо да чакат CSS-а -->
@@ -43,7 +50,7 @@
         "@id": "https://pesenta.bg/#org",
         "name": "Песента",
         "url": "https://pesenta.bg/",
-        "logo": "https://pesenta.bg/assets/img/og-image.png",
+        "logo": "https://pesenta.bg/assets/img/og-image.jpg",
         "email": "sales@pesenta.bg",
         "description": "Персонализирани песни по поръчка за всеки повод — рожден ден, сватба, ергенско парти, годишнина."
       },
@@ -159,7 +166,10 @@
   <section class="section" id="demo">
     <div class="container">
       <div class="section-head reveal">
-        <span class="kicker">Чуй сам</span>
+        <span class="section-eyebrow">
+          <span class="sec-no" aria-hidden="true">01</span>
+          <span class="kicker">Чуй сам</span>
+        </span>
         <h2>Песни, които вече зарадваха някого</h2>
         <p>Всяка от тези песни е правена за истински човек — приятел, брат, колега. Докосни песен, за да я чуеш.</p>
       </div>
@@ -172,7 +182,7 @@
             <span>За приятел · песен-послание</span>
           </div>
           <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
-          <span class="time">0:00</span>
+          <span class="time">4:27</span>
         </div>
         <div class="track-row player reveal" data-src="assets/audio/habibi-rusi.mp3" role="button" tabindex="0" aria-label="Пусни „Habibi Rusi“">
           <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
@@ -182,7 +192,7 @@
             <span>Шега за приятел · ориенталски вайб</span>
           </div>
           <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
-          <span class="time">0:00</span>
+          <span class="time">2:01</span>
         </div>
         <div class="track-row player reveal" data-src="assets/audio/rosen-abi.mp3" role="button" tabindex="0" aria-label="Пусни „Rosen Abi“">
           <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
@@ -192,7 +202,7 @@
             <span>Турски вайб · песен за приятел</span>
           </div>
           <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
-          <span class="time">0:00</span>
+          <span class="time">3:18</span>
         </div>
         <div class="track-row player reveal" data-src="assets/audio/rocco-di-catania.mp3" role="button" tabindex="0" aria-label="Пусни „Rocco di Catania“">
           <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
@@ -202,7 +212,7 @@
             <span>Италиански вайб · серенада с усмивка</span>
           </div>
           <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
-          <span class="time">0:00</span>
+          <span class="time">3:34</span>
         </div>
         <div class="track-row player reveal" data-src="assets/audio/napipay-go-vladi.mp3" role="button" tabindex="0" aria-label="Пусни „Напипай го, Влади“ (18+)">
           <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
@@ -212,7 +222,7 @@
             <span>Парти парче · за купона</span>
           </div>
           <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
-          <span class="time">0:00</span>
+          <span class="time">3:27</span>
         </div>
         <div class="track-row player reveal" data-src="assets/audio/za-teb-brate-tutso.mp3" role="button" tabindex="0" aria-label="Пусни „За теб, брате Туцо“">
           <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
@@ -222,7 +232,7 @@
             <span>За приятел · песен-послание</span>
           </div>
           <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
-          <span class="time">0:00</span>
+          <span class="time">5:06</span>
         </div>
         <div class="track-row player reveal" data-src="assets/audio/veche-nyama-koy.mp3" role="button" tabindex="0" aria-label="Пусни „Вече няма кой…“">
           <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
@@ -232,7 +242,7 @@
             <span>Носталгия · след ергенското</span>
           </div>
           <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
-          <span class="time">0:00</span>
+          <span class="time">3:59</span>
         </div>
         <div class="track-row player reveal" data-src="assets/audio/api.mp3" role="button" tabindex="0" aria-label="Пусни „АПИ“ (18+)">
           <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
@@ -242,7 +252,7 @@
             <span>Вътрешна шега · песен за приятел</span>
           </div>
           <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
-          <span class="time">0:00</span>
+          <span class="time">2:56</span>
         </div>
       </div>
     </div>
@@ -252,7 +262,10 @@
   <section class="section" id="povodi">
     <div class="container">
       <div class="section-head reveal">
-        <span class="kicker">За какво се поръчва песен</span>
+        <span class="section-eyebrow">
+          <span class="sec-no" aria-hidden="true">02</span>
+          <span class="kicker">За какво се поръчва песен</span>
+        </span>
         <h2>Има повод? Има песен.</h2>
         <p>Най-честите случаи — но сме писали песни и за изгубени басове, спечелени мачове и котки с характер.</p>
       </div>
@@ -271,7 +284,10 @@
   <section class="section" id="kak-raboti">
     <div class="container">
       <div class="section-head reveal">
-        <span class="kicker">Простичко е</span>
+        <span class="section-eyebrow">
+          <span class="sec-no" aria-hidden="true">03</span>
+          <span class="kicker">Простичко е</span>
+        </span>
         <h2>Как работи</h2>
         <p>От твоята история до готова песен — три стъпки, нула главоболия.</p>
       </div>
@@ -299,7 +315,10 @@
   <section class="section" id="stilove">
     <div class="container">
       <div class="section-head reveal">
-        <span class="kicker">Ти избираш звука</span>
+        <span class="section-eyebrow">
+          <span class="sec-no" aria-hidden="true">04</span>
+          <span class="kicker">Ти избираш звука</span>
+        </span>
         <h2>19 стила, 15 езика — комбинирай свободно</h2>
         <p>Балада за мама, рап за най-добрия приятел или кючек за ергенското? Може и песен на турски, гръцки, сръбски или италиански — а защо не и смес.</p>
       </div>
@@ -331,7 +350,10 @@
   <section class="section" id="ceni">
     <div class="container">
       <div class="section-head reveal">
-        <span class="kicker">Прозрачна цена</span>
+        <span class="section-eyebrow">
+          <span class="sec-no" aria-hidden="true">05</span>
+          <span class="kicker">Прозрачна цена</span>
+        </span>
         <h2>Една песен, една цена</h2>
         <p>Без пакети и без скрити такси. Една цена, платена веднага, и песента тръгва.</p>
       </div>
@@ -360,7 +382,10 @@
   <section class="section" id="istorii">
     <div class="container">
       <div class="section-head reveal">
-        <span class="kicker">Зад кулисите</span>
+        <span class="section-eyebrow">
+          <span class="sec-no" aria-hidden="true">06</span>
+          <span class="kicker">Зад кулисите</span>
+        </span>
         <h2>Как се раждат песните</h2>
         <p>Песента тръгна като подарък за приятели — после приятелите на приятелите започнаха да питат „а за нас може ли?“. Може.</p>
       </div>
@@ -389,7 +414,10 @@
   <section class="section" id="vaprosi">
     <div class="container">
       <div class="section-head reveal">
-        <span class="kicker">Питай смело</span>
+        <span class="section-eyebrow">
+          <span class="sec-no" aria-hidden="true">07</span>
+          <span class="kicker">Питай смело</span>
+        </span>
         <h2>Често задавани въпроси</h2>
       </div>
       <div class="faq-list reveal">

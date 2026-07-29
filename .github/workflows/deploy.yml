@@ -25,6 +25,14 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Pages
         uses: actions/configure-pages@v5
+      # upload-pages-artifact качва каквото намери в path, а path беше "."
+      # — тоест цялото repo. Вътрешната документация и одиторските файлове
+      # се сервираха публично: pesenta.bg/NAP-PLAN.md, /README.md,
+      # /nap-audit/*.xml и /.gitignore връщаха 200.
+      # Изтриването е само в checkout-а на runner-а — файловете си остават
+      # в repo-то непокътнати.
+      - name: Strip non-site files from the artifact
+        run: rm -rf nap-audit NAP-PLAN.md README.md .gitignore .github
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

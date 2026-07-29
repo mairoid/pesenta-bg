@@ -76,13 +76,26 @@
       function (c) { return c.getAttribute("data-value"); }
     );
   }
-  function showError(msg) {
+  /* Грешката се съобщава на две места, защото само едното не стига:
+     в #form-error (role="alert" — екранният четец я прочита веднага) И
+     върху самото поле (aria-invalid + фокус). Без второто потребителят
+     чува „въведи валиден имейл", но не е отведен до полето и трябва да
+     го търси сам из три стъпки. */
+  function showError(msg, fieldId) {
     errBox.textContent = msg;
     errBox.classList.add("show");
+    if (!fieldId) return;
+    var el = document.getElementById(fieldId);
+    if (!el) return;
+    el.setAttribute("aria-invalid", "true");
+    el.focus();
   }
   function clearError() {
     errBox.textContent = "";
     errBox.classList.remove("show");
+    document.querySelectorAll("[aria-invalid]").forEach(function (el) {
+      el.removeAttribute("aria-invalid");
+    });
   }
 
   /* ============ Чипове ============ */
@@ -194,23 +207,43 @@
       renderSummary();
       renderReview();
     }
+    /* Фокусът тръгва заедно със стъпката. Без това клавиатурният потребител
+       остава върху „Напред →“, а съдържанието зад бутона се сменя безшумно —
+       екранният четец не съобщава нищо и трябва да табва назад, за да намери
+       новата стъпка. goTo() се вика само от двата бутона, никога при
+       зареждане, така че фокус тук не отмъква вниманието на никого.
+       preventScroll: скролът към върха отдолу върши тази работа плавно. */
+    var title = document.querySelector('.wizard-step[data-step="' + step + '"] .step-title');
+    if (title) title.focus({ preventScroll: true });
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  /* Задължителни са само име, имейл и съгласие — всичко останало е по желание */
+  /* Задължителни са само име, имейл и съгласие — всичко останало е по желание.
+     Връща { msg, field } вместо голо съобщение, за да знае showError кое поле
+     да маркира и фокусира. */
   function validateStep(step) {
     if (step === 3) {
-      if (!val("cust-name")) return "Напиши името си — трябва ни за фактурата и демото.";
+      if (!val("cust-name")) {
+        return { msg: "Напиши името си — трябва ни за фактурата и демото.", field: "cust-name" };
+      }
       var email = val("cust-email");
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return "Въведи валиден имейл — там ще получиш демото.";
-      if (!document.getElementById("consent").checked) return "Моля, потвърди съгласието с Общите условия, за да изпратим заявката.";
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+        return { msg: "Въведи валиден имейл — там ще получиш демото.", field: "cust-email" };
+      }
+      if (!document.getElementById("consent").checked) {
+        return { msg: "Моля, потвърди съгласието с Общите условия, за да изпратим заявката.", field: "consent" };
+      }
     }
     return null;
   }
 
   btnNext.addEventListener("click", function () {
+    /* Чистим преди всяка проверка, иначе маркерите се трупат: поправяш
+       името, но то остава aria-invalid="true" и четецът продължава да го
+       обявява за грешно. clearError() иначе се вика само при смяна на стъпка. */
+    clearError();
     var err = validateStep(state.step);
-    if (err) { showError(err); return; }
+    if (err) { showError(err.msg, err.field); return; }
     if (state.step < TOTAL_STEPS) {
       goTo(state.step + 1);
     } else {

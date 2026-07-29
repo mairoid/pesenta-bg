@@ -164,6 +164,52 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   margin-bottom: var(--sp-3);
 }
 
+/* ------------------------------------------------------------
+   Номер на секция — контурна цифра до kicker-а
+   ------------------------------------------------------------
+   Дава редакторски гръбнак: окото вижда докъде е стигнало, без да
+   чете. Кухa е нарочно — плътна цифра в този размер щеше да се бие
+   с h2 за внимание, а тя е ориентир, не заглавие.
+
+   Номерирани са само седемте „глави" (демо → въпроси). Хероят и
+   финалният призив нямат номер — те рамкират арката, не са част
+   от нея.
+
+   aria-hidden в HTML-а: „01" преди „Чуй сам" е шум за екранен
+   четец. Номерът е визуален ориентир, не съдържание.
+   ------------------------------------------------------------ */
+.section-eyebrow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-3);
+}
+
+.sec-no {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3.2vw, 2.3rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  flex: none;
+  /* Контурът е розов на 55% — същият акцент като --pink, но снижен,
+     за да не спори с оранжевия kicker до него. */
+  color: transparent;
+  -webkit-text-stroke: 1.4px rgba(255, 77, 141, 0.55);
+  paint-order: stroke fill;
+}
+
+/* Без text-stroke цифрата би била невидима (color: transparent).
+   Firefox я поддържа от 49, но пада тихо — затова резервният вариант. */
+@supports not ((-webkit-text-stroke: 1px red) or (text-stroke: 1px red)) {
+  .sec-no { color: rgba(255, 77, 141, 0.55); }
+}
+
+/* В режим на висок контраст Windows изхвърля собствените цветове —
+   прозрачният текст изчезва напълно. Връщаме го като плътен. */
+@media (forced-colors: active) {
+  .sec-no { color: CanvasText; -webkit-text-stroke: 0; }
+}
+
 .muted { color: var(--muted); }
 
 .section { padding: var(--sp-24) 0; }
@@ -193,14 +239,18 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   color: var(--ink);
   box-shadow: 0 10px 30px rgba(255, 77, 141, 0.35);
 }
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(255, 77, 141, 0.45); }
+@media (hover: hover) {
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(255, 77, 141, 0.45); }
+}
 
 .btn-ghost {
   background: var(--surface);
   border-color: var(--border);
   color: var(--text);
 }
-.btn-ghost:hover { background: var(--surface-strong); transform: translateY(-2px); }
+@media (hover: hover) {
+  .btn-ghost:hover { background: var(--surface-strong); transform: translateY(-2px); }
+}
 
 .btn-lg { padding: var(--sp-4) var(--sp-8); font-size: var(--fs-lg); }
 .btn[disabled] { opacity: 0.55; cursor: not-allowed; transform: none !important; }
@@ -242,8 +292,10 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 }
 /* вторият ринг тръгва на половин цикъл — усеща се като дишане, не като мигане */
 .mic-pulse::after { animation-delay: 1.2s; }
-.btn:hover .mic-pulse::before,
-.btn:hover .mic-pulse::after { animation-play-state: paused; opacity: 0; }
+@media (hover: hover) {
+  .btn:hover .mic-pulse::before,
+  .btn:hover .mic-pulse::after { animation-play-state: paused; opacity: 0; }
+}
 
 /* ---------- Хедър ---------- */
 
@@ -273,7 +325,9 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
    (замерен контраст 1.18:1 върху оранжевото — текстът се четеше едвам) и
    смъкваше размера му от 16px на 15px. Правилото важи за връзки, не за бутони. */
 .main-nav a:not(.btn) { color: var(--muted); font-weight: 600; font-size: var(--fs-md); transition: color var(--dur-fast) var(--ease); }
-.main-nav a:not(.btn):hover { color: var(--text); }
+@media (hover: hover) {
+  .main-nav a:not(.btn):hover { color: var(--text); }
+}
 /* Двусловните етикети („Демо песни“, „Как работи“) се чупеха на два реда,
    щом мястото свърши — вдигаха хедъра вместо да пренесат менюто.
    Прагът е решен на 960px по-долу; това е предпазна мрежа, ако
@@ -340,7 +394,9 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   cursor: pointer;
   transition: transform var(--dur-fast) var(--ease);
 }
-.play-btn:hover { transform: scale(1.07); }
+@media (hover: hover) {
+  .play-btn:hover { transform: scale(1.07); }
+}
 .play-btn svg { width: 18px; height: 18px; }
 
 .progress {
@@ -409,7 +465,9 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   color: var(--muted);
   transition: transform, border-color, background, color var(--dur-fast) var(--ease);
 }
-.style-chip:hover { color: var(--text); border-color: var(--pink); transform: translateY(-2px); }
+@media (hover: hover) {
+  .style-chip:hover { color: var(--text); border-color: var(--pink); transform: translateY(-2px); }
+}
 
 /* ---------- Цени ---------- */
 
@@ -542,7 +600,9 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 
 .footer-grid { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--sp-8); margin-bottom: var(--sp-8); }
 .footer-grid a { display: block; padding: var(--sp-1) 0; }
-.footer-grid a:hover { color: var(--text); }
+@media (hover: hover) {
+  .footer-grid a:hover { color: var(--text); }
+}
 .footer-col h3 { font-size: var(--fs-sm); text-transform: uppercase; letter-spacing: 0.12em; color: var(--text); }
 .footer-bottom { border-top: 1px solid var(--border); padding-top: var(--sp-6); font-size: var(--fs-sm); }
 
@@ -663,7 +723,9 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   text-decoration: underline;
   text-underline-offset: 3px;
 }
-.prefer-write a:hover { color: var(--text); }
+@media (hover: hover) {
+  .prefer-write a:hover { color: var(--text); }
+}
 
 /* Гласово съобщение */
 
@@ -745,7 +807,9 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   transition: transform, border-color, background, color var(--dur-fast) var(--ease);
   user-select: none;
 }
-.chip:hover { border-color: rgba(255, 255, 255, 0.3); color: var(--text); }
+@media (hover: hover) {
+  .chip:hover { border-color: rgba(255, 255, 255, 0.3); color: var(--text); }
+}
 .chip.selected {
   background: var(--grad);
   border-color: transparent;
@@ -927,7 +991,9 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   padding: 0.15rem var(--sp-1);
   flex: none;
 }
-.intro-stop:hover { color: var(--text); }
+@media (hover: hover) {
+  .intro-stop:hover { color: var(--text); }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .intro-eq i { animation: none; }
@@ -947,7 +1013,9 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   border-radius: var(--radius);
   transition: transform var(--dur-base) var(--ease), border-color var(--dur-base) var(--ease);
 }
-.news-card:hover { transform: translateY(-3px); border-color: rgba(255, 255, 255, 0.25); }
+@media (hover: hover) {
+  .news-card:hover { transform: translateY(-3px); border-color: rgba(255, 255, 255, 0.25); }
+}
 .news-card h2 { font-size: var(--fs-xl); margin: var(--sp-1) 0 var(--sp-2); }
 .news-card p { color: var(--muted); font-size: var(--fs-md); margin: 0; }
 .news-date {
@@ -1078,7 +1146,9 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   cursor: pointer;
   transition: border-color var(--dur-base) var(--ease), background var(--dur-base) var(--ease), transform var(--dur-base) var(--ease);
 }
-.track-row:hover { border-color: rgba(255, 255, 255, 0.25); transform: translateY(-1px); }
+@media (hover: hover) {
+  .track-row:hover { border-color: rgba(255, 255, 255, 0.25); transform: translateY(-1px); }
+}
 .track-row.playing { border-color: var(--pink); background: rgba(255, 77, 141, 0.08); }
 .track-row .play-btn { flex: none; }
 .track-thumb { width: 48px; height: 48px; border-radius: 10px; object-fit: cover; flex: none; }
@@ -1094,7 +1164,9 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 }
 
 a.style-chip { text-decoration: none; color: inherit; }
-a.style-chip:hover { border-color: var(--pink); color: #fff; }
+@media (hover: hover) {
+  a.style-chip:hover { border-color: var(--pink); color: #fff; }
+}
 
 .pricing-single { grid-template-columns: minmax(0, 460px); justify-content: center; }
 
@@ -1109,6 +1181,19 @@ a.style-chip:hover { border-color: var(--pink); color: #fff; }
    не разредим същите елементи на десктоп, където мишката е точна.
    Това е разликата между „мобилно, което е проектирано“ и
    „десктоп, който е смачкан“.
+   ============================================================ */
+/* ============================================================
+   Защо всеки :hover в този файл седи в @media (hover: hover)
+   ------------------------------------------------------------
+   На тъч устройство браузърът задържа :hover след тап — картата
+   остава вдигната, чипът остава подчертан, докато не тапнеш другаде.
+   Guard-ът гаси целия клас „залепнали състояния" наведнъж.
+
+   Обвити са НА МЯСТО, не събрани в общ блок накрая: .chip:hover и
+   .chip.selected са с еднаква специфичност (0,2,0), както и
+   .track-row:hover и .track-row.playing. При еднаква специфичност
+   решава редът — местене назад щеше да остави hover да бие
+   „избран" и „свири".
    ============================================================ */
 @media (hover: none) and (pointer: coarse) {
   .footer-grid a,

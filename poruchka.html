@@ -2,7 +2,13 @@
 <html lang="bg">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- resizes-content: при отворена клавиатура layout-ът се свива, вместо да се
+       скролва — фиксираните елементи сядат НАД клавиатурата, не под нея.
+       Безопасно е: в style.css няма нито една vh-базирана височина. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
+  <meta name="theme-color" content="#0b0a1a">
+  <meta name="application-name" content="Песента">
+  <meta name="apple-mobile-web-app-title" content="Песента">
   <title>Поръчай песен по поръчка | Pesenta.bg</title>
   <meta name="description" content="Поръчай персонализирана песен за 5 минути: разкажи историята, избери стилове и език. Плащаш 19,90 € при поръчката, песента е готова до 48 часа.">
   <link rel="canonical" href="https://pesenta.bg/poruchka.html">
@@ -13,7 +19,7 @@
   <meta property="og:title" content="Поръчай песен по поръчка | Pesenta.bg">
   <meta property="og:description" content="Разкажи историята, избери стилове — получи песен до 48 часа. За 19,90 €.">
   <meta property="og:url" content="https://pesenta.bg/poruchka.html">
-  <meta property="og:image" content="https://pesenta.bg/assets/img/og-image.png">
+  <meta property="og:image" content="https://pesenta.bg/assets/img/og-image.jpg">
 
   <!-- Критичните (кирилски) шрифтове тръгват веднага, вместо да чакат CSS-а -->
   <link rel="preload" href="assets/fonts/unbounded-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
@@ -106,7 +112,9 @@
 
     <!-- СТЪПКА 1: Повод и история -->
     <section class="wizard-step current" data-step="1">
-      <h2 class="step-title">За кого е песента?</h2>
+      <!-- tabindex="-1": заглавието трябва да може да приеме фокус програмно
+           при смяна на стъпка, но да не влиза в реда на табулация. -->
+      <h2 class="step-title" tabindex="-1">За кого е песента?</h2>
       <p class="step-sub">Стъпка 1 от 3 — поводът и историята. Попълни каквото ти е удобно.</p>
 
       <div class="field">
@@ -204,7 +212,7 @@
 
     <!-- СТЪПКА 2: Музиката -->
     <section class="wizard-step" data-step="2">
-      <h2 class="step-title">Как да звучи?</h2>
+      <h2 class="step-title" tabindex="-1">Как да звучи?</h2>
       <p class="step-sub">Стъпка 2 от 3 — стилове, настроение, език. Може повече от един стил. Ако не си сигурен — прескочи, ще преценим ние.</p>
 
       <div class="field">
@@ -305,7 +313,7 @@
 
     <!-- СТЪПКА 3: Пакет и контакти -->
     <section class="wizard-step" data-step="3">
-      <h2 class="step-title">Последни щрихи</h2>
+      <h2 class="step-title" tabindex="-1">Последни щрихи</h2>
       <p class="step-sub">Стъпка 3 от 3 — песента е €19,90 и се плаща при поръчката. Веднага след това получаваш фактура и започваме работа.</p>
 
       <div class="toggle-row">
