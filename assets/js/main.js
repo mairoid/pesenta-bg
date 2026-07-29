@@ -2,6 +2,14 @@
 (function () {
   "use strict";
 
+  /* ---------- Plausible: помощник за custom events ----------
+     Само добавя събития успоредно на съществуващото поведение — никога не
+     блокира и не променя нищо, ако скриптът не се е заредил (adblock,
+     бавна мрежа). */
+  function trackPlausible(name, props) {
+    if (window.plausible) window.plausible(name, props ? { props: props } : undefined);
+  }
+
   /* ---------- Мобилна навигация ---------- */
   var navToggle = document.querySelector(".nav-toggle");
   var mainNav = document.querySelector(".main-nav");
@@ -121,6 +129,8 @@
     var bar = wrap.querySelector(".progress");
     var fill = wrap.querySelector(".progress-fill");
     var time = wrap.querySelector(".time");
+    var titleEl = wrap.querySelector(".track-info h3");
+    var trackTitle = titleEl ? titleEl.textContent.trim() : srcUrl.split("/").pop();
 
     function pause() {
       audio.pause();
@@ -134,6 +144,7 @@
         if (window.__pesentaIntroStop) window.__pesentaIntroStop();
         players.forEach(function (p) { if (p.audio !== audio) p.pause(); });
         audio.play();
+        trackPlausible("Demo Play", { track: trackTitle });
         btn.innerHTML = ICON_PAUSE;
         wrap.classList.add("playing");
       } else {
@@ -182,6 +193,35 @@
       audio.currentTime = Math.max(0, Math.min(1, pct)) * audio.duration;
     });
   });
+
+  /* ---------- Plausible: клик на „Поръчай“ бутоните ----------
+     Добавъчни слушатели — не пипат href/click дестинациите, само отчитат
+     паралелно. Всеки елемент, чийто видим текст съдържа „Поръчай“ (навигация,
+     цени, CTA-тата), плюс footer линкът към poruchka.html. */
+  document.querySelectorAll("a, button").forEach(function (el) {
+    if (el.id === "fast-rec") return; /* стейтфул бутон — проследява се отделно по-долу */
+    var label = (el.textContent || "").replace(/\s+/g, " ").trim();
+    if (!/Поръчай/.test(label)) return;
+    el.addEventListener("click", function () {
+      trackPlausible("Order CTA Click", { label: label.slice(0, 60) });
+    });
+  });
+
+  /* Hero бутонът за гласова поръчка е стейтфул (сменя надпис/клас между
+     „Поръчай с глас“ → „Спри записа“ → „Запиши наново“, логиката е в
+     voice-order.js). Слушателят тук е ДОБАВЪЧЕН и НЕ променя нищо в
+     voice-order.js; тъй като main.js се зарежда преди voice-order.js,
+     този клик стига до нас първи, докато класът все още не е сменен —
+     затова classList.contains("recording") надеждно различава „старт на
+     запис“ (истинската CTA стъпка) от „спри записа“/„запиши наново“. */
+  var heroRecBtn = document.getElementById("fast-rec");
+  if (heroRecBtn) {
+    heroRecBtn.addEventListener("click", function () {
+      if (!heroRecBtn.classList.contains("recording")) {
+        trackPlausible("Order CTA Click", { label: "Поръчай с глас (hero запис)" });
+      }
+    });
+  }
 })();
 
 /* ---------- Музикален поздрав: тих припев на началната страница ----------

@@ -2,6 +2,13 @@
 (function () {
   "use strict";
 
+  /* ---------- Plausible: помощник за custom events ----------
+     Само добавя събития успоредно на съществуващото поведение — не блокира
+     и не променя нищо, ако скриптът не се е заредил (adblock, бавна мрежа). */
+  function trackPlausible(name, props) {
+    if (window.plausible) window.plausible(name, props ? { props: props } : undefined);
+  }
+
   /* ============ Конфигурация (редактирай тук) ============ */
 
   /* Един и същ (вече активиран) адрес в два вида ендпойнт:
@@ -606,6 +613,9 @@
       payload["Гласово съобщение"] = fileName + " (прикачен — историята горе е автоматичната транскрипция)";
       rememberOrder(orderNo, PLANS[state.plan].label + (state.express ? " + Експрес" : ""), eur(t.total));
       try { localStorage.removeItem("pesenta_draft"); } catch (e) { /* ок */ }
+      /* нативният POST навигира веднага след submit() — събитието трябва да
+         тръгне ПРЕДИ него, друг момент за него няма */
+      trackPlausible("Order Submitted", { plan: payload["Пакет"], method: "voice-attachment" });
       postWithAttachment(payload, voiceBlob, fileName);
       return;
     }
@@ -626,6 +636,7 @@
         return res.json();
       })
       .then(function () {
+        trackPlausible("Order Submitted", { plan: payload["Пакет"], method: "form" });
         onSuccess(orderNo, t);
       })
       .catch(function () {
