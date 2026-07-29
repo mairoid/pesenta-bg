@@ -132,7 +132,7 @@
       <a href="#ceni">Цени</a>
       <a href="#vaprosi">Въпроси</a>
       <a href="novini/">Новини</a>
-      <a class="btn btn-primary" href="poruchka.html">Поръчай песен</a>
+      <a class="btn btn-primary" href="#voice-card">Поръчай песен</a>
     </nav>
   </div>
 </header>
@@ -146,12 +146,58 @@
         <span class="kicker">Песен по поръчка за всеки повод</span>
         <h1>Твоята история, превърната в <span class="grad-text">песен</span></h1>
         <p class="lead">Разказваш ни за човека и повода. Ние пишем текста и композираме музиката — авторска песен само за него, готова до 48 часа.</p>
-        <div class="hero-ctas">
-          <a class="btn btn-primary btn-lg" href="poruchka.html#glas">
-            <span class="mic mic-pulse"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg></span>
-            Поръчай
-          </a>
-          <a class="btn btn-ghost btn-lg" href="#demo">Чуй примери</a>
+        <!-- Поръчката става тук, на първия екран. Бутонът изглежда като
+             покана, но е самият запис — полетата излизат чак след като
+             човек натисне, за да не посреща началната страница с формуляр. -->
+        <div id="voice-card">
+          <div class="hero-ctas">
+            <button type="button" class="btn btn-primary btn-lg voice-btn" id="fast-rec">
+              <span class="mic mic-pulse"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg></span>
+              <span id="fast-rec-label">Поръчай с глас</span>
+            </button>
+            <a class="btn btn-ghost btn-lg" href="#demo">Чуй примери</a>
+          </div>
+          <p class="voice-status" id="fast-status">Натисни и разкажи за кого е песента, повода и историята ви. До 3 минути — ние пишем останалото.</p>
+          <p class="voice-status" id="voice-fallback" hidden>Този браузър не може да записва глас. <a href="poruchka.html" style="color:var(--orange);text-decoration:underline;">Поръчай през формата →</a></p>
+          <!-- Бутонът е <button>, не връзка: без JavaScript не води доникъде.
+               Затова изходът към формата стои и тук. -->
+          <noscript>
+            <p class="voice-status">Гласовата поръчка иска JavaScript. <a href="poruchka.html" style="color:var(--orange);text-decoration:underline;">Поръчай през формата →</a></p>
+          </noscript>
+
+          <div id="fast-fields" hidden>
+            <div class="voice-play" id="fast-play" hidden>
+              <audio controls id="fast-audio" style="height:40px;max-width:100%;"></audio>
+              <button type="button" class="btn btn-ghost" id="fast-del" style="padding:0.5rem 1rem;font-size:0.85rem;">Изтрий</button>
+            </div>
+
+            <div class="field" id="fast-transcript-wrap" hidden>
+              <label for="fast-transcript">Това чухме — прочети го и го поправи
+                <span class="hint" id="fast-transcript-hint">Особено имената: така, както ги напишеш тук, така ще ги изпее песента. Записът ти пътува заедно с текста, така че нищо не се губи.</span>
+              </label>
+              <textarea id="fast-transcript" placeholder="Текстът се появява тук, докато говориш…"></textarea>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="fast-name">Твоето име *</label>
+                <input type="text" id="fast-name" autocomplete="name" placeholder="Име и фамилия">
+              </div>
+              <div class="field">
+                <label for="fast-email">Имейл *</label>
+                <input type="email" id="fast-email" autocomplete="email" placeholder="ti@primer.bg">
+              </div>
+            </div>
+
+            <label class="consent">
+              <input type="checkbox" id="fast-consent">
+              <span>Запознах се с <a href="usloviya.html" target="_blank" style="color:var(--orange);text-decoration:underline;">Общите условия</a> и <a href="poveritelnost.html" target="_blank" style="color:var(--orange);text-decoration:underline;">Политиката за поверителност</a> и се съгласявам записът и данните ми да бъдат използвани за изработката на песента. Изрично се съгласявам изпълнението да започне веднага след плащането и потвърждавам, че <strong>губя 14-дневното право на отказ</strong> (чл. 57 ЗЗП) — песента се изработва лично за мен по мои указания и плащам предварително, за да започне работата.</span>
+            </label>
+
+            <div class="form-error" id="fast-error" role="alert"></div>
+            <button type="button" class="btn btn-primary btn-lg" id="fast-send" style="width:100%;margin-top:0.8rem;">Изпрати гласовата поръчка</button>
+            <p class="hint" style="margin-top:0.6rem;">Предпочиташ да напишеш? <a href="poruchka.html" style="color:var(--orange);text-decoration:underline;">Формата стъпка по стъпка →</a></p>
+          </div>
         </div>
         <p class="hero-sub">Песен за 19,90 € · Авторски текст и музика · Готова до 48 часа</p>
       </div>
@@ -375,7 +421,7 @@
             <li>Безплатна корекция</li>
             <li>MP3 + текст на имейла ти до 48 часа</li>
           </ul>
-          <a class="btn btn-primary" href="poruchka.html">Поръчай сега</a>
+          <a class="btn btn-primary" href="#voice-card">Поръчай сега</a>
         </div>
       </div>
       <div class="pricing-note reveal">
@@ -474,9 +520,9 @@
         <h2>Подари нещо, което не се забравя</h2>
         <p>Цветята увяхват, ваучерите изтичат. Песента остава — и се пуска на всяко семейно събиране.</p>
         <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
-          <a class="btn btn-primary btn-lg" href="poruchka.html#glas">
+          <a class="btn btn-primary btn-lg" href="#voice-card">
             <span class="mic mic-pulse"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg></span>
-            Поръчай
+            Поръчай с глас
           </a>
           <a class="btn btn-ghost btn-lg" href="poruchka.html">Или с формата</a>
         </div>
@@ -523,5 +569,6 @@
 </footer>
 
 <script src="assets/js/main.js" defer></script>
+<script src="assets/js/voice-order.js" defer></script>
 </body>
 </html>

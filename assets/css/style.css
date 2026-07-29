@@ -748,6 +748,10 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 }
 .voice-row { display: flex; align-items: center; gap: var(--sp-4); flex-wrap: wrap; }
 .voice-btn { padding: var(--sp-3) var(--sp-6); font-size: var(--fs-md); gap: var(--sp-2); }
+/* В hero-а бутонът е едновременно .btn-lg и .voice-btn. .voice-btn стои
+   по-долу във файла и при равна специфичност би смачкал едрия размер —
+   затова го връщаме изрично. */
+.btn-lg.voice-btn { padding: var(--sp-4) var(--sp-8); font-size: var(--fs-lg); }
 /* Записващото състояние е писано за призрачния бутон: тъмен фон, светло
    червено отгоре. Върху .btn-primary обаче същият цвят ляга светло върху
    светъл градиент и надписът изчезва — затова primary получава собствен
