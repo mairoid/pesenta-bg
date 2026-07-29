@@ -157,6 +157,41 @@
     } catch (e) { /* localStorage недостъпен — не е фатално */ }
   }
 
+  /* Hero-гридът е с align-items: center. Щом полетата излязат, лявата
+     колона става двойно по-висока и снимката се пре-центрира — на десктоп
+     слизаше с близо 400 пиксела. Затова я заковаваме точно там, където е
+     била: минава на подравняване отгоре, а разликата ѝ се връща като
+     margin. Измерваме, вместо да гадаем — офсетът зависи от височината на
+     текста, тоест от ширината на екрана. */
+  function pinHeroPhoto() {
+    var photo = document.querySelector(".hero-photo");
+    if (!photo || !photo.offsetParent) return;   /* скрита на телефон */
+    if (photo.dataset.pinned) return;
+    var before = photo.getBoundingClientRect().top;
+    photo.style.alignSelf = "start";
+    var after = photo.getBoundingClientRect().top;
+    photo.style.marginTop = Math.round(before - after) + "px";
+    photo.dataset.pinned = "1";
+  }
+
+  /* Смени ли се ширината, старата стойност вече не важи. Премерваме наново
+     при СКРИТИ полета, за да хванем истинската покойна позиция. */
+  var pinTimer = null;
+  window.addEventListener("resize", function () {
+    var photo = document.querySelector(".hero-photo");
+    if (!photo || !photo.dataset.pinned || !fieldsWrap) return;
+    clearTimeout(pinTimer);
+    pinTimer = setTimeout(function () {
+      var wasHidden = fieldsWrap.hidden;
+      photo.style.alignSelf = "";
+      photo.style.marginTop = "";
+      delete photo.dataset.pinned;
+      fieldsWrap.hidden = true;
+      pinHeroPhoto();
+      fieldsWrap.hidden = wasHidden;
+    }, 150);
+  });
+
   function setStatus(msg, cls) {
     if (!statusEl) return;
     statusEl.textContent = msg;
@@ -203,6 +238,7 @@
 
       /* полетата и текстът излизат заедно със записа: клиентът вижда какво
          сме чули и оправя имената, преди да натисне „Изпрати“ */
+      pinHeroPhoto();
       if (fieldsWrap) fieldsWrap.hidden = false;
       trWrap.hidden = false;
       trBase = trEl.value ? trEl.value.replace(/\s+$/, "") + " " : "";
