@@ -676,9 +676,25 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 }
 .voice-row { display: flex; align-items: center; gap: var(--sp-4); flex-wrap: wrap; }
 .voice-btn { padding: var(--sp-3) var(--sp-6); font-size: var(--fs-md); gap: var(--sp-2); }
+/* Записващото състояние е писано за призрачния бутон: тъмен фон, светло
+   червено отгоре. Върху .btn-primary обаче същият цвят ляга светло върху
+   светъл градиент и надписът изчезва — затова primary получава собствен
+   вид: гаси градиента за тъмна червена повърхност. Така и състоянието се
+   различава от поканата „Разкажи с глас“, вместо да я повтаря. */
 .voice-btn.recording {
   border-color: #ff5b5b;
   color: #ff8080;
+}
+.btn-primary.voice-btn.recording {
+  background: rgba(255, 91, 91, 0.16);
+  color: #ffc2c2;
+  box-shadow: none;
+}
+@media (hover: hover) {
+  .btn-primary.voice-btn.recording:hover {
+    background: rgba(255, 91, 91, 0.24);
+    box-shadow: none;
+  }
 }
 .voice-btn.recording svg { animation: voicepulse 1.2s ease-in-out infinite; }
 @keyframes voicepulse {
