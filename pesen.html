@@ -150,6 +150,33 @@
 
     .reveal-audio-note { color: var(--muted); font-size: var(--fs-sm); }
 
+    /* QR кодът е нарочно чисто черно на бяло — контрастът е това, което
+       камерата на телефона реално разчита. „Елегантно“ идва от РАМКАТА
+       (градиентен бордер + сянка в брандовите цветове), не от оцветяване
+       на самите модули — цветен/нискоконтрастен QR е по-труден за сканиране. */
+    .reveal-qr {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--sp-3);
+      margin: 0 auto var(--sp-8);
+      padding: var(--sp-4);
+      background-image: linear-gradient(#fff, #fff), var(--grad);
+      background-origin: border-box;
+      background-clip: padding-box, border-box;
+      border: 3px solid transparent;
+      border-radius: var(--radius);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.3);
+    }
+    .reveal-qr svg { width: 132px; height: 132px; display: block; }
+    .reveal-qr span {
+      font-size: var(--fs-xs);
+      color: #56506e;
+      text-align: center;
+      max-width: 170px;
+      line-height: 1.4;
+    }
+
     .reveal-brand {
       color: var(--muted);
       font-size: var(--fs-sm);
@@ -213,6 +240,16 @@
         </button>
       </div>
 
+      <!-- QR код към същата страница — генериран клиентски (assets/js/qrcode.js),
+           не през външна услуга: линкът носи име и лично посвещение, не бива
+           да пътува към чужд сървър само за да се направи картинка.
+           Бъдещо разширение: втори линк/QR и към YouTube клипа на песента,
+           засега само този — виж коментара в скрипта долу. -->
+      <div class="reveal-qr" id="reveal-qr" hidden>
+        <div id="reveal-qr-code"></div>
+        <span>Сканирай, за да отвориш пак тази песен</span>
+      </div>
+
       <p class="reveal-brand">Песен, създадена специално за теб от <a href="index.html">pesenta.bg</a></p>
     </div>
 
@@ -236,6 +273,9 @@
   </div>
 </footer>
 
+<!-- Vendored: kazuhikoarase/qrcode-generator, MIT license — вижте лиценза в
+     самия файл. Чист vanilla JS, без зависимости, генерира QR клиентски. -->
+<script src="assets/js/qrcode.js"></script>
 <script>
 (function () {
   "use strict";
@@ -370,6 +410,28 @@
     });
   }
   /* нито едното — бутонът остава hidden по подразбиране */
+
+  /* ---------- QR код ----------
+     Кодира текущия URL (със същите ?ime=&ot=&text=&audio=) — сканирането
+     отваря пак тази страница. typeNumber=0 → библиотеката сама избира
+     най-малкия размер, който побира данните. Ниво 'L' нарочно: това е
+     дигитален екранен код, не отпечатан и подложен на износване — не се
+     нуждае от допълнителен резерв срещу повреда, а по-ниското ниво пази
+     решетката по-семпла (по-лесна за сканиране на малък дисплей) при
+     дълго посвещение. Ако получателят промени/скъси текста в бъдеще,
+     генерирай нов линк — QR-ът винаги отразява текущия URL при зареждане.
+     Бъдещо разширение (не сега): втори QR/бутон към YouTube клипа. */
+  try {
+    var qr = qrcode(0, "L");
+    qr.addData(shareUrl);
+    qr.make();
+    document.getElementById("reveal-qr-code").innerHTML =
+      qr.createSvgTag({ cellSize: 4, margin: 12, scalable: true, alt: "QR код към тази страница", title: "Сканирай, за да отвориш тази песен" });
+    document.getElementById("reveal-qr").hidden = false;
+  } catch (e) {
+    /* URL-ът се оказа твърде дълъг за QR (изключително дълго посвещение) —
+       страницата продължава да работи нормално, просто без QR блока. */
+  }
 })();
 </script>
 <!-- Плаващ бутон за връзка: Viber на мобилно (+359899456326 — ПЛЕЙСХОЛЪР номер, смени с реалния), имейл при десктоп -->
