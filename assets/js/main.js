@@ -194,6 +194,40 @@
     });
   });
 
+  /* ---------- Демо: филтър табове по категория ----------
+     Не пипа плейър логиката отгоре — само показва/скрива готови .track-row
+     елементи по вече зададения им data-category. Скриването е плавно:
+     .track-hide пуска CSS прехода (max-height/padding/margin → 0, свива
+     кутията реално, не само fade), .track-gone (display:none) идва чак
+     след него — така остатъчните карти се "вдигат" на мястото ѝ.
+     Нарочно НЕ ползваме елемент.hidden: .track-row си има собствен
+     display:flex (по-специфично от [hidden] в user-agent таблицата, затова
+     hidden не го крие) — вместо това display:none идва през собствен клас. */
+  var filterBar = document.getElementById("demo-filters");
+  if (filterBar) {
+    var filterChips = filterBar.querySelectorAll(".chip");
+    var trackRows = document.querySelectorAll(".tracks-list .track-row");
+    filterBar.addEventListener("click", function (e) {
+      var chip = e.target.closest(".chip");
+      if (!chip) return;
+      filterChips.forEach(function (c) { c.classList.remove("selected"); });
+      chip.classList.add("selected");
+      var filter = chip.getAttribute("data-filter");
+      trackRows.forEach(function (row) {
+        var cats = (row.getAttribute("data-category") || "").split(" ");
+        var show = filter === "all" || cats.indexOf(filter) > -1;
+        if (show) {
+          row.classList.remove("track-gone");
+          void row.offsetHeight; /* форсира reflow — без него преходът няма от какво "свито" състояние да тръгне */
+          row.classList.remove("track-hide");
+        } else if (!row.classList.contains("track-hide")) {
+          row.classList.add("track-hide");
+          setTimeout(function () { row.classList.add("track-gone"); }, 240);
+        }
+      });
+    });
+  }
+
   /* ---------- Plausible: клик на „Поръчай“ бутоните ----------
      Добавъчни слушатели — не пипат href/click дестинациите, само отчитат
      паралелно. Всеки елемент, чийто видим текст съдържа „Поръчай“ (навигация,

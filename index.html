@@ -233,8 +233,14 @@
         <h2>Песни, които вече зарадваха някого</h2>
         <p>Всяка от тези песни е правена за истински човек — приятел, брат, колега. Докосни песен, за да я чуеш.</p>
       </div>
+      <div class="chips" id="demo-filters" role="group" aria-label="Филтър на демо песните">
+        <span class="chip selected" data-filter="all">Всички</span>
+        <span class="chip" data-filter="za-podarak">За подарък</span>
+        <span class="chip" data-filter="parti-shegi">Партита и шеги</span>
+        <span class="chip chip--muted" data-filter="18-plus">18+</span>
+      </div>
       <div class="tracks-list">
-        <div class="track-row player reveal" data-src="assets/audio/za-teb-brate-vladi.mp3" role="button" tabindex="0" aria-label="Пусни „За теб, брате Влади“">
+        <div class="track-row player reveal" data-category="za-podarak" data-src="assets/audio/za-teb-brate-vladi.mp3" role="button" tabindex="0" aria-label="Пусни „За теб, брате Влади“">
           <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
           <img class="track-thumb" src="assets/img/cover-vladi.svg" alt="" loading="lazy" width="48" height="48">
           <div class="track-info">
@@ -244,7 +250,7 @@
           <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
           <span class="time">4:27</span>
         </div>
-        <div class="track-row player reveal" data-src="assets/audio/habibi-rusi.mp3" role="button" tabindex="0" aria-label="Пусни „Habibi Rusi“">
+        <div class="track-row player reveal" data-category="parti-shegi" data-src="assets/audio/habibi-rusi.mp3" role="button" tabindex="0" aria-label="Пусни „Habibi Rusi“">
           <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
           <img class="track-thumb" src="assets/img/cover-habibi.svg" alt="" loading="lazy" width="48" height="48">
           <div class="track-info">
@@ -254,7 +260,7 @@
           <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
           <span class="time">2:01</span>
         </div>
-        <div class="track-row player reveal" data-src="assets/audio/rosen-abi.mp3" role="button" tabindex="0" aria-label="Пусни „Rosen Abi“">
+        <div class="track-row player reveal" data-category="za-podarak" data-src="assets/audio/rosen-abi.mp3" role="button" tabindex="0" aria-label="Пусни „Rosen Abi“">
           <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
           <img class="track-thumb" src="assets/img/cover-rosen-abi.svg" alt="" loading="lazy" width="48" height="48">
           <div class="track-info">
@@ -264,7 +270,7 @@
           <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
           <span class="time">3:18</span>
         </div>
-        <div class="track-row player reveal" data-src="assets/audio/rocco-di-catania.mp3" role="button" tabindex="0" aria-label="Пусни „Rocco di Catania“">
+        <div class="track-row player reveal" data-category="za-podarak" data-src="assets/audio/rocco-di-catania.mp3" role="button" tabindex="0" aria-label="Пусни „Rocco di Catania“">
           <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
           <img class="track-thumb" src="assets/img/cover-rocco.svg" alt="" loading="lazy" width="48" height="48">
           <div class="track-info">
@@ -274,7 +280,7 @@
           <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
           <span class="time">3:34</span>
         </div>
-        <div class="track-row player reveal" data-src="assets/audio/napipay-go-vladi.mp3" role="button" tabindex="0" aria-label="Пусни „Напипай го, Влади“ (18+)">
+        <div class="track-row player reveal" data-category="parti-shegi 18-plus" data-src="assets/audio/napipay-go-vladi.mp3" role="button" tabindex="0" aria-label="Пусни „Напипай го, Влади“ (18+)">
           <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
           <img class="track-thumb" src="assets/img/cover-napipay.svg" alt="" loading="lazy" width="48" height="48">
           <div class="track-info">
@@ -284,7 +290,7 @@
           <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
           <span class="time">3:27</span>
         </div>
-        <div class="track-row player reveal" data-src="assets/audio/za-teb-brate-tutso.mp3" role="button" tabindex="0" aria-label="Пусни „За теб, брате Туцо“">
+        <div class="track-row player reveal" data-category="za-podarak" data-src="assets/audio/za-teb-brate-tutso.mp3" role="button" tabindex="0" aria-label="Пусни „За теб, брате Туцо“">
           <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
           <img class="track-thumb" src="assets/img/cover-tutso.svg" alt="" loading="lazy" width="48" height="48">
           <div class="track-info">
@@ -294,7 +300,7 @@
           <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
           <span class="time">5:06</span>
         </div>
-        <div class="track-row player reveal" data-src="assets/audio/veche-nyama-koy.mp3" role="button" tabindex="0" aria-label="Пусни „Вече няма кой…“">
+        <div class="track-row player reveal" data-category="parti-shegi" data-src="assets/audio/veche-nyama-koy.mp3" role="button" tabindex="0" aria-label="Пусни „Вече няма кой…“">
           <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
           <img class="track-thumb" src="assets/img/cover-veche-nyama.svg" alt="" loading="lazy" width="48" height="48">
           <div class="track-info">
@@ -304,7 +310,7 @@
           <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
           <span class="time">3:59</span>
         </div>
-        <div class="track-row player reveal" data-src="assets/audio/api.mp3" role="button" tabindex="0" aria-label="Пусни „АПИ“ (18+)">
+        <div class="track-row player reveal" data-category="parti-shegi 18-plus" data-src="assets/audio/api.mp3" role="button" tabindex="0" aria-label="Пусни „АПИ“ (18+)">
           <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
           <img class="track-thumb" src="assets/img/cover-api.svg" alt="" loading="lazy" width="48" height="48">
           <div class="track-info">
