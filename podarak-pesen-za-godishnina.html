@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <!-- resizes-content: при отворена клавиатура layout-ът се свива, вместо да се
+       скролва — фиксираните елементи сядат НАД клавиатурата, не под нея.
+       Безопасно е: в style.css няма нито една vh-базирана височина. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
+  <meta name="theme-color" content="#0b0a1a">
+  <meta name="application-name" content="Песента">
+  <meta name="apple-mobile-web-app-title" content="Песента">
+  <title>Подарък за годишнина: песен по поръчка | 19,90 € | Pesenta.bg</title>
+  <meta name="description" content="Търсиш подарък за годишнина от връзка или брак? Персонализирана песен по вашата история — 19,90 €, готова до 48 часа.">
+  <link rel="canonical" href="https://pesenta.bg/podarak-pesen-za-godishnina.html">
+  <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="bg_BG">
+  <meta property="og:site_name" content="Песента">
+  <meta property="og:title" content="Подарък за годишнина: песен по поръчка | Pesenta.bg">
+  <meta property="og:description" content="Подарък за годишнина — авторска песен по вашата история заедно, 19,90 €, готова до 48 часа.">
+  <meta property="og:url" content="https://pesenta.bg/podarak-pesen-za-godishnina.html">
+  <meta property="og:image" content="https://pesenta.bg/assets/img/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:type" content="image/jpeg">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Подарък за годишнина: песен по поръчка | Pesenta.bg">
+  <meta name="twitter:description" content="Годините заедно, превърнати в подарък. За 19,90 €, готова до 48 часа.">
+  <meta name="twitter:image" content="https://pesenta.bg/assets/img/og-image.jpg">
+
+  <!-- Шрифтове -->
+  <!-- Критичните (кирилски) шрифтове тръгват веднага, вместо да чакат CSS-а -->
+  <link rel="preload" href="assets/fonts/unbounded-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <!-- Латинските подмножества се теглят на ВСЯКА страница: запетаята, точката,
+       тирето, кавичките и цифрите живеят в тях, не в кирилските. Без preload
+       браузърът ги открива чак след като разбере CSS-а — цял round-trip по-късно,
+       заради което пунктуацията в заглавията за миг е с резервния шрифт. -->
+  <link rel="preload" href="assets/fonts/unbounded-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/fonts.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+
+  <!-- Structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "serviceType": "Подарък за годишнина — песен по поръчка",
+    "name": "Подарък за годишнина: песен по поръчка",
+    "description": "Подарък за годишнина от връзка или брак — персонализирана песен по вашата обща история, готова до 48 часа.",
+    "provider": {
+      "@type": "Organization",
+      "name": "Песента",
+      "url": "https://pesenta.bg/",
+      "email": "sales@pesenta.bg"
+    },
+    "areaServed": "BG",
+    "audience": {
+      "@type": "Audience",
+      "audienceType": "Двойки, отбелязващи годишнина"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "19.90",
+      "priceCurrency": "EUR",
+      "url": "https://pesenta.bg/poruchka.html?povod=godishnina",
+      "availability": "https://schema.org/InStock"
+    }
+  }
+  </script>
+  <!-- Plausible analytics — без бисквитки -->
+  <script defer data-domain="pesenta.bg" src="https://plausible.io/js/script.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Към съдържанието</a>
+
+<header class="site-header">
+  <div class="container header-in">
+    <a class="logo" href="index.html" aria-label="Песента — начало">
+      <img src="assets/img/logo.svg" alt="Песента — песен по поръчка" width="190" height="44">
+    </a>
+    <nav class="main-nav open" aria-label="Основна навигация" style="display:flex;position:static;padding:0;background:none;border:none;box-shadow:none;">
+      <a href="index.html">Начало</a>
+      <a class="btn btn-primary" href="poruchka.html?povod=godishnina">Поръчай песен</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <article class="article" style="padding-bottom:0;">
+    <span class="kicker">Годините, събрани в едно парче</span>
+    <h1>Подарък за <span class="grad-text">годишнина</span>: песен по поръчка</h1>
+
+    <p>Пета, десета, двайсета — всяка годишнина е доказателство, че сте избрали правилния човек отново и отново. Букет цветя увяхва за седмица. Песен, писана за вашата връзка, звучи еднакво силно и на следващата годишнина, и на по-следващата.</p>
+
+    <p>Разказваш ни какво сте преживели заедно — трудното, смешното, момента, в който си разбрал/а, че е тя/той завинаги. От тези спомени пишем текст, който е ваша лична времева капсула — не общи думи за любов, а вашата конкретна история.</p>
+
+    <p>Може да е балада за тих домашен момент, може да е нещо по-игриво, ако връзката ви е такава — стилът, темпото и езикът са изцяло по ваш избор, включително ако искате да звучи като песента, на която сте танцували за първи път.</p>
+
+    <p>Песента пристига до 48 часа — идеално за самата дата, за вечеря по случай годишнината или като изненада на семейно събиране, което събира близките ви.</p>
+
+    <div class="article-cta">
+      <p><strong>Годишнините се броят с числа. Тази песен помни защо си струваше всяка от тях.</strong></p>
+      <a class="btn btn-primary" href="poruchka.html?povod=godishnina">Поръчай песен за годишнина — 19,90 €</a>
+    </div>
+  </article>
+
+  <!-- ДЕМО ПЕСНИ -->
+  <section class="section" id="demo">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="kicker">Чуй сам</span>
+        <h2>Песни, писани, за да останат</h2>
+        <p>Всяка от тези песни е направена за конкретен човек — точно каквато ще е и вашата, писана за годините, които вече сте изживели заедно.</p>
+      </div>
+      <div class="tracks-list">
+        <div class="track-row player reveal" data-src="assets/audio/za-teb-brate-vladi.mp3" role="button" tabindex="0" aria-label="Пусни „За теб, брате Влади“">
+          <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+          <img class="track-thumb" src="assets/img/cover-vladi.svg" alt="" loading="lazy" width="48" height="48">
+          <div class="track-info">
+            <h3>За теб, брате Влади</h3>
+            <span>За приятел · песен-послание</span>
+          </div>
+          <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
+          <span class="time">4:27</span>
+        </div>
+        <div class="track-row player reveal" data-src="assets/audio/rosen-abi.mp3" role="button" tabindex="0" aria-label="Пусни „Rosen Abi“">
+          <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+          <img class="track-thumb" src="assets/img/cover-rosen-abi.svg" alt="" loading="lazy" width="48" height="48">
+          <div class="track-info">
+            <h3>Rosen Abi</h3>
+            <span>Турски вайб · песен за приятел</span>
+          </div>
+          <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
+          <span class="time">3:18</span>
+        </div>
+        <div class="track-row player reveal" data-src="assets/audio/rocco-di-catania.mp3" role="button" tabindex="0" aria-label="Пусни „Rocco di Catania“">
+          <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+          <img class="track-thumb" src="assets/img/cover-rocco.svg" alt="" loading="lazy" width="48" height="48">
+          <div class="track-info">
+            <h3>Rocco di Catania</h3>
+            <span>Италиански вайб · серенада с усмивка</span>
+          </div>
+          <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
+          <span class="time">3:34</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="vaprosi">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="kicker">Питай смело</span>
+        <h2>Често задавани въпроси</h2>
+      </div>
+      <div class="faq-list reveal">
+        <details class="faq-item">
+          <summary>Можем ли да поръчаме песен и за приятели, не само за партньор?</summary>
+          <div class="faq-body">Да — годишнина може да е и на приятелство, не само на връзка или брак. Кажи ни за кого точно е песента и историята ви заедно, а ние оформяме текста според случая.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Може ли песента да съдържа конкретна дата или число години заедно?</summary>
+          <div class="faq-body">Разбира се — датата на запознанството, броят години, дори конкретен спомен от всяка година, ако искаш нещо по-разгърнато. Всичко, което напишеш в историята, може да влезе в текста.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Какво стане, ако искаме нещо по-различно от типичната любовна балада?</summary>
+          <div class="faq-body">Избираш стила — рок, поп-фолк, акустика, дори нещо игриво и хумористично, ако това сте вие като двойка. Балада е само една от 19-те опции, не задължителна.</div>
+        </details>
+        <details class="faq-item">
+          <summary>По-добър подарък ли е песента от бижу или цветя за годишнина?</summary>
+          <div class="faq-body">Различен е, не задължително по-добър — бижуто трае, цветята радват за седмица, а песента разказва защо годините са си стрували. Много клиенти комбинират песента с друг физически подарък.</div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-band reveal">
+        <h2>Отпразнувайте годините с песен, писана само за вас</h2>
+        <p>Вечерята свършва до полунощ. Песента остава на всяка следваща годишнина.</p>
+        <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+          <a class="btn btn-primary btn-lg" href="poruchka.html?povod=godishnina">Поръчай сега — 19,90 €</a>
+          <a class="btn btn-ghost btn-lg" href="poruchka.html">Всички поводи</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-bottom" style="border:none;">
+    © <span id="year">2026</span> Pesenta.bg — „БАУФИЗИК“ ЕООД · <a href="usloviya.html">Общи условия</a> · <a href="poveritelnost.html">Поверителност</a>
+  </div>
+</footer>
+
+<script src="assets/js/main.js" defer></script>
+<!-- Плаващ бутон за връзка: Viber на мобилно (+359899456326 — ПЛЕЙСХОЛЪР номер, смени с реалния), имейл при десктоп -->
+<a class="float-contact float-contact--mobile" href="viber://chat?number=+359899456326" aria-label="Пиши ни във Viber">
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+</a>
+<a class="float-contact float-contact--desktop" href="mailto:sales@pesenta.bg" aria-label="Пиши ни на имейл">
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
+</a>
+</body>
+</html>
