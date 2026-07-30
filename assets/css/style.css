@@ -616,6 +616,60 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 .footer-col h3 { font-size: var(--fs-sm); text-transform: uppercase; letter-spacing: 0.12em; color: var(--text); }
 .footer-bottom { border-top: 1px solid var(--border); padding-top: var(--sp-6); font-size: var(--fs-sm); }
 
+/* ---------- Плаващ бутон за връзка (Viber/имейл) ----------
+   Два отделни <a>, показва се само единият — избор чрез CSS media query по
+   pointer/hover, без JS. bottom:96px, не 20px, защото на index.html точно
+   на 20px седи .intro-pill (z-index:80) — на всички други страници просто
+   се вижда малко над долния ръб, нормален вид. */
+.float-contact {
+  position: fixed;
+  bottom: 96px;
+  right: 20px;
+  z-index: 85;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--grad);
+  color: var(--ink);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 30px rgba(255, 77, 141, 0.4);
+  transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+}
+.float-contact svg { width: 26px; height: 26px; }
+@media (hover: hover) {
+  .float-contact:hover { transform: scale(1.08); box-shadow: 0 14px 36px rgba(255, 77, 141, 0.5); }
+}
+@media (hover: none) and (pointer: coarse) { .float-contact--mobile { display: flex; } }
+@media (hover: hover) and (pointer: fine) { .float-contact--desktop { display: flex; } }
+@media (max-width: 640px) {
+  .float-contact { bottom: 84px; width: 50px; height: 50px; }
+  .float-contact svg { width: 22px; height: 22px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .float-contact { transition: none; }
+}
+
+/* ---------- „Кой пише песните“ (секция Зад кулисите) ---------- */
+.team-block {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  margin-top: var(--sp-10);
+  padding: var(--sp-6);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.team-photo { flex: none; width: 84px; height: 84px; border-radius: 50%; background: var(--grad); display: grid; place-items: center; color: var(--ink); }
+.team-photo svg { width: 40px; height: 40px; }
+.team-text h3 { margin: 0 0 var(--sp-2); }
+.team-text p { margin: 0; color: var(--muted); }
+@media (max-width: 640px) {
+  .team-block { flex-direction: column; text-align: center; }
+}
+
 /* Икони към социалните мрежи — кръгли бутони, същият език като .play-btn */
 .footer-social { display: flex; gap: var(--sp-3); margin-top: var(--sp-4); }
 .footer-social a {
