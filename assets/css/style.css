@@ -369,6 +369,18 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 
 .hero p.lead { font-size: var(--fs-xl); color: var(--muted); max-width: 34rem; }
 
+/* Свива се, щом клиентът тръгне да поръчва (text-order.js мери реалната
+   височина и слага max-height в inline стил, преди да добави класа —
+   виж бележката за forced reflow там, същият проблем като track-hide). */
+#hero-intro {
+  overflow: hidden;
+  transition: max-height var(--dur-slow) var(--ease), opacity var(--dur-slow) var(--ease), margin-bottom var(--dur-slow) var(--ease);
+}
+#hero-intro.collapsed { max-height: 0 !important; opacity: 0; margin-bottom: 0; }
+@media (prefers-reduced-motion: reduce) {
+  #hero-intro { transition: none; }
+}
+
 .hero-ctas { display: flex; flex-wrap: wrap; gap: var(--sp-4); margin: var(--sp-8) 0 var(--sp-8); }
 
 .hero-badges { display: flex; flex-wrap: wrap; gap: var(--sp-2); }

@@ -151,9 +151,13 @@
   <section class="hero">
     <div class="container hero-grid">
       <div>
-        <span class="kicker">Песен по поръчка за всеки повод</span>
-        <h1>Твоята история, превърната в <span class="grad-text">песен</span></h1>
-        <p class="lead">Разказваш ни за човека и повода. Ние пишем текста и композираме музиката — авторска песен само за него, готова до 48 часа.</p>
+        <!-- Свива се при клик на "Поръчай с глас"/"Поръчай бързо" (text-order.js) —
+             освобождава място за формата, вместо тя да пада под сгъвката. -->
+        <div id="hero-intro">
+          <span class="kicker">Песен по поръчка за всеки повод</span>
+          <h1>Твоята история, превърната в <span class="grad-text">песен</span></h1>
+          <p class="lead">Разказваш ни за човека и повода. Ние пишем текста и композираме музиката — авторска песен само за него, готова до 48 часа.</p>
+        </div>
         <!-- Поръчката става тук, на първия екран. Бутонът изглежда като
              покана, но е самият запис — полетата излизат чак след като
              човек натисне, за да не посреща началната страница с формуляр. -->
@@ -162,6 +166,10 @@
             <button type="button" class="btn btn-primary btn-lg voice-btn" id="fast-rec">
               <span class="mic mic-pulse"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg></span>
               <span id="fast-rec-label">Поръчай с глас</span>
+            </button>
+            <button type="button" class="btn btn-primary btn-lg" id="fast-text">
+              <span class="mic"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 17.5V20h2.5L17 9.5 14.5 7 4 17.5zm14.7-11.2a1 1 0 0 0 0-1.4l-1.6-1.6a1 1 0 0 0-1.4 0L14 5l3 3 1.7-1.7z"/></svg></span>
+              Поръчай бързо
             </button>
             <a class="btn btn-ghost btn-lg" href="#demo">Чуй примери</a>
           </div>
@@ -205,6 +213,105 @@
             <div class="form-error" id="fast-error" role="alert"></div>
             <button type="button" class="btn btn-primary btn-lg" id="fast-send" style="width:100%;margin-top:0.8rem;">Изпрати гласовата поръчка</button>
             <p class="hint" style="margin-top:0.6rem;">Предпочиташ да напишеш? <a href="poruchka.html" style="color:var(--orange);text-decoration:underline;">Формата стъпка по стъпка →</a></p>
+          </div>
+
+          <!-- Бърза текстова поръчка — по аналогия на гласовата: излиза на същия
+               екран, без прехвърляне към poruchka.html. Виж text-order.js. -->
+          <div id="text-fields" hidden>
+            <div class="field">
+              <label>Повод <span class="hint">По желание — избери или просто разкажи по-долу</span></label>
+              <div class="chips" id="text-occasion-chips" data-single>
+                <span class="chip" data-value="Рожден ден">Рожден ден</span>
+                <span class="chip" data-value="Сватба">Сватба</span>
+                <span class="chip" data-value="Ергенско / Моминско">Ергенско / Моминско</span>
+                <span class="chip" data-value="Годишнина">Годишнина</span>
+                <span class="chip" data-value="Бебе / Кръщене">Бебе / Кръщене</span>
+                <span class="chip" data-value="Юбилей">Юбилей</span>
+                <span class="chip" data-value="Фирмено събитие">Фирмено събитие</span>
+                <span class="chip" data-value="Шега / Изненада">Шега / Изненада</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Стил <span class="hint">По желание, може повече от един</span></label>
+              <div class="chips" id="text-style-chips">
+                <span class="chip" data-value="Поп">Поп</span>
+                <span class="chip" data-value="Балада">Балада</span>
+                <span class="chip" data-value="Поп-фолк / Чалга">Поп-фолк / Чалга</span>
+                <span class="chip" data-value="Кючек">Кючек</span>
+                <span class="chip" data-value="Рап / Хип-хоп">Рап / Хип-хоп</span>
+                <span class="chip" data-value="Народна музика">Народна музика</span>
+                <span class="chip" data-value="Диско / Ретро">Диско / Ретро</span>
+                <span class="chip" data-value="Акустична китара">Акустична китара</span>
+              </div>
+              <details class="more-fields" style="margin-top:0.6rem;">
+                <summary>Покажи още стилове <span class="hint">(19 общо)</span></summary>
+                <div class="more-fields-body">
+                  <div class="chips" id="text-style-chips-more">
+                    <span class="chip" data-value="Рок">Рок</span>
+                    <span class="chip" data-value="EDM / Денс">EDM / Денс</span>
+                    <span class="chip" data-value="R&amp;B / Соул">R&amp;B / Соул</span>
+                    <span class="chip" data-value="Джаз / Суинг">Джаз / Суинг</span>
+                    <span class="chip" data-value="Кънтри">Кънтри</span>
+                    <span class="chip" data-value="Латино / Регетон">Латино / Регетон</span>
+                    <span class="chip" data-value="Ориенталски">Ориенталски</span>
+                    <span class="chip" data-value="Метъл">Метъл</span>
+                    <span class="chip" data-value="Детска песен">Детска песен</span>
+                    <span class="chip" data-value="Естрада / Шансон">Естрада / Шансон</span>
+                    <span class="chip" data-value="Кино / Епично">Кино / Епично</span>
+                  </div>
+                </div>
+              </details>
+            </div>
+
+            <div class="field">
+              <label for="text-language">Език на песента</label>
+              <select id="text-language" name="text-language">
+                <option>Български</option>
+                <option>Английски</option>
+                <option>Немски</option>
+                <option>Френски</option>
+                <option>Италиански</option>
+                <option>Испански</option>
+                <option>Гръцки</option>
+                <option>Сръбски</option>
+                <option>Македонски</option>
+                <option>Румънски</option>
+                <option>Турски</option>
+                <option>Руски</option>
+                <option>Украински</option>
+                <option>Арабски</option>
+                <option>Смесен (комбинация от езици)</option>
+                <option>Друг (уточни в разказа)</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="text-story">Разкажи ни накратко
+                <span class="hint">За кого е песента, поводът, историята и детайлите. Колкото повече, толкова по-точна песента.</span>
+              </label>
+              <textarea id="text-story" placeholder="напр. За колегата ми Данчо — има 40-ти рожден ден следващата събота, обича риболова…"></textarea>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="text-name">Твоето име *</label>
+                <input type="text" id="text-name" autocomplete="name" placeholder="Име и фамилия">
+              </div>
+              <div class="field">
+                <label for="text-email">Имейл *</label>
+                <input type="email" id="text-email" autocomplete="email" placeholder="ti@primer.bg">
+              </div>
+            </div>
+
+            <label class="consent">
+              <input type="checkbox" id="text-consent">
+              <span>Запознах се с <a href="usloviya.html" target="_blank" style="color:var(--orange);text-decoration:underline;">Общите условия</a> и <a href="poveritelnost.html" target="_blank" style="color:var(--orange);text-decoration:underline;">Политиката за поверителност</a> и се съгласявам данните ми да бъдат използвани за изработката на песента. Изрично се съгласявам изпълнението да започне веднага след плащането и потвърждавам, че <strong>губя 14-дневното право на отказ</strong> (чл. 57 ЗЗП) — песента се изработва лично за мен по мои указания и плащам предварително, за да започне работата.</span>
+            </label>
+
+            <div class="form-error" id="text-error" role="alert"></div>
+            <button type="button" class="btn btn-primary btn-lg" id="text-send" style="width:100%;margin-top:0.8rem;">Изпрати бързата поръчка</button>
+            <p class="hint" style="margin-top:0.6rem;">Искаш избор на стил, повод или експресна доставка? <a href="poruchka.html" style="color:var(--orange);text-decoration:underline;">Пълната форма →</a></p>
           </div>
         </div>
         <p class="hero-sub">Песен за 19,90 € · Авторски текст и музика · Готова до 48 часа</p>
@@ -673,6 +780,7 @@
 
 <script src="assets/js/main.js" defer></script>
 <script src="assets/js/voice-order.js" defer></script>
+<script src="assets/js/text-order.js" defer></script>
 <!-- Плаващ бутон за връзка: Viber на мобилно (+359899456326 — ПЛЕЙСХОЛЪР номер, смени с реалния), имейл при десктоп -->
 <a class="float-contact float-contact--mobile" href="viber://chat?number=+359899456326" aria-label="Пиши ни във Viber">
   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
