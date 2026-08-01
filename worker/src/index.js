@@ -13,6 +13,11 @@
    Тайните се задават с `wrangler secret put`, никога в кода — виж README.md.
    ───────────────────────────────────────────────────────────────────── */
 
+/* .cjs, а не .js: библиотеката е UMD/CommonJS, а package.json е с
+   "type": "module". Без разширението Node и esbuild я четат като ESM и
+   не намират default export. Съдържанието ѝ не е пипано. */
+import qrcode from "./qrcode.cjs";
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -91,7 +96,8 @@ async function recordSale(env, event) {
   const totalSt = eurToSt(s.amount_total, rate);
   const discountSt = Math.max(0, subtotalSt - totalSt);
 
-  const today = isoDate(new Date());
+  const now = sofiaParts(new Date());
+  const today = now.date;
   const orderNo = s.client_reference_id || ("STRIPE-" + s.id.slice(-12));
 
   /* Експресната поръчка е вторият Payment Link (29,80 € вместо 19,90 €).
@@ -103,16 +109,20 @@ async function recordSale(env, event) {
   const docN = await nextDocNumber(env);
 
   await env.DB.prepare(
-    `INSERT INTO sales (doc_n, doc_date, order_no, order_date, customer_email,
-       customer_name, art_name, art_quant, art_price_st, vat_rate, vat_st,
-       discount_st, total_st, total_eur_c, paym, trans_n, proc_id,
-       stripe_event_key, created_at)
-     VALUES (?,?,?,?,?,?,?,1,?,0,0,?,?,?,4,?,?,?,?)`
+    `INSERT INTO sales (doc_n, doc_date, doc_time, order_no, order_date,
+       customer_email, customer_name, art_name, art_quant, art_price_st,
+       vat_rate, vat_st, discount_st, total_st,
+       subtotal_eur_c, discount_eur_c, total_eur_c,
+       paym, trans_n, proc_id, stripe_event_key, created_at)
+     VALUES (?,?,?,?,?,?,?,?,1,?,0,0,?,?,?,?,?,4,?,?,?,?)`
   ).bind(
-    docN, today, orderNo, today,
+    docN, today, now.time, orderNo, today,
     (s.customer_details && s.customer_details.email) || null,
     (s.customer_details && s.customer_details.name) || null,
-    artName, subtotalSt, discountSt, totalSt, s.amount_total || null,
+    artName, subtotalSt, discountSt, totalSt,
+    s.amount_subtotal || null,
+    Math.max(0, (s.amount_subtotal || 0) - (s.amount_total || 0)),
+    s.amount_total || null,
     s.payment_intent || null, env.PROC_ID, key, new Date().toISOString()
   ).run();
 }
@@ -130,11 +140,13 @@ async function recordRefund(env, event) {
     .bind(ch.payment_intent).first();
 
   await env.DB.prepare(
-    `INSERT INTO refunds (order_no, amount_st, refund_date, r_paym, stripe_event_key, created_at)
-     VALUES (?,?,?,2,?,?)`
+    `INSERT INTO refunds (order_no, amount_st, amount_eur_c, refund_date, r_paym,
+       stripe_event_key, created_at)
+     VALUES (?,?,?,?,2,?,?)`
   ).bind(
     sale ? sale.order_no : ("STRIPE-" + String(ch.payment_intent || ch.id).slice(-12)),
     eurToSt(ch.amount_refunded, Number(env.BGN_RATE)),
+    ch.amount_refunded || null,
     isoDate(new Date()), key, new Date().toISOString()
   ).run();
 }
@@ -168,14 +180,17 @@ async function handleAudit(request, env, year, month) {
   ).bind(prefix).all()).results || [];
 
   /* Схемата на НАП изисква <order> с поне един <orderenum> — месец без
-     продажби няма как да даде валиден файл. По-добре ясно съобщение,
-     отколкото XML, който порталът ще отхвърли при подаването. */
+     продажби няма как да даде валиден файл. Потвърдено от счетоводителя
+     (01.08.2026): за такъв месец НЕ се подава нищо. Затова липсата на
+     продажби не е грешка, а нормално състояние. */
   if (!sales.length) {
     return json({
-      error: "няма продажби за " + year + "-" + month,
-      note: "Схемата (Приложение №38) не допуска файл без нито една поръчка. " +
-            "За месец без продажби провери със счетоводителя дали изобщо се подава файл."
-    }, 409);
+      ok: true,
+      nothing_to_submit: true,
+      period: year + "-" + month,
+      note: "Няма продажби за този месец — файл не се подава. " +
+            "Схемата (Приложение №38) и без това не допуска файл без нито една поръчка."
+    }, 200);
   }
 
   const xml = buildAuditXml(env, year, month, sales, refunds);
@@ -189,7 +204,28 @@ async function handleAudit(request, env, year, month) {
   });
 }
 
+/* В коя валута излиза одиторският файл.
+   ------------------------------------------------------------------
+   От 01.01.2026 основната валута в България е еврото. Схемата на НАП
+   обаче е от 06.06.2022, няма поле за валута и към момента НЯМА
+   публикувано указание какво се очаква след въвеждането на еврото —
+   проверено на страницата със спецификацията, качена е само версията
+   от 2022 г.
+
+   Затова стойността е превключвател, а не зашита в кода: подразбира се
+   EUR (официалната валута), но се сменя на BGN с една дума в
+   wrangler.toml, ако счетоводителят или НАП кажат друго. И двете суми
+   се пазят в базата, така че смяната не изисква преизчисляване. */
+function amountsIn(env) {
+  return String(env.AUDIT_CURRENCY || "EUR").toUpperCase() === "BGN"
+    ? { unit: (s) => s.art_price_st, disc: (s) => s.discount_st,
+        total: (s) => s.total_st, refund: (r) => r.amount_st }
+    : { unit: (s) => s.subtotal_eur_c, disc: (s) => s.discount_eur_c,
+        total: (s) => s.total_eur_c, refund: (r) => r.amount_eur_c };
+}
+
 export function buildAuditXml(env, year, month, sales, refunds) {
+  const A = amountsIn(env);
   const L = [];
   L.push('<?xml version="1.0" encoding="windows-1251"?>');
   L.push("<audit>");
@@ -214,15 +250,15 @@ export function buildAuditXml(env, year, month, sales, refunds) {
     L.push("<art><artenum>");
     L.push(tag("art_name", s.art_name));
     L.push(tag("art_quant", String(s.art_quant)));
-    L.push(tag("art_price", money(s.art_price_st)));
+    L.push(tag("art_price", money(A.unit(s))));
     L.push(tag("art_vat_rate", String(s.vat_rate)));
     L.push(tag("art_vat", money(s.vat_st)));
-    L.push(tag("art_sum", money(s.art_price_st * s.art_quant)));
+    L.push(tag("art_sum", money(A.unit(s) * s.art_quant)));
     L.push("</artenum></art>");
-    L.push(tag("ord_total1", money(s.art_price_st * s.art_quant)));
-    L.push(tag("ord_disc", money(s.discount_st)));
+    L.push(tag("ord_total1", money(A.unit(s) * s.art_quant)));
+    L.push(tag("ord_disc", money(A.disc(s))));
     L.push(tag("ord_vat", money(s.vat_st)));
-    L.push(tag("ord_total2", money(s.total_st)));
+    L.push(tag("ord_total2", money(A.total(s))));
     L.push(tag("paym", String(s.paym)));
     /* При банков превод (paym=1) няма ДПУ трансакция — в пробния файл на
        НАП двете полета просто липсват за такава поръчка. */
@@ -240,14 +276,14 @@ export function buildAuditXml(env, year, month, sales, refunds) {
     for (const r of refunds) {
       L.push("<rorderenum>");
       L.push(tag("r_ord_n", r.order_no));
-      L.push(tag("r_amount", money(r.amount_st)));
+      L.push(tag("r_amount", money(A.refund(r))));
       L.push(tag("r_date", r.refund_date));
       L.push(tag("r_paym", String(r.r_paym)));
       L.push("</rorderenum>");
     }
     L.push("</rorder>");
   }
-  L.push(tag("r_total", money(refunds.reduce((a, r) => a + r.amount_st, 0))));
+  L.push(tag("r_total", money(refunds.reduce((a, r) => a + A.refund(r), 0))));
   L.push("</audit>");
   return L.join("\n");
 }
@@ -289,15 +325,47 @@ const PAYM_LABEL = {
   4: "карта през доставчик на платежни услуги (Stripe)"
 };
 
+/* QR по Приложение №18а — шест полета, разделени със звездичка:
+     <номер от НАП>*<номер на поръчката>*<референтен номер на трансакцията>
+     *<дата ГГГГ-ММ-ДД>*<час ЧЧ:ММ:СС>*<сума>
+
+   Кодировката по наредбата е ISO/IEC 8859-5, но за нас въпросът е без
+   значение: всички шест полета са ASCII (RF…, PSN-…, pi_…, дати, числа),
+   а там 8859-5 съвпада байт по байт с ASCII.
+
+   Сумата следва СЪЩАТА валута като одиторския файл (AUDIT_CURRENCY) —
+   двата документа описват една и съща продажба и не бива да се разминават,
+   ако НАП ги сверява. */
+export function qrPayload(env, s) {
+  return [
+    env.E_SHOP_N,
+    s.order_no,
+    s.trans_n || "",
+    s.doc_date,
+    s.doc_time || "00:00:00",
+    money(amountsIn(env).total(s))
+  ].join("*");
+}
+
+/* Генерира се тук, а не в браузъра на клиента: бележката е документ по
+   чл. 52о и трябва да е пълна сама по себе си, независимо дали сайтът и
+   външните скриптове са достъпни в момента на отварянето ѝ. */
+export function qrSvg(payload) {
+  const qr = qrcode(0, "M");
+  qr.addData(payload);
+  qr.make();
+  return qr.createSvgTag({ cellSize: 4, margin: 8, scalable: true });
+}
+
 export function renderBeleshka(env, s) {
   const e = xmlEscape;
-  /* Реално таксуваното от Stripe. Ако по някаква причина липсва (стар запис),
-     се пада обратно към изчисление от левовата сума — с ясно обозначение,
-     че е приблизително, вместо да се представя за точно. */
-  const eurExact = s.total_eur_c != null;
-  const eurStr = eurExact
-    ? money(s.total_eur_c)
-    : money(Math.round(s.total_st / Number(env.BGN_RATE)));
+  /* Еврото е основната валута от 01.01.2026; левовата равностойност се
+     показва информативно и отпада на 08.08.2026. Датата се сравнява с
+     датата на документа, а не с „днес" — стар документ, отворен по-късно,
+     трябва да изглежда както е издаден. */
+  const showBgn = String(s.doc_date || "") < "2026-08-08";
+  const eur = (c) => money(c == null ? 0 : c);
+  const bgn = (c) => money(eurToSt(c == null ? 0 : c, Number(env.BGN_RATE)));
   const row = (k, v) =>
     `<tr><th>${e(k)}</th><td>${e(v)}</td></tr>`;
 
@@ -319,11 +387,16 @@ export function renderBeleshka(env, s) {
   .items td.num, .items th.num { text-align: right; }
   .total { font-weight: 700; font-size: 1.05rem; }
   .foot { color: #666; font-size: .8rem; border-top: 1px solid #e5e5e5; padding-top: 1rem; }
+  /* Наредбата иска кодът да е не по-малък от 18 × 18 мм. Размерът е зададен
+     в милиметри, а не в пиксели, за да важи и при печат. */
+  .qr { margin: 1.5rem 0; }
+  .qr svg { display: block; width: 24mm; height: 24mm; }
+  .qr p { font-size: .75rem; color: #666; margin: .35rem 0 0; }
   @media print { body { padding: 0; } .noprint { display: none; } }
 </style></head><body><div class="doc">
 
 <h1>Електронна бележка за продажба № ${e(padDoc(s.doc_n))}</h1>
-<p class="sub">Документ по чл. 52о, ал. 1 от Наредба № Н-18 · издаден на ${e(s.doc_date)}</p>
+<p class="sub">Документ по чл. 52о, ал. 1 от Наредба № Н-18 · издаден на ${e(s.doc_date)} ${e(s.doc_time || "")}</p>
 
 <table>
   ${row("Продавач", env.SELLER_NAME)}
@@ -351,23 +424,24 @@ export function renderBeleshka(env, s) {
     <td>${e(s.art_name)}</td>
     <td class="num">${e(env.TAX_GROUP)}</td>
     <td class="num">${e(String(s.art_quant))}</td>
-    <td class="num">${e(money(s.art_price_st))} лв.</td>
-    <td class="num">${e(money(s.art_price_st * s.art_quant))} лв.</td>
+    <td class="num">${e(eur(s.subtotal_eur_c))} €</td>
+    <td class="num">${e(eur(s.subtotal_eur_c))} €</td>
   </tr>
-  ${s.discount_st ? `<tr><td colspan="4">Отстъпка</td>
-    <td class="num">−${e(money(s.discount_st))} лв.</td></tr>` : ""}
+  ${s.discount_eur_c ? `<tr><td colspan="4">Отстъпка</td>
+    <td class="num">−${e(eur(s.discount_eur_c))} €</td></tr>` : ""}
   <tr><td colspan="4">ДДС (${e(String(s.vat_rate))}%)</td>
-      <td class="num">${e(money(s.vat_st))} лв.</td></tr>
+      <td class="num">${e(money(s.vat_st))} €</td></tr>
   <tr class="total"><td colspan="4">Общо</td>
-      <td class="num">${e(money(s.total_st))} лв.</td></tr>
-  <tr><td colspan="4">Платено в евро${eurExact ? "" : " (приблизително)"}</td>
-      <td class="num">${e(eurStr)} €</td></tr>
+      <td class="num">${e(eur(s.total_eur_c))} €</td></tr>
+  ${showBgn ? `<tr><td colspan="4">Равностойност в лева
+      <span style="color:#888">(информативно)</span></td>
+      <td class="num">${e(bgn(s.total_eur_c))} лв.</td></tr>` : ""}
 </table>
 
-<!-- QR по Приложение №18а — още НЕ е вграден. Изчаква потвърждение от
-     счетоводителя дали е задължителен за е-магазин в алтернативен режим и
-     какво точно съдържа. Библиотеката вече е в репото (assets/js/qrcode.js),
-     добавянето е малко. Виж worker/README.md. -->
+<div class="qr">
+  ${qrSvg(qrPayload(env, s))}
+  <p>Двумерен баркод по Приложение №18а</p>
+</div>
 
 <p class="foot">
   Сумите са в лева по фиксирания курс 1 € = ${e(env.BGN_RATE)} лв.
@@ -395,8 +469,23 @@ export function padDoc(n) {
   return String(n).padStart(10, "0");
 }
 
+/* Дата и час в софийско време, не в UTC.
+   Worker-ите вървят на UTC, а България е +2/+3. Продажба в 02:00 софийско
+   на 1 септември е 23:00 UTC на 31 август — с toISOString() тя щеше да
+   влезе в одиторския файл за ГРЕШНИЯ месец. Затова часовата зона се задава
+   изрично. Локалът sv-SE дава точно „ГГГГ-ММ-ДД ЧЧ:ММ:СС". */
+export function sofiaParts(d) {
+  const s = new Intl.DateTimeFormat("sv-SE", {
+    timeZone: "Europe/Sofia",
+    year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false
+  }).format(d);
+  const [date, time] = s.split(" ");
+  return { date, time };
+}
+
 function isoDate(d) {
-  return d.toISOString().slice(0, 10);
+  return sofiaParts(d).date;
 }
 
 function tag(name, value) {
