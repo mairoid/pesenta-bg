@@ -32,7 +32,7 @@ jobs:
       # Изтриването е само в checkout-а на runner-а — файловете си остават
       # в repo-то непокътнати.
       - name: Strip non-site files from the artifact
-        run: rm -rf nap-audit NAP-PLAN.md README.md .gitignore .github
+        run: rm -rf nap-audit NAP-PLAN.md README.md .gitignore .github worker
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

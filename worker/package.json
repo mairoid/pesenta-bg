@@ -1,0 +1,7 @@
+{
+  "name": "pesenta-nap",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Cloudflare Worker: е-бележка по чл. 52о и одиторски файл по Приложение №38 за pesenta.bg"
+}
