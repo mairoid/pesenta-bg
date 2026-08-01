@@ -23,6 +23,10 @@ CREATE TABLE IF NOT EXISTS sales (
   vat_st            INTEGER NOT NULL DEFAULT 0,
   discount_st       INTEGER NOT NULL DEFAULT 0,
   total_st          INTEGER NOT NULL,          -- крайна сума след отстъпка
+  -- Реално таксуваната сума в евроцентове, както я дава Stripe. Стои
+  -- отделно, защото на е-бележката трябва да пише какво клиентът е платил,
+  -- а не сума, изчислена обратно от левовата равностойност.
+  total_eur_c       INTEGER,
   -- Начин на плащане по номенклатурата на схемата:
   --   4 = доставчик на платежни услуги (Stripe), 1 = без ППП (банков превод)
   paym              INTEGER NOT NULL,

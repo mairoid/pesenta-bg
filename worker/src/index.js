@@ -30,6 +30,11 @@ export default {
       return handleAudit(request, env, auditMatch[1], auditMatch[2]);
     }
 
+    const belMatch = url.pathname.match(/^\/beleshka\/([A-Za-z0-9\-]{1,64})$/);
+    if (belMatch && request.method === "GET") {
+      return handleBeleshka(request, env, belMatch[1]);
+    }
+
     return new Response("Not found", { status: 404 });
   }
 };
@@ -100,13 +105,14 @@ async function recordSale(env, event) {
   await env.DB.prepare(
     `INSERT INTO sales (doc_n, doc_date, order_no, order_date, customer_email,
        customer_name, art_name, art_quant, art_price_st, vat_rate, vat_st,
-       discount_st, total_st, paym, trans_n, proc_id, stripe_event_key, created_at)
-     VALUES (?,?,?,?,?,?,?,1,?,0,0,?,?,4,?,?,?,?)`
+       discount_st, total_st, total_eur_c, paym, trans_n, proc_id,
+       stripe_event_key, created_at)
+     VALUES (?,?,?,?,?,?,?,1,?,0,0,?,?,?,4,?,?,?,?)`
   ).bind(
     docN, today, orderNo, today,
     (s.customer_details && s.customer_details.email) || null,
     (s.customer_details && s.customer_details.name) || null,
-    artName, subtotalSt, discountSt, totalSt,
+    artName, subtotalSt, discountSt, totalSt, s.amount_total || null,
     s.payment_intent || null, env.PROC_ID, key, new Date().toISOString()
   ).run();
 }
@@ -244,6 +250,130 @@ export function buildAuditXml(env, year, month, sales, refunds) {
   L.push(tag("r_total", money(refunds.reduce((a, r) => a + r.amount_st, 0))));
   L.push("</audit>");
   return L.join("\n");
+}
+
+/* ============ Е-бележка (чл. 52о) ============ */
+
+/* Адресът на бележката трябва да е неотгатваем — вътре има име, имейл и
+   номер на трансакция. Токенът се извежда от номера на поръчката с
+   AUDIT_TOKEN, вместо да се пази в базата: така няма какво да изтече и
+   няма миграция на схемата. */
+export async function beleshkaToken(orderNo, secret) {
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    "raw", enc.encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]
+  );
+  const mac = await crypto.subtle.sign("HMAC", key, enc.encode("beleshka:" + orderNo));
+  return [...new Uint8Array(mac)].slice(0, 8)
+    .map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+async function handleBeleshka(request, env, orderNo) {
+  if (!env.AUDIT_TOKEN) return new Response("AUDIT_TOKEN не е зададен", { status: 500 });
+
+  const given = new URL(request.url).searchParams.get("t") || "";
+  const want = await beleshkaToken(orderNo, env.AUDIT_TOKEN);
+  if (!timingSafeEqual(given, want)) return new Response("Забранено", { status: 403 });
+
+  const sale = await env.DB.prepare("SELECT * FROM sales WHERE order_no = ?")
+    .bind(orderNo).first();
+  if (!sale) return new Response("Няма такъв документ", { status: 404 });
+
+  return new Response(renderBeleshka(env, sale), {
+    headers: { "Content-Type": "text/html; charset=utf-8" }
+  });
+}
+
+const PAYM_LABEL = {
+  1: "банков превод",
+  4: "карта през доставчик на платежни услуги (Stripe)"
+};
+
+export function renderBeleshka(env, s) {
+  const e = xmlEscape;
+  /* Реално таксуваното от Stripe. Ако по някаква причина липсва (стар запис),
+     се пада обратно към изчисление от левовата сума — с ясно обозначение,
+     че е приблизително, вместо да се представя за точно. */
+  const eurExact = s.total_eur_c != null;
+  const eurStr = eurExact
+    ? money(s.total_eur_c)
+    : money(Math.round(s.total_st / Number(env.BGN_RATE)));
+  const row = (k, v) =>
+    `<tr><th>${e(k)}</th><td>${e(v)}</td></tr>`;
+
+  return `<!doctype html>
+<html lang="bg"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Електронна бележка № ${e(padDoc(s.doc_n))} — Pesenta.bg</title>
+<style>
+  body { font-family: system-ui, "Segoe UI", sans-serif; color: #16091c;
+         background: #fff; margin: 0; padding: 2rem 1rem; line-height: 1.5; }
+  .doc { max-width: 640px; margin: 0 auto; }
+  h1 { font-size: 1.15rem; margin: 0 0 .25rem; }
+  .sub { color: #666; font-size: .85rem; margin: 0 0 1.5rem; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+  th, td { text-align: left; padding: .45rem .5rem; border-bottom: 1px solid #e5e5e5;
+           font-size: .9rem; vertical-align: top; }
+  th { font-weight: 600; color: #555; width: 42%; }
+  .items th { color: #555; }
+  .items td.num, .items th.num { text-align: right; }
+  .total { font-weight: 700; font-size: 1.05rem; }
+  .foot { color: #666; font-size: .8rem; border-top: 1px solid #e5e5e5; padding-top: 1rem; }
+  @media print { body { padding: 0; } .noprint { display: none; } }
+</style></head><body><div class="doc">
+
+<h1>Електронна бележка за продажба № ${e(padDoc(s.doc_n))}</h1>
+<p class="sub">Документ по чл. 52о, ал. 1 от Наредба № Н-18 · издаден на ${e(s.doc_date)}</p>
+
+<table>
+  ${row("Продавач", env.SELLER_NAME)}
+  ${row("ЕИК", env.EIK)}
+  ${row("Адрес", env.SELLER_ADDRESS)}
+  ${row("ДДС номер", env.SELLER_VAT)}
+  ${row("Електронен магазин", env.DOMAIN_NAME)}
+  ${row("Уникален номер на е-магазина", env.E_SHOP_N)}
+</table>
+
+<table>
+  ${row("Номер на клиентската поръчка", s.order_no)}
+  ${row("Дата на поръчката", s.order_date)}
+  ${row("Начин на плащане", PAYM_LABEL[s.paym] || String(s.paym))}
+  ${s.trans_n ? row("Референтен номер на трансакцията", s.trans_n) : ""}
+  ${s.proc_id ? row("Идентификатор на ДПУ", s.proc_id) : ""}
+</table>
+
+<table class="items">
+  <tr>
+    <th>Услуга</th><th class="num">Дан. гр.</th><th class="num">Кол.</th>
+    <th class="num">Ед. цена</th><th class="num">Сума</th>
+  </tr>
+  <tr>
+    <td>${e(s.art_name)}</td>
+    <td class="num">${e(env.TAX_GROUP)}</td>
+    <td class="num">${e(String(s.art_quant))}</td>
+    <td class="num">${e(money(s.art_price_st))} лв.</td>
+    <td class="num">${e(money(s.art_price_st * s.art_quant))} лв.</td>
+  </tr>
+  ${s.discount_st ? `<tr><td colspan="4">Отстъпка</td>
+    <td class="num">−${e(money(s.discount_st))} лв.</td></tr>` : ""}
+  <tr><td colspan="4">ДДС (${e(String(s.vat_rate))}%)</td>
+      <td class="num">${e(money(s.vat_st))} лв.</td></tr>
+  <tr class="total"><td colspan="4">Общо</td>
+      <td class="num">${e(money(s.total_st))} лв.</td></tr>
+  <tr><td colspan="4">Платено в евро${eurExact ? "" : " (приблизително)"}</td>
+      <td class="num">${e(eurStr)} €</td></tr>
+</table>
+
+<!-- QR по Приложение №18а — още НЕ е вграден. Изчаква потвърждение от
+     счетоводителя дали е задължителен за е-магазин в алтернативен режим и
+     какво точно съдържа. Библиотеката вече е в репото (assets/js/qrcode.js),
+     добавянето е малко. Виж worker/README.md. -->
+
+<p class="foot">
+  Сумите са в лева по фиксирания курс 1 € = ${e(env.BGN_RATE)} лв.
+  Документът е издаден по електронен път и е валиден без подпис и печат.
+</p>
+</div></body></html>`;
 }
 
 /* ============ Помощни ============ */
