@@ -40,6 +40,13 @@ export default {
       return handleBeleshka(request, env, belMatch[1]);
     }
 
+    /* Страницата след плащане пита оттук къде е бележката на клиента.
+       Отваря се от чужд домейн (pesenta.bg), затова носи CORS. */
+    if (url.pathname === "/beleshka-link") {
+      if (request.method === "OPTIONS") return cors(new Response(null, { status: 204 }));
+      if (request.method === "GET") return handleBeleshkaLink(request, env);
+    }
+
     return new Response("Not found", { status: 404 });
   }
 };
@@ -125,6 +132,18 @@ async function recordSale(env, event) {
     s.amount_total || null,
     s.payment_intent || null, env.PROC_ID, key, new Date().toISOString()
   ).run();
+
+  /* Връчването е след записа, не преди: документът трябва да съществува,
+     преди да го обявим на клиента. */
+  const sale = {
+    doc_n: docN, order_no: orderNo,
+    customer_email: (s.customer_details && s.customer_details.email) || null,
+    customer_name: (s.customer_details && s.customer_details.name) || null
+  };
+  const sent = await sendBeleshkaEmail(env, sale);
+  await env.DB.prepare(
+    "UPDATE sales SET email_sent_at = ?, email_error = ? WHERE stripe_event_key = ?"
+  ).bind(sent.ok ? new Date().toISOString() : null, sent.ok ? null : sent.error, key).run();
 }
 
 async function recordRefund(env, event) {
@@ -160,6 +179,93 @@ async function nextDocNumber(env) {
   ).first();
   if (!row) throw new Error("броячът doc_n липсва — пусни schema.sql");
   return row.value;
+}
+
+/* ============ Връчване на бележката ============ */
+
+/* Позволяваме само нашия домейн, не „*": отговорът съдържа адрес, който
+   отваря документ с име, имейл и номер на трансакция. */
+function cors(res, env) {
+  res.headers.set("Access-Control-Allow-Origin", "https://pesenta.bg");
+  res.headers.set("Access-Control-Allow-Methods", "GET, OPTIONS");
+  res.headers.set("Vary", "Origin");
+  return res;
+}
+
+/* Клиентът се връща от Stripe с ?session_id=… и пита кой е неговият
+   документ. Webhook-ът може още да не е пристигнал — тогава отговаряме
+   „още не", а страницата пробва пак. */
+async function handleBeleshkaLink(request, env) {
+  const sid = new URL(request.url).searchParams.get("session") || "";
+  if (!/^cs_[A-Za-z0-9_]+$/.test(sid)) {
+    return cors(json({ error: "невалиден идентификатор на сесия" }, 400));
+  }
+
+  const sale = await env.DB.prepare(
+    "SELECT order_no, doc_n FROM sales WHERE stripe_event_key = ?"
+  ).bind("cs:" + sid).first();
+
+  if (!sale) return cors(json({ ready: false }));
+
+  const url = await beleshkaUrl(env, sale.order_no);
+  /* Продажбата съществува, но липсва настройка за линка. Не лъжем клиента
+     с „готово" — страницата ще му каже, че документът идва по имейл. */
+  if (!url) return cors(json({ ready: false, reason: "линкът не е конфигуриран" }));
+
+  return cors(json({ ready: true, doc_n: padDoc(sale.doc_n), url: url }));
+}
+
+/* Връща null, ако липсва нещо от нужното, вместо адрес, който после ще
+   даде 500. По-добре клиентът да не види линк, отколкото да види счупен. */
+async function beleshkaUrl(env, orderNo) {
+  if (!env.AUDIT_TOKEN || !env.PUBLIC_BASE) return null;
+  return env.PUBLIC_BASE + "/beleshka/" + encodeURIComponent(orderNo) +
+         "?t=" + (await beleshkaToken(orderNo, env.AUDIT_TOKEN));
+}
+
+/* Изпращане по имейл през Brevo — акаунтът вече се ползва за бюлетина,
+   затова не въвеждаме втори доставчик само за това.
+
+   Провалът НЕ вдига грешка нагоре: продажбата вече е записана и документът
+   съществува на адрес. Ако върнем 500, Stripe ще ретрайва и рискуваме
+   втори документ за същото плащане — по-лошото от двете. Грешката се
+   записва в email_error, за да се види при проверка. */
+async function sendBeleshkaEmail(env, sale) {
+  if (!env.BREVO_API_KEY) return { ok: false, error: "BREVO_API_KEY не е зададен" };
+  if (!sale.customer_email) return { ok: false, error: "клиентът няма имейл в Stripe" };
+
+  const url = await beleshkaUrl(env, sale.order_no);
+  if (!url) return { ok: false, error: "липсва AUDIT_TOKEN или PUBLIC_BASE — линкът не може да се подпише" };
+
+  const body = {
+    sender: { name: env.MAIL_SENDER_NAME || "Песента", email: env.MAIL_SENDER },
+    to: [{ email: sale.customer_email, name: sale.customer_name || undefined }],
+    subject: "Документ за продажба " + padDoc(sale.doc_n) + " — Песента",
+    htmlContent:
+      "<p>Здравей" + (sale.customer_name ? " " + xmlEscape(sale.customer_name) : "") + ",</p>" +
+      "<p>Плащането е получено. Ето документа за продажбата " +
+      "<strong>" + padDoc(sale.doc_n) + "</strong> по поръчка " +
+      "<strong>" + xmlEscape(sale.order_no) + "</strong>:</p>" +
+      '<p><a href="' + url + '">Отвори документа</a></p>' +
+      "<p>Песента пристига до 48 часа на този имейл, заедно с текста.</p>" +
+      "<p>Песента · pesenta.bg</p>"
+  };
+
+  try {
+    const res = await fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
+      headers: {
+        "api-key": env.BREVO_API_KEY,
+        "content-type": "application/json",
+        "accept": "application/json"
+      },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) return { ok: false, error: "Brevo HTTP " + res.status + " " + (await res.text()).slice(0, 200) };
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: String(e && e.message || e) };
+  }
 }
 
 /* ============ Одиторски файл (Приложение №38) ============ */

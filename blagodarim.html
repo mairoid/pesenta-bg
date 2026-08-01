@@ -60,9 +60,66 @@
     </div>
     <h2>Заявката е приета! 🎶</h2>
     <p>Благодарим ти! До няколко часа получаваш имейл с потвърждение и фактура с данните за плащане. Щом сумата постъпи, започваме работа — песента пристига до 48 часа, в MP3 и с текста.</p>
+
+    <!-- Документ за продажбата по чл. 52о — показва се САМО при връщане от
+         Stripe (?session_id=…). При обикновена заявка без плащане блокът
+         остава скрит, защото няма продажба, за която да се издаде документ. -->
+    <div id="beleshka-box" hidden style="margin-top:1.5rem;">
+      <p id="beleshka-wait">Издаваме документа за продажбата…</p>
+      <p id="beleshka-ready" hidden>
+        <a class="btn btn-primary" id="beleshka-link" href="#" target="_blank" rel="noopener">Отвори документа за продажбата</a>
+      </p>
+      <p id="beleshka-late" hidden class="hint">Документът се издава до минута и пристига на имейла ти. Ако не дойде, пиши ни на <a href="mailto:sales@pesenta.bg" style="color:var(--orange);text-decoration:underline;">sales@pesenta.bg</a>.</p>
+    </div>
+
     <p style="margin-top:1.5rem;"><a class="btn btn-primary" href="index.html">← Обратно към началото</a></p>
   </div>
 </main>
+<script>
+/* Документът за продажбата по чл. 52о.
+   Stripe връща клиента тук с ?session_id={CHECKOUT_SESSION_ID}. Webhook-ът,
+   който издава документа, може да пристигне секунда-две по-късно, затова
+   питаме няколко пъти с нарастващи паузи, вместо веднъж. Ако до ~15 сек.
+   не е готов, казваме че идва по имейл — не оставяме въртящ се текст. */
+(function () {
+  "use strict";
+  var WORKER = "https://pesenta-nap.pesenta-nap.workers.dev";
+
+  var sid = new URLSearchParams(location.search).get("session_id");
+  if (!sid || !WORKER) return;
+
+  var box = document.getElementById("beleshka-box");
+  var wait = document.getElementById("beleshka-wait");
+  var ready = document.getElementById("beleshka-ready");
+  var late = document.getElementById("beleshka-late");
+  box.hidden = false;
+
+  var delays = [800, 1500, 2500, 4000, 6000];
+  var i = 0;
+
+  function ask() {
+    fetch(WORKER + "/beleshka-link?session=" + encodeURIComponent(sid))
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d && d.ready && d.url) {
+          document.getElementById("beleshka-link").href = d.url;
+          wait.hidden = true;
+          ready.hidden = false;
+          return;
+        }
+        next();
+      })
+      .catch(next);
+  }
+
+  function next() {
+    if (i >= delays.length) { wait.hidden = true; late.hidden = false; return; }
+    setTimeout(ask, delays[i++]);
+  }
+
+  ask();
+})();
+</script>
 <!-- Плаващ бутон за връзка: Viber на мобилно (+359899456326 — ПЛЕЙСХОЛЪР номер, смени с реалния), имейл при десктоп -->
 <a class="float-contact float-contact--mobile" href="viber://chat?number=+359899456326" aria-label="Пиши ни във Viber">
   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>

@@ -41,10 +41,16 @@ CREATE TABLE IF NOT EXISTS sales (
   -- Идемпотентност: Stripe праща един и същи webhook повторно при неуспех.
   -- UNIQUE тук е това, което пази от двойно издаден документ.
   stripe_event_key  TEXT    NOT NULL UNIQUE,
+  -- Кога бележката е изпратена по имейл. NULL = още не е. Пази от повторно
+  -- изпращане, ако Stripe ретрайва webhook-а, и показва при проверка кои
+  -- продажби са останали без връчен документ.
+  email_sent_at     TEXT,
+  email_error       TEXT,
   created_at        TEXT    NOT NULL
 );
 
 CREATE INDEX IF NOT EXISTS idx_sales_doc_date ON sales(doc_date);
+CREATE INDEX IF NOT EXISTS idx_sales_event_key ON sales(stripe_event_key);
 CREATE INDEX IF NOT EXISTS idx_sales_order_no ON sales(order_no);
 
 CREATE TABLE IF NOT EXISTS refunds (
