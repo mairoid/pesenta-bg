@@ -98,6 +98,20 @@ async function recordSale(env, event) {
     .bind(key).first();
   if (exists) return;                       /* повторен webhook — вече е записан */
 
+  /* Валутата НЕ се приема на доверие.
+     ------------------------------------------------------------------
+     Stripe може да покаже касата в местната валута на купувача (Adaptive
+     Pricing). Тогава amount_total идва в ТАЗИ валута, не в евро. Кодът
+     смята всичко в евроцентове, тоест плащане в долари би влязло в
+     одиторския файл като евро — с грешна сума пред НАП.
+
+     Затова записваме валутата както е дошла и я отбелязваме, ако не е
+     евро. Продажбата пак се регистрира — плащането е факт и документ се
+     дължи — но несъответствието остава видимо, вместо да се скрие в
+     привидно нормален отчет. */
+  const currency = String(s.currency || "").toLowerCase();
+  const currencyOk = currency === "eur";
+
   const rate = Number(env.BGN_RATE);
   const subtotalSt = eurToSt(s.amount_subtotal, rate);
   const totalSt = eurToSt(s.amount_total, rate);
@@ -120,8 +134,8 @@ async function recordSale(env, event) {
        customer_email, customer_name, art_name, art_quant, art_price_st,
        vat_rate, vat_st, discount_st, total_st,
        subtotal_eur_c, discount_eur_c, total_eur_c,
-       paym, trans_n, proc_id, stripe_event_key, created_at)
-     VALUES (?,?,?,?,?,?,?,?,1,?,0,0,?,?,?,?,?,4,?,?,?,?)`
+       paym, trans_n, proc_id, stripe_event_key, currency, currency_warning, created_at)
+     VALUES (?,?,?,?,?,?,?,?,1,?,0,0,?,?,?,?,?,4,?,?,?,?,?,?)`
   ).bind(
     docN, today, now.time, orderNo, today,
     (s.customer_details && s.customer_details.email) || null,
@@ -130,7 +144,13 @@ async function recordSale(env, event) {
     s.amount_subtotal || null,
     Math.max(0, (s.amount_subtotal || 0) - (s.amount_total || 0)),
     s.amount_total || null,
-    s.payment_intent || null, env.PROC_ID, key, new Date().toISOString()
+    s.payment_intent || null, env.PROC_ID, key,
+    currency || null,
+    currencyOk ? null :
+      "ВНИМАНИЕ: плащането е в " + (currency || "неизвестна валута").toUpperCase() +
+      ", не в EUR. Сумите в одиторския файл са изчислени като евро и НЕ са верни " +
+      "за тази поръчка. Изключи Adaptive Pricing в Stripe и провери ръчно.",
+    new Date().toISOString()
   ).run();
 
   /* Връчването е след записа, не преди: документът трябва да съществува,
@@ -297,6 +317,23 @@ async function handleAudit(request, env, year, month) {
       note: "Няма продажби за този месец — файл не се подава. " +
             "Схемата (Приложение №38) и без това не допуска файл без нито една поръчка."
     }, 200);
+  }
+
+  /* Ако месецът съдържа продажба в чужда валута, файлът НЕ се произвежда.
+     Сумите му биха били тихо грешни, а това е отчет пред НАП — по-добре
+     да няма файл и да се разбере, отколкото да има файл, на който не може
+     да се вярва. */
+  const bad = sales.filter((s) => s.currency_warning);
+  if (bad.length) {
+    return json({
+      error: "файлът не е генериран — има продажби в чужда валута",
+      period: year + "-" + month,
+      broi: bad.length,
+      porachki: bad.map((s) => ({ order_no: s.order_no, currency: s.currency })),
+      kakvo_da_napravish: "Изключи Adaptive Pricing в Stripe, за да не се повтаря. " +
+        "За тези поръчки провери реалните суми в Stripe и ги коригирай в базата, " +
+        "после изчисти currency_warning."
+    }, 409);
   }
 
   const xml = buildAuditXml(env, year, month, sales, refunds);
