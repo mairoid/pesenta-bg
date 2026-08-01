@@ -143,6 +143,19 @@
     f.submit();
   }
 
+  /* Адресът на касата за дадена поръчка.
+     client_reference_id е това, което свързва плащането с брифа: Stripe го
+     връща в webhook-а, а Worker-ът записва по него продажбата и издава
+     документа. Ако payments.js липсва или плащанията са изключени, падаме
+     към plati.html — там клиентът вижда обяснение, вместо да опре в нищо. */
+  function paymentUrl(orderNo) {
+    var cfg = window.PESENTA_PAYMENTS;
+    var link = cfg && cfg.enabled && cfg.paymentLinks && cfg.paymentLinks.pesen;
+    if (!link) return "https://pesenta.bg/plati.html?order=" + encodeURIComponent(orderNo) + "&plan=pesen";
+    return link + (link.indexOf("?") === -1 ? "?" : "&") +
+           "client_reference_id=" + encodeURIComponent(orderNo);
+  }
+
   function rememberOrder(orderNo) {
     try {
       var orders = JSON.parse(localStorage.getItem("pesenta_orders") || "[]");
@@ -300,38 +313,37 @@
     clearFail();
     if (recording) stopRec();
     if (!blob) { fail("Първо запиши гласовото си съобщение."); return; }
-    var name = document.getElementById("fast-name").value.trim();
-    var email = document.getElementById("fast-email").value.trim();
-    if (!name) { fail("Напиши името си."); return; }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { fail("Въведи валиден имейл — там ще получиш песента."); return; }
     if (!document.getElementById("fast-consent").checked) {
       fail("Моля, потвърди съгласието с Общите условия."); return;
     }
+    /* Име и имейл НЕ се искат тук — Stripe ги събира на своята страница.
+       Съгласието по чл. 57 обаче остава преди плащането: клиентът се отказва
+       от правото на връщане, това не може да се потвърждава след факта. */
 
     var orderNo = genOrderNo();
     var fileName = "glasovo-" + orderNo + "." + audioExt(blob);
     var transcript = trEl ? trEl.value.trim() : "";
 
     var fields = {
-      "_subject": "ГЛАСОВА заявка за песен — " + orderNo,
+      "_subject": "ГЛАСОВА заявка (ОЧАКВА ПЛАЩАНЕ) — " + orderNo,
       "_template": "box",
       "_captcha": "false",
-      "_next": THANKS_URL,
+      /* Нативният POST навигира сам след изпращането. Вместо към страницата
+         за благодарност, го пращаме право на касата — така записът стига до
+         нас И клиентът стига до плащането с едно действие. */
+      "_next": paymentUrl(orderNo),
       "Номер на заявка": orderNo,
       "Тип": "Гласова бърза поръчка",
-      "Клиент": name,
-      "Имейл": email,
-      /* Същият линк, който праща и пълният съветник в order.js. Без него
-         поръчката пристига, а клиентът няма откъде да плати. Гласовата форма
-         няма избор на пакет — винаги основният, без експресна изработка. */
-      "Линк за плащане (изпрати веднага)": "https://pesenta.bg/plati.html?order=" + orderNo + "&plan=pesen",
+      "Състояние": "ОЧАКВА ПЛАЩАНЕ — клиентът е пренасочен към Stripe",
+      "Клиент": "— идва от Stripe след плащането",
       "Транскрипция": transcript || "— няма (виж записа)",
       "Аудио запис": fileName + " (прикачен)",
-      "Съгласие чл. 57 ЗЗП (без право на отказ)": "потвърдено",
+      "Съгласие чл. 57 ЗЗП (без право на отказ)": "потвърдено преди плащането",
       "CLAUDE BRIEF": [
         "# Гласова поръчка — " + orderNo,
         "",
-        "Клиент: " + name + " <" + email + ">",
+        "СЪСТОЯНИЕ: очаква плащане. Свери в Stripe по " + orderNo,
+        "преди да започнеш работа.",
         "",
         "## Транскрипция (автоматична, прегледана от клиента)",
         transcript || "— няма текст: браузърът не разпозна реч. Всичко е в записа.",
@@ -371,22 +383,26 @@
         return res.json();
       })
       .then(function () {
+        /* Тук НЕ пренасочваме автоматично: клиентът първо трябва да си свали
+           записа, а тръгне ли към Stripe, страницата се сменя и обектният
+           URL умира заедно с нея. Затова му даваме двата бутона по ред. */
         var dl = URL.createObjectURL(blob);
         card.innerHTML =
           '<div class="success-box" style="padding:1.5rem 1rem;">' +
           '<div class="check"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#16091c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></div>' +
-          "<h2>Гласовата поръчка е приета!</h2>" +
+          "<h2>Още една стъпка</h2>" +
           '<div class="order-no">' + esc(orderNo) + "</div>" +
-          "<p>Текстът стигна до нас. Браузърът ти обаче не успя да прикачи самия запис — " +
+          "<p>Разказът ти стигна до нас. Браузърът ти обаче не успя да прикачи самия запис — " +
           "свали го оттук и ни го прати на <strong>" + ORDER_EMAIL + "</strong>, за да сверим имената по гласа ти.</p>" +
-          '<p><a href="' + dl + '" download="' + esc(fileName) + '" class="btn btn-primary">Свали записа</a></p>' +
-          "<p>До няколко часа получаваш имейл с потвърждение и фактура. Щом плащането постъпи, песента е готова до 48 часа.</p>" +
+          '<p><a href="' + dl + '" download="' + esc(fileName) + '" class="btn btn-ghost">1. Свали записа</a></p>' +
+          '<p><a href="' + paymentUrl(orderNo) + '" class="btn btn-primary btn-lg">2. Плати 19,90 € и започваме</a></p>' +
+          "<p>Работата тръгва веднага след плащането — песента е готова до 48 часа.</p>" +
           "</div>";
         card.scrollIntoView({ behavior: "smooth" });
       })
       .catch(function () {
         sendBtn.disabled = false;
-        sendBtn.textContent = "Изпрати гласовата поръчка";
+        sendBtn.textContent = "Продължи към плащане · 19,90 €";
         var vurl = URL.createObjectURL(blob);
         fail("Няма връзка със сървъра за заявки — опитай пак след минута, записът ти е запазен тук. ");
         errEl.innerHTML += '<a href="' + vurl + '" download="' + esc(fileName) + '" style="color:#ffd36e;font-weight:700;">Или свали записа и ни го прати на ' + ORDER_EMAIL + " →</a>";

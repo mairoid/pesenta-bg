@@ -54,6 +54,23 @@
   function fail(msg) { errEl.textContent = msg; errEl.classList.add("show"); }
   function clearFail() { errEl.textContent = ""; errEl.classList.remove("show"); }
 
+  /* Адресът на касата за дадена поръчка.
+     ------------------------------------------------------------------
+     client_reference_id е това, което свързва плащането с брифа: Stripe
+     го връща в webhook-а, а Worker-ът записва по него продажбата и издава
+     документа със същия номер.
+
+     Ако payments.js по някаква причина не се е заредил или плащанията са
+     изключени, падаме към plati.html — там клиентът вижда обяснение и
+     банков път, вместо да опре в нищо. */
+  function paymentUrl(orderNo) {
+    var cfg = window.PESENTA_PAYMENTS;
+    var link = cfg && cfg.enabled && cfg.paymentLinks && cfg.paymentLinks.pesen;
+    if (!link) return "plati.html?order=" + encodeURIComponent(orderNo) + "&plan=pesen";
+    return link + (link.indexOf("?") === -1 ? "?" : "&") +
+           "client_reference_id=" + encodeURIComponent(orderNo);
+  }
+
   /* Същият проблем, същата поправка като в voice-order.js: hero-снимката
      е центрирана спрямо колоната — щом полетата излязат и колоната
      стане по-висока, я закотвяме там, където си беше. */
@@ -133,14 +150,13 @@
   sendBtn.addEventListener("click", function () {
     clearFail();
     var story = storyEl.value.trim();
-    var name = document.getElementById("text-name").value.trim();
-    var email = document.getElementById("text-email").value.trim();
     if (!story) { fail("Разкажи накратко за кого е песента и повода."); return; }
-    if (!name) { fail("Напиши името си."); return; }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { fail("Въведи валиден имейл — там ще получиш песента."); return; }
     if (!document.getElementById("text-consent").checked) {
       fail("Моля, потвърди съгласието с Общите условия."); return;
     }
+    /* Име и имейл НЕ се искат тук — Stripe ги събира на своята страница.
+       Съгласието по чл. 57 обаче остава преди плащането: клиентът се отказва
+       от правото на връщане, това не може да се потвърждава след факта. */
 
     var orderNo = genOrderNo();
     var occasion = selectedOccasion();
@@ -148,25 +164,27 @@
     var language = document.getElementById("text-language").value;
 
     var fields = {
-      "_subject": "БЪРЗА текстова заявка за песен — " + orderNo,
+      "_subject": "БЪРЗА заявка (ОЧАКВА ПЛАЩАНЕ) — " + orderNo,
       "_template": "box",
       "Номер на заявка": orderNo,
       "Тип": "Бърза текстова поръчка",
-      "Клиент": name,
-      "Имейл": email,
-      /* Същият линк, който праща и пълният съветник в order.js. Без него
-         поръчката пристига, а клиентът няма откъде да плати. Бързата форма
-         няма избор на пакет — винаги основният, без експресна изработка. */
-      "Линк за плащане (изпрати веднага)": "https://pesenta.bg/plati.html?order=" + orderNo + "&plan=pesen",
+      /* Брифът тръгва ПРЕДИ плащането, защото след него клиентът е на
+         страницата на Stripe и разказът щеше да се загуби. Затова темата
+         казва „очаква плащане" — свързването става по номера на поръчката,
+         който пътува със самото плащане като client_reference_id. */
+      "Състояние": "ОЧАКВА ПЛАЩАНЕ — клиентът е пренасочен към Stripe",
+      "Клиент": "— идва от Stripe след плащането",
       "Повод": occasion || "— не е избран, виж разказа",
       "Стилове": styles.length ? styles.join(", ") : "— не са избрани, виж разказа",
       "Език": language,
       "Разказ": story,
-      "Съгласие чл. 57 ЗЗП (без право на отказ)": "потвърдено",
+      "Съгласие чл. 57 ЗЗП (без право на отказ)": "потвърдено преди плащането",
       "CLAUDE BRIEF": [
         "# Бърза текстова поръчка — " + orderNo,
         "",
-        "Клиент: " + name + " <" + email + ">",
+        "СЪСТОЯНИЕ: очаква плащане. Свери в Stripe по " + orderNo,
+        "преди да започнеш работа.",
+        "",
         "Повод: " + (occasion || "— не е избран, виж разказа"),
         "Стилове: " + (styles.length ? styles.join(", ") : "— не са избрани, виж разказа"),
         "Език: " + language,
@@ -182,31 +200,26 @@
     rememberOrder(orderNo);
 
     sendBtn.disabled = true;
-    sendBtn.textContent = "Изпращане…";
+    sendBtn.textContent = "Отваряме плащането…";
 
     var fd = new FormData();
     Object.keys(fields).forEach(function (k) { fd.append(k, fields[k]); });
+
+    /* Плащането е следващата стъпка при ВСЯКО положение. Ако брифът не
+       успее да замине, пак пращаме клиента към Stripe — номерът на
+       поръчката пътува с плащането, така че разказът може да се поиска
+       после. Да го спрем пред касата заради наш проблем е по-лошото. */
+    function toPayment() {
+      if (window.plausible) window.plausible("Order Submitted", { props: { method: "text-quick" } });
+      window.location.href = paymentUrl(orderNo);
+    }
 
     fetch(FORM_ENDPOINT, { method: "POST", headers: { "Accept": "application/json" }, body: fd })
       .then(function (res) {
         if (!res.ok) throw new Error("HTTP " + res.status);
         return res.json();
       })
-      .then(function () {
-        if (window.plausible) window.plausible("Order Submitted", { props: { method: "text-quick" } });
-        card.innerHTML =
-          '<div class="success-box" style="padding:1.5rem 1rem;">' +
-          '<div class="check"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#16091c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></div>' +
-          "<h2>Бързата поръчка е приета!</h2>" +
-          '<div class="order-no">' + esc(orderNo) + "</div>" +
-          "<p>Разказът ти стигна до нас. До няколко часа получаваш имейл с потвърждение и фактура. Щом плащането постъпи, песента е готова до 48 часа.</p>" +
-          "</div>";
-        card.scrollIntoView({ behavior: "smooth" });
-      })
-      .catch(function () {
-        sendBtn.disabled = false;
-        sendBtn.textContent = "Изпрати бързата поръчка";
-        fail("Няма връзка със сървъра за заявки — опитай пак след минута.");
-      });
+      .then(toPayment)
+      .catch(toPayment);
   });
 })();
