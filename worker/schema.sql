@@ -68,6 +68,10 @@ CREATE TABLE IF NOT EXISTS refunds (
   -- 2 = възстановяване по картата (както в пробния файл)
   r_paym            INTEGER NOT NULL DEFAULT 2,
   stripe_event_key  TEXT    NOT NULL UNIQUE,
+  -- Кога клиентът е уведомен за връщането. Същата логика като при
+  -- продажбите: провалът на писмото не проваля записа, но остава видим.
+  email_sent_at     TEXT,
+  email_error       TEXT,
   created_at        TEXT    NOT NULL
 );
 

@@ -174,20 +174,88 @@ async function recordRefund(env, event) {
   if (exists) return;
 
   /* Връзваме възстановяването с продажбата по payment_intent — това е
-     единственото, което идва и в двете събития. */
-  const sale = await env.DB.prepare("SELECT order_no FROM sales WHERE trans_n = ?")
-    .bind(ch.payment_intent).first();
+     единственото, което идва и в двете събития. Взимаме и данните за
+     писмото: имейлът на клиента идва от Stripe при плащането, тук го няма. */
+  const sale = await env.DB.prepare(
+    "SELECT order_no, doc_n, customer_email, customer_name, total_eur_c FROM sales WHERE trans_n = ?"
+  ).bind(ch.payment_intent).first();
+
+  const orderNo = sale ? sale.order_no
+    : ("STRIPE-" + String(ch.payment_intent || ch.id).slice(-12));
 
   await env.DB.prepare(
     `INSERT INTO refunds (order_no, amount_st, amount_eur_c, refund_date, r_paym,
        stripe_event_key, created_at)
      VALUES (?,?,?,?,2,?,?)`
   ).bind(
-    sale ? sale.order_no : ("STRIPE-" + String(ch.payment_intent || ch.id).slice(-12)),
+    orderNo,
     eurToSt(ch.amount_refunded, Number(env.BGN_RATE)),
     ch.amount_refunded || null,
     isoDate(new Date()), key, new Date().toISOString()
   ).run();
+
+  /* Уведомяваме клиента. Както при бележката, провалът на писмото НЕ вдига
+     грешка нагоре — връщането вече е записано, а 500 би накарало Stripe да
+     ретрайва и да го запише втори път. */
+  const sent = await sendRefundEmail(env, sale, ch.amount_refunded || 0);
+  await env.DB.prepare(
+    "UPDATE refunds SET email_sent_at = ?, email_error = ? WHERE stripe_event_key = ?"
+  ).bind(sent.ok ? new Date().toISOString() : null, sent.ok ? null : sent.error, key).run();
+}
+
+/* Писмо при върнати пари.
+   ------------------------------------------------------------------
+   НЕ се представя за данъчен документ. Дали при връщане се дължи такъв по
+   чл. 52о, не е потвърдено — затова писмото само уведомява, а полето за
+   документ остава празно, докато счетоводителят не каже друго.
+
+   Частичните връщания се разпознават по сумата: схемата на НАП изрично
+   говори за „изцяло или частично върнати поръчки", тоест случаят е реален
+   и текстът не бива да твърди, че всичко е върнато. */
+export async function sendRefundEmail(env, sale, amountC) {
+  if (!env.BREVO_API_KEY) return { ok: false, error: "BREVO_API_KEY не е зададен" };
+  if (!sale) return { ok: false, error: "връщането не е свързано с продажба — няма кому да се пише" };
+  if (!sale.customer_email) return { ok: false, error: "продажбата няма имейл на клиента" };
+
+  const full = sale.total_eur_c != null && amountC >= sale.total_eur_c;
+  const sum = money(amountC) + " €";
+  const bgn = money(eurToSt(amountC, Number(env.BGN_RATE))) + " лв.";
+
+  const body = {
+    sender: { name: env.MAIL_SENDER_NAME || "Песента", email: env.MAIL_SENDER },
+    to: [{ email: sale.customer_email, name: sale.customer_name || undefined }],
+    subject: (full ? "Върнахме плащането" : "Върнахме част от плащането") +
+             " по поръчка " + sale.order_no + " — Песента",
+    htmlContent:
+      "<p>Здравей" + (sale.customer_name ? " " + xmlEscape(sale.customer_name) : "") + ",</p>" +
+      "<p>" + (full
+        ? "Плащането по поръчка <strong>" + xmlEscape(sale.order_no) + "</strong> е върнато изцяло."
+        : "Част от плащането по поръчка <strong>" + xmlEscape(sale.order_no) + "</strong> е върната.") +
+      "</p>" +
+      "<p>Върната сума: <strong>" + sum + "</strong> (" + bgn + ")<br>" +
+      "Документ за продажбата: <strong>" + padDoc(sale.doc_n) + "</strong></p>" +
+      "<p>Сумата се връща по същата карта, с която е платено. " +
+      "Банката обикновено я отразява до няколко работни дни — при някои издатели отнема " +
+      "малко повече, затова не се притеснявай, ако не се появи веднага.</p>" +
+      (full ? "<p>Ако връщането е по недоразумение или искаме да опитаме пак — просто отговори на това писмо.</p>" : "") +
+      "<p>Песента · pesenta.bg</p>"
+  };
+
+  try {
+    const res = await fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
+      headers: {
+        "api-key": env.BREVO_API_KEY,
+        "content-type": "application/json",
+        "accept": "application/json"
+      },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) return { ok: false, error: "Brevo HTTP " + res.status + " " + (await res.text()).slice(0, 200) };
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: String(e && e.message || e) };
+  }
 }
 
 /* Атомарно взимане на следващ номер. UPDATE … RETURNING е едно изявление,
