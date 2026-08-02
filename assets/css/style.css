@@ -596,13 +596,76 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 
 /* ---------- Отзиви ---------- */
 
-.quotes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-6); }
+/* Отзивите текат непрекъснато наляво.
+   ------------------------------------------------------------------
+   Движението е CSS анимация върху transform, не скролиране с JavaScript.
+   Причината: transform се смята от графичния процесор и тече гладко, докато
+   местене на scrollLeft по кадри се накъсва — а тук движението е бавно и
+   всяко накъсване си личи.
+
+   Безкрайността идва от УДВОЯВАНЕ на картите (прави се в main.js).
+   Анимацията измества лентата точно с −50%, тоест в момента на връщането
+   на екрана стои същото като в началото и шевът не се вижда. */
+.quotes-rail {
+  position: relative;
+  overflow: hidden;
+  /* Картите избледняват към двата ръба, вместо да се отрязват рязко. */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+
+/* БЕЗ gap и БЕЗ проценти — и двете чупят безкрайното превъртане:
+
+   `gap` оставя разстояние МЕЖДУ картите, тоест при 12 карти има 11
+   разстояния. Тогава половината от лентата не е равна на един комплект от
+   шест и шевът се вижда. С margin-right всяка карта носи своето разстояние,
+   ширината става точно 12 × (карта + отстъп) и −50% съвпада до пиксел.
+
+   Процент във `flex-basis` пък обърква `width: max-content`: контейнерът се
+   оразмерява по неувития текст, а не по реалната ширина на картите. Мерено:
+   лента 7477px при съдържание 4344px, тоест 3000px празнина накрая. */
+.quotes-track {
+  display: flex;
+  padding: var(--sp-2) 0 var(--sp-4);
+  width: max-content;
+}
+
+/* Тръгва чак когато лентата влезе в екрана — main.js слага класа. */
+.quotes-track.rolling {
+  animation: quotes-roll 48s linear infinite;
+}
+/* Спира при посочване, за да може отзивът да се прочете докрай. */
+@media (hover: hover) {
+  .quotes-rail:hover .quotes-track.rolling { animation-play-state: paused; }
+}
+
+@keyframes quotes-roll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* При изключени анимации няма движение — лентата става обикновен
+   хоризонтален скрол, за да остане съдържанието достъпно. */
+@media (prefers-reduced-motion: reduce) {
+  .quotes-track.rolling { animation: none; }
+  .quotes-rail { overflow-x: auto; }
+}
 
 .quote-card {
+  flex: 0 0 340px;
+  display: flex;
+  flex-direction: column;
   padding: var(--sp-6);
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
+  /* margin-right, а не gap — виж бележката при .quotes-track */
+  margin: 0 var(--sp-6) 0 0;
+}
+.quote-card blockquote {
+  margin: 0 0 var(--sp-4);
+  font-size: var(--fs-base);
+  flex: 1;
 }
 .quote-card p { margin: 0 0 var(--sp-4); font-size: var(--fs-base); }
 .quote-card .who { color: var(--muted); font-size: var(--fs-sm); font-weight: 600; }
@@ -1207,7 +1270,10 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   .hero-photo { max-width: 420px; margin: 0 auto; }
   .steps-grid { grid-template-columns: repeat(2, 1fr); }
   .pricing-grid { grid-template-columns: repeat(2, 1fr); }
-  .quotes-grid { grid-template-columns: 1fr; max-width: 560px; }
+  /* На тесен екран картата е по-тясна, за да наднича следващата и да си
+     личи, че лентата продължава. Стойността е в пиксели, не в проценти —
+     процент тук чупи оразмеряването (виж бележката при .quotes-track). */
+  .quote-card { flex-basis: 280px; }
   .occasion-grid { grid-template-columns: repeat(2, 1fr); }
   .main-nav {
     display: none;

@@ -383,3 +383,45 @@
 
   setTimeout(begin, INTRO.delayMs);
 })();
+
+/* ---------- Отзиви: непрекъсната лента ----------
+   Самото движение е CSS анимация (виж quotes-roll в style.css). Тук се
+   правят само две неща: удвояване на картите и пускане в подходящия момент.
+
+   УДВОЯВАНЕТО прави безкрайността възможна. Анимацията измества лентата с
+   −50%; ако картите не са два еднакви комплекта, в този момент екранът
+   нямаше да показва същото и връщането щеше да се вижда като подскок.
+
+   Прави се тук, а не в разметката, за да не стои текстът на отзивите на две
+   места в index.html — иначе поправка в единия екземпляр тихо разминава
+   двата. */
+(function () {
+  "use strict";
+
+  var rail = document.getElementById("quotes-rail");
+  var track = document.getElementById("quotes-track");
+  if (!rail || !track) return;
+
+  var cards = Array.prototype.slice.call(track.children);
+  if (!cards.length) return;
+
+  /* Копията са само декор — екранните четци трябва да прочетат отзивите
+     веднъж, не два пъти. */
+  cards.forEach(function (card) {
+    var copy = card.cloneNode(true);
+    copy.setAttribute("aria-hidden", "true");
+    track.appendChild(copy);
+  });
+
+  /* Пуска се чак когато лентата се вижда: анимация, която върви невидяна,
+     хаби батерия без никаква полза. */
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        track.classList.toggle("rolling", e.isIntersecting);
+      });
+    }, { threshold: 0.2 }).observe(rail);
+  } else {
+    track.classList.add("rolling");
+  }
+})();
