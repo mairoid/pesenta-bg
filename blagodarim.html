@@ -59,7 +59,12 @@
       <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#16091c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
     </div>
     <h2>Заявката е приета! 🎶</h2>
-    <p>Благодарим ти! До няколко часа получаваш имейл с потвърждение и фактура с данните за плащане. Щом сумата постъпи, започваме работа — песента пристига до 48 часа, в MP3 и с текста.</p>
+    <!-- Страницата се достига по ДВА пътя: след плащане в Stripe (тогава има
+         ?session_id=) и от съветника с гласов запис, който още НЕ е платил.
+         Затова текстът се сменя според това кое от двете е — скриптът долу
+         показва верния. Без JavaScript остава неутралният, който важи и в
+         двата случая. -->
+    <p id="thanks-text">Благодарим ти! Заявката е приета — до няколко часа получаваш имейл с потвърждение. Песента пристига до 48 часа след плащането, в MP3 и с текста.</p>
 
     <!-- Документ за продажбата по чл. 52о — показва се САМО при връщане от
          Stripe (?session_id=…). При обикновена заявка без плащане блокът
@@ -86,7 +91,17 @@
   var WORKER = "https://pesenta-nap.pesenta-nap.workers.dev";
 
   var sid = new URLSearchParams(location.search).get("session_id");
-  if (!sid || !WORKER) return;
+  if (!sid) return;   /* дошъл е от съветника, не от касата — текстът остава неутрален */
+
+  /* Плащането е факт: Stripe връща тук само след успешна каса. */
+  var txt = document.getElementById("thanks-text");
+  if (txt) {
+    txt.textContent = "Благодарим ти! Плащането е получено и вече започваме работа. " +
+      "Документът за продажбата пътува към имейла ти. Песента пристига до 48 часа, в MP3 и с текста.";
+  }
+  document.querySelector(".success-box h2").textContent = "Плащането е успешно! 🎶";
+
+  if (!WORKER) return;
 
   var box = document.getElementById("beleshka-box");
   var wait = document.getElementById("beleshka-wait");

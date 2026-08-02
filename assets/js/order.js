@@ -684,6 +684,16 @@
 
     document.getElementById("success-no").textContent = orderNo;
     document.getElementById("success-eta").textContent = state.express ? "24 часа" : "48 часа";
+
+    /* Бутонът за плащане носи поръчката и избрания пакет — plati.html оттам
+       разбира коя сума да покаже и кой Stripe линк да отвори. Без експреса
+       параметърът просто липсва. */
+    var payBtn = document.getElementById("success-pay");
+    if (payBtn) {
+      payBtn.href = "plati.html?order=" + encodeURIComponent(orderNo) +
+                    "&plan=" + encodeURIComponent(state.plan) +
+                    (state.express ? "&express=1" : "");
+    }
     form.hidden = true;
     document.querySelector(".wizard-progress").hidden = true;
     document.querySelector(".order-head").hidden = true;

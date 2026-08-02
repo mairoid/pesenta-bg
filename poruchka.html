@@ -336,7 +336,7 @@
     <!-- СТЪПКА 3: Пакет и контакти -->
     <section class="wizard-step" data-step="3">
       <h2 class="step-title" tabindex="-1">Последни щрихи</h2>
-      <p class="step-sub">Стъпка 3 от 3 — песента е €19,90 и се плаща при поръчката. Веднага след това получаваш фактура и започваме работа.</p>
+      <p class="step-sub">Стъпка 3 от 3 — песента е €19,90 и се плаща при поръчката. След изпращането отиваш на защитената страница за плащане с карта, а документът за продажбата идва на имейла ти веднага.</p>
 
       <div class="toggle-row">
         <label for="express">Експресна изработка до 24 часа
@@ -403,9 +403,13 @@
     <div class="check">
       <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#16091c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
     </div>
-    <h2>Заявката е приета!</h2>
+    <h2>Остана плащането</h2>
     <div class="order-no" id="success-no">PSN-000000-0000</div>
-    <p>Благодарим ти! До няколко часа получаваш имейл с потвърждение и фактура с данните за плащане. Щом сумата постъпи, песента е готова до <strong id="success-eta">48 часа</strong>.</p>
+    <p>Разказът ти стигна до нас. Плати с карта, за да започнем — веднага след това получаваш документа за продажбата на имейла си, а песента е готова до <strong id="success-eta">48 часа</strong>.</p>
+    <!-- Адресът се попълва от order.js: там се знае дали е избрана
+         експресна изработка, тоест коя цена трябва да плати човекът. -->
+    <p style="margin-top:1.2rem;"><a class="btn btn-primary btn-lg" id="success-pay" href="plati.html">Плати с карта</a></p>
+    <p class="hint" style="margin-top:0.8rem;">Предпочиташ банков превод? Пиши ни на <a href="mailto:sales@pesenta.bg" style="color:var(--orange);text-decoration:underline;">sales@pesenta.bg</a> и ти изпращаме фактура.</p>
     <p style="margin-top:1rem;"><a class="btn btn-ghost" href="index.html">← Обратно към началото</a></p>
   </div>
 
