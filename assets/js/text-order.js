@@ -134,7 +134,23 @@
     fieldsWrap.hidden = false;
     collapseHeroIntro();
     pinHeroPhoto();
-    storyEl.focus();
+
+    /* preventScroll е същественото. Обикновеният .focus() скролира веднага,
+       но collapseHeroIntro() тече 600ms и през това време свива заглавието —
+       съдържанието отдолу се качва СЛЕД скрола и полето отива под sticky
+       хедъра. Затова: фокус без скрол сега, а нагласяне чак когато
+       анимацията е приключила и разположението е окончателно. */
+    storyEl.focus({ preventScroll: true });
+    setTimeout(function () {
+      var r = storyEl.getBoundingClientRect();
+      var head = document.querySelector(".site-header");
+      var top = head ? head.getBoundingClientRect().height : 0;
+      /* Пипаме само ако полето наистина е скрито или извън екрана —
+         иначе оставяме страницата където е, вместо да я дърпаме без нужда. */
+      if (r.top < top + 8 || r.bottom > window.innerHeight) {
+        storyEl.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }, 650);
   });
 
   /* Обратната посока: кликне ли се "Поръчай с глас", докато текстовите

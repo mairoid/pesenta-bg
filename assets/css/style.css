@@ -73,7 +73,14 @@
 
 * { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  /* Хедърът е sticky на top:0 и покрива горните ~77px. Без този отстъп
+     всичко, до което браузърът скролира сам — котвите от навигацията и
+     .focus() върху поле — заставаше ПОД него. При бързата поръчка от
+     текстовото поле оставаше видима ивица от 34px. */
+  scroll-padding-top: 6rem;
+}
 
 body {
   margin: 0;
