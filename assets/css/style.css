@@ -376,6 +376,24 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 
 .hero p.lead { font-size: var(--fs-xl); color: var(--muted); max-width: 34rem; }
 
+/* Кадърът за телефон и този за десктоп никога не се показват заедно —
+   единият винаги е скрит, така че вторият изобщо не се тегли. Границата е
+   768px, както е поискано; hero-photo пада на 860px по своя причина
+   (квадратното видео заемаше цялата височина на таблет). */
+.hero-photo-mobile { display: none; }
+.hero-photo-mobile img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: var(--radius);
+  background: var(--bg-soft);
+}
+@media (max-width: 768px) {
+  .hero-photo-mobile { display: block; margin-top: var(--sp-8); }
+}
+
 /* Свива се, щом клиентът тръгне да поръчва (text-order.js мери реалната
    височина и слага max-height в inline стил, преди да добави класа —
    виж бележката за forced reflow там, същият проблем като track-hide). */
@@ -530,6 +548,28 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   margin-bottom: var(--sp-4);
 }
 .occasion-icon svg { width: 22px; height: 22px; }
+
+/* Илюстрация в картата: 3:2, изрязана в центъра, за да са еднакви въпреки
+   различните оригинали. Отрицателните полета я долепят до ръба на картата —
+   иначе плуваше в padding-а ѝ. */
+.occasion-photo {
+  display: block;
+  width: calc(100% + var(--sp-6) * 2);
+  /* Глобалното `img { max-width: 100% }` (ред 101) реже calc-а обратно до
+     ширината на съдържанието и снимката оставаше 48px по-тясна от картата.
+     Тук нарочно се вдига — това е единственото изображение, което ТРЯБВА
+     да излезе извън padding-а на родителя си. */
+  max-width: none;
+  /* height: auto е задължително — без него атрибутът height="400" от HTML
+     остава като твърда височина и aspect-ratio не влиза в сила. Атрибутите
+     си стоят, защото пазят мястото, преди изображението да се зареди. */
+  height: auto;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  margin: calc(var(--sp-6) * -1) calc(var(--sp-6) * -1) var(--sp-5);
+  border-radius: var(--radius) var(--radius) 0 0;
+  background: var(--bg-soft);   /* докато се зареди — вместо празно място */
+}
 
 .occasion-card h3 { font-size: var(--fs-lg); margin: 0 0 var(--sp-2); }
 .occasion-card p { color: var(--muted); font-size: var(--fs-md); margin: 0; }
