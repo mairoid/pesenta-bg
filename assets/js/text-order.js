@@ -54,6 +54,30 @@
   function fail(msg) { errEl.textContent = msg; errEl.classList.add("show"); }
   function clearFail() { errEl.textContent = ""; errEl.classList.remove("show"); }
 
+  /* ============ Фактура по желание ============
+     Полетата стоят скрити, докато отметката не се сложи — 90% от клиентите
+     са физически лица, за които фактура не се дължи (чл. 113, ал. 3, т. 1
+     ЗДДС), и няма смисъл да ги гледат. */
+  var invChk = document.getElementById("text-invoice");
+  var invBox = document.getElementById("text-invoice-fields");
+  if (invChk && invBox) {
+    invChk.addEventListener("change", function () {
+      invBox.hidden = !invChk.checked;
+      if (invChk.checked) document.getElementById("text-inv-name").focus({ preventScroll: true });
+    });
+  }
+
+  /* Връща данните за фактура или null. Валидира само когато е поискана —
+     иначе празните полета не бива да спират поръчката. */
+  function invoiceData() {
+    if (!invChk || !invChk.checked) return null;
+    return {
+      name: (document.getElementById("text-inv-name").value || "").trim(),
+      addr: (document.getElementById("text-inv-addr").value || "").trim(),
+      eik: (document.getElementById("text-inv-eik").value || "").trim()
+    };
+  }
+
   /* Адресът на касата за дадена поръчка.
      ------------------------------------------------------------------
      client_reference_id е това, което свързва плащането с брифа: Stripe
@@ -170,6 +194,10 @@
     if (!document.getElementById("text-consent").checked) {
       fail("Моля, потвърди съгласието с Общите условия."); return;
     }
+    var inv = invoiceData();
+    if (inv && (!inv.name || !inv.addr)) {
+      fail("За фактура са нужни име (или фирма) и адрес."); return;
+    }
     /* Име и имейл НЕ се искат тук — Stripe ги събира на своята страница.
        Съгласието по чл. 57 обаче остава преди плащането: клиентът се отказва
        от правото на връщане, това не може да се потвърждава след факта. */
@@ -194,12 +222,25 @@
       "Стилове": styles.length ? styles.join(", ") : "— не са избрани, виж разказа",
       "Език": language,
       "Разказ": story,
+      /* Ако няма отметка, пишем изрично „не иска" — така при преглед се вижда
+         разликата между „не е поискана" и „забравили сме да я запишем". */
+      "ФАКТУРА": inv
+        ? (inv.eik ? "ДА — ФИРМА (задължителна)" : "ДА — физическо лице (по желание)")
+        : "не е поискана — влиза в отчета по чл. 119",
+      "Фактура: име / фирма": inv ? inv.name : "—",
+      "Фактура: адрес": inv ? inv.addr : "—",
+      "Фактура: ЕИК / ДДС номер": inv && inv.eik ? inv.eik : "—",
       "Съгласие чл. 57 ЗЗП (без право на отказ)": "потвърдено преди плащането",
       "CLAUDE BRIEF": [
         "# Бърза текстова поръчка — " + orderNo,
         "",
         "СЪСТОЯНИЕ: очаква плащане. Свери в Stripe по " + orderNo,
         "преди да започнеш работа.",
+        "",
+        inv
+          ? ("ФАКТУРА: поискана" + (inv.eik ? " — ФИРМА " + inv.eik + " (задължителна по ЗДДС)" : " — физическо лице") +
+             "\n" + inv.name + ", " + inv.addr)
+          : "ФАКТУРА: не е поискана.",
         "",
         "Повод: " + (occasion || "— не е избран, виж разказа"),
         "Стилове: " + (styles.length ? styles.join(", ") : "— не са избрани, виж разказа"),

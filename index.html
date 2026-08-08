@@ -203,6 +203,30 @@
               <span>Запознах се с <a href="usloviya.html" target="_blank" style="color:var(--orange);text-decoration:underline;">Общите условия</a> и <a href="poveritelnost.html" target="_blank" style="color:var(--orange);text-decoration:underline;">Политиката за поверителност</a> и се съгласявам записът и данните ми да бъдат използвани за изработката на песента. Изрично се съгласявам изпълнението да започне веднага след плащането и потвърждавам, че <strong>губя 14-дневното право на отказ</strong> (чл. 57 ЗЗП) — песента се изработва лично за мен по мои указания и плащам предварително, за да започне работата.</span>
             </label>
 
+            <!-- Фактура по желание — виж бележката при текстовата поръчка в
+                 index.html. Идентични полета, защото и двете водят до един и
+                 същ брифинг при нас. -->
+            <label class="consent" style="margin-top:0.4rem;">
+              <input type="checkbox" id="fast-invoice">
+              <span>Искам фактура <span class="hint" style="display:inline;">(задължително за фирма; за физическо лице е по желание)</span></span>
+            </label>
+            <div id="fast-invoice-fields" hidden>
+              <div class="field">
+                <label for="fast-inv-name">Име или фирма *</label>
+                <input type="text" id="fast-inv-name" autocomplete="organization" placeholder="напр. „Пример&quot; ЕООД или Иван Иванов">
+              </div>
+              <div class="field">
+                <label for="fast-inv-addr">Адрес *</label>
+                <input type="text" id="fast-inv-addr" autocomplete="street-address" placeholder="гр., улица, номер">
+              </div>
+              <div class="field">
+                <label for="fast-inv-eik">ЕИК / ДДС номер
+                  <span class="hint">Само за фирма — остави празно, ако си физическо лице</span>
+                </label>
+                <input type="text" id="fast-inv-eik" placeholder="напр. 207427793 или BG207427793">
+              </div>
+            </div>
+
             <div class="form-error" id="fast-error" role="alert"></div>
             <button type="button" class="btn btn-primary btn-lg" id="fast-send" style="width:100%;margin-top:0.8rem;">Продължи към плащане · 19,90 €</button>
             <p class="hint" style="margin-top:0.6rem;">Плащането е през Stripe. Там въвеждаш име и имейл — песента идва на него.<br>Предпочиташ да напишеш? <a href="poruchka.html" style="color:var(--orange);text-decoration:underline;">Формата стъпка по стъпка →</a></p>
@@ -294,6 +318,34 @@
               <input type="checkbox" id="text-consent">
               <span>Запознах се с <a href="usloviya.html" target="_blank" style="color:var(--orange);text-decoration:underline;">Общите условия</a> и <a href="poveritelnost.html" target="_blank" style="color:var(--orange);text-decoration:underline;">Политиката за поверителност</a> и се съгласявам данните ми да бъдат използвани за изработката на песента. Изрично се съгласявам изпълнението да започне веднага след плащането и потвърждавам, че <strong>губя 14-дневното право на отказ</strong> (чл. 57 ЗЗП) — песента се изработва лично за мен по мои указания и плащам предварително, за да започне работата.</span>
             </label>
+
+            <!-- Фактура по желание. При продажба на физическо лице фактура НЕ се
+                 дължи (чл. 113, ал. 3, т. 1 ЗДДС) — е-бележката по чл. 52о е
+                 достатъчна. При фирма обаче изключението не важи и фактурата е
+                 задължителна, затова полето за ЕИК/ДДС номер решава двете
+                 наведнъж. Данните се искат ТУК, преди плащането: върне ли се
+                 човек след продажбата, тя вече е влязла в отчета по чл. 119 и
+                 корекцията е разкарване. -->
+            <label class="consent" style="margin-top:0.4rem;">
+              <input type="checkbox" id="text-invoice">
+              <span>Искам фактура <span class="hint" style="display:inline;">(задължително за фирма; за физическо лице е по желание)</span></span>
+            </label>
+            <div id="text-invoice-fields" hidden>
+              <div class="field">
+                <label for="text-inv-name">Име или фирма *</label>
+                <input type="text" id="text-inv-name" autocomplete="organization" placeholder="напр. „Пример" ЕООД или Иван Иванов">
+              </div>
+              <div class="field">
+                <label for="text-inv-addr">Адрес *</label>
+                <input type="text" id="text-inv-addr" autocomplete="street-address" placeholder="гр., улица, номер">
+              </div>
+              <div class="field">
+                <label for="text-inv-eik">ЕИК / ДДС номер
+                  <span class="hint">Само за фирма — остави празно, ако си физическо лице</span>
+                </label>
+                <input type="text" id="text-inv-eik" placeholder="напр. 207427793 или BG207427793">
+              </div>
+            </div>
 
             <div class="form-error" id="text-error" role="alert"></div>
             <button type="button" class="btn btn-primary btn-lg" id="text-send" style="width:100%;margin-top:0.8rem;">Продължи към плащане · 19,90 €</button>

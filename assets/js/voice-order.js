@@ -205,6 +205,28 @@
     }, 150);
   });
 
+  /* ============ Фактура по желание ============
+     Виж бележката в text-order.js — същата логика, същите полета. Скрити,
+     докато отметката не се сложи: физическите лица, за които фактура не се
+     дължи, не бива да ги гледат. */
+  var invChk = document.getElementById("fast-invoice");
+  var invBox = document.getElementById("fast-invoice-fields");
+  if (invChk && invBox) {
+    invChk.addEventListener("change", function () {
+      invBox.hidden = !invChk.checked;
+      if (invChk.checked) document.getElementById("fast-inv-name").focus({ preventScroll: true });
+    });
+  }
+
+  function invoiceData() {
+    if (!invChk || !invChk.checked) return null;
+    return {
+      name: (document.getElementById("fast-inv-name").value || "").trim(),
+      addr: (document.getElementById("fast-inv-addr").value || "").trim(),
+      eik: (document.getElementById("fast-inv-eik").value || "").trim()
+    };
+  }
+
   function setStatus(msg, cls) {
     if (!statusEl) return;
     statusEl.textContent = msg;
@@ -316,6 +338,10 @@
     if (!document.getElementById("fast-consent").checked) {
       fail("Моля, потвърди съгласието с Общите условия."); return;
     }
+    var inv = invoiceData();
+    if (inv && (!inv.name || !inv.addr)) {
+      fail("За фактура са нужни име (или фирма) и адрес."); return;
+    }
     /* Име и имейл НЕ се искат тук — Stripe ги събира на своята страница.
        Съгласието по чл. 57 обаче остава преди плащането: клиентът се отказва
        от правото на връщане, това не може да се потвърждава след факта. */
@@ -338,12 +364,25 @@
       "Клиент": "— идва от Stripe след плащането",
       "Транскрипция": transcript || "— няма (виж записа)",
       "Аудио запис": fileName + " (прикачен)",
+      /* Ако няма отметка, пишем изрично „не иска" — така при преглед се вижда
+         разликата между „не е поискана" и „забравили сме да я запишем". */
+      "ФАКТУРА": inv
+        ? (inv.eik ? "ДА — ФИРМА (задължителна)" : "ДА — физическо лице (по желание)")
+        : "не е поискана — влиза в отчета по чл. 119",
+      "Фактура: име / фирма": inv ? inv.name : "—",
+      "Фактура: адрес": inv ? inv.addr : "—",
+      "Фактура: ЕИК / ДДС номер": inv && inv.eik ? inv.eik : "—",
       "Съгласие чл. 57 ЗЗП (без право на отказ)": "потвърдено преди плащането",
       "CLAUDE BRIEF": [
         "# Гласова поръчка — " + orderNo,
         "",
         "СЪСТОЯНИЕ: очаква плащане. Свери в Stripe по " + orderNo,
         "преди да започнеш работа.",
+        "",
+        inv
+          ? ("ФАКТУРА: поискана" + (inv.eik ? " — ФИРМА " + inv.eik + " (задължителна по ЗДДС)" : " — физическо лице") +
+             "\n" + inv.name + ", " + inv.addr)
+          : "ФАКТУРА: не е поискана.",
         "",
         "## Транскрипция (автоматична, прегледана от клиента)",
         transcript || "— няма текст: браузърът не разпозна реч. Всичко е в записа.",
