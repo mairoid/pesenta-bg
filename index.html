@@ -834,6 +834,28 @@
     </div>
   </section>
 
+  <!-- ЗАЛАВЯНЕ НА ИМЕЙЛ -->
+  <!-- Кодът PESEN10 съществува реално: в PROMOS на order.js и като купон в
+       Stripe, ограничен само до продуктите на pesenta.bg. Тоест обещанието
+       тук е покрито — не измисляме отстъпка, която после не работи. -->
+  <section class="section email-capture-section">
+    <div class="container">
+      <div class="email-capture reveal">
+        <div>
+          <h2>Не си готов още?</h2>
+          <p>Остави имейла си и вземи код за <strong>−10%</strong> — важи 30 дни.</p>
+        </div>
+        <form class="email-capture-form" id="promo-form" novalidate>
+          <input type="email" id="promo-email" name="email" autocomplete="email"
+                 placeholder="ti@primer.bg" aria-label="Твоят имейл" required>
+          <button type="submit" class="btn btn-primary" id="promo-send">Изпрати ми кода</button>
+        </form>
+        <div class="form-error" id="promo-error" role="alert"></div>
+        <p class="promo-done" id="promo-done" hidden>Провери пощата си 📬</p>
+      </div>
+    </div>
+  </section>
+
   <!-- CTA -->
   <section class="section">
     <div class="container">

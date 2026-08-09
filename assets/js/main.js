@@ -451,3 +451,70 @@
     img.addEventListener("error", function () { drop(img); });
   });
 })();
+
+/* ---------- Залавяне на имейл срещу промо код ----------
+   Праща през FormSubmit като останалите форми, но с два техни специални
+   полета: _autoresponse връща кода на клиента автоматично, а _subject
+   озаглавява писмото при нас. Без autoresponse „Провери пощата си" щеше да
+   е обещание, което никой не изпълнява — Мирослав щеше да праща кода на
+   ръка при всяка заявка.
+
+   Остава на страницата (AJAX, не нативен POST): човекът чете нещо друго,
+   няма причина да го изхвърляме от него. */
+(function () {
+  "use strict";
+
+  var form = document.getElementById("promo-form");
+  if (!form) return;
+
+  var TARGET = "sales@pesenta.bg";
+  var input = document.getElementById("promo-email");
+  var btn = document.getElementById("promo-send");
+  var err = document.getElementById("promo-error");
+  var done = document.getElementById("promo-done");
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    err.textContent = "";
+    err.classList.remove("show");
+
+    var email = input.value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+      err.textContent = "Въведи валиден имейл — там ще дойде кодът.";
+      err.classList.add("show");
+      input.focus();
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = "Изпращане…";
+
+    var fd = new FormData();
+    fd.append("_subject", "Промо код -10%");
+    fd.append("_template", "box");
+    fd.append("email", email);
+    fd.append("Заявка", "иска промо код за -10% от началната страница");
+    fd.append("_autoresponse",
+      "Здравей! Ето кода ти за 10% отстъпка: PESEN10\n\n" +
+      "Въведи го при поръчката на https://pesenta.bg — важи 30 дни.\n\n" +
+      "Песента · pesenta.bg");
+
+    fetch("https://formsubmit.co/ajax/" + TARGET, {
+      method: "POST",
+      headers: { "Accept": "application/json" },
+      body: fd
+    })
+      .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then(function () {
+        if (window.plausible) window.plausible("Promo Requested");
+        form.hidden = true;
+        done.hidden = false;
+      })
+      .catch(function () {
+        btn.disabled = false;
+        btn.textContent = "Изпрати ми кода";
+        err.textContent = "Нещо се обърка — опитай пак след минута.";
+        err.classList.add("show");
+      });
+  });
+})();
