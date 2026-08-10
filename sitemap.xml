@@ -80,6 +80,20 @@
     <priority>0.7</priority>
   </url>
   <!-- NOVINI:SITEMAP — новите статии се добавят непосредствено под този ред -->
+  <!-- Двете статии със съвети са с по-висок приоритет от новинарските:
+       те водят към поръчка, не само информират. -->
+  <url>
+    <loc>https://pesenta.bg/novini/pesen-za-svatba-7-momenta.html</loc>
+    <lastmod>2026-08-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://pesenta.bg/novini/kakvo-da-razkazhesh-lichna-pesen.html</loc>
+    <lastmod>2026-08-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
   <url>
     <loc>https://pesenta.bg/novini/tyla-a-pop-vtori-albom.html</loc>
     <lastmod>2026-07-26</lastmod>
