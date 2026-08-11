@@ -177,6 +177,22 @@
       line-height: 1.4;
     }
 
+    /* Поканата стои ПОД плейъра, не над него: страницата е подарък за
+       конкретен човек и първото, което трябва да види, е песента си.
+       Затова и тонът е тих — това не е банер, а изречение. */
+    .reveal-upsell {
+      margin: 0 auto var(--sp-4);
+      font-size: var(--fs-sm);
+      color: #56506e;
+      max-width: 30rem;
+    }
+    .reveal-upsell a {
+      color: var(--pink);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .reveal-upsell strong { white-space: nowrap; }
+
     .reveal-brand {
       color: var(--muted);
       font-size: var(--fs-sm);
@@ -232,6 +248,14 @@
         <p class="reveal-audio-note" id="reveal-audio-note" hidden>Записът пристига съвсем скоро — провери отново след малко.</p>
       </div>
       <audio id="reveal-audio" preload="none"></audio>
+
+      <!-- Кодът е PRIYATELI20, защото съществува реално — създаден е в Stripe
+           и стои в PROMOS на order.js. Името му („приятели") пасва точно на
+           случая: човек чува песента на приятел и си поръчва своя. -->
+      <p class="reveal-upsell">
+        Искаш такава песен за твой човек?
+        <a href="poruchka.html?promo=PRIYATELI20">Поръчай с −20% с код <strong>PRIYATELI20</strong></a>
+      </p>
 
       <div style="margin-top:var(--sp-2);margin-bottom:var(--sp-8);">
         <button type="button" class="btn btn-ghost" id="reveal-share-btn" hidden>

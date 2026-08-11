@@ -780,6 +780,21 @@
     var povodChip = document.querySelector('#occasion-chips .chip[data-value="' + POVOD_MAP[urlPovod] + '"]');
     if (povodChip) povodChip.classList.add("selected");
   }
+  /* Промо код от URL: poruchka.html?promo=PRIYATELI20
+     Идва от reveal страницата, където някой чува песента на приятел. Кодът
+     не само се попълва, а се и ПРИЛАГА — иначе човекът вижда празно поле и
+     отстъпката, която му обещахме, изглежда като недоразумение.
+     Непознат код просто се игнорира; проверката е в applyPromo. */
+  var urlPromo = (params.get("promo") || "").trim().toUpperCase();
+  if (urlPromo && PROMOS[urlPromo]) {
+    var promoField = document.getElementById("promo");
+    if (promoField) {
+      promoField.value = urlPromo;
+      var applyBtn = document.getElementById("promo-apply");
+      if (applyBtn) applyBtn.click();
+    }
+  }
+
   renderSummary();
   renderMyOrders();
 
