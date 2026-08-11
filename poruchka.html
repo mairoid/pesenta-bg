@@ -163,6 +163,11 @@
       <h2 class="step-title" tabindex="-1">За кого е песента?</h2>
       <p class="step-sub">Стъпка 1 от 3 — поводът и историята. Попълни каквото ти е удобно.</p>
 
+      <!-- Показва се само при идване от чип за стил на началната страница
+           (?stil=). Без нея избраният стил стои маркиран чак на стъпка 2 и
+           кликът изглежда безрезултатен. Попълва се от order.js. -->
+      <p class="promo-msg ok" id="preselect-note" hidden></p>
+
       <div class="field">
         <label>Повод</label>
         <div class="chips" id="occasion-chips" data-single>

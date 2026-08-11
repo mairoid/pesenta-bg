@@ -780,6 +780,33 @@
     var povodChip = document.querySelector('#occasion-chips .chip[data-value="' + POVOD_MAP[urlPovod] + '"]');
     if (povodChip) povodChip.classList.add("selected");
   }
+  /* Стил от URL: poruchka.html?stil=Рок
+     Идва от чиповете в секция „19 стила" на началната страница — човек
+     цъка стил и попада направо във формата, вместо да се лута.
+
+     Групата #style-chips е multi-select, тоест предварителният избор НЕ
+     пречи да се добавят още — точно каквото се иска.
+
+     Стиловете обаче са на СТЪПКА 2, а съветникът отваря на стъпка 1.
+     Затова и бележката: без нея маркираният чип се вижда чак след едно
+     „Напред" и кликът изглежда безрезултатен. */
+  var urlStil = params.get("stil");
+  if (urlStil) {
+    var stilChip = document.querySelector(
+      '#style-chips .chip[data-value="' + urlStil.replace(/"/g, '\\"') + '"]'
+    );
+    if (stilChip && !stilChip.classList.contains("selected")) {
+      stilChip.classList.add("selected");
+      updateStyleCount();
+      saveDraft();
+      var note = document.getElementById("preselect-note");
+      if (note) {
+        note.textContent = "✔ Стил „" + urlStil + "“ е избран — на стъпка 2 можеш да добавиш още.";
+        note.hidden = false;
+      }
+    }
+  }
+
   /* Промо код от URL: poruchka.html?promo=PRIYATELI20
      Идва от reveal страницата, където някой чува песента на приятел. Кодът
      не само се попълва, а се и ПРИЛАГА — иначе човекът вижда празно поле и
