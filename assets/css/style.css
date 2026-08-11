@@ -1543,7 +1543,22 @@ a.style-chip { text-decoration: none; color: inherit; }
 
 /* Грешката и успехът заемат цялата ширина, за да не мачкат формата. */
 .email-capture .form-error { flex-basis: 100%; margin: 0; }
-.promo-done { flex-basis: 100%; margin: 0; color: var(--orange); font-weight: 600; }
+.promo-done { flex-basis: 100%; }
+.promo-done p { margin: 0; color: var(--orange); font-weight: 600; }
+.promo-done .hint { color: var(--muted); font-weight: 400; margin-top: var(--sp-1); }
+/* Кодът трябва да се чете и препише безпогрешно — затова моноширинен,
+   уголемен и с разредка. Ползва се веднъж и на ръка. */
+.promo-code {
+  display: inline-block;
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: var(--fs-xl);
+  letter-spacing: 0.08em;
+  padding: var(--sp-1) var(--sp-3);
+  border-radius: var(--radius-sm);
+  background: var(--surface-strong);
+  border: 1px dashed var(--pink);
+  color: var(--text);
+}
 
 @media (max-width: 640px) {
   .email-capture { padding: var(--sp-6); }

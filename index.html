@@ -846,7 +846,14 @@
           <button type="submit" class="btn btn-primary" id="promo-send">Изпрати ми кода</button>
         </form>
         <div class="form-error" id="promo-error" role="alert"></div>
-        <p class="promo-done" id="promo-done" hidden>Провери пощата си 📬</p>
+        <!-- Кодът се показва ТУК, а не се праща по имейл. FormSubmit не праща
+             автоотговор при AJAX подаване (тяхна документация), а нативният
+             POST щеше да изхвърли човека от страницата. Показването на екрана
+             удържа обещанието веднага и не зависи от доставка на поща. -->
+        <div class="promo-done" id="promo-done" hidden>
+          <p>Ето кода ти: <strong class="promo-code">PESEN10</strong></p>
+          <p class="hint">Запиши го — въвежда се при поръчката.</p>
+        </div>
       </div>
     </div>
   </section>
