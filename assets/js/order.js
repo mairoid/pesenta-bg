@@ -23,7 +23,6 @@
   var FORM_ENDPOINT_NATIVE = "https://formsubmit.co/" + FORM_TARGET;
   var THANKS_URL = "https://pesenta.bg/blagodarim.html";
   var ORDER_EMAIL = "sales@pesenta.bg";
-  var BGN_RATE = 1.95583;
 
   var PLANS = {
     pesen: { label: "Песен по поръчка", price: 19.9, desc: "авторски текст, до 3:30 мин, 2 версии, безплатна корекция, MP3 + текст" }
@@ -77,9 +76,6 @@
 
   function eur(n) {
     return "€" + n.toFixed(2).replace(".", ",");
-  }
-  function bgn(n) {
-    return (n * BGN_RATE).toFixed(2).replace(".", ",") + " лв.";
   }
   function val(id) {
     var el = document.getElementById(id);
@@ -200,7 +196,7 @@
     if (t.discount > 0) {
       html += '<div class="row discount"><span>Промо код ' + state.promoCode + " (−" + state.promoPct + "%)</span><span>−" + eur(t.discount) + "</span></div>";
     }
-    html += '<div class="row total"><span>Общо</span><span>' + eur(t.total) + " <small style=\"color:var(--muted);font-size:0.75em;font-weight:400;\">(" + bgn(t.total) + ")</small></span></div>";
+    html += '<div class="row total"><span>Общо</span><span>' + eur(t.total) + "</span></div>";
     html += '<div class="row" style="font-size:0.85rem;"><span>Плаща се при поръчката — фактура веднага</span><span></span></div>';
     box.innerHTML = html;
   }
@@ -316,7 +312,7 @@
       ["Нецензурни изрази", d.explicit ? "разрешени (18+)" : "не"],
       ["Гласово съобщение", voiceBlob ? "приложено ✓" : "не"],
       ["Пакет", PLANS[state.plan].label + (state.express ? " + Експрес 24ч" : "")],
-      ["Общо", eur(t.total) + " (" + bgn(t.total) + ")" + (state.promoCode ? " с код " + state.promoCode : "")]
+      ["Общо", eur(t.total) + (state.promoCode ? " с код " + state.promoCode : "")]
     ];
     var html = "<h3>Преглед на заявката</h3><dl>";
     rows.forEach(function (r) {
@@ -603,7 +599,7 @@
       "Линк за плащане (изпрати веднага)": "https://pesenta.bg/plati.html?order=" + orderNo + "&plan=" + state.plan + (state.express ? "&express=1" : ""),
       "Пакет": PLANS[state.plan].label + (state.express ? " + Експрес 24ч" : ""),
       "Промо код": state.promoCode ? state.promoCode + " (−" + state.promoPct + "%)" : "—",
-      "Обща цена": eur(t.total) + " / " + bgn(t.total),
+      "Обща цена": eur(t.total),
       "Бележки": d.notes || "—",
       "CLAUDE BRIEF": brief
     };

@@ -75,11 +75,17 @@
   </url>
   <url>
     <loc>https://pesenta.bg/novini/</loc>
-    <lastmod>2026-07-16</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <!-- NOVINI:SITEMAP — новите статии се добавят непосредствено под този ред -->
+  <url>
+    <loc>https://pesenta.bg/novini/evroviziya-2027-burgas.html</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
   <!-- Двете статии със съвети са с по-висок приоритет от новинарските:
        те водят към поръчка, не само информират. -->
   <url>

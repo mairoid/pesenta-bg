@@ -88,7 +88,6 @@
   var box = document.getElementById("pay-summary");
 
   function eur(n) { return "€" + n.toFixed(2).replace(".", ","); }
-  function bgn(n) { return (n * cfg.bgnRate).toFixed(2).replace(".", ",") + " лв."; }
   function esc(s) {
     return String(s).replace(/[&<>"]/g, function (c) {
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
@@ -105,7 +104,7 @@
   if (orderNo) html += '<div class="row"><span>Поръчка</span><span>' + esc(orderNo) + "</span></div>";
   html += '<div class="row"><span>Пакет „' + esc(plan.label) + '“</span><span>' + eur(plan.price) + "</span></div>";
   if (express) html += '<div class="row"><span>Експресна изработка (24 ч)</span><span>' + eur(cfg.expressPrice) + "</span></div>";
-  html += '<div class="row total"><span>Общо</span><span>' + eur(total) + ' <small style="color:var(--muted);font-size:0.75em;font-weight:400;">(' + bgn(total) + ")</small></span></div>";
+  html += '<div class="row total"><span>Общо</span><span>' + eur(total) + "</span></div>";
   box.innerHTML = html;
 
   var linkKey = express ? planKey + "_express" : planKey;

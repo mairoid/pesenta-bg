@@ -65,6 +65,5 @@ window.PESENTA_PAYMENTS = {
   plans: {
     pesen: { label: "Песен по поръчка", price: 19.9 }
   },
-  expressPrice: 9.9,
-  bgnRate: 1.95583
+  expressPrice: 9.9
 };
