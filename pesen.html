@@ -15,6 +15,10 @@
        индексира: Google би видял хиляди „празни“ варианта без параметри. -->
   <meta name="robots" content="noindex, nofollow">
   <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+  <!-- PNG резерви: Safari на iOS не ползва SVG фавикон, а apple-touch-icon
+       не бива да е прозрачен — иначе iOS го слага върху черно. -->
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 
   <!-- Open Graph — статичните стойности тук са резервни; JS ги презаписва
        веднага след зареждане (виж скрипта долу). Повечето линк-preview

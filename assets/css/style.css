@@ -482,18 +482,31 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   border-radius: var(--radius);
 }
 
-.step-num {
-  display: inline-grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
-  background: var(--grad);
-  color: var(--ink);
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: var(--fs-xl);
+.step-icon {
+  display: block;
+  width: 72px;
+  height: 72px;
   margin-bottom: var(--sp-4);
+}
+
+/* Номерът беше квадратче с градиент. Откакто всяка стъпка има градиентна
+   икона, двата елемента се биеха — затова тук номерът е тих маркер в ъгъла,
+   а иконата носи цвета. */
+.step-num {
+  position: absolute;
+  top: var(--sp-6);
+  right: var(--sp-6);
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--fs-sm);
 }
 
 .step-card p { color: var(--muted); font-size: var(--fs-md); margin: 0; }
@@ -755,6 +768,20 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   border: 1px solid var(--border);
 }
 .cta-band p { color: var(--muted); max-width: 34rem; margin: 0 auto var(--sp-6); }
+
+/* Тъмният слой е част от background-image, не отделен елемент — така текстът
+   остава четим без допълнителен ::before и без да се пипа подредбата вътре.
+   0.62 е мерено, не на око: най-тъмната точка под абзаца дава 5,86:1 спрямо
+   цвета на текста (WCAG AA иска 4,5:1). При 0,72 контрастът е 7,67:1, но
+   снимката изчезва напълно и остава само текстура. */
+.cta-band-photo {
+  background-image:
+    linear-gradient(rgba(11, 10, 26, 0.62), rgba(11, 10, 26, 0.62)),
+    url("../img/podaruk-moment.jpg");
+  background-size: cover;
+  background-position: center;
+}
+.cta-band-photo p { color: #d7d3ea; }
 
 /* ---------- Футър ---------- */
 
@@ -1505,6 +1532,40 @@ a.style-chip { text-decoration: none; color: inherit; }
   color: transparent;
 }
 .founder-text .founder-sign { margin: 0; color: var(--text); font-weight: 600; }
+
+/* ---------- Снимки в „Зад кулисите“ ---------- */
+
+.studio-pair,
+.reactions-grid {
+  display: grid;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-10);
+}
+.studio-pair { grid-template-columns: repeat(2, 1fr); }
+.reactions-grid { grid-template-columns: repeat(3, 1fr); margin: var(--sp-10) 0 0; }
+
+.studio-pair img,
+.reactions-grid img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  transition: transform var(--dur-base) var(--ease);
+}
+@media (hover: hover) {
+  .studio-pair img:hover,
+  .reactions-grid img:hover { transform: scale(1.02); }
+}
+
+@media (max-width: 720px) {
+  /* На телефон трите реакции една под друга изяждат цял екран скрол, затова
+     стават две в ред; студийните остават една под друга, за да се вижда
+     детайлът в тъмното. */
+  .studio-pair { grid-template-columns: 1fr; }
+  .reactions-grid { grid-template-columns: repeat(2, 1fr); }
+  .reactions-grid img:first-child { grid-column: 1 / -1; }
+}
 @media (max-width: 640px) {
   .founder-story { flex-direction: column; align-items: center; text-align: center; }
 }

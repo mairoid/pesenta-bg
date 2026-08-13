@@ -13,6 +13,10 @@
   <meta name="description" content="Песен по поръчка с авторски текст по твоята история — за 19,90 €. Комбинирай стилове, избери от 15 езика. Плащаш при поръчката, песента е готова до 48 часа.">
   <link rel="canonical" href="https://pesenta.bg/">
   <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+  <!-- PNG резерви: Safari на iOS не ползва SVG фавикон, а apple-touch-icon
+       не бива да е прозрачен — иначе iOS го слага върху черно. -->
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 
   <!-- Open Graph -->
   <meta property="og:type" content="website">
@@ -621,17 +625,23 @@
       </div>
       <div class="steps-grid">
         <div class="step-card reveal">
-          <span class="step-num">1</span>
+          <!-- Иконата носи смисъла, затова alt е празен — заглавието я дублира.
+               Номерът остана като малък маркер: три градиентни квадратчета и три
+               градиентни икони в един ред се биеха. -->
+          <img class="step-icon" src="assets/img/stapka-1.png" alt="" width="72" height="72" loading="lazy" decoding="async">
+          <span class="step-num" aria-hidden="true">1</span>
           <h3>Разказваш и плащаш</h3>
           <p>Кратка форма или 2 минути гласово — човекът, поводът, вътрешните шеги. Плащаш 19,90 € с карта и получаваш документа за продажбата на имейла си веднага.</p>
         </div>
         <div class="step-card reveal">
-          <span class="step-num">2</span>
+          <img class="step-icon" src="assets/img/stapka-2.png" alt="" width="72" height="72" loading="lazy" decoding="async">
+          <span class="step-num" aria-hidden="true">2</span>
           <h3>Пишем и композираме</h3>
           <p>Авторски текст по твоята история, композиран в избраните от теб стилове. Правим две версии и избираме по-добрата.</p>
         </div>
         <div class="step-card reveal">
-          <span class="step-num">3</span>
+          <img class="step-icon" src="assets/img/stapka-3.png" alt="" width="72" height="72" loading="lazy" decoding="async">
+          <span class="step-num" aria-hidden="true">3</span>
           <h3>Получаваш песента</h3>
           <p>До 48 часа песента пристига в MP3 на имейла ти, заедно с текста. Ако нещо не е точно — коригираме я безплатно.</p>
         </div>
@@ -738,6 +748,15 @@
         </div>
       </div>
 
+      <!-- Мястото, където се пишат песните. Двете снимки са от една и съща
+           стая — умишлено, за да не изглежда като студио с екип. -->
+      <div class="studio-pair reveal">
+        <img src="assets/img/studio-1.jpg" width="800" height="600" loading="lazy" decoding="async"
+             alt="Домашно студио през нощта: кондензаторен микрофон с поп филтър, слушалки на стойка и лаптоп с вълновата форма на песента, осветени от една топла настолна лампа">
+        <img src="assets/img/studio-2.jpg" width="800" height="600" loading="lazy" decoding="async"
+             alt="Ръка върху копчето на компактен аудио интерфейс, кехлибарени индикаторни лампички в тъмното">
+      </div>
+
       <!-- Реални отзиви от клиенти. Лентата тръгва наляво сама, щом влезе в
            екрана, и спира при посочване с мишка, за да може да се прочете.
            Виж quotes-* в style.css и main.js. -->
@@ -774,6 +793,18 @@
             <figcaption class="who">Росен Б.</figcaption>
           </figure>
         </div>
+      </div>
+
+      <!-- Реакциите затварят секцията: думите отгоре, моментите отдолу.
+           Снимките са постановъчни, не са на конкретните хора от отзивите —
+           затова alt-овете описват сцена, а не назовават никого. -->
+      <div class="reactions-grid reveal">
+        <img src="assets/img/reakciya-1.jpg" width="800" height="600" loading="lazy" decoding="async"
+             alt="Младоженец слуша изненадваща песен на сватбата си, със сълза на окото, а гостите около масата го гледат">
+        <img src="assets/img/reakciya-2.jpg" width="800" height="600" loading="lazy" decoding="async"
+             alt="Баба избърсва сълза на юбилей, внучка и внук я прегръщат от двете страни">
+        <img src="assets/img/reakciya-3.jpg" width="800" height="600" loading="lazy" decoding="async"
+             alt="Мъже в бродирани ризи седят в кръг под лампички и слушат песен заедно">
       </div>
     </div>
   </section>
@@ -861,7 +892,9 @@
   <!-- CTA -->
   <section class="section">
     <div class="container">
-      <div class="cta-band reveal">
+      <!-- Снимката е фон, не съдържание: носи настроение, а текстът отгоре е
+           това, което трябва да се прочете. Затова е в CSS, а не <img>. -->
+      <div class="cta-band cta-band-photo reveal">
         <h2>Подари нещо, което не се забравя</h2>
         <p>Цветята увяхват, ваучерите изтичат. Песента остава — и се пуска на всяко семейно събиране.</p>
         <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
