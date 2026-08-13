@@ -614,6 +614,7 @@ export function renderBeleshka(env, s) {
   ${row("ЕИК", env.EIK)}
   ${row("Адрес", env.SELLER_ADDRESS)}
   ${env.SELLER_VAT ? row("ДДС номер", env.SELLER_VAT) : ""}
+  ${env.VAT_EXEMPT_NOTE ? row("Данъчен режим", env.VAT_EXEMPT_NOTE) : ""}
   ${row("Електронен магазин", env.DOMAIN_NAME)}
   ${row("Уникален номер на е-магазина", env.E_SHOP_N)}
 </table>
@@ -640,7 +641,11 @@ export function renderBeleshka(env, s) {
   </tr>
   ${s.discount_eur_c ? `<tr><td colspan="4">Отстъпка</td>
     <td class="num">−${e(eur(s.discount_eur_c))} €</td></tr>` : ""}
-  ${env.SELLER_VAT ? `<tr><td colspan="4">ДДС (${e(String(s.vat_rate))}%)</td>
+  ${/* Редът съществува само ако наистина се начислява данък. При чл. 97а
+        ставката е 0 и чл. 113, ал. 9 ЗДДС забранява данъкът да се посочва —
+        затова условието е ставката, а не наличието на ДДС номер (номерът е
+        валиден и стои горе). */ ""}
+  ${Number(s.vat_rate) > 0 ? `<tr><td colspan="4">ДДС (${e(String(s.vat_rate))}%)</td>
       <td class="num">${e(money(s.vat_st))} €</td></tr>` : ""}
   <tr class="total"><td colspan="4">Общо</td>
       <td class="num">${e(eur(s.total_eur_c))} €</td></tr>
