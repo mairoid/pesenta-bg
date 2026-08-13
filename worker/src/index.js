@@ -613,7 +613,7 @@ export function renderBeleshka(env, s) {
   ${row("Продавач", env.SELLER_NAME)}
   ${row("ЕИК", env.EIK)}
   ${row("Адрес", env.SELLER_ADDRESS)}
-  ${row("ДДС номер", env.SELLER_VAT)}
+  ${env.SELLER_VAT ? row("ДДС номер", env.SELLER_VAT) : ""}
   ${row("Електронен магазин", env.DOMAIN_NAME)}
   ${row("Уникален номер на е-магазина", env.E_SHOP_N)}
 </table>
@@ -640,8 +640,8 @@ export function renderBeleshka(env, s) {
   </tr>
   ${s.discount_eur_c ? `<tr><td colspan="4">Отстъпка</td>
     <td class="num">−${e(eur(s.discount_eur_c))} €</td></tr>` : ""}
-  <tr><td colspan="4">ДДС (${e(String(s.vat_rate))}%)</td>
-      <td class="num">${e(money(s.vat_st))} €</td></tr>
+  ${env.SELLER_VAT ? `<tr><td colspan="4">ДДС (${e(String(s.vat_rate))}%)</td>
+      <td class="num">${e(money(s.vat_st))} €</td></tr>` : ""}
   <tr class="total"><td colspan="4">Общо</td>
       <td class="num">${e(eur(s.total_eur_c))} €</td></tr>
   ${showBgn ? `<tr><td colspan="4">Равностойност в лева
