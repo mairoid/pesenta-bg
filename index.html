@@ -414,6 +414,40 @@
     </div>
   </section>
 
+  <!-- КИНЕМАТИЧЕН ВХОД (scrub) -->
+  <!-- Стои ПОД hero-то, не над него и не вместо него. Решението е на Мирослав
+       и логиката му е: дошлият да поръча получава формата на първия екран, а
+       разглеждащият стига до киното, като продължи надолу. Ако беше отгоре,
+       поръчката щеше да падне на четвъртия екран.
+       Затова и бутонът в банда 4 сочи НАГОРЕ към #voice-card — човекът вече е
+       минал покрай формата и го връщаме към нея.
+       Показва се само на десктоп и само ако видеото се зареди; иначе остава
+       display:none и страницата тече все едно секцията я няма. -->
+  <section class="scrub" id="scrub" hidden aria-label="Въведение">
+    <div class="scrub-sticky">
+      <video class="scrub-video" id="scrub-video"
+             muted playsinline preload="none" tabindex="-1" aria-hidden="true"
+             poster="assets/img/hero-poster.jpg"></video>
+      <div class="scrub-scrim" aria-hidden="true"></div>
+
+      <div class="scrub-band" data-from="0.00" data-to="0.18">
+        <p>Всяка история крие песен.</p>
+      </div>
+      <div class="scrub-band" data-from="0.24" data-to="0.42">
+        <p>Разкажи ни я за 5 минути.</p>
+      </div>
+      <div class="scrub-band" data-from="0.48" data-to="0.66">
+        <p>Ние я превръщаме в музика за 48 часа.</p>
+      </div>
+      <div class="scrub-band" data-from="0.74" data-to="1.00">
+        <p>19,90 €. Готова за момента, който ще помнят.</p>
+        <a class="btn btn-primary btn-lg" href="#voice-card">Поръчай песен</a>
+      </div>
+
+      <div class="scrub-hint" aria-hidden="true">Скролни</div>
+    </div>
+  </section>
+
   <!-- ДЕМО ПЕСНИ -->
   <section class="section" id="demo">
     <div class="container">
@@ -1003,6 +1037,7 @@
 
 <script src="assets/js/main.js" defer></script>
 <script src="assets/js/rojdendni.js" defer></script>
+<script src="assets/js/scrub.js" defer></script>
 <!-- Линковете за плащане живеят на едно място. Бързите поръчки пращат клиента
      право на касата, затова конфигурацията трябва да е и тук, не само в
      plati.html. Зарежда се ПРЕДИ формите, за да е налична, щом им потрябва. -->
