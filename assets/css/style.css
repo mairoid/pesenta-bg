@@ -1631,10 +1631,9 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
      плейъра си остава непроменена */
   transition: border-color var(--dur-base) var(--ease), background var(--dur-base) var(--ease), transform var(--dur-base) var(--ease), opacity var(--dur-base) var(--ease), max-height var(--dur-base) var(--ease), margin-bottom var(--dur-base) var(--ease), padding-top var(--dur-base) var(--ease), padding-bottom var(--dur-base) var(--ease), border-width var(--dur-base) var(--ease);
 }
-@media (hover: hover) {
-  .track-row:hover { border-color: rgba(255, 255, 255, 0.25); transform: translateY(-1px); }
-}
-.track-row.playing { border-color: var(--pink); background: rgba(255, 77, 141, 0.08); }
+/* Правилата за :hover и .playing на картата живеят по-надолу, в блока
+   „Характер на картите“ — тук стояха старите, за списъчния ред, и се
+   разминаваха с новите (розово срещу цвета на песента). */
 
 /* ---------- Песните като решетка от корици ----------
    Разметката НЕ се пипа: плейърът търси .player[data-src] с .progress-fill
@@ -1707,6 +1706,76 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 .track-info { grid-area: 2 / 1; padding: var(--sp-4) var(--sp-4) var(--sp-5); min-width: 0; }
 .track-info h3 { margin: 0 0 var(--sp-1); font-size: var(--fs-md); line-height: 1.3; }
 .track-info span { display: block; font-size: var(--fs-xs); color: var(--muted); }
+
+/* ---------- Характер на картите ----------
+   Всяка песен си има цвят още от старите SVG корици и новите илюстрации го
+   пазят. Тук картата го поема, за да не е сивата рамка еднаква за всички.
+   Цветът се чете от името на файла през :has() — така разметката остава
+   недокосната и правилото важи и на осемте страници за поводи, където
+   песните са в различен ред. */
+.track-row { --glow: var(--pink); }
+.track-row:has([src*="cover-vladi"])       { --glow: #4ADE80; }
+.track-row:has([src*="cover-habibi"])      { --glow: #FF7A4D; }
+.track-row:has([src*="cover-rosen-abi"])   { --glow: #E8563F; }
+.track-row:has([src*="cover-rocco"])       { --glow: #38BDF8; }
+.track-row:has([src*="cover-napipay"])     { --glow: #C084FC; }
+.track-row:has([src*="cover-tutso"])       { --glow: #2DD4BF; }
+.track-row:has([src*="cover-veche-nyama"]) { --glow: #7C90C0; }
+.track-row:has([src*="cover-api"])         { --glow: #7C5CFF; }
+
+.track-thumb { transition: transform var(--dur-base) var(--ease); }
+
+/* Прогресът в градиента на песента, не в общото розово */
+.track-row .progress-fill { background: linear-gradient(90deg, var(--glow), var(--orange)); }
+
+@media (hover: hover) {
+  /* Бутонът стои тих, докато мишката не дойде — илюстрацията е рисувана,
+     за да се гледа, не за да носи копче в средата си. */
+  .track-row .play-btn { opacity: 0; transform: scale(0.82); }
+  .track-row:hover .play-btn,
+  .track-row:focus-within .play-btn,
+  .track-row.playing .play-btn { opacity: 1; transform: scale(1); }
+
+  .track-row:hover {
+    transform: translateY(-6px);
+    border-color: color-mix(in srgb, var(--glow) 55%, transparent);
+    box-shadow: 0 20px 44px -16px color-mix(in srgb, var(--glow) 50%, transparent);
+  }
+  .track-row:hover .track-thumb { transform: scale(1.05); }
+}
+
+/* Свиреща карта: пръстен в цвета на песента и три подскачащи чертички
+   в ъгъла. Така се вижда коя върви, без да се чете текст. */
+.track-row.playing {
+  border-color: var(--glow);
+  background: color-mix(in srgb, var(--glow) 8%, transparent);
+}
+.track-row.playing::after {
+  content: "";
+  grid-area: 1 / 1;
+  place-self: end start;
+  z-index: 2;
+  margin: var(--sp-3);
+  width: 22px;
+  height: 18px;
+  background:
+    linear-gradient(var(--glow), var(--glow)) 0    100% / 5px 60% no-repeat,
+    linear-gradient(var(--glow), var(--glow)) 50%  100% / 5px 100% no-repeat,
+    linear-gradient(var(--glow), var(--glow)) 100% 100% / 5px 40% no-repeat;
+  animation: eq 900ms steps(1, end) infinite alternate;
+}
+@keyframes eq {
+  0%   { background-size: 5px 60%, 5px 100%, 5px 40%; }
+  33%  { background-size: 5px 100%, 5px 35%, 5px 80%; }
+  66%  { background-size: 5px 30%, 5px 75%, 5px 100%; }
+  100% { background-size: 5px 85%, 5px 45%, 5px 55%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track-row:hover { transform: none; }
+  .track-row:hover .track-thumb { transform: none; }
+  .track-row.playing::after { animation: none; }
+}
 .age-chip {
   display: inline-block; font-size: var(--fs-xs); font-weight: 700;
   color: #ff8a8a; border: 1px solid rgba(255, 100, 100, 0.7);
