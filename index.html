@@ -663,44 +663,12 @@
     </div>
   </section>
 
-  <!-- ДНЕС ПРАЗНУВАТ -->
-  <!-- Секцията е СКРИТА по подразбиране (hidden) и се показва само след като
-       rojdendni.js успее да зареди и да намери днешната дата. Ако fetch-ът
-       падне, посетителят не вижда празна рамка — вижда, че секцията изобщо
-       я няма. Затова разметката тук е само обвивка; съдържанието го пише JS. -->
-  <section class="section" id="rojdendni" hidden>
-    <div class="container">
-      <div class="section-head reveal">
-        <span class="section-eyebrow">
-          <span class="sec-no" aria-hidden="true">03</span>
-          <span class="kicker">Всеки ден е нечий</span>
-        </span>
-        <h2 id="rojdendni-title">Днес празнуват:</h2>
-      </div>
-
-      <div class="rojdendni-grid" id="rojdendni-grid"></div>
-
-      <p class="rojdendni-more">
-        <button type="button" class="link-btn" id="rojdendni-toggle" aria-expanded="false"
-                aria-controls="rojdendni-all"></button>
-      </p>
-      <div class="rojdendni-all" id="rojdendni-all" hidden></div>
-
-      <div class="rojdendni-cta reveal">
-        <p>А днес рожден ден има и твой приятел? 🎁</p>
-        <!-- Плавният скрол идва от scroll-behavior: smooth в style.css — не му
-             трябва JS. При prefers-reduced-motion правилото го изключва само. -->
-        <a class="btn btn-primary" href="#voice-card">Поръчай му персонална песен за 48 часа — 19,90 €</a>
-      </div>
-    </div>
-  </section>
-
   <!-- КАК РАБОТИ -->
   <section class="section" id="kak-raboti">
     <div class="container">
       <div class="section-head reveal">
         <span class="section-eyebrow">
-          <span class="sec-no" aria-hidden="true">04</span>
+          <span class="sec-no" aria-hidden="true">03</span>
           <span class="kicker">Простичко е</span>
         </span>
         <h2>Как работи</h2>
@@ -728,6 +696,38 @@
           <h3>Получаваш песента</h3>
           <p>До 48 часа песента пристига в MP3 на имейла ти, заедно с текста. Ако нещо не е точно — коригираме я безплатно.</p>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ДНЕС ПРАЗНУВАТ -->
+  <!-- Секцията е СКРИТА по подразбиране (hidden) и се показва само след като
+       rojdendni.js успее да зареди и да намери днешната дата. Ако fetch-ът
+       падне, посетителят не вижда празна рамка — вижда, че секцията изобщо
+       я няма. Затова разметката тук е само обвивка; съдържанието го пише JS. -->
+  <section class="section" id="rojdendni" hidden>
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="section-eyebrow">
+          <span class="sec-no" aria-hidden="true">04</span>
+          <span class="kicker">Всеки ден е нечий</span>
+        </span>
+        <h2 id="rojdendni-title">Днес празнуват:</h2>
+      </div>
+
+      <div class="rojdendni-grid" id="rojdendni-grid"></div>
+
+      <p class="rojdendni-more">
+        <button type="button" class="link-btn" id="rojdendni-toggle" aria-expanded="false"
+                aria-controls="rojdendni-all"></button>
+      </p>
+      <div class="rojdendni-all" id="rojdendni-all" hidden></div>
+
+      <div class="rojdendni-cta reveal">
+        <p>А днес рожден ден има и твой приятел? 🎁</p>
+        <!-- Плавният скрол идва от scroll-behavior: smooth в style.css — не му
+             трябва JS. При prefers-reduced-motion правилото го изключва само. -->
+        <a class="btn btn-primary" href="#voice-card">Поръчай му персонална песен за 48 часа — 19,90 €</a>
       </div>
     </div>
   </section>
