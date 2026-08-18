@@ -844,6 +844,32 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
    изтече периодът на двойното обозначаване. */
 .price-note { color: var(--muted); font-size: var(--fs-sm); margin-bottom: var(--sp-4); }
 
+/* Отзив над цената. Стои преди картата, защото истинските коментари са в
+   секция 07 — след искането за 19,90 €. Който се колебае за цената, не
+   стига дотам. Текстът е дословно същият, не нов. */
+.price-quote {
+  max-width: 34rem;
+  margin: 0 auto var(--sp-6);
+  text-align: center;
+}
+.price-quote blockquote {
+  margin: 0 0 var(--sp-2);
+  font-size: var(--fs-lg);
+  line-height: 1.45;
+  color: var(--text);
+}
+.price-quote figcaption { font-size: var(--fs-sm); color: var(--muted); }
+
+/* Гаранцията под бутона — там, където колебанието е най-силно. Зелено,
+   защото е обещание, не бележка под линия. */
+.price-guarantee {
+  margin: var(--sp-3) 0 0;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: #6ee7a8;
+  text-align: center;
+}
+
 .price-card ul { list-style: none; margin: 0 0 var(--sp-6); padding: 0; flex: 1; }
 .price-card li {
   padding: var(--sp-2) 0 var(--sp-2) var(--sp-6);
