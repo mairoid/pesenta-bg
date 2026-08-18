@@ -847,6 +847,23 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 /* Отзив над цената. Стои преди картата, защото истинските коментари са в
    секция 07 — след искането за 19,90 €. Който се колебае за цената, не
    стига дотам. Текстът е дословно същият, не нов. */
+/* Числото стои над цената, не в hero-то: там на лаптоп 1366x640 всеки
+   нов ред връща бутона под сгъвката (мерено). Тук е точно преди
+   искането за пари, заедно с отзива — двете правят едно доказателство. */
+.proof-count {
+  max-width: 34rem;
+  margin: 0 auto var(--sp-3);
+  text-align: center;
+  color: var(--muted);
+  font-size: var(--fs-md);
+}
+.proof-count strong {
+  font-family: var(--font-display);
+  font-size: 1.35em;
+  font-weight: 800;
+  color: var(--text);
+}
+
 .price-quote {
   max-width: 34rem;
   margin: 0 auto var(--sp-6);
