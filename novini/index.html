@@ -56,7 +56,7 @@
             "headline": "Евровизия 2027 идва в Бургас — за първи път в България",
             "url": "https://pesenta.bg/novini/evroviziya-2027-burgas.html",
             "datePublished": "2026-08-13",
-            "image": "https://pesenta.bg/assets/img/novini/novini-default.jpg"
+            "image": "https://pesenta.bg/assets/img/novini/evroviziya-2027-burgas.jpg"
           },
           {
             "@type": "BlogPosting",
@@ -157,8 +157,13 @@
     ]
   }
   </script>
-  <!-- Plausible analytics — без бисквитки -->
-  <script defer data-domain="pesenta.bg" src="https://plausible.io/js/script.js"></script>
+  <!-- Cloudflare Web Analytics. Без бисквитки и без localStorage — затова
+       сайтът пак няма нужда от банер за съгласие. Смени Plausible, който
+       зареждаше скрипт на всяка страница, но домейнът никога не беше
+       регистриран — тоест месеци наред всеки посетител плащаше заявка към
+       чужд сървър, а нищо не се записваше. -->
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon='{"token": "902a1340b733442da0ef0ebfe90903dc"}'></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Към съдържанието</a>
