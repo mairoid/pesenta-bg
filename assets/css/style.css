@@ -1785,6 +1785,8 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 .track-row:has([src*="cover-tutso"])       { --glow: #2DD4BF; }
 .track-row:has([src*="cover-veche-nyama"]) { --glow: #7C90C0; }
 .track-row:has([src*="cover-api"])         { --glow: #7C5CFF; }
+/* Жълтото на торбата — най-честият наситен цвят в самата корица. */
+.track-row:has([src*="cover-angel"])       { --glow: #F0A800; }
 
 .track-thumb { transition: transform var(--dur-base) var(--ease); }
 

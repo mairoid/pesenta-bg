@@ -485,9 +485,23 @@
         <span class="chip selected" data-filter="all">Всички</span>
         <span class="chip" data-filter="za-podarak">За подарък</span>
         <span class="chip" data-filter="parti-shegi">Партита и шеги</span>
-        <span class="chip chip--muted" data-filter="18-plus">18+</span>
+        <span class="chip" data-filter="publichni">За публични личности</span>
+          <span class="chip chip--muted" data-filter="18-plus">18+</span>
       </div>
       <div class="tracks-list">
+          <!-- Песен за публични личности. Води към собствената си страница,
+               защото е правена, за да се споделя — картата пуска, линкът
+               в заглавието отваря страницата с истинските Open Graph тагове. -->
+          <div class="track-row player reveal" data-category="publichni" data-src="assets/audio/angel-s-torbata.mp3" role="button" tabindex="0" aria-label="Пусни „Ангел с торбата“">
+            <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+            <img class="track-thumb" src="assets/img/cover-angel.jpg" alt="" loading="lazy" width="600" height="600">
+            <div class="track-info">
+              <h3>Ангел с торбата</h3>
+              <span>За Пламен и Ангел · <a href="pesni/angel-s-torbata.html">виж песента →</a></span>
+            </div>
+            <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
+            <span class="time">3:38</span>
+          </div>
         <div class="track-row player reveal" data-category="za-podarak" data-src="assets/audio/za-teb-brate-vladi.mp3" role="button" tabindex="0" aria-label="Пусни „За теб, брате Влади“">
           <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
           <img class="track-thumb" src="assets/img/cover-vladi.jpg" alt="" loading="lazy" width="600" height="600">
