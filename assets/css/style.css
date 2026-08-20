@@ -1886,6 +1886,26 @@ a.style-chip { text-decoration: none; color: inherit; }
 
 .article-hero { width: 100%; height: auto; border-radius: 16px; margin: var(--sp-4) 0 var(--sp-6); }
 
+/* Текст на песен. <pre> заради строфите — всеки ред е ред, не поток от думи.
+   Затова и се пренася с pre-wrap: без него дългите редове бутат страницата
+   настрани на телефон. */
+.pesen-tekst {
+  white-space: pre-wrap;
+  font-family: inherit;
+  font-size: var(--fs-md);
+  line-height: 1.75;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--orange);
+  border-radius: var(--radius);
+  padding: var(--sp-6);
+  margin: 0 0 var(--sp-6);
+  overflow-x: auto;
+}
+.pesen-stil { color: var(--muted); font-size: var(--fs-md); }
+
+
 /* Кредитът под снимката НЕ е декорация: CC лицензите изискват видимо
    посочване на автор, източник и лиценз. Затова стои на страницата, а не
    само в alt-а. Снимката отгоре губи долния си margin, за да са двойка.
