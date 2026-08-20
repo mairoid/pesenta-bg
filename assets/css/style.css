@@ -251,13 +251,35 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
 }
 
+/* Градиентът е двойно по-широк от бутона и при посочване се плъзга —
+   светлината минава през него, вместо да стои. Без анимационен цикъл:
+   движи се само докато мишката е отгоре, тоест не яде кадри в покой.
+   Сянката е по-плътна и по-близо до бутона; предишната беше 30px разлята
+   и се четеше като размазано петно, а не като повдигнат предмет. */
 .btn-primary {
-  background: var(--grad);
+  background: linear-gradient(100deg, var(--pink), var(--orange), var(--pink));
+  background-size: 220% 100%;
+  background-position: 0% 50%;
   color: var(--ink);
-  box-shadow: 0 10px 30px rgba(255, 77, 141, 0.35);
+  box-shadow: 0 6px 18px -4px rgba(255, 77, 141, 0.45);
+  transition: background-position var(--dur-slow) var(--ease),
+              transform var(--dur-fast) var(--ease),
+              box-shadow var(--dur-fast) var(--ease);
 }
 @media (hover: hover) {
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(255, 77, 141, 0.45); }
+  .btn-primary:hover {
+    background-position: 100% 50%;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px -6px rgba(255, 77, 141, 0.6);
+  }
+}
+/* Натискането трябва да се усеща. Досега бутонът не реагираше на клик —
+   само на посочване, което на телефон значи никаква обратна връзка. */
+.btn-ghost:active { transform: translateY(0) scale(0.98); }
+
+.btn-primary:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 3px 10px -2px rgba(255, 77, 141, 0.5);
 }
 
 .btn-ghost {
@@ -266,7 +288,13 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   color: var(--text);
 }
 @media (hover: hover) {
-  .btn-ghost:hover { background: var(--surface-strong); transform: translateY(-2px); }
+  /* Вторичният бутон получава очертание в цвета на марката при посочване —
+     дотук се различаваше само по нюанс сиво. */
+  .btn-ghost:hover {
+    background: var(--surface-strong);
+    border-color: var(--pink);
+    transform: translateY(-2px);
+  }
 }
 
 .btn-lg { padding: var(--sp-4) var(--sp-8); font-size: var(--fs-lg); }
@@ -1107,22 +1135,47 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 }
 
 /* Икони към социалните мрежи — кръгли бутони, същият език като .play-btn */
-.footer-social { display: flex; gap: var(--sp-3); margin-top: var(--sp-4); }
+/* Социалните копчета бяха сиви кръгове със сиви икони, които при посочване
+   ставаха малко по-светло сиви — не се забелязваха. Сега иконата е в цвета
+   на текста, а при посочване копчето се пълни с градиента на марката,
+   вдига се и хвърля светлина. 44px, не 40 — това е и минималната цел за
+   пръст по указанията на Apple. */
+.footer-social { display: flex; gap: var(--sp-3); margin-top: var(--sp-5); }
 .footer-social a {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: var(--surface);
   border: 1px solid var(--border);
-  color: var(--muted);
-  transition: color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+  color: var(--text);
+  overflow: hidden;
+  transition: color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease),
+              border-color var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
 }
+/* Градиентът е отделен слой, който изплува — така преходът е плавен.
+   Пряката смяна на background не се анимира между градиенти. */
+.footer-social a::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--grad);
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease);
+}
+.footer-social a svg { position: relative; z-index: 1; }
 .footer-social svg { width: 18px; height: 18px; }
 @media (hover: hover) {
-  .footer-social a:hover { color: var(--text); background: var(--surface-strong); border-color: var(--pink); }
+  .footer-social a:hover {
+    color: var(--ink);
+    border-color: transparent;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px -6px rgba(255, 77, 141, 0.5);
+  }
+  .footer-social a:hover::before { opacity: 1; }
 }
 
 /* ============================================================
