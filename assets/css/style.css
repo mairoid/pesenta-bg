@@ -721,10 +721,33 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 
 /* ---------- Днес празнуват ---------- */
 
-.rojdendni-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--sp-4);
+/* Лента, не решетка. БЕЗ gap — при 14 карти (седемте плюс копията им)
+   gap-овете са 13 и половината от лентата не е равна на един комплект,
+   тоест шевът се вижда при завъртането. Всяка карта носи своя отстъп през
+   margin-right и −50% съвпада до пиксел. Същият капан беше и при отзивите. */
+.rojdendni-rail {
+  position: relative;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+}
+.rojdendni-track {
+  display: flex;
+  width: max-content;
+  padding: var(--sp-2) 0;
+}
+.rojdendni-track .rojden-card { flex: 0 0 210px; margin-right: var(--sp-4); }
+.rojdendni-track.rolling { animation: rojdeni-roll 42s linear infinite; }
+@media (hover: hover) {
+  .rojdendni-rail:hover .rojdendni-track.rolling { animation-play-state: paused; }
+}
+@keyframes rojdeni-roll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rojdendni-track.rolling { animation: none; }
+  .rojdendni-rail { overflow-x: auto; }
 }
 
 .rojden-card {
@@ -745,6 +768,32 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 }
 .rojden-meta { color: var(--muted); font-size: var(--fs-md); margin: 0; }
 
+.rojden-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-3);
+}
+
+/* Знамето е три ленти, нарисувани в CSS. НЕ емоджи: 🇧🇬 се рисува различно
+   на всяка система, а на Windows често изобщо не се показва като знаме, а
+   като двете букви BG. Тук изгледът е един и същ навсякъде. */
+.rojden-flag {
+  display: inline-block;
+  width: 26px;
+  height: 17px;
+  border-radius: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: linear-gradient(
+    to bottom,
+    #ffffff 0 33.33%,
+    #00966E 33.33% 66.66%,
+    #D62612 66.66% 100%
+  );
+  flex: none;
+}
+
 .rojden-badge {
   display: inline-block;
   padding: 2px var(--sp-2);
@@ -753,10 +802,31 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--ink);
+  color: var(--muted);
+  border: 1px solid var(--border);
 }
-.rojden-badge.is-bg    { background: var(--pink); }
-.rojden-badge.is-svyat { background: var(--orange); }
+
+/* Възрастта е числото, заради което човек спира да чете — затова е едра и
+   в шрифта на заглавията, а не поредна дребна подробност. */
+.rojden-age {
+  font-family: var(--font-display);
+  font-size: var(--fs-2xl);
+  font-weight: 800;
+  line-height: 1;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.rojden-age::after {
+  content: "г.";
+  font-family: var(--font-body);
+  font-size: 0.45em;
+  font-weight: 600;
+  color: var(--muted);
+  margin-left: 2px;
+  -webkit-text-fill-color: var(--muted);
+}
 
 .rojdendni-more { margin: var(--sp-6) 0 0; }
 
@@ -772,6 +842,11 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   text-decoration: underline;
 }
 .link-btn:hover { color: var(--pink); }
+
+/* display: grid бие атрибута hidden — той е само user-agent правило и всяко
+   авторско display го отменя. Без този ред разгънатият списък заема 1195px
+   невидимо място под лентата. Същият капан е описан по-горе за .track-row. */
+.rojdendni-all[hidden] { display: none; }
 
 .rojdendni-all {
   display: grid;
@@ -795,12 +870,12 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 }
 
 @media (max-width: 980px) {
-  .rojdendni-grid, .rojdendni-all { grid-template-columns: repeat(2, 1fr); }
+  .rojdendni-all { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 560px) {
   /* Една на ред, не хоризонтален скрол: картите са само текст и на телефон
      четенето надолу е по-естествено от бутането настрани. */
-  .rojdendni-grid, .rojdendni-all { grid-template-columns: 1fr; }
+  .rojdendni-all { grid-template-columns: 1fr; }
 }
 
 .occasion-icon {
@@ -1021,6 +1096,25 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 .quote-card p { margin: 0 0 var(--sp-4); font-size: var(--fs-base); }
 .quote-card .who { color: var(--muted); font-size: var(--fs-sm); font-weight: 600; }
 .quote-mark { font-family: var(--font-display); font-size: var(--fs-3xl); color: var(--pink); line-height: 1; }
+
+/* Затварящата кавичка липсваше — цитатът се отваряше и не се затваряше.
+   Прави се от CSS, не от нов таг в разметката: така не се пипат шестте
+   отзива, а и марквеят клонира картите, тоест всяка промяна по тях се
+   удвоява. Обръща се на 180°, защото шрифтът няма отделен затварящ знак. */
+.quote-card blockquote::after {
+  content: "“";
+  display: block;
+  margin-top: var(--sp-2);
+  font-family: var(--font-display);
+  font-size: var(--fs-2xl);
+  line-height: 0.6;
+  color: var(--pink);
+  opacity: 0.55;
+  transform: rotate(180deg);
+  transform-origin: center;
+  width: 1em;
+  margin-left: auto;
+}
 
 /* ---------- FAQ ---------- */
 

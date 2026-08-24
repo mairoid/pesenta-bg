@@ -719,7 +719,7 @@
     </div>
   </section>
 
-  <!-- ДНЕС ПРАЗНУВАТ -->
+  <!-- РОДЕНИ НА ТОЗИ ДЕН -->
   <!-- Секцията е СКРИТА по подразбиране (hidden) и се показва само след като
        rojdendni.js успее да зареди и да намери днешната дата. Ако fetch-ът
        падне, посетителят не вижда празна рамка — вижда, че секцията изобщо
@@ -731,10 +731,15 @@
           <span class="sec-no" aria-hidden="true">04</span>
           <span class="kicker">Всеки ден е нечий</span>
         </span>
-        <h2 id="rojdendni-title">Днес празнуват:</h2>
+        <h2 id="rojdendni-title">Родени на този ден:</h2>
       </div>
 
-      <div class="rojdendni-grid" id="rojdendni-grid"></div>
+      <!-- Лента, не решетка: седем имена се движат наляво, както отзивите.
+           Пълненето и клонирането стават в rojdendni.js, защото картите ги
+           няма в разметката — идват от JSON след зареждането. -->
+      <div class="rojdendni-rail" id="rojdendni-rail">
+        <div class="rojdendni-track" id="rojdendni-grid"></div>
+      </div>
 
       <p class="rojdendni-more">
         <button type="button" class="link-btn" id="rojdendni-toggle" aria-expanded="false"
