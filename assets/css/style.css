@@ -1092,10 +1092,9 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   display: block;
   margin-top: var(--sp-2);
   font-family: var(--font-display);
-  font-size: var(--fs-2xl);
+  font-size: var(--fs-3xl);
   line-height: 0.6;
   color: var(--pink);
-  opacity: 0.55;
   transform: rotate(180deg);
   transform-origin: center;
   width: 1em;
