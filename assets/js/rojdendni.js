@@ -94,20 +94,38 @@
         ' stroke="rgba(0,0,0,.4)" stroke-width="1"/>' +
     "</svg>";
 
-  /* Планетата е глобус с меридиан и екватор, не континенти. Първият опит
-     рисуваше суша — на 18 пиксела тя става петно, което не се чете като
-     нищо. Решетката се разпознава на всякакъв размер и остава в същия стил
-     като знамето: плоско, със същия тънък тъмен ринг. */
+  /* Знамето е плосък правоъгълник с тъмен ринг. Ако отсреща сложим кръгъл
+     глобус, в един и същ ред застават два различни ПРЕДМЕТА — знаме и
+     картинка — и окото го чете като чуждо тяло. Затова световният знак е
+     същият правоъгълник: „знаме на никоя държава“, в нашия розово-оранжев
+     градиент, с решетка от меридиан и паралели вместо шарка.
+     Двата предишни опита бяха синьо кръгче — и единственото синьо на сайта. */
+  var GRAD_ID = "rojden-svyat-grad";
   var ZNAK_SVYAT =
     '<svg class="rojden-znak" viewBox="0 0 26 18" aria-hidden="true">' +
-      '<circle cx="13" cy="9" r="8" fill="#2A6FB0"/>' +
-      '<path d="M5.2 9h15.6M5.9 5.4h14.2M5.9 12.6h14.2" stroke="#BFE3FF"' +
-        ' stroke-width="1.1" fill="none" stroke-linecap="round"/>' +
-      '<ellipse cx="13" cy="9" rx="3.6" ry="8" fill="none" stroke="#BFE3FF"' +
-        ' stroke-width="1.1"/>' +
-      '<circle cx="13" cy="9" r="8" fill="none" stroke="rgba(0,0,0,.4)"' +
-        ' stroke-width="1"/>' +
+      '<rect x="0.5" y="0.5" width="25" height="17" rx="3" fill="url(#' + GRAD_ID + ')"/>' +
+      '<g stroke="#fff" stroke-opacity=".9" stroke-width=".9" fill="none">' +
+        '<path d="M1.1 9h23.8M2 4.4h22M2 13.6h22" stroke-linecap="round"/>' +
+        '<ellipse cx="13" cy="9" rx="5.4" ry="8"/>' +
+      "</g>" +
+      '<rect x="0.5" y="0.5" width="25" height="17" rx="3" fill="none"' +
+        ' stroke="rgba(0,0,0,.4)" stroke-width="1"/>' +
     "</svg>";
+
+  /* Градиентът се дефинира ВЕДНЪЖ за цялата секция, не вътре в знака: картите
+     се клонират за безкрайната лента, тоест id-то вътре в тях щеше да се
+     повтори четиринайсет пъти. Тук стои един-единствен, извън тях. */
+  function gradient(sec) {
+    if (document.getElementById(GRAD_ID)) return;
+    var kutiya = document.createElement("div");
+    kutiya.innerHTML =
+      '<svg width="0" height="0" aria-hidden="true" style="position:absolute">' +
+        '<defs><linearGradient id="' + GRAD_ID + '" x1="0" y1="0" x2="1" y2="1">' +
+          '<stop offset="0" stop-color="#ff4d8d"/>' +
+          '<stop offset="1" stop-color="#ffa14d"/>' +
+        "</linearGradient></defs></svg>";
+    sec.insertBefore(kutiya.firstChild, sec.firstChild);
+  }
 
   /* Иконка по професия. ТУК емоджи е добре, за разлика от знамето: ⚽ и 🎤 са
      единични знака и се рисуват навсякъде, докато 🇧🇬 е двойка „regional
@@ -207,6 +225,7 @@
         : "Виж всички от този ден (" + podredeni.length + ") →";
     });
 
+    gradient(sec);
     sec.hidden = false;
 
     /* Лентата се пуска СЛЕД показването на секцията: докато е hidden, тя е
