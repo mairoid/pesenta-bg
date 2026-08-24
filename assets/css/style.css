@@ -750,7 +750,13 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   .rojdendni-rail { overflow-x: auto; }
 }
 
+/* Картата е <a>, не <article> — цялата води към поръчка с предизбран повод.
+   Затова текстът наследява цвета си вместо да стане син подчертан линк. */
 .rojden-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
   position: relative;
   padding: var(--sp-6);
   background: var(--surface);
@@ -776,34 +782,14 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   margin-bottom: var(--sp-3);
 }
 
-/* Знамето е три ленти, нарисувани в CSS. НЕ емоджи: 🇧🇬 се рисува различно
-   на всяка система, а на Windows често изобщо не се показва като знаме, а
-   като двете букви BG. Тук изгледът е един и същ навсякъде. */
-.rojden-flag {
-  display: inline-block;
+/* Знаците са SVG с еднакъв viewBox, значи и двата заемат една и съща кутия
+   независимо какво рисуват — знамето е правоъгълник, планетата е кръг,
+   но редът не подскача между картите. */
+.rojden-znak {
+  display: block;
   width: 26px;
-  height: 17px;
-  border-radius: 3px;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  background: linear-gradient(
-    to bottom,
-    #ffffff 0 33.33%,
-    #00966E 33.33% 66.66%,
-    #D62612 66.66% 100%
-  );
+  height: 18px;
   flex: none;
-}
-
-.rojden-badge {
-  display: inline-block;
-  padding: 2px var(--sp-2);
-  border-radius: 999px;
-  font-size: var(--fs-xs);
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--muted);
-  border: 1px solid var(--border);
 }
 
 /* Възрастта е числото, заради което човек спира да чете — затова е едра и

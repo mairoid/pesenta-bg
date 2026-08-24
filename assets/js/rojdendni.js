@@ -74,21 +74,59 @@
     return m[1].trim() + " (" + vatre + ")";
   }
 
-  /* Знамето е три ленти в CSS, не картинка и не емоджи: емоджито се рисува
-     различно на всяка система, а понякога изобщо липсва. */
+  /* Двата знака са SVG, не емоджи и не CSS ленти.
+     Не емоджи, защото 🇧🇬 се рисува от два „regional indicator" знака и на
+     Windows излиза като буквите BG, а не като знаме — тогава двата знака
+     нямаше да са в сходен стил, а в никакъв.
+     Не CSS ленти, защото знамето имаше рамка, а долната му лента е червена:
+     отдолу оставаше бяла черта, точно тя, която дразнеше.
+     БЕЗ clipPath, макар да е очевидното решение — той иска id, а знаците се
+     повтарят по всяка карта и щяхме да получим дублирани идентификатори в
+     страницата. Затова долната лента е път със заоблени само долни ъгли,
+     изчислен да съвпадне с радиуса на основата. */
+  var ZNAK_BG =
+    '<svg class="rojden-znak" viewBox="0 0 26 18" aria-hidden="true">' +
+      '<rect x="0.5" y="0.5" width="25" height="17" rx="3" fill="#fff"/>' +
+      '<rect x="0.5" y="6.17" width="25" height="5.66" fill="#00966E"/>' +
+      '<path d="M0.5 11.83 H25.5 V14.5 A3 3 0 0 1 22.5 17.5 H3.5' +
+        ' A3 3 0 0 1 0.5 14.5 Z" fill="#D62612"/>' +
+      '<rect x="0.5" y="0.5" width="25" height="17" rx="3" fill="none"' +
+        ' stroke="rgba(0,0,0,.4)" stroke-width="1"/>' +
+    "</svg>";
+
+  /* Линиите на сушата стоят навътре от ръба на кръга: при радиус 8 и дебелина
+     на щриха 1.5 всичко след x≈19.5 или преди x≈6.5 щеше да се подава извън
+     синьото. */
+  var ZNAK_SVYAT =
+    '<svg class="rojden-znak" viewBox="0 0 26 18" aria-hidden="true">' +
+      '<circle cx="13" cy="9" r="8" fill="#2A6FB0"/>' +
+      '<path d="M7.4 6.2c1.4.4 2 1.4 3.1 1.3 1-.1 1.3-1 2.4-.9.9.1 1 .9 2 1' +
+        ' .8.1 1.4-.5 2.2-.3" fill="none" stroke="#4ADE80" stroke-width="1.5"' +
+        ' stroke-linecap="round"/>' +
+      '<path d="M7 11.2c1.1-.5 1.8.3 2.8.2.9-.1 1.1-.8 2-.6 1 .2.9 1.2 2 1.4' +
+        ' 1.1.2 1.6-.7 2.6-.4" fill="none" stroke="#4ADE80" stroke-width="1.5"' +
+        ' stroke-linecap="round"/>' +
+      '<circle cx="13" cy="9" r="8" fill="none" stroke="rgba(0,0,0,.4)"' +
+        ' stroke-width="1"/>' +
+    "</svg>";
+
   function karta(p, godina) {
     var bg = p.tip === "българска";
     var vazrast = godina - Number(p.godina);
-    var znak = bg
-      ? '<span class="rojden-flag" aria-label="българска" title="българска"></span>'
-      : '<span class="rojden-badge">Свят</span>';
-    return '<article class="rojden-card">' +
-             '<div class="rojden-top">' + znak +
-               '<span class="rojden-age">' + vazrast + '</span>' +
-             "</div>" +
+    var znak = bg ? ZNAK_BG : ZNAK_SVYAT;
+    var etiket = bg ? "българска" : "световна";
+    /* Цялата карта е връзка към поръчка с предизбран повод „Рожден ден" —
+       човек, който е спрял на нечий рожден ден, е на една мисъл от това да
+       се сети за свой. Копията в лентата се правят с tabindex -1 в lenta(),
+       за да не се минава два пъти през едни и същи връзки с клавиатура. */
+    return '<a class="rojden-card" href="poruchka.html?povod=rojden-den"' +
+             ' aria-label="Поръчай песен за рожден ден">' +
+             '<span class="rojden-top" title="' + etiket + '">' + znak +
+               '<span class="rojden-age">' + vazrast + "</span>" +
+             "</span>" +
              "<h3>" + esc(ime(p)) + "</h3>" +
              '<p class="rojden-meta">' + esc(p.pole) + "</p>" +
-           "</article>";
+           "</a>";
   }
 
   /* Българските top картите вървят първи, останалите запазват реда си от
@@ -151,6 +189,7 @@
     karti.forEach(function (k) {
       var kopie = k.cloneNode(true);
       kopie.setAttribute("aria-hidden", "true");
+      kopie.setAttribute("tabindex", "-1");
       grid.appendChild(kopie);
     });
     if ("IntersectionObserver" in window) {
