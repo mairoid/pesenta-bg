@@ -2225,3 +2225,54 @@ a.style-chip { text-decoration: none; color: inherit; }
   .email-capture-form input,
   .email-capture-form .btn { width: 100%; }
 }
+
+/* ---------- Амбилайт: светлината идва от самото изображение ----------
+   Същият ефект като при песните и поводите — повдигане, лек зум и сянка в
+   цвета на кадъра. Тоновете са ИЗМЕРЕНИ: най-наситеният чест цвят в
+   картинката, пробван върху 64 на 48 пиксела, после изсветлен до еднаква
+   сила, защото суровите проби са твърде тъмни, за да светнат върху тъмен фон.
+
+   Честно за резултата: всички проби на сайта излизат между 350 и 39 градуса.
+   Целият фотографски набор е в една топла гама, тоест сиянието тук е ефект, а
+   не код — различава се по сила, не по цвят. Стойностите пак са по кадър, за
+   да следват снимката, ако някога я сменим. */
+
+.step-card {
+  --glow: var(--pink);
+  transition: transform var(--dur-fast) var(--ease),
+              border-color var(--dur-fast) var(--ease),
+              box-shadow var(--dur-fast) var(--ease);
+}
+.step-card:has([src*="stapka-1"]) { --glow: #EA536C; }
+.step-card:has([src*="stapka-2"]) { --glow: #EA6D53; }
+.step-card:has([src*="stapka-3"]) { --glow: #EA6D53; }
+.step-icon { transition: transform var(--dur-base) var(--ease); }
+
+.studio-pair img, .reactions-grid img {
+  --glow: var(--pink);
+  /* Правилото по-горе дава преход само на transform. Понеже този блок е
+     последен във файла, добавяме останалите две тук, вместо да го гоним. */
+  transition: transform var(--dur-base) var(--ease),
+              border-color var(--dur-fast) var(--ease),
+              box-shadow var(--dur-fast) var(--ease);
+}
+.studio-pair img[src*="studio-1"]      { --glow: #EA5357; }
+.studio-pair img[src*="studio-2"]      { --glow: #EA7553; }
+.reactions-grid img[src*="reakciya-1"] { --glow: #EA7753; }
+.reactions-grid img[src*="reakciya-2"] { --glow: #EA8653; }
+.reactions-grid img[src*="reakciya-3"] { --glow: #EA7653; }
+
+@media (hover: hover) {
+  .step-card:hover {
+    transform: translateY(-6px);
+    border-color: color-mix(in srgb, var(--glow) 55%, transparent);
+    box-shadow: 0 20px 44px -16px color-mix(in srgb, var(--glow) 50%, transparent);
+  }
+  .step-card:hover .step-icon { transform: scale(1.06); }
+
+  .studio-pair img:hover, .reactions-grid img:hover {
+    transform: translateY(-6px) scale(1.02);
+    border-color: color-mix(in srgb, var(--glow) 55%, transparent);
+    box-shadow: 0 20px 44px -16px color-mix(in srgb, var(--glow) 50%, transparent);
+  }
+}
