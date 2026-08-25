@@ -116,6 +116,14 @@
     return "🎂";
   }
 
+  /* Четирилъчева звезда за покойниците. SVG, а не знакът ✦ от шрифта: него го
+     няма във всеки шрифт и рискът да излезе празно квадратче не си струва —
+     същата причина, поради която знамената не са емоджи. */
+  var ZVEZDA =
+    '<svg class="rojden-zvezda" viewBox="0 0 10 10" aria-hidden="true">' +
+      '<path d="M5 0 6.2 3.8 10 5 6.2 6.2 5 10 3.8 6.2 0 5 3.8 3.8Z"/>' +
+    "</svg>";
+
   function karta(p, godina) {
     var vazrast = godina - Number(p.godina);
     /* Българите нямат поле strana — типът им я казва. За чужденците тя е
@@ -125,14 +133,23 @@
     var kod = p.tip === "българска" ? "BG" : String(p.strana || "");
     var znak = window.zname(kod);
     var etiket = window.znameIme(kod);
+    /* Числото си остава и за покойниците: заглавието казва „Родени на 11
+       септември“, тоест то е възрастта, която човекът ЩЕШЕ да навърши днес.
+       Смяната е в тона — градиентът пада до тихо сребро — и в звездата след
+       него. Годините стоят в подсказката, където не пречат на подредбата. */
+    var pochinal = Number(p.pochinal) || 0;
+    if (pochinal) etiket += " · " + p.godina + " – " + pochinal;
     /* Цялата карта е връзка към поръчка с предизбран повод „Рожден ден" —
        човек, който е спрял на нечий рожден ден, е на една мисъл от това да
        се сети за свой. Копията в лентата се правят с tabindex -1 в lenta(),
        за да не се минава два пъти през едни и същи връзки с клавиатура. */
     return '<a class="rojden-card" href="poruchka.html?povod=rojden-den"' +
              ' aria-label="Поръчай песен за рожден ден">' +
-             '<span class="rojden-top" title="' + etiket + '">' + znak +
-               '<span class="rojden-age">' + vazrast + "</span>" +
+             '<span class="rojden-top" title="' + esc(etiket) + '">' + znak +
+               '<span class="rojden-vazrast' + (pochinal ? " pochinal" : "") + '">' +
+                 '<span class="rojden-age">' + vazrast + "</span>" +
+                 (pochinal ? ZVEZDA : "") +
+               "</span>" +
              "</span>" +
              "<h3>" + esc(ime(p)) + "</h3>" +
              '<p class="rojden-meta">' + esc(p.pole) +
@@ -140,9 +157,16 @@
            "</a>";
   }
 
-  /* Българските top картите вървят първи, останалите запазват реда си от
-     файла. Стабилно сортиране — Array.prototype.sort е стабилен от ES2019,
-     а и на практика във всички браузъри, които поддържат fetch. */
+  /* Легендата излиза само ако в лентата наистина има покоен. Иначе редът е
+     обяснение на нещо, което го няма на екрана. */
+  function legenda(pokazani) {
+    var el = document.getElementById("rojdendni-legenda");
+    if (!el) return;
+    var ima = pokazani.some(function (p) { return Number(p.pochinal); });
+    el.hidden = !ima;
+    el.innerHTML = ima ? ZVEZDA + "<span>вече не е сред нас</span>" : "";
+  }
+
   function bgParvo(a, b) {
     var A = a.tip === "българска" ? 0 : 1;
     var B = b.tip === "българска" ? 0 : 1;
@@ -166,6 +190,7 @@
        да влезе на мястото на годината. */
     var risuvai = function (p) { return karta(p, dnes.godina); };
     grid.innerHTML = top.map(risuvai).join("");
+    legenda(top);
 
     /* Разгъването показва ЦЕЛИЯ ден, включително седемте отгоре — така
        броят в надписа съвпада с това, което човекът вижда, като разгъне. */

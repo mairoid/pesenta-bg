@@ -2276,3 +2276,38 @@ a.style-chip { text-decoration: none; color: inherit; }
     box-shadow: 0 20px 44px -16px color-mix(in srgb, var(--glow) 50%, transparent);
   }
 }
+
+/* ---------- Покойници в лентата с рождениците ----------
+   Числото си остава: заглавието казва „Родени на 11 септември“, тоест то е
+   възрастта, която човекът ЩЕШЕ да навърши днес. Смяната е в тона — розово-
+   оранжевият градиент пада до тихо сребро — и в четирилъчевата звезда след
+   него. Годините стоят в подсказката, за да не удължават реда.
+   Звездата е SVG, а не знакът ✦ от шрифта: него го няма във всеки шрифт и
+   рискът да излезе празно квадратче не си струва. */
+.rojden-vazrast {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 3px;
+}
+.rojden-vazrast.pochinal .rojden-age {
+  background: linear-gradient(100deg, #D3D7EA, #9AA0BD);
+}
+.rojden-zvezda {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  margin-top: 3px;
+  fill: #9AA0BD;
+}
+
+/* Обяснението стои под лентата и се показва само когато в нея има покоен —
+   иначе е ред, който обяснява нещо, което не се вижда на екрана. */
+.rojden-legenda {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: var(--sp-3) 0 0;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+.rojden-legenda .rojden-zvezda { margin-top: 0; }
