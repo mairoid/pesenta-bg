@@ -724,31 +724,39 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 /* Лента, не решетка. БЕЗ gap — при 14 карти (седемте плюс копията им)
    gap-овете са 13 и половината от лентата не е равна на един комплект,
    тоест шевът се вижда при завъртането. Всяка карта носи своя отстъп през
-   margin-right и −50% съвпада до пиксел. Същият капан беше и при отзивите. */
+   margin-right и половината съвпада до пиксел. Същият капан беше и при
+   отзивите. */
+
+/* Лентата е ИСТИНСКИ хоризонтален скрол, а не CSS анимация върху transform.
+   С transform пръстът и анимацията се бият за едно и също свойство и човек
+   няма как да отмести картите. Като скрол влаченето с пръст го върши самият
+   браузър — заедно с инерцията — а автоматичното пълзене е просто scrollLeft,
+   който добавяме всеки кадър. */
 .rojdendni-rail {
   position: relative;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
+  /* Без това дърпането наляво на телефон връща предишната страница. */
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
   mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
 }
+.rojdendni-rail::-webkit-scrollbar { display: none; }
+@media (hover: hover) and (pointer: fine) {
+  .rojdendni-rail { cursor: grab; }
+  .rojdendni-rail.vlacha { cursor: grabbing; }
+}
+/* Докато влачим с мишка, текстът не бива да се маркира — иначе вместо да
+   местиш картите, ги избираш. */
+.rojdendni-rail.vlacha, .rojdendni-rail.vlacha * { user-select: none; }
 .rojdendni-track {
   display: flex;
   width: max-content;
   padding: var(--sp-2) 0;
 }
 .rojdendni-track .rojden-card { flex: 0 0 210px; margin-right: var(--sp-4); }
-.rojdendni-track.rolling { animation: rojdeni-roll 42s linear infinite; }
-@media (hover: hover) {
-  .rojdendni-rail:hover .rojdendni-track.rolling { animation-play-state: paused; }
-}
-@keyframes rojdeni-roll {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .rojdendni-track.rolling { animation: none; }
-  .rojdendni-rail { overflow-x: auto; }
-}
 
 /* Картата е <a>, не <article> — цялата води към поръчка с предизбран повод.
    Затова текстът наследява цвета си вместо да стане син подчертан линк. */
