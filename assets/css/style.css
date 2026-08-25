@@ -575,11 +575,16 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 
 /* ---------- Поводи (грид карти) ---------- */
 
-.occasion-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--sp-6);
+/* Поводите също са лента, а не решетка: осем карти на четири колони правеха
+   страницата дълга колкото две екранни височини само за този раздел.
+   Картата се стеснява от четвърт екран до 250 пиксела — снимката остава
+   3:2, просто по-малка. */
+.povodi-track {
+  display: flex;
+  width: max-content;
+  padding: var(--sp-2) 0 var(--sp-4);
 }
+.povodi-track .occasion-card { flex: 0 0 250px; margin-right: var(--sp-6); }
 
 .occasion-card {
   display: flex;
@@ -588,10 +593,41 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  transition: transform var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+  /* Снимката се уголемява при посочване; без това излиза извън заобления ъгъл. */
+  overflow: hidden;
+  transition: transform var(--dur-fast) var(--ease),
+              border-color var(--dur-fast) var(--ease),
+              box-shadow var(--dur-fast) var(--ease);
 }
+
+/* Амбилайт, същият като при песните: светлината идва от самата снимка.
+   Тоновете са ИЗМЕРЕНИ от картинките — най-наситеният чест цвят в кадъра,
+   пробван върху 64×43 пиксела — после изсветлени до еднаква сила, защото
+   суровите проби на годишнината и юбилея бяха толкова тъмни (#6e2b35,
+   #ad510e), че не биха светнали върху тъмния фон.
+   Всичките осем излизат топли, между 351 и 39 градуса: снимките наистина
+   споделят една гама. Това е свойство на кадрите, не на кода — затова не съм
+   раздал изкуствено различни цветове, които биха противоречали на снимката
+   под тях. */
+.occasion-card { --glow: var(--pink); }
+.occasion-card:has([src*="povod-rojden-den"])  { --glow: #EA6C53; }
+.occasion-card:has([src*="povod-svatba"])      { --glow: #EA5358; }
+.occasion-card:has([src*="povod-ergensko"])    { --glow: #EA8F53; }
+.occasion-card:has([src*="povod-godishnina"])  { --glow: #EA5369; }
+.occasion-card:has([src*="povod-bebe"])        { --glow: #EA5A53; }
+.occasion-card:has([src*="povod-jubilej"])     { --glow: #EA9253; }
+.occasion-card:has([src*="povod-firmeno"])     { --glow: #EA5353; }
+.occasion-card:has([src*="povod-shega"])       { --glow: #EAB553; }
+
+.occasion-photo { transition: transform var(--dur-base) var(--ease); }
+
 @media (hover: hover) {
-  .occasion-card:hover { transform: translateY(-3px); border-color: var(--pink); }
+  .occasion-card:hover {
+    transform: translateY(-6px);
+    border-color: color-mix(in srgb, var(--glow) 55%, transparent);
+    box-shadow: 0 20px 44px -16px color-mix(in srgb, var(--glow) 50%, transparent);
+  }
+  .occasion-card:hover .occasion-photo { transform: scale(1.04); }
 }
 
 /* ---------- Кинематичен вход (scrub) ---------- */
@@ -721,18 +757,22 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 
 /* ---------- Днес празнуват ---------- */
 
-/* Лента, не решетка. БЕЗ gap — при 14 карти (седемте плюс копията им)
-   gap-овете са 13 и половината от лентата не е равна на един комплект,
-   тоест шевът се вижда при завъртането. Всяка карта носи своя отстъп през
-   margin-right и половината съвпада до пиксел. Същият капан беше и при
-   отзивите. */
+/* ---------- Ленти: общото поведение на трите върволици ----------
+   Рождениците, отзивите и поводите се държат еднакво — пълзят сами и се
+   влачат на ръка. Механизмът им е един и живее в lenta.js.
 
-/* Лентата е ИСТИНСКИ хоризонтален скрол, а не CSS анимация върху transform.
+   Лентата е ИСТИНСКИ хоризонтален скрол, а не CSS анимация върху transform.
    С transform пръстът и анимацията се бият за едно и също свойство и човек
    няма как да отмести картите. Като скрол влаченето с пръст го върши самият
-   браузър — заедно с инерцията — а автоматичното пълзене е просто scrollLeft,
-   който добавяме всеки кадър. */
-.rojdendni-rail {
+   браузър — заедно с инерцията — а автоматичното пълзене е scrollLeft, който
+   добавяме всеки кадър.
+
+   БЕЗ gap в редиците: при два комплекта карти разстоянията са с едно
+   по-малко от картите, тоест половината от лентата не е равна на комплект и
+   шевът се вижда при завъртането. Всяка карта носи своя отстъп през
+   margin-right и половината съвпада до пиксел. Процент във flex-basis пък
+   обърква width: max-content — контейнерът се мери по неувития текст. */
+.lenta-rail {
   position: relative;
   overflow-x: auto;
   overflow-y: hidden;
@@ -740,17 +780,24 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   overscroll-behavior-x: contain;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
 }
-.rojdendni-rail::-webkit-scrollbar { display: none; }
+.lenta-rail::-webkit-scrollbar { display: none; }
 @media (hover: hover) and (pointer: fine) {
-  .rojdendni-rail { cursor: grab; }
-  .rojdendni-rail.vlacha { cursor: grabbing; }
+  .lenta-rail { cursor: grab; }
+  .lenta-rail.vlacha { cursor: grabbing; }
 }
 /* Докато влачим с мишка, текстът не бива да се маркира — иначе вместо да
    местиш картите, ги избираш. */
-.rojdendni-rail.vlacha, .rojdendni-rail.vlacha * { user-select: none; }
+.lenta-rail.vlacha, .lenta-rail.vlacha * { user-select: none; }
+
+/* Картите избледняват към двата ръба, вместо да се отрязват рязко. */
+.rojdendni-rail,
+.quotes-rail,
+.povodi-rail {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+}
+
 .rojdendni-track {
   display: flex;
   width: max-content;
@@ -1026,49 +1073,10 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
    Безкрайността идва от УДВОЯВАНЕ на картите (прави се в main.js).
    Анимацията измества лентата точно с −50%, тоест в момента на връщането
    на екрана стои същото като в началото и шевът не се вижда. */
-.quotes-rail {
-  position: relative;
-  overflow: hidden;
-  /* Картите избледняват към двата ръба, вместо да се отрязват рязко. */
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
-}
-
-/* БЕЗ gap и БЕЗ проценти — и двете чупят безкрайното превъртане:
-
-   `gap` оставя разстояние МЕЖДУ картите, тоест при 12 карти има 11
-   разстояния. Тогава половината от лентата не е равна на един комплект от
-   шест и шевът се вижда. С margin-right всяка карта носи своето разстояние,
-   ширината става точно 12 × (карта + отстъп) и −50% съвпада до пиксел.
-
-   Процент във `flex-basis` пък обърква `width: max-content`: контейнерът се
-   оразмерява по неувития текст, а не по реалната ширина на картите. Мерено:
-   лента 7477px при съдържание 4344px, тоест 3000px празнина накрая. */
 .quotes-track {
   display: flex;
   padding: var(--sp-2) 0 var(--sp-4);
   width: max-content;
-}
-
-/* Тръгва чак когато лентата влезе в екрана — main.js слага класа. */
-.quotes-track.rolling {
-  animation: quotes-roll 48s linear infinite;
-}
-/* Спира при посочване, за да може отзивът да се прочете докрай. */
-@media (hover: hover) {
-  .quotes-rail:hover .quotes-track.rolling { animation-play-state: paused; }
-}
-
-@keyframes quotes-roll {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-
-/* При изключени анимации няма движение — лентата става обикновен
-   хоризонтален скрол, за да остане съдържанието достъпно. */
-@media (prefers-reduced-motion: reduce) {
-  .quotes-track.rolling { animation: none; }
-  .quotes-rail { overflow-x: auto; }
 }
 
 .quote-card {
@@ -1750,8 +1758,7 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   /* На тесен екран картата е по-тясна, за да наднича следващата и да си
      личи, че лентата продължава. Стойността е в пиксели, не в проценти —
      процент тук чупи оразмеряването (виж бележката при .quotes-track). */
-  .quote-card { flex-basis: 280px; }
-  .occasion-grid { grid-template-columns: repeat(2, 1fr); }
+  .quote-card { flex-basis: 280px; }
   .main-nav {
     display: none;
     position: absolute;
@@ -1778,8 +1785,7 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   .section { padding: var(--sp-16) 0; }
   .hero { padding: var(--sp-16) 0 var(--sp-12); }
   .steps-grid { grid-template-columns: 1fr; }
-  .pricing-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
-  .occasion-grid { grid-template-columns: 1fr; }
+  .pricing-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
   .field-row { grid-template-columns: 1fr; }
 }
 

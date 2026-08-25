@@ -597,8 +597,11 @@
         <h2>Има повод? Има песен.</h2>
         <p>Най-честите случаи — но сме писали песни и за изгубени басове, спечелени мачове и котки с характер.</p>
       </div>
-      <div class="occasion-grid">
-        <a class="occasion-card reveal" href="podarak-pesen-za-rojden-den.html">
+      <!-- Лента, не решетка: осем карти една под друга правеха страницата
+           много дълга. Влаченето и пълзенето ги дава lenta.js. -->
+      <div class="lenta-rail povodi-rail" id="povodi-rail">
+        <div class="povodi-track" id="povodi-track">
+        <a class="occasion-card" href="podarak-pesen-za-rojden-den.html">
           <img class="occasion-photo" src="assets/img/povod-rojden-den.jpg"
                loading="lazy" decoding="async" width="600" height="400"
                alt="Подарък за рожден ден">
@@ -608,7 +611,7 @@
           <h3>Рожден ден</h3>
           <p>Подарък, който празнува човека, не рафта до другите подаръци.</p>
         </a>
-        <a class="occasion-card reveal" href="podarak-pesen-za-svatba.html">
+        <a class="occasion-card" href="podarak-pesen-za-svatba.html">
           <img class="occasion-photo" src="assets/img/povod-svatba.jpg"
                loading="lazy" decoding="async" width="600" height="400"
                alt="Подарък за сватба">
@@ -618,7 +621,7 @@
           <h3>Сватба</h3>
           <p>Песен, която младоженецът ще помни повече от менюто.</p>
         </a>
-        <a class="occasion-card reveal" href="podarak-pesen-za-ergensko.html">
+        <a class="occasion-card" href="podarak-pesen-za-ergensko.html">
           <img class="occasion-photo" src="assets/img/povod-ergensko.jpg"
                loading="lazy" decoding="async" width="600" height="400"
                alt="Подарък за ергенско и моминско парти">
@@ -628,7 +631,7 @@
           <h3>Ергенско / Моминско</h3>
           <p>Химн за компанията — с точните имена и точните шеги.</p>
         </a>
-        <a class="occasion-card reveal" href="podarak-pesen-za-godishnina.html">
+        <a class="occasion-card" href="podarak-pesen-za-godishnina.html">
           <img class="occasion-photo" src="assets/img/povod-godishnina.jpg"
                loading="lazy" decoding="async" width="600" height="400"
                alt="Подарък за годишнина">
@@ -638,7 +641,7 @@
           <h3>Годишнина</h3>
           <p>Доказателство, че годините се броят, а не отброяват.</p>
         </a>
-        <a class="occasion-card reveal" href="podarak-pesen-za-bebeski.html">
+        <a class="occasion-card" href="podarak-pesen-za-bebeski.html">
           <img class="occasion-photo" src="assets/img/povod-bebe.jpg"
                loading="lazy" decoding="async" width="600" height="400"
                alt="Подарък за бебе и кръщене">
@@ -648,7 +651,7 @@
           <h3>Бебе / Кръщене</h3>
           <p>Първият подарък, който детето ще слуша цял живот.</p>
         </a>
-        <a class="occasion-card reveal" href="podarak-pesen-za-jubilej.html">
+        <a class="occasion-card" href="podarak-pesen-za-jubilej.html">
           <img class="occasion-photo" src="assets/img/povod-jubilej.jpg"
                loading="lazy" decoding="async" width="600" height="400"
                alt="Подарък за юбилей">
@@ -658,7 +661,7 @@
           <h3>Юбилей</h3>
           <p>Кръгла годишнина, песен по мярка — не поредната картичка.</p>
         </a>
-        <a class="occasion-card reveal" href="podarak-pesen-za-firmeno.html">
+        <a class="occasion-card" href="podarak-pesen-za-firmeno.html">
           <img class="occasion-photo" src="assets/img/povod-firmeno.jpg"
                loading="lazy" decoding="async" width="600" height="400"
                alt="Подарък за фирмено събитие">
@@ -668,7 +671,7 @@
           <h3>Фирмено събитие</h3>
           <p>Химн на екипа — с фактура, ако трябва.</p>
         </a>
-        <a class="occasion-card reveal" href="poruchka.html?povod=shega">
+        <a class="occasion-card" href="poruchka.html?povod=shega">
           <img class="occasion-photo" src="assets/img/povod-shega.jpg"
                loading="lazy" decoding="async" width="600" height="400"
                alt="Песен за шега и изненада">
@@ -678,6 +681,7 @@
           <h3>Шега / Изненада</h3>
           <p>За вътрешната шега, която просто трябва да стане песен.</p>
         </a>
+        </div>
       </div>
     </div>
   </section>
@@ -737,7 +741,7 @@
       <!-- Лента, не решетка: седем имена се движат наляво, както отзивите.
            Пълненето и клонирането стават в rojdendni.js, защото картите ги
            няма в разметката — идват от JSON след зареждането. -->
-      <div class="rojdendni-rail" id="rojdendni-rail">
+      <div class="lenta-rail rojdendni-rail" id="rojdendni-rail">
         <div class="rojdendni-track" id="rojdendni-grid"></div>
       </div>
 
@@ -801,7 +805,7 @@
         </span>
         <h2>Една песен, една цена</h2>
         <p>Без пакети и без скрити такси. Една цена, платена веднага, и песента тръгва.</p>
-      </div>
+      </div>
       <!-- Отзив ПРЕДИ цената, не след нея. Истинските коментари живеят в
            секция 07, тоест човек вижда 19,90 € преди каквото и да е
            доказателство. Тук стои един, дословно същият като долу — не е
@@ -888,7 +892,7 @@
       <!-- Реални отзиви от клиенти. Лентата тръгва наляво сама, щом влезе в
            екрана, и спира при посочване с мишка, за да може да се прочете.
            Виж quotes-* в style.css и main.js. -->
-      <div class="quotes-rail reveal" id="quotes-rail">
+      <div class="lenta-rail quotes-rail reveal" id="quotes-rail">
         <div class="quotes-track" id="quotes-track">
           <figure class="quote-card">
             <div class="quote-mark">“</div>
@@ -1094,6 +1098,7 @@
   </div>
 </footer>
 
+<script src="assets/js/lenta.js" defer></script>
 <script src="assets/js/main.js" defer></script>
 <script src="assets/js/rojdendni.js" defer></script>
 <script src="assets/js/scrub.js" defer></script>
