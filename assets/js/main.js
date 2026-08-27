@@ -132,6 +132,8 @@
     var titleEl = wrap.querySelector(".track-info h3");
     var trackTitle = titleEl ? titleEl.textContent.trim() : srcUrl.split("/").pop();
 
+    var vlacha = false;   /* тегли ли се в момента лентата — вж. превъртането долу */
+
     function pause() {
       audio.pause();
       btn.innerHTML = ICON_PLAY;
@@ -159,16 +161,17 @@
     });
 
     audio.addEventListener("timeupdate", function () {
+      if (vlacha) return;   /* човекът тегли — не му отнемай лентата изпод пръста */
       if (audio.duration) {
         var pct = (audio.currentTime / audio.duration) * 100;
-        fill.style.inset = "0 " + (100 - pct) + "% 0 0";
+        fill.style.right = (100 - pct) + "%";
         time.textContent = fmt(audio.currentTime);
       }
     });
 
     audio.addEventListener("ended", function () {
       pause();
-      fill.style.inset = "0 100% 0 0";
+      fill.style.right = "100%";
       time.textContent = fmt(audio.duration);
     });
 
@@ -186,11 +189,72 @@
       }
     });
 
-    bar.addEventListener("click", function (e) {
-      if (!audio.duration) return;
+    /* ---------- Превъртане ----------
+       Досега беше само click върху лента, висока 4 пиксела, а под 560px тя
+       изобщо не се показваше — тоест на телефон превъртане нямаше. Сега:
+
+       ВЛАЧЕНЕ, не само щракане. Човек хваща лентата и я тегли; докато тегли,
+       времето отгоре показва къде ще падне, но звукът не подскача на всяко
+       движение — прескачането става на пускане. Затова pointermove само
+       рисува, а currentTime се пише веднъж накрая.
+
+       pointer capture, за да не се губи влаченето, ако пръстът излезе извън
+       лентата — при 10 пиксела височина това се случва постоянно.
+
+       touch-action: none в CSS-а, иначе браузърът приема движението за скрол
+       на страницата и отнема събитията по средата. */
+    function delOtDaleche(clientX) {
       var rect = bar.getBoundingClientRect();
-      var pct = (e.clientX - rect.left) / rect.width;
-      audio.currentTime = Math.max(0, Math.min(1, pct)) * audio.duration;
+      return Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+    }
+
+    function risuvai(del) {
+      fill.style.right = (100 - del * 100) + "%";
+      if (audio.duration) time.textContent = fmt(del * audio.duration);
+    }
+
+    bar.addEventListener("pointerdown", function (e) {
+      if (!audio.duration) return;
+      vlacha = true;
+      bar.classList.add("scrubbing");
+      try { bar.setPointerCapture(e.pointerId); } catch (x) {}
+      risuvai(delOtDaleche(e.clientX));
+      e.preventDefault();
+    });
+
+    bar.addEventListener("pointermove", function (e) {
+      if (!vlacha) return;
+      risuvai(delOtDaleche(e.clientX));
+    });
+
+    function pusni(e) {
+      if (!vlacha) return;
+      vlacha = false;
+      bar.classList.remove("scrubbing");
+      try { bar.releasePointerCapture(e.pointerId); } catch (x) {}
+      audio.currentTime = delOtDaleche(e.clientX) * audio.duration;
+    }
+    bar.addEventListener("pointerup", pusni);
+    bar.addEventListener("pointercancel", function (e) {
+      vlacha = false;
+      bar.classList.remove("scrubbing");
+      try { bar.releasePointerCapture(e.pointerId); } catch (x) {}
+    });
+
+    /* Клавиатура: лентата е плъзгач и трябва да се движи със стрелки.
+       Пет секунди на натискане, трийсет с Shift. */
+    bar.setAttribute("role", "slider");
+    bar.setAttribute("tabindex", "0");
+    bar.setAttribute("aria-label", "Превърти песента");
+    bar.addEventListener("keydown", function (e) {
+      if (!audio.duration) return;
+      var stapka = e.shiftKey ? 30 : 5;
+      if (e.key === "ArrowRight") audio.currentTime = Math.min(audio.duration, audio.currentTime + stapka);
+      else if (e.key === "ArrowLeft") audio.currentTime = Math.max(0, audio.currentTime - stapka);
+      else if (e.key === "Home") audio.currentTime = 0;
+      else return;
+      e.preventDefault();
+      e.stopPropagation();   /* иначе Space/стрелките стигат до реда и го спират */
     });
   });
 

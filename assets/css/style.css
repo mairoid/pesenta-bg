@@ -1758,7 +1758,7 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   /* На тесен екран картата е по-тясна, за да наднича следващата и да си
      личи, че лентата продължава. Стойността е в пиксели, не в проценти —
      процент тук чупи оразмеряването (виж бележката при .quotes-track). */
-  .quote-card { flex-basis: 280px; }
+  .quote-card { flex-basis: 280px; }
   .main-nav {
     display: none;
     position: absolute;
@@ -1785,7 +1785,7 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   .section { padding: var(--sp-16) 0; }
   .hero { padding: var(--sp-16) 0 var(--sp-12); }
   .steps-grid { grid-template-columns: 1fr; }
-  .pricing-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
+  .pricing-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
   .field-row { grid-template-columns: 1fr; }
 }
 
@@ -2311,3 +2311,114 @@ a.style-chip { text-decoration: none; color: inherit; }
   font-size: var(--fs-sm);
 }
 .rojden-legenda .rojden-zvezda { margin-top: 0; }
+
+/* ---------- Плейър: превъртане и копче ----------
+   Лентата беше 4 пиксела и се криеше напълно под 560px — тоест на телефон
+   превъртане просто нямаше. Мерена цел за пръст: поне 24 пиксела. Затова
+   лентата е 10 пиксела видима, но кутията ѝ е 22 с прозрачно поле отгоре и
+   отдолу: пръстът я хваща, без ивицата да яде от корицата.
+
+   touch-action: none е задължително — иначе браузърът смята влаченето за
+   скрол на страницата и отнема събитията по средата на движението. */
+.track-row .progress {
+  height: 22px;
+  padding: 6px 0;
+  background: none;
+  border-radius: 0;
+  overflow: visible;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.track-row .progress::before {
+  content: "";
+  position: absolute;
+  inset: 6px 0;
+  background: rgba(11, 10, 26, 0.55);
+  backdrop-filter: blur(2px);
+  border-radius: 0 0 14px 14px;
+}
+.track-row .progress-fill {
+  inset: 6px 100% 6px 0;
+  border-radius: 0;
+  z-index: 1;
+}
+/* Топчето казва „това се тегли“. Без него дебелата лента изглежда просто
+   като по-дебела линия, а не като нещо, което се хваща. */
+.track-row .progress-fill::after {
+  content: "";
+  position: absolute;
+  right: -6px;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease);
+}
+.track-row:hover .progress-fill::after,
+.track-row.playing .progress-fill::after,
+.track-row .progress:focus-visible .progress-fill::after,
+.track-row .progress.scrubbing .progress-fill::after { opacity: 1; }
+.track-row .progress.scrubbing .progress-fill::after { transform: translateY(-50%) scale(1.25); }
+.track-row .progress:focus-visible { outline: 2px solid var(--pink); outline-offset: 2px; }
+
+/* Копчето беше плътен сив кръг върху илюстрацията. Сега е в цветовете на
+   сайта, със заоблени ъгли вместо кръг, и с амбилайт сянка — същият похват
+   като при песните на началната страница: сиянието идва в цвета на самото
+   копче, не като черен похлупак под него.
+   Знакът вътре е в цвета на фона (--ink), не бял: върху розово-оранжев
+   градиент тъмният триъгълник се чете по-добре от светъл. */
+.track-row .play-btn {
+  width: 76px;
+  height: 76px;
+  border: none;
+  border-radius: 24px;
+  background: var(--grad);
+  backdrop-filter: none;
+  color: var(--ink);
+  box-shadow:
+    0 10px 34px -8px color-mix(in srgb, var(--pink) 70%, transparent),
+    0 4px 14px -4px rgba(0, 0, 0, 0.45);
+  transition: transform var(--dur-fast) var(--ease),
+              box-shadow var(--dur-fast) var(--ease);
+}
+.track-row .play-btn svg { width: 46%; height: 46%; }
+.track-row.playing .play-btn { background: var(--grad); border-color: transparent; }
+@media (hover: hover) {
+  .track-row:hover .play-btn {
+    transform: scale(1.06);
+    box-shadow:
+      0 14px 44px -8px color-mix(in srgb, var(--pink) 88%, transparent),
+      0 4px 14px -4px rgba(0, 0, 0, 0.45);
+  }
+}
+
+/* Под 560px лентата СЕ ПОКАЗВА. Скриването ѝ там беше точно обратното на
+   нужното: телефонът е мястото, където превъртането е най-трудно. */
+@media (max-width: 560px) {
+  .track-row .progress { display: block; }
+}
+
+/* Единична песен на цяла страница: илюстрацията Е плейърът, затова картата
+   заема цялата колона на статията, а не една клетка от решетка. Кадърът е
+   широк (1200×638), не квадратен като корица — обратното би го отрязало. */
+.tracks-list.pesen-solo {
+  display: block;
+  max-width: 780px;
+  margin: var(--sp-8) auto var(--sp-6);
+}
+.pesen-solo .track-row { margin: 0; }
+.pesen-solo .track-thumb { aspect-ratio: 1200 / 638; }
+.pesen-solo .play-btn { width: 92px; height: 92px; }
+
+/* На страницата на една песен копчето стои ВИНАГИ видимо. В решетката на
+   началната страница то се появява при посочване — там картите са девет и
+   девет копчета едновременно са шум. Тук картата е една и илюстрацията Е
+   плейърът: ако копчето се крие, нищо не подсказва, че картината се пуска. */
+@media (hover: hover) {
+  .pesen-solo .play-btn { opacity: 1; transform: none; }
+  .pesen-solo .track-row:hover .play-btn { transform: scale(1.06); }
+}
