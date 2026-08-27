@@ -25,7 +25,7 @@
   var ORDER_EMAIL = "sales@pesenta.bg";
 
   var PLANS = {
-    pesen: { label: "Песен по поръчка", price: 19.9, desc: "авторски текст, до 3:30 мин, 2 версии, безплатна корекция, MP3 + текст" }
+    pesen: { label: "Песен по поръчка", price: 19.9, desc: "авторски текст, 2 версии, безплатна корекция, MP3 + текст" }
   };
   var EXPRESS_PRICE = 9.9;
 
