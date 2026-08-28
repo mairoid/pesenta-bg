@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
+  <meta name="theme-color" content="#0b0a1a">
+  <meta name="application-name" content="Песента">
+  <meta name="apple-mobile-web-app-title" content="Песента">
+  <title>За Цветелина — Ние двамата | Песента</title>
+  <meta name="description" content="Песен за годишнина — там, където морето докосва пясъка. Послушай я, прочети текста и я свали.">
+
+  <!-- ЧАСТНА страница. Втората песен за същата поръчка. Виждат я двама души:
+       Живко, който е платил, и Цветелина, на която той я праща. Затова
+       noindex, nofollow, няма я в sitemap.xml и НИЩО на сайта не сочи към
+       нея. Тагът спира търсачките; линк-разгъвачите на Viber и Facebook не
+       го четат, затова отворените тагове отдолу пак работят. -->
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="canonical" href="https://pesenta.bg/pesni/nie-dvamata.html">
+  <link rel="icon" type="image/svg+xml" href="../assets/img/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32.png">
+  <link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png">
+
+  <!-- Статични, не писани от JavaScript: Facebook и Viber не изпълняват
+       скриптове, когато вадят визитката на линка. Стилът на песента живее
+       ТУК и в JSON-LD — на екрана го няма, защото е производствена
+       информация, а страницата е подарък. -->
+  <meta property="og:type" content="music.song">
+  <meta property="og:locale" content="bg_BG">
+  <meta property="og:title" content="Ние двамата — песен за Цветелина">
+  <meta property="og:description" content="Търсихме брегове, а домът бе до нас. Българска романтична балада, дует — песен за годишнина, написана по една история.">
+  <meta property="og:url" content="https://pesenta.bg/pesni/nie-dvamata.html">
+  <meta property="og:image" content="https://pesenta.bg/assets/img/og-nie-dvamata.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="preload" href="../assets/fonts/unbounded-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <!-- Само кирилските два от Lora, както при другите шрифтове: латинските са
+       за пунктуацията и цифрите и се дърпат при нужда, а Lora носи цялата
+       песен. Manrope-latin отпада — на тази страница латиница почти няма. -->
+  <link rel="preload" href="../assets/fonts/lora-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/lora-cyrillic-italic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../assets/css/fonts.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "MusicRecording",
+    "name": "Ние двамата",
+    "byArtist": { "@type": "Organization", "name": "Pesenta.bg" },
+    "inLanguage": "bg",
+    "duration": "PT4M8S",
+    "genre": "българска романтична балада",
+    "image": "https://pesenta.bg/assets/img/og-nie-dvamata.jpg",
+    "audio": "https://pesenta.bg/assets/audio/nie-dvamata.mp3",
+    "url": "https://pesenta.bg/pesni/nie-dvamata.html"
+  }
+  </script>
+
+  <!-- Cloudflare Web Analytics. Без бисквитки и без localStorage — затова
+       сайтът пак няма нужда от банер за съгласие. -->
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon='{"token": "902a1340b733442da0ef0ebfe90903dc"}'></script>
+</head>
+<body class="podarak">
+
+<!-- Шапката на сайта я няма нарочно — вж. бележката в nasheto-myasto.html:
+     реклама пред двама души не носи нищо и разваля подаръка. -->
+
+<main class="podarak-stranica">
+
+  <div class="podarak-posveshtenie">
+    <h1>За Цветелина</h1>
+    <p class="podarak-poslanie">Обичам те!</p>
+    <p class="podarak-ot">от Живко · годишнина</p>
+  </div>
+
+  <!-- Илюстрацията и плейърът. Разметката вътре в .player е точно тази, която
+       main.js разпознава (.play-btn, .progress, .progress-fill, .time), затова
+       тук няма нито ред нов JavaScript.
+       БЕЗ клас .reveal: той слага opacity:0 и разчита на скрипт да го върне.
+       На страница, чийто смисъл е тази песен, това значи празен екран, ако
+       скриптът не се зареди. -->
+  <figure class="podarak-kadar">
+    <img src="../assets/img/pesen-nie-dvamata-hero.jpg"
+         srcset="../assets/img/pesen-nie-dvamata-hero-600.jpg 600w, ../assets/img/pesen-nie-dvamata-hero.jpg 1200w"
+         sizes="(max-width: 768px) 100vw, 720px" fetchpriority="high"
+         alt="Рисунка в стил комикс: двойка в кола по крайбрежен път при залез, картата е разгъната на таблото, ръцете им се докосват върху скоростния лост"
+         width="1200" height="638">
+  </figure>
+
+  <div class="podarak-red">
+    <!-- Свалянето е ИЗВЪН .player нарочно: main.js слага клик върху целия
+         елемент и щракването по линка щеше да пуска и песента. -->
+    <div class="podarak-player player" data-src="../assets/audio/nie-dvamata.mp3"
+         role="button" tabindex="0" aria-label="Пусни „Ние двамата“">
+      <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+      <div class="podarak-meta">
+        <h3>Ние двамата</h3>
+        <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
+        <span class="time">4:08</span>
+      </div>
+    </div>
+    <a class="podarak-svali" href="../assets/audio/nie-dvamata.mp3"
+       download="Ние двамата — Песента.mp3">Свали</a>
+  </div>
+
+  <!-- Производствените маркери [Verse 1 - male], [Stop], [Pre-chorus] ги няма:
+       те са указания към генератора, не част от песента. Остават само тихите
+       обозначения кой пее. -->
+  <div class="podarak-tekst">
+
+    <div class="strofa strofa-tiho">
+      <span class="glas">той</span>
+      <p>Колко пътя извървяхме… и все към теб…</p>
+      <p>Цвети…</p>
+    </div>
+
+    <div class="strofa">
+      <span class="glas">той</span>
+      <p>Помниш ли първия поглед, първата тишина,</p>
+      <p>как от нищото поехме — и стана съдба.</p>
+      <p>Километри след нас, карти по прах,</p>
+      <p>а най-точният компас бе твоята ръка.</p>
+    </div>
+
+    <div class="strofa strofa-predpripev">
+      <span class="glas">тя</span>
+      <p>Смяхме се, губехме, ставахме пак,</p>
+      <p>през светли утрини и през тъмен мрак.</p>
+    </div>
+
+    <div class="strofa strofa-pripev">
+      <span class="glas">двамата</span>
+      <p>Търсихме брегове, а домът бе до нас —</p>
+      <p>там, където морето докосва пясъка, в час.</p>
+      <p>Няма карта за него, няма посока, знак —</p>
+      <p>най-хубавото място сме ние двамата, пак.</p>
+      <p>Цветелина, Цветелина — за теб пея сега,</p>
+      <p>и ако трябва отново — избирам те, любов моя.</p>
+    </div>
+
+    <div class="strofa">
+      <span class="glas">тя</span>
+      <p>Ти пазиш този дом, когато вятърът вие,</p>
+      <p>търпелива и силна — сърцето ни се крие.</p>
+      <p>Красива, умна, упорита, справедлива —</p>
+      <p>и всеки ден до теб е малко по-красив.</p>
+    </div>
+
+    <div class="strofa strofa-predpripev">
+      <span class="glas">той</span>
+      <p>Децата ни растат, мечтите ни с тях,</p>
+      <p>а аз до теб съм цял — без умора, без страх.</p>
+    </div>
+
+    <div class="strofa strofa-pripev">
+      <span class="glas">двамата</span>
+      <p>Търсихме брегове, а домът бе до нас —</p>
+      <p>там, където морето докосва пясъка, в час.</p>
+      <p>Няма карта за него, няма посока, знак —</p>
+      <p>най-хубавото място сме ние двамата, пак.</p>
+      <p>Цветелина, Цветелина — за теб пея сега,</p>
+      <p>и ако трябва отново — избирам те, любов моя.</p>
+    </div>
+
+    <div class="strofa strofa-most">
+      <span class="glas">той</span>
+      <p>Ако можех живота отново да извървя,</p>
+      <p>всеки завой, всеки километър, всяка тъга —</p>
+    </div>
+
+    <div class="strofa strofa-most">
+      <span class="glas">тя</span>
+      <p>бих тръгнала пак по същия път,</p>
+    </div>
+
+    <div class="strofa strofa-most">
+      <span class="glas">двамата</span>
+      <p>с теб. Отново. И отново. И пак.</p>
+    </div>
+
+    <div class="strofa strofa-pripev">
+      <span class="glas">двамата</span>
+      <p>Търсихме брегове, а домът бе до нас —</p>
+      <p>там, където морето докосва пясъка, в час.</p>
+      <p>Тази песен е подарък — за нашата година,</p>
+      <p>за смеха ти, за очите ти, за всяка твоя обич, мила.</p>
+      <p>Цветелина, Цветелина — обичан човек,</p>
+      <p>най-хубавото място на света си ти, завинаги, навек.</p>
+    </div>
+
+    <div class="strofa strofa-tiho">
+      <span class="glas">той</span>
+      <p>Благодаря ти… за всичко.</p>
+    </div>
+
+    <div class="strofa strofa-tiho">
+      <span class="glas">двамата</span>
+      <p>Обичам те…</p>
+    </div>
+
+  </div>
+
+  <div class="podarak-kraj">
+    <p class="podarak-red-kraj">Най-хубавото място на света си ти.</p>
+    <p class="podarak-imena">Живко &amp; Цветелина</p>
+  </div>
+
+  <!-- Знакът е подпис, не реклама: не води наникъде и стои тихо. -->
+  <div class="podarak-znak">
+    <img src="../assets/img/logo.svg" alt="Песента" width="120" height="28">
+  </div>
+
+</main>
+
+<script src="../assets/js/main.js" defer></script>
+</body>
+</html>

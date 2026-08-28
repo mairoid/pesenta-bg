@@ -2608,6 +2608,13 @@ body.podarak {
   border-left: 1px solid color-mix(in srgb, var(--kekhlibar) 32%, transparent);
 }
 .strofa-pripev p { color: var(--kekhlibar); font-style: italic; font-size: 20.5px; }
+/* Предприпевът е стъпало към припева, не отделен вид строфа: куплетът е
+   равен, предприпевът е навътре наполовина, припевът — цял отстъп и линия.
+   Окото вижда изкачването, каквото прави и музиката.
+   Половинката е през calc, а не написана като число: ако отстъпът на
+   припева някога се смени, стъпалото остава наполовина само по себе си. */
+.strofa-predpripev { padding-left: calc(var(--sp-5) / 2); }
+.strofa-predpripev p { color: #C8CBDC; font-size: 18.5px; }
 .strofa-most p { font-size: 18px; color: var(--muted); }
 .strofa-tiho p { font-size: 17px; color: var(--muted); font-style: italic; }
 
