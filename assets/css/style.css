@@ -17,6 +17,9 @@
      тоест разширяваха палитрата без да носят смисъл. */
   --pink: #ff4d8d;
   --orange: #ffa14d;
+  /* Кехлибарено — само за страниците-подарък: припевът и личното
+     послание. Топло и по-тихо от розовото, за да не звучи търговски. */
+  --kekhlibar: #FFC46B;
   --grad: linear-gradient(100deg, var(--pink), var(--orange));
   /* Мастило за текст ВЪРХУ градиента — тъмно, защото розовото и
      оранжевото са светли. Беше hardcode-нато на 4 места. */
@@ -2402,23 +2405,243 @@ a.style-chip { text-decoration: none; color: inherit; }
   .track-row .progress { display: block; }
 }
 
-/* Единична песен на цяла страница: илюстрацията Е плейърът, затова картата
-   заема цялата колона на статията, а не една клетка от решетка. Кадърът е
-   широк (1200×638), не квадратен като корица — обратното би го отрязало. */
-.tracks-list.pesen-solo {
-  display: block;
-  max-width: 780px;
-  margin: var(--sp-8) auto var(--sp-6);
-}
-.pesen-solo .track-row { margin: 0; }
-.pesen-solo .track-thumb { aspect-ratio: 1200 / 638; }
-.pesen-solo .play-btn { width: 92px; height: 92px; }
+/* ============================================================
+   Страница-подарък
+   ------------------------------------------------------------
+   Отделен режим от витринните страници като „Ангел с торбата".
+   Витрината е публична и работи за продажбата — там шапката,
+   навигацията и копчето „Поръчай" са на място. Тук страницата е
+   noindex и я виждат двама души: този, който е платил, и този, на
+   когото я праща. Реклама пред тях не носи нищо и разваля подаръка;
+   промоцията отива в имейла.
 
-/* На страницата на една песен копчето стои ВИНАГИ видимо. В решетката на
-   началната страница то се появява при посочване — там картите са девет и
-   девет копчета едновременно са шум. Тук картата е една и илюстрацията Е
-   плейърът: ако копчето се крие, нищо не подсказва, че картината се пуска. */
-@media (hover: hover) {
-  .pesen-solo .play-btn { opacity: 1; transform: none; }
-  .pesen-solo .track-row:hover .play-btn { transform: scale(1.06); }
+   Всичко е под .podarak на <body>, тоест не докосва нищо друго.
+   ============================================================ */
+body.podarak {
+  font-family: "Lora", Lora-fallback, Georgia, serif;
+  line-height: 1.6;
 }
+
+.podarak-stranica {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 var(--sp-6) var(--sp-16);
+}
+
+/* ---------- Посвещението ---------- */
+
+.podarak-posveshtenie {
+  padding: clamp(var(--sp-12), 11vw, var(--sp-20)) 0 var(--sp-10);
+  text-align: center;
+}
+.podarak-posveshtenie h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(38px, 9vw, 64px);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  margin: 0 0 var(--sp-4);
+}
+/* Личното послание от Живко. Курсивът и кехлибареното го отделят от
+   всичко останало — то е негов глас, не наш текст. */
+.podarak-poslanie {
+  font-style: italic;
+  color: var(--kekhlibar);
+  font-size: clamp(22px, 5.2vw, 28px);
+  line-height: 1.3;
+  margin: 0 0 var(--sp-5);
+}
+.podarak-ot {
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  color: var(--muted);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* ---------- Кадърът ---------- */
+
+.podarak-kadar {
+  margin: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  line-height: 0;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+}
+.podarak-kadar img { width: 100%; height: auto; display: block; }
+
+/* ---------- Плейърът ----------
+   Разметката е тази, която main.js разпознава, но видът е друг: тук
+   илюстрацията стои сама и чиста, а плейърът е отделен ред под нея.
+   Нищо не се слага върху рисунката. */
+
+.podarak-red {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  padding: var(--sp-5) var(--sp-1) 0;
+}
+.podarak-player {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  flex: 1 1 auto;
+  min-width: 0;
+  cursor: pointer;
+}
+.podarak-player .play-btn {
+  flex: none;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: none;
+  background: var(--grad);
+  color: var(--ink);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow: 0 8px 24px -8px color-mix(in srgb, var(--pink) 65%, transparent);
+  transition: transform var(--dur-fast) var(--ease);
+}
+.podarak-player .play-btn svg { width: 20px; height: 20px; }
+@media (hover: hover) {
+  .podarak-player:hover .play-btn { transform: scale(1.06); }
+}
+.podarak-meta { flex: 1 1 auto; min-width: 0; }
+.podarak-meta h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--fs-md);
+  letter-spacing: -0.01em;
+  margin: 0 0 var(--sp-2);
+}
+
+/* Лентата е 3 пиксела на вид, но кутията ѝ е 17 с прозрачно поле отгоре и
+   отдолу — пръстът я хваща, без ивицата да надебелява. Същият похват като
+   в решетката с песните; там научихме, че 4 пиксела не се улучват. */
+.podarak-meta .progress {
+  height: 17px;
+  padding: 7px 0;
+  background: none;
+  border-radius: 0;
+  overflow: visible;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.podarak-meta .progress::before {
+  content: "";
+  position: absolute;
+  inset: 7px 0;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 2px;
+}
+.podarak-meta .progress-fill {
+  inset: 7px 100% 7px 0;
+  border-radius: 2px;
+  z-index: 1;
+}
+.podarak-meta .progress-fill::after {
+  content: "";
+  position: absolute;
+  right: -5px;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease);
+}
+.podarak-player:hover .progress-fill::after,
+.podarak-player.playing .progress-fill::after,
+.podarak-meta .progress.scrubbing .progress-fill::after { opacity: 1; }
+.podarak-meta .progress:focus-visible { outline: 2px solid var(--kekhlibar); outline-offset: 3px; }
+.podarak-meta .time {
+  display: block;
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
+  color: var(--muted);
+  margin-top: var(--sp-2);
+}
+.podarak-svali {
+  flex: none;
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  color: var(--text);
+  opacity: 0.75;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  padding-bottom: 1px;
+  white-space: nowrap;
+  transition: opacity var(--dur-fast) var(--ease);
+}
+.podarak-svali:hover { opacity: 1; }
+
+/* ---------- Текстът ----------
+   Тялото на страницата. 34em е около 60-65 знака на ред — мярката, при
+   която окото не се губи, връщайки се на следващия ред. */
+
+.podarak-tekst {
+  margin: var(--sp-16) auto 0;
+  max-width: 34em;
+}
+.strofa { margin: 0 0 var(--sp-10); }
+.strofa p {
+  margin: 0 0 4px;
+  font-size: 19.5px;
+  line-height: 1.72;
+}
+.glas {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: var(--sp-3);
+}
+.strofa-pripev {
+  padding-left: var(--sp-5);
+  border-left: 1px solid color-mix(in srgb, var(--kekhlibar) 32%, transparent);
+}
+.strofa-pripev p { color: var(--kekhlibar); font-style: italic; font-size: 20.5px; }
+.strofa-most p { font-size: 18px; color: var(--muted); }
+.strofa-tiho p { font-size: 17px; color: var(--muted); font-style: italic; }
+
+/* ---------- Краят ---------- */
+
+.podarak-kraj {
+  margin: var(--sp-16) auto 0;
+  max-width: 34em;
+  text-align: center;
+  padding-top: var(--sp-9);
+  border-top: 1px solid rgba(255, 255, 255, 0.09);
+}
+.podarak-red-kraj {
+  font-style: italic;
+  font-size: 20px;
+  color: var(--kekhlibar);
+  margin: 0 0 var(--sp-6);
+}
+.podarak-imena {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--fs-md);
+  margin: 0;
+}
+
+/* Подпис, не реклама: не води наникъде и стои тихо. */
+.podarak-znak { margin-top: var(--sp-16); text-align: center; opacity: 0.42; }
+.podarak-znak img { width: 120px; height: auto; }
+
+@media (max-width: 520px) {
+  .podarak-tekst { margin-top: var(--sp-12); }
+  .strofa p { font-size: 18px; }
+  .strofa-pripev p { font-size: 19px; }
+  .podarak-red { flex-wrap: wrap; }
+  .podarak-svali { margin-left: 68px; }
+}
+

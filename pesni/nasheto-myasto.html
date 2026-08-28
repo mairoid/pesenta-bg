@@ -6,14 +6,14 @@
   <meta name="theme-color" content="#0b0a1a">
   <meta name="application-name" content="Песента">
   <meta name="apple-mobile-web-app-title" content="Песента">
-  <title>Нашето място — песен за Цветелина | Pesenta.bg</title>
-  <meta name="description" content="Песен за годишнина — там, където морето среща брега. Послушай я и я свали.">
+  <title>За Цветелина — Нашето място | Песента</title>
+  <meta name="description" content="Песен за годишнина — там, където морето среща брега. Послушай я, прочети текста и я свали.">
 
   <!-- ЧАСТНА страница. За разлика от „Ангел с торбата", тази е песен по
        поръчка: получателят я вижда, защото има линка, и никой друг.
        Затова noindex, nofollow, няма я в sitemap.xml и НИЩО на сайта не
        сочи към нея. Тагът спира търсачките; линк-разгъвачите на Viber и
-       Facebook не го четат, затова открехнатите тагове отдолу пак работят
+       Facebook не го четат, затова отворените тагове отдолу пак работят
        и визитката при споделяне излиза както трябва. -->
   <meta name="robots" content="noindex, nofollow">
   <link rel="canonical" href="https://pesenta.bg/pesni/nasheto-myasto.html">
@@ -22,11 +22,13 @@
   <link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png">
 
   <!-- Статични, не писани от JavaScript: Facebook и Viber не изпълняват
-       скриптове, когато вадят визитката на линка. -->
+       скриптове, когато вадят визитката на линка. Стилът на песента живее
+       ТУК и в JSON-LD — на екрана го няма, защото е производствена
+       информация, а страницата е подарък. -->
   <meta property="og:type" content="music.song">
   <meta property="og:locale" content="bg_BG">
   <meta property="og:title" content="Нашето място — песен за Цветелина">
-  <meta property="og:description" content="Там, където морето среща брега, защото бяхме заедно. Песен за годишнина, написана по една история.">
+  <meta property="og:description" content="Там, където морето среща брега, защото бяхме заедно. Българска романтична балада, дует — песен за годишнина, написана по една история.">
   <meta property="og:url" content="https://pesenta.bg/pesni/nasheto-myasto.html">
   <meta property="og:image" content="https://pesenta.bg/assets/img/og-nasheto-myasto.jpg">
   <meta property="og:image:width" content="1200">
@@ -35,9 +37,12 @@
   <meta name="twitter:card" content="summary_large_image">
 
   <link rel="preload" href="../assets/fonts/unbounded-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <!-- Само кирилските два от Lora, както при другите шрифтове: латинските са
+       за пунктуацията и цифрите и се дърпат при нужда, а Lora носи цялата
+       песен. Manrope-latin отпада — на тази страница латиница почти няма. -->
+  <link rel="preload" href="../assets/fonts/lora-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/lora-cyrillic-italic.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="../assets/fonts/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="../assets/fonts/unbounded-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="../assets/fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../assets/css/fonts.css">
   <link rel="stylesheet" href="../assets/css/style.css">
 
@@ -49,6 +54,7 @@
     "byArtist": { "@type": "Organization", "name": "Pesenta.bg" },
     "inLanguage": "bg",
     "duration": "PT4M21S",
+    "genre": "българска романтична балада",
     "image": "https://pesenta.bg/assets/img/og-nasheto-myasto.jpg",
     "audio": "https://pesenta.bg/assets/audio/nasheto-myasto.mp3",
     "url": "https://pesenta.bg/pesni/nasheto-myasto.html"
@@ -60,129 +66,163 @@
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js"
           data-cf-beacon='{"token": "902a1340b733442da0ef0ebfe90903dc"}'></script>
 </head>
-<body>
-  <a class="skip-link" href="#main">Към съдържанието</a>
+<body class="podarak">
 
-<header class="site-header">
-  <div class="container header-in">
-    <a class="logo" href="../index.html" aria-label="Песента — начало">
-      <img src="../assets/img/logo.svg" alt="Песента — песен по поръчка" width="190" height="44">
-    </a>
-    <nav class="main-nav open" aria-label="Основна навигация" style="display:flex;position:static;padding:0;background:none;border:none;box-shadow:none;">
-      <a href="../index.html#demo">Още песни</a>
-      <a class="btn btn-primary" href="../poruchka.html">Поръчай песен</a>
-    </nav>
+<!-- Шапката на сайта я няма нарочно. Тази страница е `noindex` и никой не
+     идва тук от търсачка — единствените посетители са Живко, който е платил,
+     и Цветелина, на която той я праща. Навигация към „Още песни" и копче
+     „Поръчай" на такава страница не носят нищо и развалят подаръка.
+     Промоцията отива в имейла до Живко заедно с линка. -->
+
+<main class="podarak-stranica">
+
+  <div class="podarak-posveshtenie">
+    <h1>За Цветелина</h1>
+    <p class="podarak-poslanie">Обичам те!</p>
+    <p class="podarak-ot">от Живко · годишнина</p>
   </div>
-</header>
 
-<main id="main" class="container article">
-  <article>
-    <span class="news-date">Песен по поръчка · годишнина</span>
-    <h1>Нашето място</h1>
+  <!-- Илюстрацията и плейърът. Разметката вътре в .player е точно тази, която
+       main.js разпознава (.play-btn, .progress, .progress-fill, .time), затова
+       тук няма нито ред нов JavaScript.
+       БЕЗ клас .reveal: той слага opacity:0 и разчита на скрипт да го върне.
+       На страница, чийто смисъл е тази песен, това значи празен екран, ако
+       скриптът не се зареди. -->
+  <figure class="podarak-kadar">
+    <img src="../assets/img/pesen-nasheto-myasto-hero.jpg"
+         srcset="../assets/img/pesen-nasheto-myasto-hero-600.jpg 600w, ../assets/img/pesen-nasheto-myasto-hero.jpg 1200w"
+         sizes="(max-width: 768px) 100vw, 720px" fetchpriority="high"
+         alt="Рисунка в стил комикс: двойка стои гърбом на плажа във водата, прегърнати, гледат залеза над морето; той носи обувките си в ръка, а зад тях в пясъка остават следи"
+         width="1200" height="638">
+  </figure>
 
-    <!-- Илюстрацията Е плейърът. Нямаше причина да стоят две картинки една
-         под друга — голямата за гледане и малката за пускане. Разметката е
-         същата, която main.js разпознава (.player[data-src] с .play-btn,
-         .progress, .progress-fill и .time), само корицата е сменена с
-         hero-то. Затова тук няма нито ред нов JavaScript.
-
-         БЕЗ клас .reveal нарочно: той слага opacity:0 и разчита на скрипт да
-         го върне. На страница, чийто единствен смисъл е този плейър, това
-         значи празен екран, ако скриптът не се зареди. -->
-    <div class="tracks-list pesen-solo">
-      <div class="track-row player" data-src="../assets/audio/nasheto-myasto.mp3"
-           role="button" tabindex="0" aria-label="Пусни „Нашето място“">
-        <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
-        <img class="track-thumb" src="../assets/img/pesen-nasheto-myasto-hero.jpg"
-             srcset="../assets/img/pesen-nasheto-myasto-hero-600.jpg 600w, ../assets/img/pesen-nasheto-myasto-hero.jpg 1200w"
-             sizes="(max-width: 860px) 92vw, 780px" fetchpriority="high"
-             alt="Рисунка в стил комикс: двойка стои гърбом на плажа във водата, прегърнати, гледат залеза над морето; той носи обувките си в ръка, а зад тях в пясъка остават следи"
-             width="1200" height="638">
-        <div class="track-info">
-          <h3>Нашето място</h3>
-          <span>За Цветелина · от Живко</span>
-        </div>
+  <div class="podarak-red">
+    <!-- Свалянето е ИЗВЪН .player нарочно: main.js слага клик върху целия
+         елемент и щракването по линка щеше да пуска и песента. -->
+    <div class="podarak-player player" data-src="../assets/audio/nasheto-myasto.mp3"
+         role="button" tabindex="0" aria-label="Пусни „Нашето място“">
+      <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+      <div class="podarak-meta">
+        <h3>Нашето място</h3>
         <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
         <span class="time">4:21</span>
       </div>
     </div>
+    <a class="podarak-svali" href="../assets/audio/nasheto-myasto.mp3"
+       download="Нашето място — Песента.mp3">Свали</a>
+  </div>
 
-    <!-- Свалянето е ОТДЕЛЕН бутон, не контекстно меню върху плейъра: човекът
-         отваря линка на телефон, а там „запази като" го няма. Атрибутът
-         download дава смислено име на файла вместо адреса. -->
-    <p style="text-align: center; margin: 0 0 var(--sp-10);">
-      <a class="btn btn-ghost" href="../assets/audio/nasheto-myasto.mp3"
-         download="Нашето място — Песента.mp3">
-        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
-             style="width:18px;height:18px;vertical-align:-3px;margin-right:6px;"><path d="M12 3v10.6l3.3-3.3 1.4 1.4L12 17.4l-4.7-4.7 1.4-1.4 3.3 3.3V3h2zM5 19h14v2H5v-2z"/></svg>
-        Свали песента (MP3)
-      </a>
-    </p>
+  <!-- Производствените маркери [Verse 1 - male], [Stop], [Chorus - duet] ги
+       няма: те са указания към генератора, не част от песента. Остават само
+       тихите обозначения кой пее. -->
+  <div class="podarak-tekst">
 
-    <p class="pesen-stil"><strong>Стил:</strong> българска романтична балада — дует, пиано и акустична китара.</p>
-
-    <div class="article-cta">
-      <p><strong>Искаш такава песен за твой човек?</strong></p>
-      <a class="btn btn-primary" href="../poruchka.html?promo=PRIYATELI20">Поръчай с −20% с код PRIYATELI20</a>
+    <div class="strofa strofa-tiho">
+      <span class="glas">той</span>
+      <p>От първите мигове… до всеки изминат километър…</p>
+      <p>Цвети… нашето място…</p>
     </div>
-  </article>
+
+    <div class="strofa">
+      <span class="glas">той</span>
+      <p>От първите моменти, в които се впечатлихме,</p>
+      <p>до всеки изминат път, който заедно извървяхме.</p>
+      <p>Толкова пътища, толкова места,</p>
+      <p>толкова спомени, останали завинаги у нас.</p>
+    </div>
+
+    <div class="strofa">
+      <span class="glas">тя</span>
+      <p>Пътувахме далеч, откривахме светове,</p>
+      <p>смяхме се, мечтаехме, минахме и през трудни дни.</p>
+      <p>Но където и да идехме, каквото и да видехме —</p>
+      <p>най-красивото място беше все едно и също.</p>
+    </div>
+
+    <div class="strofa strofa-pripev">
+      <span class="glas">двамата</span>
+      <p>Там, където морето среща брега,</p>
+      <p>защото бяхме заедно — ти и аз.</p>
+      <p>Не търси карта, не търси далечни брегове,</p>
+      <p>най-хубавото място е там, където сме ние двамата.</p>
+      <p>Цветелина, любов моя — благодаря ти за всеки ден.</p>
+    </div>
+
+    <div class="strofa">
+      <span class="glas">той</span>
+      <p>Ти беше до мен във всеки мой ден,</p>
+      <p>във всяка победа и във всяко изпитание.</p>
+      <p>Благодаря ти за всичко, което направи за мен —</p>
+      <p>за любовта, търпението и силата,</p>
+      <p>с която пазиш нашия дом, нашето семейство.</p>
+    </div>
+
+    <div class="strofa">
+      <span class="glas">тя</span>
+      <p>Ти си красива, умна, упорита,</p>
+      <p>справедлива и разумна.</p>
+      <p>Но най-вече си човекът,</p>
+      <p>който прави живота ми по-смислен и по-красив.</p>
+    </div>
+
+    <div class="strofa strofa-pripev">
+      <span class="glas">двамата</span>
+      <p>Там, където морето среща брега,</p>
+      <p>защото бяхме заедно — ти и аз.</p>
+      <p>Не търси карта, не търси далечни брегове,</p>
+      <p>най-хубавото място е там, където сме ние двамата.</p>
+      <p>Цветелина, любов моя — благодаря ти за всеки ден.</p>
+    </div>
+
+    <div class="strofa strofa-most">
+      <span class="glas">той</span>
+      <p>Заедно създадохме не просто спомени,</p>
+      <p>а нашия свят.</p>
+      <p>Нашите деца, нашите мечти,</p>
+      <p>нашите малки и големи приключения.</p>
+    </div>
+
+    <div class="strofa strofa-most">
+      <span class="glas">тя</span>
+      <p>И ако трябваше отново да избера</p>
+      <p>с кого да извървя всички тези километри…</p>
+    </div>
+
+    <div class="strofa strofa-most">
+      <span class="glas">двамата</span>
+      <p>…бих избрал теб. Отново. И отново.</p>
+    </div>
+
+    <div class="strofa strofa-pripev">
+      <span class="glas">двамата</span>
+      <p>Там, където морето среща брега,</p>
+      <p>защото бяхме заедно — ти и аз.</p>
+      <p>Тази песен е моят подарък за нашата годишнина —</p>
+      <p>нека винаги ти носи усмивка, нека ти напомня</p>
+      <p>колко много си обичана, Цветелина.</p>
+    </div>
+
+    <div class="strofa strofa-tiho">
+      <span class="glas">той</span>
+      <p>Благодаря ти за всичко.</p>
+      <p>За любовта. За семейството. За всеки един ден.</p>
+      <p>Обичам те…</p>
+    </div>
+
+  </div>
+
+  <div class="podarak-kraj">
+    <p class="podarak-red-kraj">Най-хубавото място сме ние двамата.</p>
+    <p class="podarak-imena">Живко &amp; Цветелина</p>
+  </div>
+
+  <!-- Знакът е подпис, не реклама: не води наникъде и стои тихо. -->
+  <div class="podarak-znak">
+    <img src="../assets/img/logo.svg" alt="Песента" width="120" height="28">
+  </div>
+
 </main>
 
-<footer class="site-footer">
-  <div class="container">
-    <div class="footer-grid">
-      <div class="footer-col" style="max-width: 320px;">
-        <img src="../assets/img/logo.svg" alt="Песента" width="160" style="margin-bottom: 1rem;">
-        <p>Персонализирани песни по поръчка за всеки повод. Твоята история, нашата музика.</p>
-        <div class="footer-social">
-    <a href="https://www.tiktok.com/@pesentabg" target="_blank" rel="noopener" aria-label="Песента в TikTok">
-      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.53.02C13.84 0 15.14.01 16.44 0c.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
-    </a>
-    <a href="https://www.instagram.com/pesenta.bg/" target="_blank" rel="noopener" aria-label="Песента в Instagram">
-      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41-.56-.22-.96-.48-1.38-.9-.42-.42-.68-.82-.9-1.38-.16-.42-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41 1.27-.06 1.65-.07 4.85-.07M12 0C8.74 0 8.33.01 7.05.07c-1.28.06-2.15.26-2.91.56-.79.31-1.46.72-2.13 1.39C1.35 2.68.94 3.35.63 4.14c-.3.76-.5 1.63-.56 2.91C.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.28.26 2.15.56 2.91.31.79.72 1.46 1.39 2.13.67.67 1.34 1.08 2.13 1.39.76.3 1.63.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.28-.06 2.15-.26 2.91-.56.79-.31 1.46-.72 2.13-1.39.67-.67 1.08-1.34 1.39-2.13.3-.76.5-1.63.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.28-.26-2.15-.56-2.91-.31-.79-.72-1.46-1.39-2.13C20.32 1.35 19.65.94 18.86.63c-.76-.3-1.63-.5-2.91-.56C15.67.01 15.26 0 12 0zm0 5.84A6.16 6.16 0 1 0 12 18.16 6.16 6.16 0 0 0 12 5.84zm0 10.16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.41-10.44a1.44 1.44 0 1 1-2.88 0 1.44 1.44 0 0 1 2.88 0z"/></svg>
-    </a>
-    <a href="https://www.facebook.com/pesenta.bg" target="_blank" rel="noopener" aria-label="Песента във Facebook">
-      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22.68 0H1.32C.59 0 0 .59 0 1.32v21.36C0 23.41.59 24 1.32 24h11.5v-9.29H9.69v-3.62h3.13V8.41c0-3.1 1.89-4.79 4.66-4.79 1.32 0 2.46.1 2.79.14v3.24h-1.92c-1.5 0-1.79.72-1.79 1.76v2.31h3.59l-.47 3.62h-3.12V24h6.12c.73 0 1.32-.59 1.32-1.32V1.32C24 .59 23.41 0 22.68 0z"/></svg>
-    </a>
-    <a href="https://www.youtube.com/@pesenta" target="_blank" rel="noopener" aria-label="Песента в YouTube">
-      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.5 6.2s-.23-1.64-.94-2.36c-.9-.94-1.91-.95-2.37-1C16.89 2.5 12 2.5 12 2.5h-.01s-4.89 0-8.19.34c-.46.05-1.47.06-2.37 1C.72 4.56.5 6.2.5 6.2S.26 8.13.26 10.06v1.72c0 1.93.24 3.86.24 3.86s.23 1.64.94 2.36c.9.94 2.08.91 2.6 1.01 1.89.18 8 .24 8 .24s4.89-.01 8.19-.35c.46-.05 1.47-.06 2.37-1 .71-.72.94-2.36.94-2.36s.24-1.93.24-3.86v-1.72c0-1.93-.24-3.86-.24-3.86zM9.75 14.85V7.85l6.5 3.5-6.5 3.5z"/></svg>
-    </a>
-        </div>
-      </div>
-      <div class="footer-col">
-        <h3>Навигация</h3>
-        <a href="../index.html#kak-raboti">Как работи</a>
-        <a href="../index.html#demo">Демо песни</a>
-        <a href="../index.html#ceni">Цени</a>
-        <a href="../novini/">Музикални новини</a>
-        <a href="../poruchka.html">Поръчай песен</a>
-      </div>
-      <div class="footer-col">
-        <h3>Поводи</h3>
-        <a href="../podarak-pesen-za-rojden-den.html">Подарък за рожден ден</a>
-        <a href="../podarak-pesen-za-svatba.html">Подарък за сватба</a>
-        <a href="../podarak-pesen-za-ergensko.html">Подарък за ергенско парти</a>
-        <a href="../podarak-pesen-za-godishnina.html">Подарък за годишнина</a>
-        <a href="../podarak-pesen-za-mominsko.html">Подарък за моминско парти</a>
-        <a href="../podarak-pesen-za-jubilej.html">Подарък за юбилей</a>
-        <a href="../podarak-pesen-za-firmeno.html">Подарък за фирмено събитие</a>
-        <a href="../podarak-pesen-za-bebeski.html">Подарък за бебе и кръщене</a>
-      </div>
-      <div class="footer-col">
-        <h3>Контакти</h3>
-        <a href="mailto:sales@pesenta.bg">sales@pesenta.bg</a>
-        <a href="../poruchka.html">Направи запитване</a>
-        <a href="../usloviya.html">Общи условия</a>
-        <a href="../poveritelnost.html">Поверителност</a>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      © <span id="year">2026</span> Pesenta.bg — „БАУФИЗИК“ ЕООД, ЕИК 207427793. Всички права запазени. Сайт без проследяващи бисквитки.
-    </div>
-  </div>
-</footer>
-
-<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 <script src="../assets/js/main.js" defer></script>
 </body>
 </html>
