@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="bg" style="margin:0;padding:0;">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Казваме на клиента, че писмото знае какво прави с цветовете. Без тези два
+     реда Apple Mail и iOS прилагат собствена инверсия върху тъмно писмо. -->
+<meta name="color-scheme" content="dark light">
+<meta name="supported-color-schemes" content="dark light">
+<title>Песните за Цветелина са готови</title>
+</head>
+<!--
+  ШАБЛОН за връчване на готова поръчка · Pesenta.bg
+  Праща се от sales@pesenta.bg (проверен псевдоним в Gmail, „Send mail as“).
+  Попълва се: името на клиента, имената на песните, жанровете, времената,
+  двата линка и двете снимки-бутони.
+
+  ЗАЩО е така написано:
+  · Таблици, не flex и grid — Outlook на Windows рендира през Word.
+  · Всички стилове инлайн, без <style> блок — Gmail го изрязва.
+  · Без CSS градиенти — в Word ги няма. Тъмнината в снимките е ПИКСЕЛИ.
+  · Без уеб шрифтове — Gmail маха @font-face, Outlook не ги тегли. Затова
+    надписът в снимката е сложен при рендирането, с истинския Unbounded.
+  · Явен background и явен color на ВСЯКА клетка и всеки текст.
+
+  ЦВЕТЪТ. #FF4D8D на сайта е 100% наситеност — на екран, пълен с текст, това е
+  агресивно. Тук е #D2577F: същият тон (340°), наситеност 58%.
+
+  СНИМКИТЕ-БУТОНИ. Надписът „Отвори страницата“ е вътре в самата снимка, а
+  рамката е цикламена; цялата снимка е един линк, тоест се цъка където и да е
+  по нея. Фонът под надписа е потъмнен до контраст 18.5:1 при най-светлите си
+  места — измерено, не на око.
+
+  РЕЗЕРВНИЯТ ЛИНК под всяка снимка НЕ Е УКРАСА. Тази пощенска кутия вече
+  изряза мълчаливо външна картинка — два пъти, заедно с alt текста. Ако това
+  се случи на клиента и бутонът е само снимка, той остава без начин да отвори
+  песента, за която е платил. Един тих ред текст е застраховката.
+-->
+<body style="margin:0;padding:0;background-color:#0B0A1A;" bgcolor="#0B0A1A">
+
+<!-- Текстът, който пощата показва до темата. Скрит в самото писмо. -->
+<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#0B0A1A;">
+  Две песни, две страници и MP3-тата &mdash; всичко за Цветелина.
+</div>
+
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"
+       bgcolor="#0B0A1A" style="background-color:#0B0A1A;margin:0;padding:0;">
+<tr>
+<td align="center" bgcolor="#0B0A1A" style="background-color:#0B0A1A;padding:28px 12px;">
+
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600"
+       bgcolor="#12101F" style="width:600px;max-width:600px;background-color:#12101F;">
+
+  <!-- ШАПКА. Текст, не картинка — вж. бележката за изрязаните картинки. -->
+  <tr>
+    <td bgcolor="#0B0A1A" style="background-color:#0B0A1A;padding:26px 32px 22px 32px;">
+      <p style="margin:0 0 5px 0;font-family:'Segoe UI Semibold','Segoe UI',Helvetica,Arial,sans-serif;font-size:26px;line-height:1.1;font-weight:bold;color:#F4F2FF;letter-spacing:0.01em;">
+        PESENTA<span style="color:#D2577F;font-weight:bold;">.</span>BG
+      </p>
+      <p style="margin:0;font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;font-size:11px;line-height:1.4;color:#8F8AB0;letter-spacing:0.18em;text-transform:uppercase;">
+        Песен по поръчка
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td bgcolor="#D2577F" height="3" style="background-color:#D2577F;height:3px;font-size:0;line-height:0;">&nbsp;</td>
+  </tr>
+
+  <!-- ТЯЛО -->
+  <tr>
+    <td bgcolor="#12101F" style="background-color:#12101F;padding:36px 32px 8px 32px;">
+
+      <p style="margin:0 0 22px 0;font-family:'Segoe UI Semibold','Segoe UI',Helvetica,Arial,sans-serif;font-size:22px;line-height:1.3;color:#F4F2FF;font-weight:bold;">
+        Здравей, Живко,
+      </p>
+
+      <p style="margin:0 0 18px 0;font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;font-size:15px;line-height:1.62;color:#D9D5EE;">
+        Песните за Цветелина са готови. Станаха две &mdash; едната за мястото, другата за пътя дотам.
+      </p>
+
+      <p style="margin:0 0 26px 0;font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;font-size:15px;line-height:1.62;color:#D9D5EE;">
+        Всяка има собствена страница с илюстрация и целия текст. Страниците са лични &mdash;
+        не се индексират от търсачки и се отварят само от този линк. Прати ги на Цветелина,
+        когато решиш.
+      </p>
+
+      <!-- ПЕСЕН 1 -->
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:0 0 16px 0;">
+        <tr>
+          <td bgcolor="#1A1730" style="background-color:#1A1730;padding:22px 24px;">
+            <p style="margin:0 0 4px 0;font-family:'Segoe UI Semibold','Segoe UI',Helvetica,Arial,sans-serif;font-size:19px;color:#F4F2FF;font-weight:bold;">
+              Нашето място
+            </p>
+            <p style="margin:0 0 16px 0;font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;font-size:13px;line-height:1.5;color:#A9A4C9;">
+              Българска романтична балада, дует &middot; 4:21
+            </p>
+            <a href="https://pesenta.bg/pesni/nasheto-myasto.html" style="text-decoration:none;">
+              <img src="https://pesenta.bg/assets/img/mail-cta-nasheto-myasto.jpg"
+                   width="488" alt="Отвори страницата"
+                   style="display:block;width:100%;max-width:488px;height:auto;border:0;outline:none;text-decoration:none;">
+            </a>
+            <p style="margin:12px 0 0 0;font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;font-size:12px;line-height:1.5;color:#6F6A8E;">
+              или:
+              <a href="https://pesenta.bg/pesni/nasheto-myasto.html" style="color:#6F6A8E;text-decoration:underline;">pesenta.bg/pesni/nasheto-myasto.html</a>
+            </p>
+          </td>
+        </tr>
+      </table>
+
+      <!-- ПЕСЕН 2 -->
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:0 0 28px 0;">
+        <tr>
+          <td bgcolor="#1A1730" style="background-color:#1A1730;padding:22px 24px;">
+            <p style="margin:0 0 4px 0;font-family:'Segoe UI Semibold','Segoe UI',Helvetica,Arial,sans-serif;font-size:19px;color:#F4F2FF;font-weight:bold;">
+              Ние двамата
+            </p>
+            <p style="margin:0 0 16px 0;font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;font-size:13px;line-height:1.5;color:#A9A4C9;">
+              Българска романтична балада, дует &middot; 4:08
+            </p>
+            <a href="https://pesenta.bg/pesni/nie-dvamata.html" style="text-decoration:none;">
+              <img src="https://pesenta.bg/assets/img/mail-cta-nie-dvamata.jpg"
+                   width="488" alt="Отвори страницата"
+                   style="display:block;width:100%;max-width:488px;height:auto;border:0;outline:none;text-decoration:none;">
+            </a>
+            <p style="margin:12px 0 0 0;font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;font-size:12px;line-height:1.5;color:#6F6A8E;">
+              или:
+              <a href="https://pesenta.bg/pesni/nie-dvamata.html" style="color:#6F6A8E;text-decoration:underline;">pesenta.bg/pesni/nie-dvamata.html</a>
+            </p>
+          </td>
+        </tr>
+      </table>
+
+      <p style="margin:0 0 28px 0;font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;font-size:15px;line-height:1.62;color:#D9D5EE;">
+        И двете песни са прикачени към този имейл като MP3, за да ги имаш и офлайн.
+        Ако прикачените не се свалят, на всяка страница има бутон &bdquo;Свали&ldquo;.
+      </p>
+
+      <!-- РЕДАКЦИИ. Лявата линия е през border на клетката, не декоративен
+           елемент: Word я рисува, за разлика от повечето други начини. -->
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:0 0 28px 0;">
+        <tr>
+          <td bgcolor="#12101F" style="background-color:#12101F;border-left:3px solid #FFA14D;padding:2px 0 2px 18px;">
+            <p style="margin:0 0 8px 0;font-family:'Segoe UI Semibold','Segoe UI',Helvetica,Arial,sans-serif;font-size:17px;color:#FFA14D;font-weight:bold;">
+              Ако нещо не е както си го представял
+            </p>
+            <p style="margin:0;font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;font-size:15px;line-height:1.62;color:#D9D5EE;">
+              Кажи ни &mdash; дума, ред, цял куплет. Правим го наново, без допълнително плащане.
+              Песента е за Цветелина и трябва да е точна.
+            </p>
+          </td>
+        </tr>
+      </table>
+
+      <!-- ОТСТЪПКА -->
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:0 0 6px 0;">
+        <tr>
+          <td bgcolor="#1A1730" style="background-color:#1A1730;padding:26px 24px;">
+            <p style="margin:0 0 10px 0;font-family:'Segoe UI Semibold','Segoe UI',Helvetica,Arial,sans-serif;font-size:17px;color:#F4F2FF;font-weight:bold;">
+              Благодарим ти, че ни се довери
+            </p>
+            <p style="margin:0 0 18px 0;font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;font-size:14px;line-height:1.6;color:#A9A4C9;">
+              Ако решиш да зарадваш и някой друг &mdash; или някой те попита откъде е песента &mdash;
+              този код дава <strong style="color:#FFA14D;">20% отстъпка</strong>:
+            </p>
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td bgcolor="#FFA14D" style="background-color:#FFA14D;padding:13px 22px;font-family:'Courier New',Courier,monospace;font-size:18px;font-weight:bold;letter-spacing:2px;color:#16091C;">
+                  PRIYATELI20
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+
+      <p style="margin:26px 0 0 0;font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;font-size:15px;line-height:1.62;color:#D9D5EE;">
+        Хубав празник на двама ви.
+      </p>
+
+    </td>
+  </tr>
+
+  <!-- ПОДПИС. Човек, не отдел: писмото придружава песен, писана по неговата
+       история. Телефонът е кликаем на телефон и видим на компютър. -->
+  <tr>
+    <td bgcolor="#12101F" style="background-color:#12101F;padding:26px 32px 30px 32px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+        <tr>
+          <td bgcolor="#12101F" height="1" style="background-color:#2A2640;height:1px;font-size:0;line-height:0;">&nbsp;</td>
+        </tr>
+        <tr>
+          <td bgcolor="#12101F" style="background-color:#12101F;padding-top:24px;">
+            <p style="margin:0 0 14px 0;font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;font-size:15px;line-height:1.6;color:#D9D5EE;">
+              Поздрави,
+            </p>
+            <p style="margin:0 0 3px 0;font-family:'Segoe UI Semibold','Segoe UI',Helvetica,Arial,sans-serif;font-size:19px;line-height:1.25;color:#F4F2FF;font-weight:bold;">
+              Миро
+            </p>
+            <p style="margin:0 0 14px 0;font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;font-size:12px;line-height:1.5;color:#8F8AB0;letter-spacing:0.14em;">
+              PESENTA<span style="color:#D2577F;font-weight:bold;">.</span>BG
+            </p>
+            <p style="margin:0;font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;font-size:14px;line-height:1.85;color:#A9A4C9;">
+              <a href="tel:+359899456326" style="color:#D2577F;text-decoration:none;font-weight:bold;">+359 899 456 326</a><br>
+              <a href="mailto:sales@pesenta.bg" style="color:#A9A4C9;text-decoration:none;">sales@pesenta.bg</a>
+              &nbsp;&middot;&nbsp;
+              <a href="https://pesenta.bg" style="color:#A9A4C9;text-decoration:none;">pesenta.bg</a>
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+</table>
+
+</td>
+</tr>
+</table>
+
+</body>
+</html>
