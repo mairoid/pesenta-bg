@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<!--
+  РАБОТЕН ДОКУМЕНТ, не страница от сайта.
+
+  Концепция за ново хранилище: частното аудио излиза в R2 под непредвидими
+  ключове, хостингът минава на Cloudflare Pages (той работи с частни репота
+  безплатно), историята започва начисто, а старото репо става частно.
+
+  Поводът: частните песни се теглят публично от ДВЕ места — от домейна и
+  направо от raw.githubusercontent.com. Затваряне само на едното не помага.
+  Проверено на 28.08.2026: и трите адреса върнаха 206 на заявка за парче.
+
+  ВНИМАНИЕ. Деплойът качва цялото хранилище (path: "." в deploy.yml), тоест
+  този файл е достъпен на pesenta.bg/docs/koncepcia-novo-repo.html. Нищо не
+  сочи към него, няма го в sitemap.xml и robots.txt го забранява — но докато
+  репото е публично, той се чете и направо от GitHub. Това е още един довод
+  за стъпка 4 от собствения му план.
+-->
+</head>
+<body>
+<title>Две експозиции</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+
+<style>
+  :root{
+    --ground:#F2F0EC; --surface:#FFFFFF; --ink:#14131A; --ink-soft:#54525F;
+    --rule:#DFDCD5; --rose:#D6255F; --amber:#C77A22; --ok:#1F7A4D; --warn:#A8332B;
+    --display:"Archivo","Helvetica Neue",Arial,sans-serif;
+    --body:"IBM Plex Sans",system-ui,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --ground:#0C0B10; --surface:#16151D; --ink:#EDEBF2; --ink-soft:#9A97A6;
+      --rule:#282631; --rose:#FF7BA8; --amber:#E8A85C; --ok:#5CC98E; --warn:#E5776B;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#0C0B10; --surface:#16151D; --ink:#EDEBF2; --ink-soft:#9A97A6;
+    --rule:#282631; --rose:#FF7BA8; --amber:#E8A85C; --ok:#5CC98E; --warn:#E5776B;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);
+    font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 24px 90px}
+
+  header{padding:66px 0 34px;border-bottom:1px solid var(--rule)}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-soft);margin:0 0 18px}
+  h1{font-family:var(--display);font-weight:800;font-size:clamp(34px,6vw,58px);
+    line-height:1;letter-spacing:-.025em;margin:0 0 20px;text-wrap:balance}
+  .thesis{font-size:19px;line-height:1.55;max-width:62ch;margin:0 0 12px;color:var(--ink-soft)}
+  .thesis strong{color:var(--ink);font-weight:600}
+
+  section{padding-top:56px}
+  h2{font-family:var(--display);font-weight:800;font-size:13px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--ink-soft);margin:0 0 8px}
+  .lede{font-size:17px;max-width:63ch;margin:0 0 26px;color:var(--ink)}
+
+  .exp{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+  .card{background:var(--surface);border:1px solid var(--rule);border-radius:4px;padding:22px}
+  .card h3{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--warn);margin:0 0 12px}
+  .card p{margin:0 0 12px;font-size:14.5px;line-height:1.55;color:var(--ink-soft)}
+  .card p:last-child{margin-bottom:0}
+  .card b{color:var(--ink);font-weight:600}
+  code{font-family:var(--mono);font-size:.92em;background:rgba(128,128,128,.12);
+    padding:1px 5px;border-radius:3px}
+
+  table{width:100%;border-collapse:collapse;margin-top:20px;font-size:14.5px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--rule)}
+  th{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-soft);font-weight:400}
+  td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+  .bad{color:var(--warn);font-weight:600}
+  .good{color:var(--ok);font-weight:600}
+
+  pre{background:var(--surface);border:1px solid var(--rule);border-radius:4px;
+    padding:20px;overflow-x:auto;margin:0}
+  pre code{background:none;padding:0;font-size:12.5px;line-height:1.7;white-space:pre;color:var(--ink)}
+
+  .tier{border-left:3px solid var(--rose);padding:4px 0 4px 20px;margin:0 0 26px}
+  .tier h3{font-family:var(--display);font-weight:800;font-size:19px;margin:0 0 4px;color:var(--ink)}
+  .tier .cost{font-family:var(--mono);font-size:11.5px;color:var(--ink-soft);
+    letter-spacing:.08em;text-transform:uppercase;margin:0 0 12px}
+  .tier p{margin:0 0 10px;font-size:15px;line-height:1.6;color:var(--ink-soft);max-width:64ch}
+  .tier.b{border-left-color:var(--amber)}
+
+  ol.steps{counter-reset:s;list-style:none;padding:0;margin:0}
+  ol.steps li{counter-increment:s;position:relative;padding:0 0 22px 46px;
+    border-left:1px solid var(--rule);margin-left:13px}
+  ol.steps li:last-child{border-left-color:transparent;padding-bottom:0}
+  ol.steps li::before{content:counter(s);position:absolute;left:-13px;top:-2px;
+    width:26px;height:26px;border-radius:50%;background:var(--rose);color:#fff;
+    font-family:var(--mono);font-size:12px;display:flex;align-items:center;justify-content:center}
+  ol.steps h3{font-family:var(--display);font-weight:600;font-size:16.5px;margin:0 0 6px;color:var(--ink)}
+  ol.steps p{margin:0;font-size:14.5px;line-height:1.55;color:var(--ink-soft);max-width:62ch}
+
+  .notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
+  .note{border-left:2px solid var(--ok);padding:2px 0 2px 18px}
+  .note h3{font-family:var(--display);font-weight:600;font-size:15.5px;margin:0 0 7px;color:var(--ink)}
+  .note p{margin:0;font-size:14.5px;line-height:1.55;color:var(--ink-soft)}
+  .note.caution{border-left-color:var(--warn)}
+
+  footer{margin-top:62px;padding-top:22px;border-top:1px solid var(--rule);
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;color:var(--ink-soft);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+</style>
+
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">pesenta.bg · концепция за ново хранилище</p>
+  <h1>Две експозиции,<br>не една.</h1>
+  <p class="thesis">Песента на Цветелина е достъпна публично на <strong>две различни места</strong>. Затваряш едното — другото остава отворено. Затова смяната на хранилището само по себе си не решава нищо.</p>
+</header>
+
+<section>
+  <h2>Измереното</h2>
+  <table>
+    <thead><tr><th>Какво</th><th style="text-align:right">Стойност</th></tr></thead>
+    <tbody>
+      <tr><td>Проследено съдържание общо</td><td class="num">64.6 MB · 196 файла</td></tr>
+      <tr><td>От тях аудио</td><td class="num bad">54.5 MB · 11 файла</td></tr>
+      <tr><td>Без аудиото</td><td class="num good">10.1 MB · 185 файла</td></tr>
+      <tr><td>Тежест на <code>.git</code></td><td class="num">79 MB</td></tr>
+      <tr><td>Ръст на поръчка</td><td class="num bad">≈ 5 MB, завинаги</td></tr>
+    </tbody>
+  </table>
+  <p class="lede" style="margin-top:18px">Аудиото е <b>84%</b> от хранилището. Git не сгъстява двоични файлове и пази всяка версия — тоест поправена песен добавя второ пълно копие.</p>
+</section>
+
+<section>
+  <h2>Двете експозиции</h2>
+  <div class="exp">
+    <div class="card">
+      <h3>1 · Хранилището</h3>
+      <p><code>github.com/mairoid/pesenta-bg</code> е публично, защото <b>GitHub Pages на безплатния план изисква публично хранилище</b>.</p>
+      <p>Проверено: <code>raw.githubusercontent.com</code> връща <b>HTTP 200</b> за всяка песен, без вход.</p>
+      <p>И най-важното — <b>историята помни</b>. Изтриваш ли файл от <code>main</code>, той остава в <code>.git</code> и се вади с обикновен <code>git clone</code>.</p>
+    </div>
+    <div class="card">
+      <h3>2 · Живият сайт</h3>
+      <p><code>pesenta.bg/assets/audio/…</code> също връща <b>HTTP 200</b>. Това е самият сайт, не GitHub.</p>
+      <p>Тоест дори хранилището да стане частно утре, песните продължават да се теглят от домейна по предвидим адрес.</p>
+      <p>Страницата е <code>noindex</code>, но <b>файлът не е страница</b> — той няма как да бъде noindex.</p>
+    </div>
+  </div>
+  <p class="lede" style="margin-top:22px">Оттук следва единственият извод, който има значение: <b>файловете трябва да се преместят</b>. Смяна на видимостта или на хостинга поотделно не затваря и двете врати.</p>
+</section>
+
+<section>
+  <h2>Разграничението, което липсва</h2>
+  <p class="lede">Същото, което направихме за страниците, важи и за звука — но не е приложено.</p>
+  <table>
+    <thead><tr><th>Вид</th><th>Примери</th><th>Публичен?</th></tr></thead>
+    <tbody>
+      <tr><td><b>Витрина</b></td><td>Влади, Руси, Розен, Роко, Ангел с торбата</td><td class="good">да — това е маркетингът</td></tr>
+      <tr><td><b>Частна поръчка</b></td><td>Нашето място, Ние двамата</td><td class="bad">не — подарък за конкретни хора</td></tr>
+    </tbody>
+  </table>
+  <p class="lede" style="margin-top:18px">В момента и двете живеят в една папка, на един адрес, с еднаква достъпност.</p>
+</section>
+
+<section>
+  <h2>Новото хранилище</h2>
+  <pre><code>pesenta-bg/                 частно · Cloudflare Pages · ≈ 10 MB
+├── index.html              сайтът, както е сега
+├── pesni/                  страници на песните (HTML, без звук)
+├── assets/
+│   ├── css/  js/  fonts/
+│   ├── img/                илюстрации, обложки, OG
+│   └── audio/              САМО витрината — демата, които трябва да са публични
+├── worker/                 pesenta-nap, както е — Stripe, D1, НАП
+└── marketing/              вече не в .gitignore, а изрично включена
+
+R2 bucket: pesenta-audio       частните песни
+└── p/{uuid}/{slug}.mp3        непредвидим ключ, не име на клиент</code></pre>
+  <p class="lede" style="margin-top:20px">Хранилището пада от <b>64.6 на ≈10 MB</b>, а всяка следваща поръчка спира да го уголемява.</p>
+</section>
+
+<section>
+  <h2>Две нива на защита — избери според случая</h2>
+
+  <div class="tier">
+    <h3>А · Непредвидим адрес</h3>
+    <p class="cost">R2 с публичен достъп · нула код · един следобед</p>
+    <p>Песента стои в R2 под ключ с UUID: <code>/p/9f3c8a12…/nasheto-myasto.mp3</code>. Няма списък, няма индекс, няма познаваемо име. Никой не налучква UUID.</p>
+    <p>Това е същото ниво на защита, което ползват Google Photos и Dropbox за споделени линкове. За песен за годишнина е напълно достатъчно.</p>
+  </div>
+
+  <div class="tier b">
+    <h3>Б · Проверка през Worker</h3>
+    <p class="cost">R2 частен + подписан линк · код в pesenta-nap · няколко дни</p>
+    <p>Worker-ът, който вече имаш, издава подписан временен адрес и стриймва файла само срещу валиден токен. Линкът може да изтича, да се отменя, да се брои.</p>
+    <p>По-правилно, но по-тежко. <b>Струва си само ако решиш да продаваш нещо, което не бива да се препраща</b> — иначе клиентът и без това ще прати песента на когото поиска.</p>
+  </div>
+
+  <p class="lede">Моята препоръка е <b>А</b>. Заплахата тук не е злонамерен противник, а случайно откриване от търсачка или любопитен. UUID го затваря. Б го усложнява без да добави нищо срещу тази заплаха.</p>
+</section>
+
+<section>
+  <h2>Редът на действие</h2>
+  <ol class="steps">
+    <li>
+      <h3>R2 кофа и преместване на частното аудио</h3>
+      <p>Създай <code>pesenta-audio</code>, качи двете частни песни под UUID ключове, обнови двете страници да сочат натам. Витрината остава където е.</p>
+    </li>
+    <li>
+      <h3>Cloudflare Pages вместо GitHub Pages</h3>
+      <p>Pages работи с <b>частни</b> хранилища безплатно — това е разликата, заради която GitHub Pages държи репото публично. CNAME се насочва към Pages.</p>
+    </li>
+    <li>
+      <h3>Ново хранилище, чисто от история</h3>
+      <p>Не чистене с <code>git-filter-repo</code>, а ново начало без аудио в историята. По-просто и по-сигурно от пренаписване.</p>
+    </li>
+    <li>
+      <h3>Старото хранилище — частно или изтрито</h3>
+      <p><b>Това е стъпката, която хората пропускат.</b> Ново репо не помага, ако старото стои публично с цялата история. Направи го частно или го изтрий.</p>
+    </li>
+    <li>
+      <h3>Правилото в CLAUDE.md</h3>
+      <p>Витрината влиза в хранилището. Частната поръчка — никога. Запиши го, за да не се налага да се помни.</p>
+    </li>
+  </ol>
+</section>
+
+<section>
+  <h2>Какво да имаш предвид</h2>
+  <div class="notes">
+    <div class="note caution">
+      <h3>Изпратените линкове ще се счупят</h3>
+      <p>Ако вече си пратил на клиент линк към MP3 на стария адрес, той спира да работи. Провери какво е излязло, преди да местиш.</p>
+    </div>
+    <div class="note caution">
+      <h3>Не съм проверявал сметките ти</h3>
+      <p>Че Cloudflare Pages поддържа частни репота безплатно, а GitHub Pages иска Pro, е публично условие на двете услуги — но не съм влизал в акаунта ти да го потвърдя.</p>
+    </div>
+    <div class="note">
+      <h3>Worker-ът не се пипа</h3>
+      <p><code>pesenta-nap</code> с D1 в EEUR остава както е. Тази промяна не докосва НАП частта.</p>
+    </div>
+    <div class="note">
+      <h3>Витрината печели също</h3>
+      <p>R2 няма такса за трафик. Дори демата да останат в репото, преместването им в R2 сваля тежестта и ускорява сайта.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>64.6 MB → 10.1 MB · 84% е аудио</span>
+  <span>две експозиции · един ход</span>
+</footer>
+
+</div>
+
+</body>
+</html>
