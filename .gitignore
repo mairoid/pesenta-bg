@@ -5,3 +5,6 @@ node_modules/
 .claude/
 marketing/
 .wrangler/
+
+# Ключовете към частното аудио в R2 — НИКОГА в публично repo
+.r2-kliuchove.txt
