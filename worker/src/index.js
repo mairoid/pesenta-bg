@@ -164,6 +164,18 @@ async function recordSale(env, event) {
   await env.DB.prepare(
     "UPDATE sales SET email_sent_at = ?, email_error = ? WHERE stripe_event_key = ?"
   ).bind(sent.ok ? new Date().toISOString() : null, sent.ok ? null : sent.error, key).run();
+
+  /* Вътрешното известие е ПОСЛЕДНО и не може да счупи нищо преди него:
+     продажбата е записана, бележката е пратена, статусът е обновен. Ако
+     Brevo откаже, тук се преглъща — иначе Stripe получава 500, ретрайва с
+     часове и вдига шум за писмо, което е удобство, не задължение. */
+  await notifyVatreshno(env, {
+    doc_n: docN, order_no: orderNo,
+    customer_name: sale.customer_name, customer_email: sale.customer_email,
+    amount_c: s.amount_total, currency: currency, currency_ok: currencyOk,
+    express: isExpress, payment_intent: s.payment_intent,
+    beleshka: sent
+  });
 }
 
 async function recordRefund(env, event) {
@@ -353,6 +365,88 @@ async function sendBeleshkaEmail(env, sale) {
     return { ok: true };
   } catch (e) {
     return { ok: false, error: String(e && e.message || e) };
+  }
+}
+
+/* Известие към нас, не към клиента.
+   ---------------------------------------------------------------------
+   Stripe праща собствено писмо при плащане, но то е лична отметка на
+   един потребител в чужд панел — на 02.08.2026 работеше, на 27.08 вече
+   не, и поръчка мина без никой да разбере. Тук изпращането е наше:
+   не зависи от ничии настройки и казва това, което Stripe не казва —
+   номер на поръчката, документа, и дали бележката е стигнала до клиента.
+
+   Получателите са в NOTIFY_EMAILS (запетаи). Задава се със `wrangler
+   secret put NOTIFY_EMAILS` — не в wrangler.toml, защото repo-то е
+   публично и лични адреси там събират спам. Без него писмото отива на
+   подателя, тоест sales@pesenta.bg. */
+async function notifyVatreshno(env, n) {
+  try {
+    if (!env.BREVO_API_KEY || !env.MAIL_SENDER) return;
+
+    var poluchateli = String(env.NOTIFY_EMAILS || env.MAIL_SENDER)
+      .split(",").map(function (a) { return a.trim(); })
+      .filter(Boolean).map(function (a) { return { email: a }; });
+    if (!poluchateli.length) return;
+
+    var suma = typeof n.amount_c === "number"
+      ? (n.amount_c / 100).toFixed(2) + " " + String(n.currency || "").toUpperCase()
+      : "неизвестна сума";
+
+    var red = function (etiket, stoinost) {
+      return "<tr><td style=\"padding:4px 14px 4px 0;color:#666\">" + etiket +
+             "</td><td style=\"padding:4px 0\"><strong>" + xmlEscape(String(stoinost)) +
+             "</strong></td></tr>";
+    };
+
+    var redove =
+      red("Поръчка", n.order_no) +
+      red("Документ", padDoc(n.doc_n)) +
+      red("Сума", suma) +
+      red("Клиент", n.customer_name || "без име") +
+      red("Имейл", n.customer_email || "няма") +
+      red("Експрес", n.express ? "ДА — 24 часа" : "не");
+
+    /* Двете предупреждения са причината писмото да съществува: и в двата
+       случая някой трябва да пипне нещо на ръка, и то днес. */
+    var trevogi = "";
+    if (!n.currency_ok) {
+      trevogi += "<p style=\"background:#FDECEA;border-left:4px solid #C0392B;padding:10px 14px\">" +
+        "<strong>Валутата не е евро.</strong> Сумите в одиторския файл са смятани " +
+        "като евро и НЕ са верни за тази поръчка. Изключи Adaptive Pricing и провери ръчно.</p>";
+    }
+    if (!n.beleshka || !n.beleshka.ok) {
+      trevogi += "<p style=\"background:#FEF5E7;border-left:4px solid #B9770E;padding:10px 14px\">" +
+        "<strong>Бележката НЕ стигна до клиента.</strong> " +
+        xmlEscape(String((n.beleshka && n.beleshka.error) || "неизвестна причина")) +
+        " — прати я на ръка.</p>";
+    }
+
+    var telo = {
+      sender: { name: env.MAIL_SENDER_NAME || "Песента", email: env.MAIL_SENDER },
+      to: poluchateli,
+      subject: (n.currency_ok ? "" : "[ВАЛУТА] ") +
+               ((n.beleshka && n.beleshka.ok) ? "" : "[БЕЛЕЖКА] ") +
+               "Плащане " + suma + " · " + n.order_no,
+      htmlContent:
+        "<h2 style=\"font:600 18px sans-serif;margin:0 0 12px\">Постъпи плащане</h2>" +
+        trevogi +
+        "<table style=\"font:14px sans-serif;border-collapse:collapse\">" + redove + "</table>" +
+        "<p style=\"font:13px sans-serif;color:#666;margin-top:16px\">Payment Intent: " +
+        xmlEscape(String(n.payment_intent || "—")) + "</p>"
+    };
+
+    await fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
+      headers: {
+        "api-key": env.BREVO_API_KEY,
+        "content-type": "application/json",
+        "accept": "application/json"
+      },
+      body: JSON.stringify(telo)
+    });
+  } catch (e) {
+    /* Нарочно глухо: продажбата вече е записана и това е по-важно. */
   }
 }
 
