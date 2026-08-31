@@ -47,6 +47,13 @@ export default {
       if (request.method === "GET") return handleBeleshkaLink(request, env);
     }
 
+    /* Разказът на клиента, пратен ПРЕДИ плащането. Идва от чужд домейн
+       (pesenta.bg) през sendBeacon, затова носи CORS. */
+    if (url.pathname === "/brief") {
+      if (request.method === "OPTIONS") return cors(new Response(null, { status: 204 }), env);
+      if (request.method === "POST") return cors(await handleBrief(request, env), env);
+    }
+
     return new Response("Not found", { status: 404 });
   }
 };
@@ -285,9 +292,59 @@ async function nextDocNumber(env) {
 
 /* Позволяваме само нашия домейн, не „*": отговорът съдържа адрес, който
    отваря документ с име, имейл и номер на трансакция. */
+/* Приемане на брифа.
+   ---------------------------------------------------------------------
+   Дотук разказът живееше само в имейл през FormSubmit. Бързата текстова
+   поръчка обаче праща клиента към касата дори когато изпращането се
+   провали — тоест платена поръчка без история, за която никой не научава.
+   Тук записът е наш и не зависи от трета страна.
+
+   Ендпойнтът е публичен по необходимост: вика го браузърът на клиента.
+   Затова има три ограничения — размер, формат на номера и презапис вместо
+   натрупване. Стойността му за спамър е нулева, а щетата е ограничена.
+
+   Тялото е text/plain, а не application/json: sendBeacon с JSON тип би
+   поискал preflight, а sendBeacon не може да го направи. Затова четем
+   текст и разбираме JSON-а сами. */
+async function handleBrief(request, env) {
+  let telo;
+  try {
+    const raw = await request.text();
+    if (raw.length > 20000) return json({ error: "твърде голямо" }, 413);
+    telo = JSON.parse(raw);
+  } catch (e) {
+    return json({ error: "невалиден JSON" }, 400);
+  }
+
+  const orderNo = String((telo && telo.order_no) || "");
+  if (!/^PSN-[0-9]{6}-[0-9]{4}$/.test(orderNo)) return json({ error: "невалиден номер" }, 400);
+
+  const kus = function (v, n) {
+    if (v === undefined || v === null) return null;
+    return String(v).slice(0, n || 400);
+  };
+
+  /* ON CONFLICT, защото клиентът може да прати два пъти — при повторен
+     опит или при два отворени раздела. По-новото печели. */
+  await env.DB.prepare(
+    `INSERT INTO briefs (order_no, created_at, vid, povod, stilove, ezik, razkaz, poleta)
+     VALUES (?,?,?,?,?,?,?,?)
+     ON CONFLICT(order_no) DO UPDATE SET
+       created_at = excluded.created_at, vid = excluded.vid, povod = excluded.povod,
+       stilove = excluded.stilove, ezik = excluded.ezik, razkaz = excluded.razkaz,
+       poleta = excluded.poleta`
+  ).bind(
+    orderNo, new Date().toISOString(),
+    kus(telo.vid), kus(telo.povod), kus(telo.stilove), kus(telo.ezik),
+    kus(telo.razkaz, 8000), JSON.stringify(telo).slice(0, 20000)
+  ).run();
+
+  return json({ ok: true });
+}
+
 function cors(res, env) {
   res.headers.set("Access-Control-Allow-Origin", "https://pesenta.bg");
-  res.headers.set("Access-Control-Allow-Methods", "GET, OPTIONS");
+  res.headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.headers.set("Vary", "Origin");
   return res;
 }
@@ -389,6 +446,16 @@ async function notifyVatreshno(env, n) {
       .filter(Boolean).map(function (a) { return { email: a }; });
     if (!poluchateli.length) return;
 
+    /* Разказът, ако е стигнал. Липсата му е новина, не дреболия: без него
+       песента не може да се напише, а клиентът вече е платил. Брифът идва
+       ПРЕДИ плащането, тоест до тук трябва да е в базата. */
+    var brief = null;
+    try {
+      brief = await env.DB.prepare(
+        "SELECT vid, povod, stilove, ezik, razkaz FROM briefs WHERE order_no = ?"
+      ).bind(n.order_no).first();
+    } catch (e) { /* дори липсваща таблица не бива да спира известието */ }
+
     var suma = typeof n.amount_c === "number"
       ? (n.amount_c / 100).toFixed(2) + " " + String(n.currency || "").toUpperCase()
       : "неизвестна сума";
@@ -422,18 +489,40 @@ async function notifyVatreshno(env, n) {
         " — прати я на ръка.</p>";
     }
 
+    if (!brief) {
+      trevogi += "<p style=\"background:#FDECEA;border-left:4px solid #C0392B;padding:10px 14px\">" +
+        "<strong>За тази поръчка НЯМА разказ.</strong> Плащането е минало, но историята " +
+        "не е стигнала до нас — песента не може да се напише. Пиши на клиента да я разкаже.</p>";
+    }
+
+    var razkazBlok = "";
+    if (brief) {
+      razkazBlok =
+        "<h3 style=\"font:600 15px sans-serif;margin:22px 0 8px\">Разказът на клиента</h3>" +
+        "<table style=\"font:14px sans-serif;border-collapse:collapse\">" +
+        (brief.povod   ? red("Повод", brief.povod)     : "") +
+        (brief.stilove ? red("Стилове", brief.stilove) : "") +
+        (brief.ezik    ? red("Език", brief.ezik)       : "") +
+        "</table>" +
+        "<p style=\"font:14px/1.6 sans-serif;background:#F6F5FA;border-left:3px solid #D2577F;" +
+        "padding:12px 16px;margin-top:12px;white-space:pre-wrap\">" +
+        xmlEscape(String(brief.razkaz || "—")) + "</p>";
+    }
+
     var telo = {
       sender: { name: env.MAIL_SENDER_NAME || "Песента", email: env.MAIL_SENDER },
       to: poluchateli,
       subject: (n.currency_ok ? "" : "[ВАЛУТА] ") +
                ((n.beleshka && n.beleshka.ok) ? "" : "[БЕЛЕЖКА] ") +
+               (brief ? "" : "[БЕЗ РАЗКАЗ] ") +
                "Плащане " + suma + " · " + n.order_no,
       htmlContent:
         "<h2 style=\"font:600 18px sans-serif;margin:0 0 12px\">Постъпи плащане</h2>" +
         trevogi +
         "<table style=\"font:14px sans-serif;border-collapse:collapse\">" + redove + "</table>" +
         "<p style=\"font:13px sans-serif;color:#666;margin-top:16px\">Payment Intent: " +
-        xmlEscape(String(n.payment_intent || "—")) + "</p>"
+        xmlEscape(String(n.payment_intent || "—")) + "</p>" +
+        razkazBlok
     };
 
     await fetch("https://api.brevo.com/v3/smtp/email", {

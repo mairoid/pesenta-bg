@@ -13,6 +13,9 @@
 
   var FORM_TARGET = "rusev.miro@gmail.com";
   var FORM_ENDPOINT = "https://formsubmit.co/ajax/" + FORM_TARGET;
+  /* Втори, независим път за разказа. FormSubmit е трета страна на безплатен
+     план; тук записът е наш и стои при поръчката в базата. */
+  var BRIEF_ENDPOINT = "https://pesenta-nap.pesenta-nap.workers.dev/brief";
 
   var fieldsWrap = document.getElementById("text-fields");
   var voiceFieldsWrap = document.getElementById("fast-fields");
@@ -270,6 +273,32 @@
       if (window.plausible) window.plausible("Order Submitted", { props: { method: "text-quick" } });
       window.location.href = paymentUrl(orderNo);
     }
+
+    /* Разказът отива И в нашата база, преди клиентът да тръгне към касата.
+       sendBeacon, а не fetch: веднага след това страницата се сменя, а
+       навигацията прекъсва обикновените заявки — точно затова досега се
+       губеха брифове. Beacon се доставя и след напускане на страницата.
+
+       Типът е text/plain нарочно: с application/json браузърът иска
+       preflight, а sendBeacon не умее да го прави и заявката не тръгва.
+       Worker-ът чете текста и сам го разбира като JSON.
+
+       Провалът тук е тих по същата причина, по която е тих и при
+       FormSubmit — клиентът не бива да спира пред касата заради нас. Но
+       вече има и трети предпазител: ако до плащането разказ няма, писмото
+       за плащане идва с [БЕЗ РАЗКАЗ] в темата. */
+    try {
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(BRIEF_ENDPOINT, new Blob([JSON.stringify({
+          order_no: orderNo,
+          vid: "бърза текстова",
+          povod: fields["Повод"],
+          stilove: fields["Стилове"],
+          ezik: fields["Език"],
+          razkaz: fields["Разказ"]
+        })], { type: "text/plain;charset=UTF-8" }));
+      }
+    } catch (e) { /* без beacon оставаме на стария път */ }
 
     fetch(FORM_ENDPOINT, { method: "POST", headers: { "Accept": "application/json" }, body: fd })
       .then(function (res) {
