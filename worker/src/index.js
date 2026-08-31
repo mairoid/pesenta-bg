@@ -9,6 +9,7 @@
      POST /stripe-webhook      — Stripe известява за плащане/възстановяване
      GET  /audit/YYYY-MM       — одиторски XML за месеца (иска AUDIT_TOKEN)
      GET  /health              — жив ли е Worker-ът
+     GET  /admin               — админ панел (иска AUDIT_TOKEN в заглавка)
 
    Тайните се задават с `wrangler secret put`, никога в кода — виж README.md.
    ───────────────────────────────────────────────────────────────────── */
@@ -17,6 +18,7 @@
    "type": "module". Без разширението Node и esbuild я четат като ESM и
    не намират default export. Съдържанието ѝ не е пипано. */
 import qrcode from "./qrcode.cjs";
+import { ADMIN_HTML } from "./admin.js";
 
 export default {
   async fetch(request, env) {
@@ -52,6 +54,26 @@ export default {
     if (url.pathname === "/brief") {
       if (request.method === "OPTIONS") return cors(new Response(null, { status: 204 }), env);
       if (request.method === "POST") return cors(await handleBrief(request, env), env);
+    }
+
+    /* Админ панелът. Страницата се дава без проверка — тя е празна и не
+       съдържа данни. Проверката е върху /admin/data и /admin/status. */
+    if (url.pathname === "/admin" && request.method === "GET") {
+      return new Response(ADMIN_HTML, {
+        headers: {
+          "Content-Type": "text/html; charset=utf-8",
+          "X-Robots-Tag": "noindex, nofollow",
+          "Cache-Control": "no-store"
+        }
+      });
+    }
+    if (url.pathname === "/admin/data" && request.method === "GET") {
+      if (!adminOk(request, env)) return json({ error: "забранено" }, 403);
+      return handleAdminData(request, env);
+    }
+    if (url.pathname === "/admin/status" && request.method === "POST") {
+      if (!adminOk(request, env)) return json({ error: "забранено" }, 403);
+      return handleAdminStatus(request, env);
     }
 
     return new Response("Not found", { status: 404 });
@@ -339,6 +361,56 @@ async function handleBrief(request, env) {
     kus(telo.razkaz, 8000), JSON.stringify(telo).slice(0, 20000)
   ).run();
 
+  return json({ ok: true });
+}
+
+/* ============ Админ панел ============ */
+
+/* Токенът пътува в заглавка, не в адреса: адресите влизат в историята на
+   браузъра, в логове и в Referer. Сравнението е с timingSafeEqual, за да не
+   се налучква буква по буква по времето за отговор. */
+function adminOk(request, env) {
+  const t = request.headers.get("X-Admin-Token") || "";
+  return !!env.AUDIT_TOKEN && timingSafeEqual(t, env.AUDIT_TOKEN);
+}
+
+/* Продажбите идват с разказа СГЛОБЕН — свързването става тук, не в браузъра.
+   Обемът е няколко десетки реда; когато станат хиляди, ще се сложи страниране. */
+async function handleAdminData(request, env) {
+  const sales = (await env.DB.prepare(
+    "SELECT * FROM sales ORDER BY doc_n DESC"
+  ).all()).results || [];
+  const briefs = (await env.DB.prepare("SELECT * FROM briefs").all()).results || [];
+  const refunds = (await env.DB.prepare(
+    "SELECT * FROM refunds ORDER BY id DESC"
+  ).all()).results || [];
+
+  const po = {};
+  briefs.forEach(function (b) { po[b.order_no] = b; });
+  sales.forEach(function (s) { s.brief = po[s.order_no] || null; });
+
+  return json({ sales: sales, refunds: refunds, generated: new Date().toISOString() });
+}
+
+/* Единственото, което панелът ПИШЕ: отметка за доставена песен и бележка.
+   Всичко останало е производно на плащането и не бива да се редактира на
+   ръка — сумите и документите отиват пред НАП. */
+async function handleAdminStatus(request, env) {
+  let telo;
+  try { telo = await request.json(); } catch (e) { return json({ error: "невалиден JSON" }, 400); }
+
+  const orderNo = String((telo && telo.order_no) || "");
+  if (!/^PSN-[0-9]{6}-[0-9]{4}$/.test(orderNo)) return json({ error: "невалиден номер" }, 400);
+
+  if (telo.delivered !== undefined) {
+    await env.DB.prepare("UPDATE sales SET delivered_at = ? WHERE order_no = ?")
+      .bind(telo.delivered ? new Date().toISOString() : null, orderNo).run();
+  }
+  if (telo.note !== undefined) {
+    const b = String(telo.note).slice(0, 2000).trim();
+    await env.DB.prepare("UPDATE sales SET note = ? WHERE order_no = ?")
+      .bind(b || null, orderNo).run();
+  }
   return json({ ok: true });
 }
 

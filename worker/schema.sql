@@ -111,3 +111,11 @@ CREATE TABLE IF NOT EXISTS briefs (
 );
 
 CREATE INDEX IF NOT EXISTS idx_briefs_created ON briefs(created_at);
+
+-- Състояние на поръчката, отмятано от админ панела.
+-- ---------------------------------------------------------------------------
+-- Базата знаеше платена ли е поръчката, има ли разказ и тръгнала ли е
+-- бележката — но не и дали ПЕСЕНТА е доставена. Това е единственото, което
+-- не може да се изведе автоматично: изпращането става на ръка.
+--   ALTER TABLE sales ADD COLUMN delivered_at TEXT;   -- ISO, NULL = още не
+--   ALTER TABLE sales ADD COLUMN note         TEXT;   -- свободна бележка
