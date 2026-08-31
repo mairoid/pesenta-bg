@@ -199,49 +199,6 @@
     <p class="podarak-imena">Кремена &amp; Николай</p>
   </div>
 
-  <!-- ОБРАТНА ВРЪЗКА. Клиентът пише тук и толкова — не отваря пощата си, не
-       търси адрес, не съчинява писмо. Праща се през FormSubmit към същия
-       адрес, на който идват заявките.
-
-       Формата е <form> с бутон, а не поле, което праща само при писане:
-       автоматичното изпращане при всяка буква би пратило десетки половинчати
-       съобщения. „Без ново съобщение“ значи без пощенски клиент, не без
-       натискане.
-
-       Ако JavaScript не се зареди, action и method оставят формата да работи
-       по нативния път — FormSubmit показва своя страница за благодарност. -->
-  <section class="podarak-otzyv" id="otzyv">
-    <h2>Как ви се стори?</h2>
-    <p class="podarak-otzyv-vaved">
-      Напишете тук каквото ви е на сърце — похвала, забележка или дума, която
-      искате да е различна. Стига да натиснете копчето; не е нужно да пишете имейл.
-    </p>
-
-    <form class="otzyv-forma" id="otzyv-forma"
-          action="https://formsubmit.co/rusev.miro@gmail.com" method="POST">
-      <input type="hidden" name="_subject" value="Обратна връзка — Двайсет пъти да (PSN-260829-7313)">
-      <input type="hidden" name="_template" value="box">
-      <input type="hidden" name="_captcha" value="false">
-      <input type="hidden" name="Поръчка" value="PSN-260829-7313 · Двайсет пъти да · Кремена и Николай">
-      <!-- Примамка за ботове: човек не я вижда и не я попълва. -->
-      <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
-
-      <label class="otzyv-label" for="otzyv-tekst">Вашето мнение</label>
-      <textarea id="otzyv-tekst" name="Мнение" rows="5" required
-                placeholder="Например: припевът е точно както си го представяхме, но…"></textarea>
-
-      <label class="otzyv-label" for="otzyv-imeyl">Имейл, ако искате отговор <span>(по избор)</span></label>
-      <input type="email" id="otzyv-imeyl" name="Имейл" placeholder="вашият@имейл.бг" autocomplete="email">
-
-      <button type="submit" class="otzyv-btn">Изпрати</button>
-      <p class="otzyv-greshka" id="otzyv-greshka" hidden></p>
-    </form>
-
-    <p class="otzyv-gotovo" id="otzyv-gotovo" hidden>
-      Благодарим — получихме го. Ако сте оставили имейл, ще ви пишем.
-    </p>
-  </section>
-
   <!-- Знакът е подпис, не реклама: не води наникъде и стои тихо. -->
   <div class="podarak-znak">
     <img src="../assets/img/logo.svg" alt="Песента" width="120" height="28">
@@ -250,6 +207,5 @@
 </main>
 
 <script src="../assets/js/main.js" defer></script>
-<script src="../assets/js/otzyv.js" defer></script>
 </body>
 </html>
