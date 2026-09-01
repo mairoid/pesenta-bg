@@ -615,7 +615,11 @@ async function notifyVatreshno(env, n) {
 
 async function handleAudit(request, env, year, month) {
   const url = new URL(request.url);
-  const token = url.searchParams.get("token") || "";
+  /* Токенът се приема и от заглавка, защото адресите влизат в историята на
+     браузъра, в логовете и в Referer. Заявката от админ панела минава по
+     заглавката; ?token= остава за ръчно теглене и за curl. */
+  const token = request.headers.get("X-Admin-Token") ||
+                url.searchParams.get("token") || "";
   if (!env.AUDIT_TOKEN || !timingSafeEqual(token, env.AUDIT_TOKEN)) {
     return new Response("Забранено", { status: 403 });
   }

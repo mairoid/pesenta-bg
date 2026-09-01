@@ -93,6 +93,14 @@ export const ADMIN_HTML = `<!DOCTYPE html>
   .beleshka-red.vidima{display:flex}
   .zapisana{margin:10px 0 0;font-size:13px;color:var(--tih);font-style:italic}
 
+  .odit{background:var(--karta);border-radius:12px;padding:18px 20px;margin-bottom:26px}
+  .odit .razdel{margin-bottom:6px;color:var(--kehlibar)}
+  .odit-vaved{margin:0 0 14px;font-size:13.5px;color:var(--tih)}
+  .odit-red{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .odit-red select{width:auto;min-width:150px;padding:9px 12px}
+  .odit-sast{font-size:13.5px;color:var(--tih)}
+  .odit-sast.losho{color:var(--cherveno)}
+  .odit-sast.dobre{color:var(--zeleno)}
   #tovari{text-align:center;padding:60px 0;color:var(--naitih)}
   .skrit{display:none}
 </style>
@@ -124,6 +132,16 @@ export const ADMIN_HTML = `<!DOCTYPE html>
   <div id="sadarzhanie" class="skrit">
     <div class="plochki" id="plochki"></div>
     <div id="vnimanie"></div>
+    <div class="odit">
+      <h2 class="razdel"><span>Одиторски файл за НАП</span></h2>
+      <p class="odit-vaved">Приложение №38, месечно. Срокът е до 15-о число на следващия месец.</p>
+      <div class="odit-red">
+        <select id="odit-mesec"></select>
+        <button class="glaven" onclick="tegliOdit()">Изтегли XML</button>
+        <span class="odit-sast" id="odit-sast"></span>
+      </div>
+    </div>
+
     <h2 class="razdel"><span>Поръчки</span><span id="broi"></span></h2>
     <div id="spisak"></div>
   </div>
@@ -183,6 +201,7 @@ function pokazhi(d){
   document.getElementById("sadarzhanie").classList.remove("skrit");
   document.getElementById("obnoveno").textContent =
     "към " + new Date(d.generated).toLocaleTimeString("bg-BG", { hour: "2-digit", minute: "2-digit" });
+  napalniMeseci(d);
   risuvaiPlochki(d);
   risuvaiVnimanie(d);
   risuvaiSpisak(d);
@@ -263,6 +282,51 @@ function risuvaiSpisak(d){
       "</div>" +
     "</div>";
   }).join("");
+}
+
+/* Месеците идват от самите продажби, не от календара: месец без продажби няма
+   как да даде валиден файл по схемата на НАП и не се подава. */
+function napalniMeseci(d){
+  var el = document.getElementById("odit-mesec");
+  if (!el) return;
+  var m = {};
+  (d.sales || []).forEach(function (x) { m[String(x.doc_date).slice(0, 7)] = 1; });
+  var spis = Object.keys(m).sort().reverse();
+  el.innerHTML = spis.map(function (x) {
+    return '<option value="' + x + '">' + x + "</option>";
+  }).join("") || '<option value="">няма продажби</option>';
+}
+
+function tegliOdit(){
+  var mes = document.getElementById("odit-mesec").value;
+  var sast = document.getElementById("odit-sast");
+  if (!mes) { sast.textContent = "няма месец за подаване"; return; }
+  sast.className = "odit-sast"; sast.textContent = "Изтегляне…";
+  /* Токенът в заглавка, не в адреса — иначе влиза в историята на браузъра. */
+  fetch("/audit/" + mes, { headers: { "X-Admin-Token": T } })
+    .then(function (r) {
+      if (r.status === 403) throw new Error("забранено");
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.blob();
+    })
+    .then(function (b) {
+      /* Ако месецът няма продажби, worker-ът връща JSON вместо XML. */
+      if (b.type.indexOf("json") > -1) {
+        sast.textContent = "за този месец не се подава нищо";
+        return;
+      }
+      var u = URL.createObjectURL(b);
+      var a = document.createElement("a");
+      a.href = u; a.download = "audit_pesenta_" + mes + ".xml";
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(u); }, 1000);
+      sast.className = "odit-sast dobre";
+      sast.textContent = "изтеглен (" + Math.round(b.size / 1024) + " KB)";
+    })
+    .catch(function (e) {
+      sast.className = "odit-sast losho";
+      sast.textContent = e.message === "забранено" ? "токенът не е валиден" : "грешка при изтегляне";
+    });
 }
 
 function pokazhiBeleshka(no){
