@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
+  <meta name="theme-color" content="#0b0a1a">
+  <meta name="application-name" content="Песента">
+  <meta name="apple-mobile-web-app-title" content="Песента">
+  <title>За Аси — Бабо Аси | Песента</title>
+  <meta name="description" content="Песен за 54-ия рожден ден на Аси. Послушай я, прочети текста и я свали.">
+
+  <!-- ЧАСТНА страница. Първата от двете песни за рождения ден на Аси.
+       Виждат я Моника, която ги поръча, и семейството. Затова noindex,
+       nofollow, няма я в sitemap.xml и НИЩО на сайта не сочи към нея.
+       Тагът спира търсачките; линк-разгъвачите на Viber и Facebook не го
+       четат, затова отворените тагове отдолу пак работят. -->
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="canonical" href="https://pesenta.bg/pesni/babo-asi.html">
+  <link rel="icon" type="image/svg+xml" href="../assets/img/favicon.svg?v=f65c17d0">
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32.png?v=c1650dc4">
+  <link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png?v=5952b3b0">
+
+  <meta property="og:type" content="music.song">
+  <meta property="og:locale" content="bg_BG">
+  <meta property="og:title" content="Бабо Аси — песен за 54-ия рожден ден на Аси">
+  <meta property="og:description" content="Всичко, което си раздала, се връща в тези две думи. Песен, написана по една история.">
+  <meta property="og:url" content="https://pesenta.bg/pesni/babo-asi.html">
+  <meta property="og:image" content="https://pesenta.bg/assets/img/og-babo-asi.jpg?v=27278c02">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="preload" href="../assets/fonts/unbounded-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/lora-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/lora-cyrillic-italic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../assets/css/fonts.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "MusicRecording",
+    "name": "Бабо Аси",
+    "byArtist": { "@type": "Organization", "name": "Pesenta.bg" },
+    "inLanguage": "bg",
+    "duration": "PT3M44S",
+    "genre": "българска балада",
+    "image": "https://pesenta.bg/assets/img/og-babo-asi.jpg?v=27278c02",
+    "audio": "https://pesenta.bg/assets/audio/babo-asi.mp3?v=761add7a",
+    "url": "https://pesenta.bg/pesni/babo-asi.html"
+  }
+  </script>
+
+  <!-- Cloudflare Web Analytics. Без бисквитки и без localStorage — затова
+       сайтът пак няма нужда от банер за съгласие. -->
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon='{"token": "902a1340b733442da0ef0ebfe90903dc"}'></script>
+</head>
+<body class="podarak">
+
+<!-- Шапката на сайта я няма нарочно — вж. бележката в nasheto-myasto.html. -->
+
+<main class="podarak-stranica">
+
+  <div class="podarak-posveshtenie">
+    <h1>За Аси</h1>
+    <p class="podarak-poslanie">Всичко, което си раздала, се връща в тези две думи.</p>
+    <p class="podarak-ot">от Моника и Александър · петдесет и четири свещи</p>
+  </div>
+
+  <!-- БЕЗ клас .reveal: той слага opacity:0 и разчита на скрипт да го върне.
+       На страница, чийто смисъл е тази песен, това значи празен екран, ако
+       скриптът не се зареди. -->
+  <figure class="podarak-kadar">
+    <img src="../assets/img/pesen-babo-asi-hero.jpg?v=efad5e27"
+         srcset="../assets/img/pesen-babo-asi-hero-600.jpg?v=77dd02b6 600w, ../assets/img/pesen-babo-asi-hero.jpg?v=efad5e27 1200w"
+         sizes="(max-width: 768px) 100vw, 720px" fetchpriority="high"
+         alt="Рисунка в стил комикс: малко дете тича по пътека към клекнала жена с отворени ръце, силуети срещу залязващо слънце"
+         width="1200" height="638">
+  </figure>
+
+  <div class="podarak-red">
+    <!-- Свалянето е ИЗВЪН .player нарочно: main.js слага клик върху целия
+         елемент и щракването по линка щеше да пуска и песента. -->
+    <div class="podarak-player player" data-src="../assets/audio/babo-asi.mp3?v=761add7a"
+         role="button" tabindex="0" aria-label="Пусни „Бабо Аси“">
+      <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+      <div class="podarak-meta">
+        <h3>Бабо Аси</h3>
+        <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
+        <span class="time">3:44</span>
+      </div>
+    </div>
+    <a class="podarak-svali" href="../assets/audio/babo-asi.mp3?v=761add7a"
+       download="Бабо Аси — Песента.mp3">Свали</a>
+  </div>
+
+  <!-- Производствените маркери [Verse 1], [Chorus], [Bridge] ги няма: те са
+       указания към генератора, не част от песента.
+
+       Няма ги и удвоените гласни („Петдесеет“, „свещии“, „женаа“). Те са
+       указание за ударение към Suno, а не правопис — ако стигнат до
+       страницата, клиентът чете грешно изписан текст. Текстът тук е този от
+       поръчката, не този от файла за генератора. -->
+  <div class="podarak-tekst">
+
+    <div class="strofa strofa-tiho">
+      <p>Мамо…</p>
+      <p>Петдесет и четири свещи.</p>
+      <p>И нито една от тях не е лека.</p>
+    </div>
+
+    <div class="strofa">
+      <p>Ти ме отгледа с голи ръце.</p>
+      <p>И не усетих, че нещо липсва.</p>
+      <p>Носеше всичко,</p>
+      <p>а на мен оставяше само хубавото.</p>
+      <p>Домът ти и до днес мирише на връщане —</p>
+      <p>на храна, на смях, на приказки.</p>
+    </div>
+
+    <div class="strofa strofa-predpripev">
+      <p>А сега те гледам с него</p>
+      <p>и разбирам всичко наведнъж.</p>
+    </div>
+
+    <div class="strofa strofa-pripev">
+      <p>Бабо Аси!</p>
+      <p>Две думи — и лицето му грейва.</p>
+      <p>Бабо Аси!</p>
+      <p>Очите му светват отдалеч.</p>
+      <p>Всичко, което си раздала,</p>
+      <p>се връща в тези две думи.</p>
+    </div>
+
+    <div class="strofa">
+      <p>Тича бос в градината ти,</p>
+      <p>бере ягодки с двете си ръчички.</p>
+      <p>При теб и при дядо Румен</p>
+      <p>никой не му се кара.</p>
+      <p>Не знае през какво си минала.</p>
+      <p>Знае само, че при теб е хубаво.</p>
+    </div>
+
+    <div class="strofa strofa-most">
+      <p>Помня деня, в който ти казахме,</p>
+      <p>че ще ставаш баба.</p>
+      <p>Ти не каза нищо.</p>
+      <p>Очите ти казаха всичко.</p>
+      <p>Тогава не знаехме</p>
+      <p>каква баба ще бъдеш.</p>
+      <p>Сега знаем.</p>
+    </div>
+
+    <div class="strofa strofa-pripev">
+      <p>Бабо Аси!</p>
+      <p>Две думи — и лицето му грейва.</p>
+      <p>Бабо Аси!</p>
+      <p>Очите му светват отдалеч.</p>
+      <p>Всичко, което си раздала,</p>
+      <p>се връща в тези две думи.</p>
+      <p>Честит рожден ден, мамо —</p>
+      <p>от Моника и от Александър.</p>
+    </div>
+
+    <div class="strofa strofa-tiho">
+      <p>Силна като скала.</p>
+      <p>И най-мекото място на света.</p>
+    </div>
+
+  </div>
+
+  <div class="podarak-kraj">
+    <p class="podarak-red-kraj">И най-мекото място на света.</p>
+    <p class="podarak-imena">Аси, Моника &amp; Александър</p>
+  </div>
+
+  <!-- Знакът е подпис, не реклама: не води наникъде и стои тихо. -->
+  <div class="podarak-znak">
+    <img src="../assets/img/logo.svg?v=22bf5c85" alt="Песента" width="120" height="28">
+  </div>
+
+</main>
+
+<script src="../assets/js/main.js" defer></script>
+</body>
+</html>
