@@ -174,9 +174,13 @@
   }
 
   /* Къде да застане петолинието, за да не минава зад бутоните в героя.
-     Смята се при зареждане и при resize — не при скрол, за да не се мести.
-     Ако групата е извън екрана (страницата е заредена превъртяна), важи
-     долната ивица. */
+     Бутоните се мерят В КООРДИНАТИ НА ДОКУМЕНТА (r.top + scrollY), тоест
+     там, където са при скрол 0. Платното е fixed, значи веднъж сметнато,
+     петолинието стои на едно и също място на екрана — и при скрол, и при
+     resize. Дотук се мереше във viewport-а: превъртиш ли надолу и дойде ли
+     resize (адресната лента на телефон го праща на всяка стъпка), бутоните
+     бяха „извън екрана“ и петолинието падаше в долната ивица над
+     еквалайзера — от 481 на 654 при 1366×900. Поправено на 04.09.2026. */
   function presmetniPetolinie() {
     var visochina = (NASTROIKI.liniiaGrupa - 1) * NASTROIKI.liniiaRazstoqnie;
     var lenta = visochina + 2 * NASTROIKI.petolinieOtstup;
@@ -184,16 +188,18 @@
     var cel = document.querySelector(NASTROIKI.izbyagvai);
     if (cel) {
       var r = cel.getBoundingClientRect();
-      var vidim = r.width > 0 && r.bottom > NASTROIKI.gornaGranica && r.top < dolu;
+      var gore = r.top + window.scrollY;                /* както при скрол 0 */
+      var dolen = r.bottom + window.scrollY;
+      var vidim = r.width > 0 && dolen > NASTROIKI.gornaGranica && gore < dolu;
       if (vidim) {
-        var podBut = dolu - r.bottom;                   /* свободно под бутона */
-        var nadBut = r.top - NASTROIKI.gornaGranica;    /* свободно над него */
+        var podBut = dolu - dolen;                      /* свободно под бутона */
+        var nadBut = gore - NASTROIKI.gornaGranica;     /* свободно над него */
         if (podBut >= lenta && podBut >= nadBut) {
-          petolinieG = Math.round(r.bottom + NASTROIKI.petolinieOtstup);
+          petolinieG = Math.round(dolen + NASTROIKI.petolinieOtstup);
           return;
         }
         if (nadBut >= lenta) {
-          petolinieG = Math.round(r.top - NASTROIKI.petolinieOtstup - visochina);
+          petolinieG = Math.round(gore - NASTROIKI.petolinieOtstup - visochina);
           return;
         }
       }
