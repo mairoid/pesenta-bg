@@ -55,16 +55,15 @@
     kliuchAlpha: 0.11,      /* прозрачност на сол ключа */
     liniiaNachalo: 105,     /* px от къде започват линиите (след ключа) */
 
-    /* Позиция на петолинието. В демото беше на 50% от височината и на живо
-       минаваше зад основния бутон. Сега мери групата бутони в героя
-       (.hero-ctas — двата розови и „Чуй примери“) и застава в по-голямата
-       свободна ивица — под нея или над нея. Само .hero — в хедъра също има
-       .btn-primary. querySelector връща първия по документ, а групата
-       предхожда бутоните в нея; резервата е самият основен бутон. */
+    /* Позиция на петолинието: ТОЧНО ПОД ХЕДЪРА (решение на Мирослав,
+       04.09.2026). Дотогава мереше групата бутони в героя (.hero-ctas) и
+       заставаше над или под нея — v3. izbyagvai остава само за резервната
+       проверка на подредбата, вече не определя мястото. */
     izbyagvai: ".hero .hero-ctas, .hero .btn-primary",
-    petolinieOtstup: 40,    /* px въздух между петолинието и бутона */
+    podHedura: 24,          /* px въздух между долния ръб на хедъра и първата линия */
+    petolinieOtstup: 40,    /* px въздух над еквалайзера при съвсем нисък прозорец */
     eqRezerv: 150,          /* px запазени отдолу за еквалайзера */
-    gornaGranica: 96,       /* px под хедъра, над които не се качва */
+    gornaGranica: 96,       /* px резерва, ако хедърът липсва или не е където се очаква */
 
     /* Еквалайзер в долната част */
     eqShirina: 6,           /* px ширина на стълб */
@@ -173,39 +172,31 @@
     presmetniPetolinie();
   }
 
-  /* Къде да застане петолинието, за да не минава зад бутоните в героя.
-     Бутоните се мерят В КООРДИНАТИ НА ДОКУМЕНТА (r.top + scrollY), тоест
-     там, където са при скрол 0. Платното е fixed, значи веднъж сметнато,
-     петолинието стои на едно и също място на екрана — и при скрол, и при
-     resize. Дотук се мереше във viewport-а: превъртиш ли надолу и дойде ли
-     resize (адресната лента на телефон го праща на всяка стъпка), бутоните
-     бяха „извън екрана“ и петолинието падаше в долната ивица над
-     еквалайзера — от 481 на 654 при 1366×900. Поправено на 04.09.2026. */
+  /* Къде да застане петолинието: ТОЧНО ПОД ХЕДЪРА. Хедърът е sticky на
+     top:0, тоест долният му ръб е една и съща стойност във viewport-а при
+     всякакъв скрол; платното е fixed — значи петолинието стои под него
+     постоянно, и при скрол, и при resize.
+
+     Измерено при скрол 0 (04.09.2026): в ивицата под хедъра няма нито един
+     бутон на 1366×900, 1366×640 и 390×844. Единственото, което минава през
+     нея при ниски екрани, е малкият надпис над заглавието (span.kicker) —
+     текст без фон, линиите се виждат зад него.
+
+     История: v3 мереше групата бутони в героя и падаше в долната ивица при
+     скрол + resize (481 → 654); поправено с координати на документа, после
+     заменено с това. Ако хедърът липсва или не е където се очаква — резерва
+     gornaGranica. При съвсем нисък прозорец ивицата се вдига над
+     еквалайзера. */
   function presmetniPetolinie() {
     var visochina = (NASTROIKI.liniiaGrupa - 1) * NASTROIKI.liniiaRazstoqnie;
-    var lenta = visochina + 2 * NASTROIKI.petolinieOtstup;
     var dolu = H - NASTROIKI.eqRezerv;                 /* над еквалайзера */
-    var cel = document.querySelector(NASTROIKI.izbyagvai);
-    if (cel) {
-      var r = cel.getBoundingClientRect();
-      var gore = r.top + window.scrollY;                /* както при скрол 0 */
-      var dolen = r.bottom + window.scrollY;
-      var vidim = r.width > 0 && dolen > NASTROIKI.gornaGranica && gore < dolu;
-      if (vidim) {
-        var podBut = dolu - dolen;                      /* свободно под бутона */
-        var nadBut = gore - NASTROIKI.gornaGranica;     /* свободно над него */
-        if (podBut >= lenta && podBut >= nadBut) {
-          petolinieG = Math.round(dolen + NASTROIKI.petolinieOtstup);
-          return;
-        }
-        if (nadBut >= lenta) {
-          petolinieG = Math.round(gore - NASTROIKI.petolinieOtstup - visochina);
-          return;
-        }
-      }
+    var hdr = document.querySelector(".site-header");
+    var hb = hdr ? hdr.getBoundingClientRect().bottom : 0;
+    if (!(hb > 0 && hb < 200)) hb = NASTROIKI.gornaGranica - NASTROIKI.podHedura;
+    petolinieG = Math.round(hb + NASTROIKI.podHedura);
+    if (petolinieG + visochina > dolu - NASTROIKI.petolinieOtstup) {
+      petolinieG = Math.round(dolu - NASTROIKI.petolinieOtstup - visochina);
     }
-    /* Няма бутон или няма място — долната ивица, над еквалайзера */
-    petolinieG = Math.round(dolu - NASTROIKI.petolinieOtstup - visochina);
   }
 
   /* Градиент pink→orange според позицията — същият като --grad в style.css */
