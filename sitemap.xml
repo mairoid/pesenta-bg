@@ -154,4 +154,12 @@
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
   </url>
+  <!-- Родени на този ден: съдържанието се сменя всяка полунощ (българско време),
+       затова daily. Излезе от началната на 05.09.2026 (идея 03). -->
+  <url>
+    <loc>https://pesenta.bg/rodeni-dnes.html</loc>
+    <lastmod>2026-09-05</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
 </urlset>

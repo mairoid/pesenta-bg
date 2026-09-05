@@ -667,53 +667,17 @@
     </div>
   </section>
 
-  <!-- РОДЕНИ НА ТОЗИ ДЕН -->
-  <!-- Секцията е СКРИТА по подразбиране (hidden) и се показва само след като
-       rojdendni.js успее да зареди и да намери днешната дата. Ако fetch-ът
-       падне, посетителят не вижда празна рамка — вижда, че секцията изобщо
-       я няма. Затова разметката тук е само обвивка; съдържанието го пише JS. -->
-  <section class="section" id="rojdendni" hidden>
-    <div class="container">
-      <div class="section-head reveal">
-        <span class="section-eyebrow">
-          <span class="sec-no" aria-hidden="true">04</span>
-          <span class="kicker">Всеки ден е нечий</span>
-        </span>
-        <h2 id="rojdendni-title">Родени на този ден:</h2>
-      </div>
-
-      <!-- Лента, не решетка: седем имена се движат наляво, както отзивите.
-           Пълненето и клонирането стават в rojdendni.js, защото картите ги
-           няма в разметката — идват от JSON след зареждането. -->
-      <div class="lenta-rail rojdendni-rail" id="rojdendni-rail">
-        <div class="rojdendni-track" id="rojdendni-grid"></div>
-      </div>
-
-      <!-- Обяснението за звездичката се показва само когато в лентата има
-           покоен — иначе е излишен ред. rojdendni.js го отпушва. -->
-      <p class="rojden-legenda" id="rojdendni-legenda" hidden></p>
-
-      <p class="rojdendni-more">
-        <button type="button" class="link-btn" id="rojdendni-toggle" aria-expanded="false"
-                aria-controls="rojdendni-all"></button>
-      </p>
-      <div class="rojdendni-all" id="rojdendni-all" hidden></div>
-
-      <div class="rojdendni-cta reveal">
-        <p>А днес рожден ден има и твой приятел? 🎁</p>
-        <!-- Плавният скрол идва от scroll-behavior: smooth в style.css — не му
-             трябва JS. При prefers-reduced-motion правилото го изключва само. -->
-        <a class="btn btn-primary" href="#voice-card">Поръчай му персонална песен за 48 часа — 19,90 €</a>
-      </div>
-    </div>
-  </section>
+  <!-- „Родени на този ден“ беше тук като секция 04 до 05.09.2026. Излезе на
+       своя страница — rodeni-dnes.html — защото е трафик машина, не аргумент
+       за продажба, а на телефон стоеше 820 px по средата на пътя към
+       поръчката. Тук остава само линк в подвала. -->
 
   <!-- СТИЛОВЕ -->
   <section class="section" id="stilove">
     <div class="container">
       <div class="section-head reveal">
         <span class="section-eyebrow">
-          <span class="sec-no" aria-hidden="true">05</span>
+          <span class="sec-no" aria-hidden="true">04</span>
           <span class="kicker">Ти избираш звука</span>
         </span>
         <h2>19 стила, 15 езика — комбинирай свободно</h2>
@@ -748,7 +712,7 @@
     <div class="container">
       <div class="section-head reveal">
         <span class="section-eyebrow">
-          <span class="sec-no" aria-hidden="true">06</span>
+          <span class="sec-no" aria-hidden="true">05</span>
           <span class="kicker">Прозрачна цена</span>
         </span>
         <h2>Една песен, една цена</h2>
@@ -801,7 +765,7 @@
     <div class="container">
       <div class="section-head reveal">
         <span class="section-eyebrow">
-          <span class="sec-no" aria-hidden="true">07</span>
+          <span class="sec-no" aria-hidden="true">06</span>
           <span class="kicker">Зад кулисите</span>
         </span>
         <h2>Как се раждат песните</h2>
@@ -894,7 +858,7 @@
     <div class="container">
       <div class="section-head reveal">
         <span class="section-eyebrow">
-          <span class="sec-no" aria-hidden="true">08</span>
+          <span class="sec-no" aria-hidden="true">07</span>
           <span class="kicker">Питай смело</span>
         </span>
         <h2>Често задавани въпроси</h2>
@@ -1019,6 +983,7 @@
         <a href="#demo">Демо песни</a>
         <a href="#ceni">Цени</a>
         <a href="novini/">Музикални новини</a>
+        <a href="rodeni-dnes.html">Родени на този ден</a>
         <a href="poruchka.html">Поръчай песен</a>
       </div>
       <div class="footer-col">
@@ -1050,7 +1015,6 @@
 <script src="assets/js/main.js" defer></script>
 <script src="assets/js/noti-bg.js" defer></script>
 <script src="assets/js/znamena.js" defer></script>
-<script src="assets/js/rojdendni.js" defer></script>
 <script src="assets/js/scrub.js" defer></script>
 <!-- Линковете за плащане живеят на едно място. Бързите поръчки пращат клиента
      право на касата, затова конфигурацията трябва да е и тук, не само в
