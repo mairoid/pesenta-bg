@@ -574,6 +574,30 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 
 .styles-cloud { display: flex; flex-wrap: wrap; gap: var(--sp-3); max-width: 900px; }
 
+/* Стил с демо: кръгъл бутон за пускане + етикетът-линк (main.js, „Стиловете се
+   чуват“). Бутонът е действие — градиентът е разрешен (вж. --grad). 44 px е и
+   целта за докосване на телефон (≥ 40). Групата е inline-flex, за да се
+   пренася в облака като едно, а не бутонът на един ред и етикетът на друг. */
+.style-group { display: inline-flex; align-items: center; gap: var(--sp-2); }
+.style-play {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: var(--grad);
+  color: var(--ink);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+}
+.style-play svg { width: 18px; height: 18px; }
+.style-play[aria-pressed="true"] { box-shadow: 0 0 0 3px color-mix(in srgb, var(--pink) 45%, transparent); }
+@media (hover: hover) {
+  .style-play:hover { transform: scale(1.07); }
+}
+
 .style-chip {
   padding: var(--sp-3) var(--sp-4);
   border-radius: 999px;

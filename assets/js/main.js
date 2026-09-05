@@ -280,6 +280,79 @@
     kadar.addEventListener("click", function () { kadarPlayer.click(); });
   }
 
+  /* ---------- Стиловете се чуват ----------
+     Етикет .style-chip с data-demo има пред себе си кръгъл бутон .style-play.
+     Свири STIL_SEK секунди от data-start с кратко затихване, после спира;
+     втори клик спира веднага; клик на друг стил сменя. Влиза в players[],
+     тоест „една песен наведнъж“ важи в двете посоки: пусне ли се стил, демо
+     списъкът спира, и обратно. Няма лента и време — това е проба на звука,
+     не плейър. Жетонът (zaqvka) различава старо от ново пускане: отхвърлен
+     play() от предишен клик (спрян, докато файлът се зареждаше) не бива да
+     спре новия.
+     Превъртане до data-start иска сървър с Range — на живо GitHub Pages го
+     дава; локално виж tools/server.js. */
+  var STIL_SEK = 25, STIL_ZATIHVANE_MS = 600;
+  document.querySelectorAll(".style-play").forEach(function (btn) {
+    var chip = btn.parentNode ? btn.parentNode.querySelector(".style-chip[data-demo]") : null;
+    if (!chip) { btn.hidden = true; return; }   /* бутон без данни няма какво да пусне */
+    var src = chip.getAttribute("data-demo");
+    var start = parseFloat(chip.getAttribute("data-start")) || 0;
+    var ime = chip.textContent.trim();
+    var audio = new Audio();
+    audio.preload = "none";
+    var timer = null, fade = null, zaqvka = 0;
+
+    function chisto() { clearTimeout(timer); clearInterval(fade); timer = fade = null; }
+    function spri() {
+      zaqvka++;
+      chisto();
+      audio.pause();
+      audio.volume = 1;
+      btn.innerHTML = ICON_PLAY;
+      btn.setAttribute("aria-pressed", "false");
+    }
+    function zatihni() {
+      var i = 0, n = 12;
+      clearInterval(fade);
+      fade = setInterval(function () {
+        i++;
+        audio.volume = Math.max(0, 1 - i / n);
+        if (i >= n) spri();
+      }, STIL_ZATIHVANE_MS / n);
+    }
+    function pusni() {
+      var moq = ++zaqvka;
+      if (window.__pesentaIntroStop) window.__pesentaIntroStop();
+      players.forEach(function (p) { if (p.audio !== audio) p.pause(); });
+      btn.innerHTML = ICON_PAUSE;
+      btn.setAttribute("aria-pressed", "true");
+      /* preload="none" + src не тегли нищо (и loadedmetadata никога не идва) —
+         както при демо редовете горе: първо preload, после src. */
+      if (!audio.src) { audio.preload = "auto"; audio.src = src; }
+      /* Преди метаданните това е „начална позиция“ и се прилага, щом се
+         заредят; стари браузъри хвърлят — тогава от началото. */
+      try { audio.currentTime = start; } catch (e) {}
+      audio.volume = 1;
+      chisto();
+      /* play() е синхронно в клика — iOS брои жеста само тук, не след
+         loadedmetadata. 25-те секунди тръгват от „playing“ (долу), не оттук:
+         иначе бавна мрежа ги изяжда. */
+      var p = audio.play();
+      if (p && p.catch) p.catch(function () { if (moq === zaqvka) spri(); });
+      trackPlausible("Style Play", { style: ime });
+    }
+    players.push({ audio: audio, pause: spri });
+    btn.addEventListener("click", function () {
+      if (btn.getAttribute("aria-pressed") === "true") spri(); else pusni();
+    });
+    audio.addEventListener("playing", function () {
+      /* timer е зает и след като е изтекъл (id-то остава) — така „playing“ след
+         прекъсване на мрежата не пуска втори отброяване по време на затихването */
+      if (btn.getAttribute("aria-pressed") === "true" && !timer && !fade) timer = setTimeout(zatihni, STIL_SEK * 1000);
+    });
+    audio.addEventListener("ended", spri);
+  });
+
   /* ---------- Демо: филтър табове по категория ----------
      Не пипа плейър логиката отгоре — само показва/скрива готови .track-row
      елементи по вече зададения им data-category. Скриването е плавно:

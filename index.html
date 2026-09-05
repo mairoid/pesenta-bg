@@ -692,11 +692,31 @@
         <h2>19 стила, 15 езика — комбинирай свободно</h2>
         <p>Балада за мама, рап за най-добрия приятел или кючек за ергенското? Може и песен на турски, гръцки, сръбски или италиански — а защо не и смес.</p>
       </div>
+      <!-- Стиловете се чуват (05.09.2026, идея 04): етикет с data-demo има кръгъл
+           бутон .style-play пред себе си; main.js го пуска за 25 секунди от
+           data-start. Без демо — без бутон. Данните са ТУК, на .style-chip, по
+           картата на Мирослав — не се отгатват по имената на файловете:
+             Рок → angel-s-torbata · Рап / Хип-хоп → za-teb-brate-vladi
+             Ориенталски → rosen-abi · Естрада / Шансон → rocco-di-catania
+           Без бутон (15) — това е списъкът какво да се запише следващо: Поп,
+           Балада, Поп-фолк / Чалга, Кючек, Народна музика, Диско / Ретро,
+           EDM / Денс, R&B / Соул, Джаз / Суинг, Кънтри, Латино / Регетон,
+           Акустична китара, Метъл, Детска песен, Кино / Епично.
+           Останалите файлове в assets/audio/ не влизат: подаръчните песни не са
+           за публично демо, 18+ парчетата не бива да свирят от секция без
+           предупреждение, а Habibi Rusi, Туцо и „Вече няма кой“ дублират стил,
+           който вече има песен. -->
       <div class="styles-cloud reveal">
         <a class="style-chip" href="poruchka.html?stil=%D0%9F%D0%BE%D0%BF">Поп</a>
         <a class="style-chip" href="poruchka.html?stil=%D0%91%D0%B0%D0%BB%D0%B0%D0%B4%D0%B0">Балада</a>
-        <a class="style-chip" href="poruchka.html?stil=%D0%A0%D0%BE%D0%BA">Рок</a>
-        <a class="style-chip" href="poruchka.html?stil=%D0%A0%D0%B0%D0%BF%20%2F%20%D0%A5%D0%B8%D0%BF-%D1%85%D0%BE%D0%BF">Рап / Хип-хоп</a>
+        <span class="style-group">
+          <button type="button" class="style-play" aria-label="Чуй пример: Рок" aria-pressed="false"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+          <a class="style-chip" href="poruchka.html?stil=%D0%A0%D0%BE%D0%BA" data-demo="assets/audio/angel-s-torbata.mp3" data-start="0">Рок</a>
+        </span>
+        <span class="style-group">
+          <button type="button" class="style-play" aria-label="Чуй пример: Рап / Хип-хоп" aria-pressed="false"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+          <a class="style-chip" href="poruchka.html?stil=%D0%A0%D0%B0%D0%BF%20%2F%20%D0%A5%D0%B8%D0%BF-%D1%85%D0%BE%D0%BF" data-demo="assets/audio/za-teb-brate-vladi.mp3" data-start="0">Рап / Хип-хоп</a>
+        </span>
         <a class="style-chip" href="poruchka.html?stil=%D0%9F%D0%BE%D0%BF-%D1%84%D0%BE%D0%BB%D0%BA%20%2F%20%D0%A7%D0%B0%D0%BB%D0%B3%D0%B0">Поп-фолк / Чалга</a>
         <a class="style-chip" href="poruchka.html?stil=%D0%9A%D1%8E%D1%87%D0%B5%D0%BA">Кючек</a>
         <a class="style-chip" href="poruchka.html?stil=%D0%9D%D0%B0%D1%80%D0%BE%D0%B4%D0%BD%D0%B0%20%D0%BC%D1%83%D0%B7%D0%B8%D0%BA%D0%B0">Народна музика</a>
@@ -706,11 +726,17 @@
         <a class="style-chip" href="poruchka.html?stil=%D0%94%D0%B6%D0%B0%D0%B7%20%2F%20%D0%A1%D1%83%D0%B8%D0%BD%D0%B3">Джаз / Суинг</a>
         <a class="style-chip" href="poruchka.html?stil=%D0%9A%D1%8A%D0%BD%D1%82%D1%80%D0%B8">Кънтри</a>
         <a class="style-chip" href="poruchka.html?stil=%D0%9B%D0%B0%D1%82%D0%B8%D0%BD%D0%BE%20%2F%20%D0%A0%D0%B5%D0%B3%D0%B5%D1%82%D0%BE%D0%BD">Латино / Регетон</a>
-        <a class="style-chip" href="poruchka.html?stil=%D0%9E%D1%80%D0%B8%D0%B5%D0%BD%D1%82%D0%B0%D0%BB%D1%81%D0%BA%D0%B8">Ориенталски</a>
+        <span class="style-group">
+          <button type="button" class="style-play" aria-label="Чуй пример: Ориенталски" aria-pressed="false"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+          <a class="style-chip" href="poruchka.html?stil=%D0%9E%D1%80%D0%B8%D0%B5%D0%BD%D1%82%D0%B0%D0%BB%D1%81%D0%BA%D0%B8" data-demo="assets/audio/rosen-abi.mp3" data-start="0">Ориенталски</a>
+        </span>
         <a class="style-chip" href="poruchka.html?stil=%D0%90%D0%BA%D1%83%D1%81%D1%82%D0%B8%D1%87%D0%BD%D0%B0%20%D0%BA%D0%B8%D1%82%D0%B0%D1%80%D0%B0">Акустична китара</a>
         <a class="style-chip" href="poruchka.html?stil=%D0%9C%D0%B5%D1%82%D1%8A%D0%BB">Метъл</a>
         <a class="style-chip" href="poruchka.html?stil=%D0%94%D0%B5%D1%82%D1%81%D0%BA%D0%B0%20%D0%BF%D0%B5%D1%81%D0%B5%D0%BD">Детска песен</a>
-        <a class="style-chip" href="poruchka.html?stil=%D0%95%D1%81%D1%82%D1%80%D0%B0%D0%B4%D0%B0%20%2F%20%D0%A8%D0%B0%D0%BD%D1%81%D0%BE%D0%BD">Естрада / Шансон</a>
+        <span class="style-group">
+          <button type="button" class="style-play" aria-label="Чуй пример: Естрада / Шансон" aria-pressed="false"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+          <a class="style-chip" href="poruchka.html?stil=%D0%95%D1%81%D1%82%D1%80%D0%B0%D0%B4%D0%B0%20%2F%20%D0%A8%D0%B0%D0%BD%D1%81%D0%BE%D0%BD" data-demo="assets/audio/rocco-di-catania.mp3" data-start="0">Естрада / Шансон</a>
+        </span>
         <a class="style-chip" href="poruchka.html?stil=%D0%9A%D0%B8%D0%BD%D0%BE%20%2F%20%D0%95%D0%BF%D0%B8%D1%87%D0%BD%D0%BE">Кино / Епично</a>
       </div>
     </div>
