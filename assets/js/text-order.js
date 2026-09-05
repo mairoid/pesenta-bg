@@ -158,6 +158,62 @@
     );
   }
 
+  /* ============ Кога е поводът → кога е готова ============
+     Собствено копие на функциите от order.js — файловете нарочно не си
+     споделят код (виж главата). Тук няма експрес: при близка дата редът
+     праща към пълната поръчка, където експресът се избира. Срокът е плосък —
+     48 часа от сега, не работни дни; датите по българско време. */
+  function dostavkaDo(sega, express) {
+    return new Date(sega.getTime() + (express ? 24 : 48) * 3600 * 1000);
+  }
+  function denBG(d) {
+    try {
+      return d.toLocaleDateString("bg-BG", { weekday: "long", day: "numeric", month: "long", timeZone: "Europe/Sofia" });
+    } catch (e) {
+      return d.toLocaleDateString("bg-BG", { weekday: "long", day: "numeric", month: "long" });
+    }
+  }
+  function denNomer(d) {
+    var s;
+    try {
+      s = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Sofia", year: "numeric", month: "2-digit", day: "2-digit" }).format(d);
+    } catch (e) {
+      s = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+    }
+    return Math.round(Date.UTC(+s.slice(0, 4), +s.slice(5, 7) - 1, +s.slice(8, 10)) / 86400000);
+  }
+  function dataOtPole(v) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v || "");
+    return m ? Math.round(Date.UTC(+m[1], +m[2] - 1, +m[3]) / 86400000) : null;
+  }
+  var eventDateEl = document.getElementById("text-event-date");
+  var dostavkaRed = document.getElementById("text-dostavka-red");
+  function presmetniDostavka() {
+    if (!dostavkaRed) return;
+    var sega = new Date();
+    var sabitie = dataOtPole(eventDateEl ? eventDateEl.value : "");
+    var gotova = dostavkaDo(sega, false);
+    var html, blizo = false;
+    if (sabitie === null) {
+      html = "Готова до <strong>" + denBG(gotova) + "</strong>.";
+    } else {
+      var n = sabitie - denNomer(gotova);
+      if (n >= 0) {
+        var koga = n === 0 ? "в деня на събитието" : (n === 1 ? "ден преди събитието" : n + " дни преди събитието");
+        html = "Поръчаш ли сега, песента е при теб до <strong>" + denBG(gotova) + "</strong> — " + koga + ".";
+      } else if (sabitie - denNomer(dostavkaDo(sega, true)) >= 0) {
+        blizo = true;
+        html = "Датата е близо. <a href=\"poruchka.html\">Избери експресна изработка в пълната поръчка →</a>";
+      } else {
+        blizo = true;
+        html = "Пиши ни на <a href=\"mailto:sales@pesenta.bg\">sales@pesenta.bg</a>, преди да платиш — ще кажем дали стигаме.";
+      }
+    }
+    dostavkaRed.innerHTML = html;
+    dostavkaRed.classList.toggle("blizo", blizo);
+  }
+  if (eventDateEl) eventDateEl.addEventListener("change", presmetniDostavka);
+
   textBtn.addEventListener("click", function () {
     /* ако гласовият запис тече, спираме го през собствения му бутон —
        той си знае как да прибере микрофона и таймера чисто */
@@ -166,6 +222,7 @@
     fieldsWrap.hidden = false;
     collapseHeroIntro();
     pinHeroPhoto();
+    presmetniDostavka(); /* „Готова до …“ се смята от момента на отваряне, не на зареждане */
 
     /* preventScroll е същественото. Обикновеният .focus() скролира веднага,
        но collapseHeroIntro() тече 600ms и през това време свива заглавието —
@@ -215,6 +272,7 @@
     var occasion = selectedOccasion();
     var styles = selectedStyles();
     var language = document.getElementById("text-language").value;
+    var eventDate = eventDateEl ? (eventDateEl.value || "") : "";
 
     var fields = {
       "_subject": "БЪРЗА заявка (ОЧАКВА ПЛАЩАНЕ) — " + orderNo,
@@ -228,6 +286,7 @@
       "Състояние": "ОЧАКВА ПЛАЩАНЕ — клиентът е пренасочен към Stripe",
       "Клиент": "— идва от Stripe след плащането",
       "Повод": occasion || "— не е избран, виж разказа",
+      "Дата на повода": eventDate || "— не е посочена",
       "Стилове": styles.length ? styles.join(", ") : "— не са избрани, виж разказа",
       "Език": language,
       "Разказ": story,
@@ -252,6 +311,7 @@
           : "ФАКТУРА: не е поискана.",
         "",
         "Повод: " + (occasion || "— не е избран, виж разказа"),
+        "Дата на повода: " + (eventDate || "— не е посочена"),
         "Стилове: " + (styles.length ? styles.join(", ") : "— не са избрани, виж разказа"),
         "Език: " + language,
         "",
@@ -299,6 +359,7 @@
           order_no: orderNo,
           vid: "бърза текстова",
           povod: fields["Повод"],
+          event_date: eventDate,
           stilove: fields["Стилове"],
           ezik: fields["Език"],
           razkaz: fields["Разказ"]

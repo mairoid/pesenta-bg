@@ -248,6 +248,15 @@
               </div>
             </div>
 
+            <!-- Датата прави „до 48 часа“ личен факт: „при теб до четвъртък,
+                 17 септември — 3 дни преди събитието“. Тук няма експрес — при
+                 близка дата редът праща към пълната поръчка. text-order.js. -->
+            <div class="field">
+              <label for="text-event-date">Кога е поводът? <span class="hint">По желание — за да ти кажем кога ще е готова</span></label>
+              <input type="date" id="text-event-date" name="text-event-date">
+              <p class="dostavka-red" id="text-dostavka-red" aria-live="polite"></p>
+            </div>
+
             <div class="field">
               <label>Стил <span class="hint">По желание, може повече от един</span></label>
               <div class="chips" id="text-style-chips">

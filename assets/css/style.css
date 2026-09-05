@@ -1323,6 +1323,14 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 .field label { display: block; font-weight: 700; font-size: var(--fs-md); margin-bottom: var(--sp-2); }
 .field .hint { font-weight: 400; color: var(--muted); font-size: var(--fs-sm); display: block; margin-top: 0.15rem; }
 
+/* Редът под „Кога е събитието?“ / „Кога е поводът?“ — order.js и text-order.js
+   го пълнят. В тона на hint-а; .blizo е кехлибар: датата е близо и човек трябва
+   да реши (експрес или писмо до нас), не грешка. */
+.dostavka-red { margin: 0.45rem 0 0; font-size: var(--fs-sm); color: var(--muted); line-height: 1.5; min-height: 1.5em; }
+.dostavka-red strong { color: var(--text); font-weight: 600; }
+.dostavka-red.blizo, .dostavka-red.blizo strong { color: var(--kekhlibar); }
+.dostavka-red a { color: var(--orange); text-decoration: underline; }
+
 .field input[type="text"],
 .field input[type="email"],
 .field input[type="tel"],

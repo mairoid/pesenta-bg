@@ -139,7 +139,75 @@
     state.express = e.target.checked;
     renderSummary();
     saveDraft();
+    presmetniDostavka(false);
   });
+
+  /* ============ Кога е събитието → кога е готова ============
+     „До 48 часа“ остава общото обещание навсякъде по сайта. Тук, където
+     човек решава, то става личен факт: „при теб до четвъртък, 17 септември
+     — 3 дни преди събитието“. Срокът е плосък — 48 часа от сега (експрес:
+     24), не работни дни. Датите са по българско време, както в rojdendni.js.
+     text-order.js носи собствено копие на същите функции — файловете нарочно
+     не си споделят код (виж главата му). */
+  function dostavkaDo(sega, express) {
+    return new Date(sega.getTime() + (express ? 24 : 48) * 3600 * 1000);
+  }
+  function denBG(d) {
+    try {
+      return d.toLocaleDateString("bg-BG", { weekday: "long", day: "numeric", month: "long", timeZone: "Europe/Sofia" });
+    } catch (e) {
+      return d.toLocaleDateString("bg-BG", { weekday: "long", day: "numeric", month: "long" });
+    }
+  }
+  /* Календарният ден в София като число — за да броим дни, не часове:
+     готова в 23:50 на 6-и е „6-и“, а не „почти 7-и“. */
+  function denNomer(d) {
+    var s;
+    try {
+      s = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Sofia", year: "numeric", month: "2-digit", day: "2-digit" }).format(d);
+    } catch (e) {
+      s = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+    }
+    return Math.round(Date.UTC(+s.slice(0, 4), +s.slice(5, 7) - 1, +s.slice(8, 10)) / 86400000);
+  }
+  function dataOtPole(v) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v || "");
+    return m ? Math.round(Date.UTC(+m[1], +m[2] - 1, +m[3]) / 86400000) : null;
+  }
+  var dostavkaRed = document.getElementById("dostavka-red");
+  var eventDateEl = document.getElementById("event-date");
+  var expressEl = document.getElementById("express");
+
+  /* fokus=true само при смяна на датата от човека: тогава, ако стандартът
+     не стига, а експресът стига, фокусът отива върху отметката — но НЕ я
+     включваме сами, човек плаща за нея. При смяна на самия експрес фокусът
+     не се пипа (той вече е там). */
+  function presmetniDostavka(fokus) {
+    if (!dostavkaRed) return;
+    var sega = new Date();
+    var sabitie = dataOtPole(eventDateEl ? eventDateEl.value : "");
+    var gotova = dostavkaDo(sega, state.express);
+    var html, blizo = false, kamExpress = false;
+    if (sabitie === null) {
+      html = "Готова до <strong>" + denBG(gotova) + "</strong>.";
+    } else {
+      var n = sabitie - denNomer(gotova);
+      if (n >= 0) {
+        var koga = n === 0 ? "в деня на събитието" : (n === 1 ? "ден преди събитието" : n + " дни преди събитието");
+        html = "Поръчаш ли сега, песента е при теб до <strong>" + denBG(gotova) + "</strong> — " + koga + ".";
+      } else if (!state.express && sabitie - denNomer(dostavkaDo(sega, true)) >= 0) {
+        blizo = true; kamExpress = true;
+        html = "Датата е близо. С експресна изработка е готова до <strong>" + denBG(dostavkaDo(sega, true)) + "</strong>.";
+      } else {
+        blizo = true;
+        html = "Пиши ни на <a href=\"mailto:" + ORDER_EMAIL + "\">" + ORDER_EMAIL + "</a>, преди да платиш — ще кажем дали стигаме.";
+      }
+    }
+    dostavkaRed.innerHTML = html;
+    dostavkaRed.classList.toggle("blizo", blizo);
+    if (kamExpress && fokus && expressEl && expressEl.offsetParent) expressEl.focus();
+  }
+  if (eventDateEl) eventDateEl.addEventListener("change", function () { presmetniDostavka(true); });
 
   /* ============ Промо код ============ */
 
@@ -679,7 +747,9 @@
     } catch (e) { /* localStorage недостъпен — не е фатално */ }
 
     document.getElementById("success-no").textContent = orderNo;
-    document.getElementById("success-eta").textContent = state.express ? "24 часа" : "48 часа";
+    /* Датата вместо „48 часа“: същата сметка като в живия ред под датата на
+       събитието — личен факт, не общо обещание. */
+    document.getElementById("success-eta").textContent = denBG(dostavkaDo(new Date(), state.express));
 
     /* Бутонът за плащане носи поръчката и избрания пакет — plati.html оттам
        разбира коя сума да покаже и кой Stripe линк да отвори. Без експреса
@@ -771,6 +841,9 @@
   var urlPovod = params.get("povod");
 
   restoreDraft();
+  /* Редът под датата — и при празна дата казва „Готова до …“; при
+     възстановена чернова с дата и експрес смята с тях. */
+  presmetniDostavka(false);
   state.plan = "pesen";
   if (urlPovod && POVOD_MAP[urlPovod] && chipValues("occasion-chips").length === 0) {
     var povodChip = document.querySelector('#occasion-chips .chip[data-value="' + POVOD_MAP[urlPovod] + '"]');

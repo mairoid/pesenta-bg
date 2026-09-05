@@ -265,6 +265,11 @@
           <div class="field">
             <label for="event-date">Кога е събитието?</label>
             <input type="date" id="event-date" name="event_date">
+            <!-- Живият ред: order.js го смята при смяна на датата и на експреса.
+                 Без дата — „Готова до <ден, дата>“; с дата — „при теб до …,
+                 N дни преди събитието“; близка дата — кехлибарен ред и фокус
+                 върху експреса (без да го включва сам). -->
+            <p class="dostavka-red" id="dostavka-red" aria-live="polite"></p>
           </div>
         </div>
       </details>
