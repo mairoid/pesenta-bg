@@ -192,8 +192,8 @@
   <section class="hero">
     <div class="container hero-grid">
       <div>
-        <!-- Свива се при клик на "Поръчай с глас"/"Поръчай бързо" (text-order.js) —
-             освобождава място за формата, вместо тя да пада под сгъвката. -->
+        <!-- Свива се при клик на „Поръчай песен“ (text-order.js) — освобождава
+             място за формата, вместо тя да пада под сгъвката. -->
         <div id="hero-intro">
           <span class="kicker">Песен по поръчка за всеки повод</span>
           <!-- Цената е в самото заглавие, не удебелена по-надолу: човек я
@@ -207,89 +207,32 @@
           <h1>Историята ти, превърната в <span class="grad-text">песен</span> за 19,90 €</h1>
           <p class="lead">Разказваш ни за човека и повода. Текстът го пишем ние — дума по дума, по твоята история. Музиката и гласът се създават с AI. Готова до 48 часа.</p>
         </div>
-        <!-- Поръчката става тук, на първия екран. Бутонът изглежда като
-             покана, но е самият запис — полетата излизат чак след като
-             човек натисне, за да не посреща началната страница с формуляр. -->
+        <!-- Поръчката става тук, на първия екран. Един основен бутон: полетата
+             излизат чак след като човек натисне, за да не посреща началната
+             страница с формуляр. Гласовата поръчка НЕ е отделен избор тук —
+             остава само в poruchka.html („Разкажи с глас“ в полето за
+             историята и #fast-rec горе), където вече работи.
+
+             id="voice-card" остава с това име нарочно: към #voice-card сочат
+             хедърът, „Цени“ и финалният CTA (пет места). Смяна на името е
+             смяна на котва без полза за никого. -->
         <div id="voice-card">
           <div class="hero-ctas">
-            <button type="button" class="btn btn-primary btn-lg voice-btn" id="fast-rec">
-              <span class="mic mic-pulse"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg></span>
-              <span id="fast-rec-label">Поръчай с глас</span>
-            </button>
-            <button type="button" class="btn btn-primary btn-lg" id="fast-text">
-              <span class="mic"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 17.5V20h2.5L17 9.5 14.5 7 4 17.5zm14.7-11.2a1 1 0 0 0 0-1.4l-1.6-1.6a1 1 0 0 0-1.4 0L14 5l3 3 1.7-1.7z"/></svg></span>
-              Поръчай бързо
-            </button>
+            <!-- id="fast-text" се пази — text-order.js се закача за него.
+                 Без икона: бутонът е действието, не режим. -->
+            <button type="button" class="btn btn-primary btn-lg" id="fast-text">Поръчай песен</button>
             <a class="btn btn-ghost btn-lg" href="#demo">Чуй примери</a>
           </div>
-          <!-- Кратко нарочно: този ред е и статусът на записа (voice-order.js
-               го подменя с „Записът е готов…“). Дълъг текст значи скок в
-               подредбата при първото натискане.
-               Но не и празно: „говори 3 минути“ не казваше ЗА КАКВО да
-               говори. Двете неща, които стигат, за да тръгне песента, са
-               човекът и поводът — те остават. Времето отпадна: то отговаря
-               на въпрос, който никой не си задава преди да натисне. -->
-          <p class="voice-status" id="fast-status">Разкажи за човека и повода — останалото го пишем ние.</p>
-          <p class="voice-status" id="voice-fallback" hidden>Този браузър не може да записва глас. <a href="poruchka.html" style="color:var(--orange);text-decoration:underline;">Поръчай през формата →</a></p>
           <!-- Бутонът е <button>, не връзка: без JavaScript не води доникъде.
                Затова изходът към формата стои и тук. -->
           <noscript>
-            <p class="voice-status">Гласовата поръчка иска JavaScript. <a href="poruchka.html" style="color:var(--orange);text-decoration:underline;">Поръчай през формата →</a></p>
+            <p class="voice-status">Бързата поръчка иска JavaScript. <a href="poruchka.html" style="color:var(--orange);text-decoration:underline;">Поръчай през формата →</a></p>
           </noscript>
 
-          <div id="fast-fields" hidden>
-            <div class="voice-play" id="fast-play" hidden>
-              <audio controls id="fast-audio" style="height:40px;max-width:100%;"></audio>
-              <button type="button" class="btn btn-ghost" id="fast-del" style="padding:0.5rem 1rem;font-size:0.85rem;">Изтрий</button>
-            </div>
-
-            <div class="field" id="fast-transcript-wrap" hidden>
-              <label for="fast-transcript">Това чухме — прочети го и го поправи
-                <span class="hint" id="fast-transcript-hint">Особено имената: така, както ги напишеш тук, така ще ги изпее песента. Записът ти пътува заедно с текста, така че нищо не се губи.</span>
-              </label>
-              <textarea id="fast-transcript" placeholder="Текстът се появява тук, докато говориш…"></textarea>
-            </div>
-
-            <!-- Име и имейл ги няма нарочно: Stripe ги събира на страницата
-                 за плащане. Да ги искаме и тук значеше клиентът да ги пише
-                 два пъти за една поръчка. -->
-
-            <label class="consent">
-              <input type="checkbox" id="fast-consent">
-              <span>Запознах се с <a href="usloviya.html" target="_blank" style="color:var(--orange);text-decoration:underline;">Общите условия</a> и <a href="poveritelnost.html" target="_blank" style="color:var(--orange);text-decoration:underline;">Политиката за поверителност</a> и се съгласявам записът и данните ми да бъдат използвани за изработката на песента. Изрично се съгласявам изпълнението да започне веднага след плащането и потвърждавам, че <strong>губя 14-дневното право на отказ</strong> (чл. 57 ЗЗП) — песента се изработва лично за мен по мои указания и плащам предварително, за да започне работата.</span>
-            </label>
-
-            <!-- Фактура по желание — виж бележката при текстовата поръчка в
-                 index.html. Идентични полета, защото и двете водят до един и
-                 същ брифинг при нас. -->
-            <label class="consent" style="margin-top:0.4rem;">
-              <input type="checkbox" id="fast-invoice">
-              <span>Искам фактура <span class="hint" style="display:inline;">(задължително за фирма; за физическо лице е по желание)</span></span>
-            </label>
-            <div id="fast-invoice-fields" hidden>
-              <div class="field">
-                <label for="fast-inv-name">Име или фирма *</label>
-                <input type="text" id="fast-inv-name" autocomplete="organization" placeholder="напр. „Пример&quot; ЕООД или Иван Иванов">
-              </div>
-              <div class="field">
-                <label for="fast-inv-addr">Адрес *</label>
-                <input type="text" id="fast-inv-addr" autocomplete="street-address" placeholder="гр., улица, номер">
-              </div>
-              <div class="field">
-                <label for="fast-inv-eik">ЕИК / ДДС номер
-                  <span class="hint">Само за фирма — остави празно, ако си физическо лице</span>
-                </label>
-                <input type="text" id="fast-inv-eik" placeholder="напр. 207427793 или BG207427793">
-              </div>
-            </div>
-
-            <div class="form-error" id="fast-error" role="alert"></div>
-            <button type="button" class="btn btn-primary btn-lg" id="fast-send" style="width:100%;margin-top:0.8rem;">Продължи към плащане · 19,90 €</button>
-            <p class="hint" style="margin-top:0.6rem;">Плащането е през Stripe. Там въвеждаш име и имейл — песента идва на него.<br>Предпочиташ да напишеш? <a href="poruchka.html" style="color:var(--orange);text-decoration:underline;">Формата стъпка по стъпка →</a></p>
-          </div>
-
-          <!-- Бърза текстова поръчка — по аналогия на гласовата: излиза на същия
-               екран, без прехвърляне към poruchka.html. Виж text-order.js. -->
+          <!-- Бърза текстова поръчка: излиза на същия екран, без прехвърляне
+               към poruchka.html. Виж text-order.js. Гласовият блок (#fast-fields
+               с полетата, записа и своето съгласие) беше тук до 05.09.2026;
+               сега гласът живее само в poruchka.html. -->
           <div id="text-fields" hidden>
             <div class="field">
               <label>Повод <span class="hint">По желание — избери или просто разкажи по-долу</span></label>
@@ -1113,7 +1056,9 @@
      право на касата, затова конфигурацията трябва да е и тук, не само в
      plati.html. Зарежда се ПРЕДИ формите, за да е налична, щом им потрябва. -->
 <script src="assets/js/payments.js" defer></script>
-<script src="assets/js/voice-order.js" defer></script>
+<!-- voice-order.js не се зарежда тук: гласовата поръчка е само в poruchka.html.
+     Скриптът и без това излиза на 15-ия ред без #fast-rec, но няма смисъл да
+     се тегли. -->
 <script src="assets/js/text-order.js" defer></script>
 <!-- Плаващ бутон за връзка: Viber на мобилно (+359899456326 — ПЛЕЙСХОЛЪР номер, смени с реалния), имейл при десктоп -->
 <a class="float-contact float-contact--mobile" href="viber://chat?number=+359899456326" aria-label="Пиши ни във Viber">
