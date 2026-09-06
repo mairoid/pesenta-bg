@@ -2180,6 +2180,22 @@ a.style-chip { text-decoration: none; color: inherit; }
 }
 .founder-text .founder-sign { margin: 0; color: var(--text); font-weight: 600; }
 
+/* Сгънатата история (06.09.2026). Под 768px първите два абзаца са отвън,
+   останалото е в <details class="founder-more">; main.js го отваря на
+   десктоп. Отвореното details няма summary — на телефон бутонът е
+   свършил работата си, на десктоп изобщо не трябва да се вижда. Ако JS
+   не тръгне на десктоп, details е затворен и summary-то стои: има какво
+   да се натисне, не отрязан текст. */
+.founder-more > summary {
+  list-style: none;
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--orange);
+  padding: var(--sp-2) 0 var(--sp-4);
+}
+.founder-more > summary::-webkit-details-marker { display: none; }
+.founder-more[open] > summary { display: none; }
+
 /* ---------- Снимки в „Зад кулисите“ ---------- */
 
 .studio-pair,

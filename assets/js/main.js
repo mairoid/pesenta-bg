@@ -393,6 +393,19 @@
     audio.addEventListener("ended", spri);
   });
 
+  /* ---------- Историята на основателя ----------
+     На телефон е сгъната в <details> (първите два абзаца остават отвън);
+     на десктоп стои отворена — summary-то там го крие CSS ([open]).
+     Слуша се промяната на ширината, не само първото зареждане. */
+  var founderMore = document.querySelector(".founder-more");
+  if (founderMore) {
+    var shirokoIst = window.matchMedia("(min-width: 769px)");
+    var otvoriIst = function () { founderMore.open = shirokoIst.matches; };
+    otvoriIst();
+    if (shirokoIst.addEventListener) shirokoIst.addEventListener("change", otvoriIst);
+    else if (shirokoIst.addListener) shirokoIst.addListener(otvoriIst);
+  }
+
   /* ---------- Демо: филтър табове по категория ----------
      Не пипа плейър логиката отгоре — само показва/скрива готови .track-row
      елементи по вече зададения им data-category. Скриването е плавно:
