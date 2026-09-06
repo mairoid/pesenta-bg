@@ -2075,6 +2075,12 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
    безусловно заради по-високата специфичност (две класи). */
 .track-row.track-gone { display: none; }
 
+/* „Още N песни“ под списъка на телефон (main.js). [hidden] е изписан
+   нарочно: .btn си има display: inline-flex, който бие user-agent правилото
+   за hidden — същата история като при .track-row по-горе. */
+.tracks-more { display: flex; width: max-content; margin: var(--sp-6) auto 0; }
+.tracks-more[hidden] { display: none; }
+
 a.style-chip { text-decoration: none; color: inherit; }
 @media (hover: hover) {
   a.style-chip:hover { border-color: var(--pink); color: #fff; }

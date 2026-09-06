@@ -415,29 +415,69 @@
      Нарочно НЕ ползваме елемент.hidden: .track-row си има собствен
      display:flex (по-специфично от [hidden] в user-agent таблицата, затова
      hidden не го крие) — вместо това display:none идва през собствен клас. */
+  /* „Още N песни“ (06.09.2026): на телефон (max-width 768px) в изгледа
+     „Всички“ се виждат първите VIDIMI_TEL реда, останалите носят
+     .track-hide + .track-gone и излизат с бутона под списъка. Филтърът по
+     категория гледа всичките девет — бутонът важи само за „Всички“ и при
+     филтър е скрит. На десктоп всичко е видимо и без бутон; при смяна на
+     ширината състоянието се преизчислява. */
   var filterBar = document.getElementById("demo-filters");
   if (filterBar) {
     var filterChips = filterBar.querySelectorAll(".chip");
     var trackRows = document.querySelectorAll(".tracks-list .track-row");
+    var oshteBtn = document.getElementById("tracks-more");
+    var tesenMQ = window.matchMedia("(max-width: 768px)");
+    var VIDIMI_TEL = 4, natisnalOshte = false, tekushtFiltar = "all";
+    var razgunato = function () { return natisnalOshte || !tesenMQ.matches; };
+
+    var pokazhiRed = function (row, show, vednaga) {
+      if (show) {
+        row.classList.remove("track-gone");
+        void row.offsetHeight; /* форсира reflow — без него преходът няма от какво "свито" състояние да тръгне */
+        row.classList.remove("track-hide");
+      } else if (vednaga) {
+        row.classList.add("track-hide");
+        row.classList.add("track-gone");   /* при зареждане — без преход */
+      } else if (!row.classList.contains("track-hide")) {
+        row.classList.add("track-hide");
+        setTimeout(function () {
+          /* ако междувременно е показан пак, не го гасим */
+          if (row.classList.contains("track-hide")) row.classList.add("track-gone");
+        }, 240);
+      }
+    };
+    var prilozhiFiltar = function (vednaga) {
+      var skriti = 0;
+      trackRows.forEach(function (row, i) {
+        var cats = (row.getAttribute("data-category") || "").split(" ");
+        var show = tekushtFiltar === "all" ? (razgunato() || i < VIDIMI_TEL) : cats.indexOf(tekushtFiltar) > -1;
+        if (tekushtFiltar === "all" && !show) skriti++;
+        pokazhiRed(row, show, vednaga);
+      });
+      if (oshteBtn) {
+        var s = tekushtFiltar === "all" && !razgunato() && skriti > 0;
+        if (s) oshteBtn.textContent = "Още " + skriti + (skriti === 1 ? " песен" : " песни");
+        oshteBtn.hidden = !s;
+      }
+    };
+
     filterBar.addEventListener("click", function (e) {
       var chip = e.target.closest(".chip");
       if (!chip) return;
       filterChips.forEach(function (c) { c.classList.remove("selected"); });
       chip.classList.add("selected");
-      var filter = chip.getAttribute("data-filter");
-      trackRows.forEach(function (row) {
-        var cats = (row.getAttribute("data-category") || "").split(" ");
-        var show = filter === "all" || cats.indexOf(filter) > -1;
-        if (show) {
-          row.classList.remove("track-gone");
-          void row.offsetHeight; /* форсира reflow — без него преходът няма от какво "свито" състояние да тръгне */
-          row.classList.remove("track-hide");
-        } else if (!row.classList.contains("track-hide")) {
-          row.classList.add("track-hide");
-          setTimeout(function () { row.classList.add("track-gone"); }, 240);
-        }
-      });
+      tekushtFiltar = chip.getAttribute("data-filter");
+      prilozhiFiltar(false);
     });
+    if (oshteBtn) {
+      oshteBtn.addEventListener("click", function () {
+        natisnalOshte = true;
+        prilozhiFiltar(false);
+      });
+    }
+    prilozhiFiltar(true);
+    if (tesenMQ.addEventListener) tesenMQ.addEventListener("change", function () { prilozhiFiltar(false); });
+    else if (tesenMQ.addListener) tesenMQ.addListener(function () { prilozhiFiltar(false); });
   }
 
   /* ---------- Plausible: клик на „Поръчай“ бутоните ----------
