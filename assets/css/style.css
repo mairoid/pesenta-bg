@@ -435,9 +435,11 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 
 .hero p.lead { font-size: var(--fs-xl); color: var(--muted); max-width: 34rem; }
 
-/* Кадърът за телефон и този за десктоп никога не се показват заедно —
-   единият винаги е скрит, така че вторият изобщо не се тегли. Границата е
-   768px, както е поискано; hero-photo пада на 860px по своя причина
+/* Кадърът за телефон е скрит на ВСИЧКИ ширини (06.09.2026): под 768px
+   стоеше 518 px СЛЕД бутоните — човек вече е минал действието, а героят
+   ставаше 1321 px висок. Разметката остава в index.html (с loading="lazy",
+   за да не се тегли скрит); никой скрипт не я мери — text-order.js гледа
+   .hero-photo, десктопския кадър. hero-photo пада на 860px по своя причина
    (квадратното видео заемаше цялата височина на таблет). */
 .hero-photo-mobile { display: none; }
 .hero-photo-mobile img {
@@ -448,9 +450,6 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   object-fit: cover;
   border-radius: var(--radius);
   background: var(--bg-soft);
-}
-@media (max-width: 768px) {
-  .hero-photo-mobile { display: block; margin-top: var(--sp-8); }
 }
 
 /* Свива се, щом клиентът тръгне да поръчва (text-order.js мери реалната
