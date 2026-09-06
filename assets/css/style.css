@@ -289,25 +289,33 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
    Фин шум върху основния бутон и върху героя — вижда се при увеличение,
    не отдалеч; маха „пластмасовия“ вид на чистия градиент. SVG-то е 160×160
    feTurbulence (fractalNoise, baseFrequency .92, 2 октави, stitch), обезцветено,
-   за да не оцветява градиента; soft-light го смесва с това под него.
-   pointer-events: none — кликът минава през него до бутона. Платното
-   #noti-bg е под всичко (z-index -1), зърното на героя е над всичко в него —
-   така и трябва: същият шум и по текста, и по линиите. */
+   за да не оцветява градиента. pointer-events: none — кликът минава през
+   него до бутона. Платното #noti-bg е под всичко (z-index -1), зърното на
+   героя е над всичко в него — така и трябва.
+
+   Две променливи, защото фонът е различен (мерено при 2× срещу същия
+   елемент без зърно):
+   - бутоните: soft-light върху този шум даваше средно 3 нива от 255 —
+     невидимо. Матрицата ×2.6 −0.8 вдига контраста на шума, а overlay го
+     смесва — средно 6 нива, максимум 23.
+   - героят: върху #0b0a1a soft-light не прави нищо (1 ниво при всякаква
+     прозрачност). Затова --grain-dark: пикселите стават бели, а тяхната
+     прозрачност е яркостта на шума (A = 0.8·(R+G+B) − 1.2, тоест само
+     по-светлата половина) — светли точици със normal смесване, ~2,3 нива. */
 :root {
-  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeColorMatrix type='matrix' values='2.6 0 0 0 -0.8 0 2.6 0 0 -0.8 0 0 2.6 0 -0.8 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  --grain-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0.8 0.8 0.8 0 -1.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
 }
 .btn-primary::after,
 .hero::after {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: var(--grain);
-  mix-blend-mode: soft-light;
   pointer-events: none;
   border-radius: inherit;
 }
-.btn-primary::after { opacity: 0.34; }
-.hero::after { opacity: 0.13; }
+.btn-primary::after { background-image: var(--grain); mix-blend-mode: overlay; opacity: 0.34; }
+.hero::after { background-image: var(--grain-dark); mix-blend-mode: normal; opacity: 0.12; }
 @media (hover: hover) {
   .btn-primary:hover {
     background-position: 100% 50%;
@@ -2238,6 +2246,11 @@ a.style-chip { text-decoration: none; color: inherit; }
   margin-bottom: var(--sp-10);
 }
 .studio-pair { grid-template-columns: repeat(2, 1fr); }
+/* На телефон студийните снимки не се показват (06.09.2026): под 768px
+   бяха 535 px една под друга в #istorii, който и след сгъването на
+   историята оставаше 2415 px. Отзивите и реакциите остават. Снимките са
+   loading="lazy", тоест скрити не се теглят. */
+@media (max-width: 768px) { .studio-pair { display: none; } }
 .reactions-grid { grid-template-columns: repeat(3, 1fr); margin: var(--sp-10) 0 0; }
 
 .studio-pair img,
