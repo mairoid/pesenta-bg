@@ -91,7 +91,17 @@
     rail.addEventListener("focusin", pipna);
 
     /* Мишката не превърта контейнер сама — това го умее само пръстът. Затова
-       за мишка хващаме влаченето ръчно, а за пръст не пипаме нищо. */
+       за мишка хващаме влаченето ръчно, а за пръст не пипаме нищо.
+
+       НАРОЧНО без setPointerCapture (махнат на 06.09.2026). С капчър браузърът
+       праща mouseup на лентата, а click отива при общия родител на mousedown
+       (картата) и mouseup (лентата) — тоест на лентата. Картата-линк никога
+       не получаваше click и нито един повод не се отваряше с мишка; с пръст
+       работеше, защото капчърът беше само за мишка. Доказано с истински
+       кликове през DevTools Protocol, не с element.click() — той не минава
+       през това правило и лъже, че всичко е наред.
+       Движението и пускането се слушат на window: така влаченето продължава
+       и след като мишката излезе от лентата, без капчър. */
     rail.addEventListener("pointerdown", function (e) {
       pipna();
       if (e.pointerType !== "mouse" || e.button !== 0) return;
@@ -100,10 +110,12 @@
       startX = e.clientX;
       baza = rail.scrollLeft;
       rail.classList.add("vlacha");
-      try { rail.setPointerCapture(e.pointerId); } catch (x) {}
     });
-    rail.addEventListener("pointermove", function (e) {
+    window.addEventListener("pointermove", function (e) {
       if (!vlacha) return;
+      /* Пусната извън прозореца: pointerup не идва, но при връщане бутонът е
+         вдигнат — приключваме влаченето, вместо лентата да тръгне след мишката. */
+      if (!e.buttons) { kray(); return; }
       var d = e.clientX - startX;
       if (Math.abs(d) > premesteno) premesteno = Math.abs(d);
       rail.scrollLeft = baza - d;
@@ -114,15 +126,15 @@
       baza = rail.scrollLeft + d;
       pozicia = rail.scrollLeft;
     });
-    function kray(e) {
-      pipna();
+    function kray() {
       if (!vlacha) return;
+      pipna();
       vlacha = false;
       rail.classList.remove("vlacha");
-      try { rail.releasePointerCapture(e.pointerId); } catch (x) {}
     }
-    rail.addEventListener("pointerup", kray);
-    rail.addEventListener("pointercancel", kray);
+    rail.addEventListener("pointerup", pipna);   /* и пръстът е „пипане“ */
+    window.addEventListener("pointerup", kray);
+    window.addEventListener("pointercancel", kray);
 
     /* Картите често са линкове. Без това всяко влачене завършва в отворена
        страница, защото браузърът праща click при пускането. Пет пиксела, за
