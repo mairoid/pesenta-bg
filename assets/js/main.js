@@ -55,25 +55,45 @@
      за да остане извън критичния път. При prefers-reduced-motion остава
      само неподвижният poster. */
   var heroVideo = document.querySelector(".hero-video[data-src]");
-  if (heroVideo && window.matchMedia("(min-width: 861px)").matches) {
-    heroVideo.poster = heroVideo.getAttribute("data-poster");
-    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      var playHeroVideo = function () {
-        var p = heroVideo.play();
-        /* autoplay на muted видео е разрешено, но при отказ остава poster-ът */
-        if (p && p.catch) p.catch(function () {});
-      };
-      var startHeroVideo = function () {
-        heroVideo.src = heroVideo.getAttribute("data-src");
-        playHeroVideo();
-        /* Браузърът паузира видео в скрит таб — възобновяваме при връщане */
+  if (heroVideo) {
+    /* Проверката беше еднократна при зареждане: тесен прозорец, после
+       разширен, даваше празна рамка без видео (06.09.2026). Сега се слуша
+       промяната на media query-то. Постерът и src-ът се задават само
+       първия път, когато стане широко; при стесняване видеото спира. */
+    var shirokoMQ = window.matchMedia("(min-width: 861px)");
+    var tihoMQ = window.matchMedia("(prefers-reduced-motion: reduce)");
+    var videoZareden = false, videoSlushaTab = false;
+    var playHeroVideo = function () {
+      var p = heroVideo.play();
+      /* autoplay на muted видео е разрешено, но при отказ остава poster-ът */
+      if (p && p.catch) p.catch(function () {});
+    };
+    var startHeroVideo = function () {
+      if (!shirokoMQ.matches) return;   /* load дойде, след като пак е тясно */
+      if (!videoZareden) { videoZareden = true; heroVideo.src = heroVideo.getAttribute("data-src"); }
+      playHeroVideo();
+      /* Браузърът паузира видео в скрит таб — възобновяваме при връщане */
+      if (!videoSlushaTab) {
+        videoSlushaTab = true;
         document.addEventListener("visibilitychange", function () {
-          if (!document.hidden && heroVideo.paused) playHeroVideo();
+          if (!document.hidden && heroVideo.paused && shirokoMQ.matches) playHeroVideo();
         });
-      };
-      if (document.readyState === "complete") startHeroVideo();
-      else window.addEventListener("load", startHeroVideo, { once: true });
-    }
+      }
+    };
+    var prilozhiVideo = function () {
+      if (shirokoMQ.matches) {
+        if (!heroVideo.poster) heroVideo.poster = heroVideo.getAttribute("data-poster");
+        if (tihoMQ.matches) return;   /* при изключени анимации остава само постерът */
+        /* Видеото (266 KB) чак след load event — извън критичния път */
+        if (document.readyState === "complete") startHeroVideo();
+        else window.addEventListener("load", startHeroVideo, { once: true });
+      } else if (!heroVideo.paused) {
+        heroVideo.pause();
+      }
+    };
+    prilozhiVideo();
+    if (shirokoMQ.addEventListener) shirokoMQ.addEventListener("change", prilozhiVideo);
+    else if (shirokoMQ.addListener) shirokoMQ.addListener(prilozhiVideo);   /* стар Safari */
   }
 
   /* ---------- Scroll reveal ----------
