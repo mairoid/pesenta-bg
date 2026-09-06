@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="190" height="44" viewBox="0 0 190 44" role="img" aria-label="Песента">
+<svg xmlns="http://www.w3.org/2000/svg" width="230" height="44" viewBox="0 0 230 44" role="img" aria-label="pesenta.bg">
   <defs>
     <linearGradient id="lg" gradientUnits="userSpaceOnUse" x1="30" y1="0" x2="600" y2="0">
       <stop offset="0" stop-color="#FF4D8D"/>
@@ -21,5 +21,5 @@
     </g>
     <ellipse cx="500" cy="246" rx="40" ry="35" transform="rotate(-18 500 246)" fill="url(#lg)"/>
   </g>
-  <text x="60" y="30" font-family="'Unbounded','Segoe UI',sans-serif" font-size="19" font-weight="700" fill="#F4F2FF">Песента</text>
+  <text x="60" y="30" font-family="'Unbounded','Segoe UI',sans-serif" font-size="19" font-weight="700" fill="#F4F2FF">pesenta.bg</text>
 </svg>
