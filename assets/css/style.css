@@ -1585,6 +1585,10 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 
 .consent { display: flex; gap: var(--sp-3); align-items: flex-start; font-size: var(--fs-md); color: var(--muted); margin: var(--sp-4) 0; }
 .consent input { margin-top: var(--sp-1); width: 18px; height: 18px; accent-color: var(--pink); flex: none; }
+/* Изречението над отметката в poruchka.html — как се прави песента. Стои
+   там, защото информацията трябва да е ПРЕДИ плащането (чл. 47 ЗЗП); от
+   героя на index.html излезе на 06.09.2026. Същият тон като .consent. */
+.izrabotka { color: var(--muted); font-size: var(--fs-md); margin: var(--sp-5) 0 0; }
 
 .form-error {
   display: none;
