@@ -1249,9 +1249,14 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   align-items: center;
   justify-content: center;
   box-shadow: 0 10px 30px rgba(255, 77, 141, 0.4);
-  transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+  transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease), opacity var(--dur-fast) var(--ease);
 }
 .float-contact svg { width: 26px; height: 26px; }
+/* Докато героят е на екрана, мобилният плик е скрит — на 375×667 лягаше
+   върху „Поръчай песен“ с 37 px (мерено 06.09.2026). Класа го слага main.js
+   с IntersectionObserver върху .hero; позицията не се пипа. Само мобилният:
+   десктопският плик не застъпва нищо. */
+.float-contact--mobile.float-contact--skrit { opacity: 0; pointer-events: none; }
 @media (hover: hover) {
   .float-contact:hover { transform: scale(1.08); box-shadow: 0 14px 36px rgba(255, 77, 141, 0.5); }
 }

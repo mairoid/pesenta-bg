@@ -27,6 +27,26 @@
   var yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
+  /* ---------- Плаващият плик и героят ----------
+     На телефон 375×667 пликът (fixed, bottom 84px) лягаше върху „Поръчай
+     песен“ — 37 px по y, мерено 06.09.2026. Докато героят пресича екрана,
+     бутонът носи .float-contact--skrit (opacity 0 + pointer-events none,
+     преходът е в CSS и при reduced-motion е изключен там); излиза, щом
+     героят излезе. Позицията не се пипа. Първото състояние се слага
+     синхронно по getBoundingClientRect, за да не мигне бутонът преди
+     наблюдателят да се обади. Кой вариант се крие решава CSS-ът — тук се
+     маркират и двата. */
+  var heroEl = document.querySelector(".hero");
+  var plavashti = document.querySelectorAll(".float-contact");
+  if (heroEl && plavashti.length) {
+    var skriiPlika = function (da) { plavashti.forEach(function (b) { b.classList.toggle("float-contact--skrit", da); }); };
+    var hr = heroEl.getBoundingClientRect();
+    skriiPlika(hr.bottom > 0 && hr.top < window.innerHeight);
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (entries) { skriiPlika(entries[0].isIntersecting); }).observe(heroEl);
+    }
+  }
+
   /* ---------- Hero видео ----------
      Само на desktop: под 860px .hero-photo е display:none, а браузърът тегли
      poster атрибута независимо от CSS — затова и poster-ът, и видеото се
