@@ -1,7 +1,8 @@
 /* Времетраене на MP3, с честота ПРОЧЕТЕНА от кадъра, не приета.
    Вчерашната грешка: фиксирани 44100 при файлове на 48000 → +9%. */
 var fs = require("fs");
-var D = "D:/My Documents 2026/Cyber Hora/THIRD BRAIN/pesenta-flags/rojden-den-asi/";
+/* Папката с MP3-тата е първият аргумент; без аргумент — тази на Аси. */
+var D = (process.argv[2] || "D:/My Documents 2026/Cyber Hora/THIRD BRAIN/pesenta-flags/rojden-den-asi").replace(/[\\/]*$/, "/");
 var CH = { 3: [44100, 48000, 32000], 2: [22050, 24000, 16000], 0: [11025, 12000, 8000] };
 var NK = { 3: 1152, 2: 576, 0: 576 };
 

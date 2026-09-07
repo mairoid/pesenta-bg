@@ -1,11 +1,11 @@
-/* Проверка на двете страници. Коментарите се махат ПРЕДИ търсенето —
+/* Проверка на страниците-подарък. Коментарите се махат ПРЕДИ търсенето —
    в тях нарочно стоят забранените образци и биха дали лъжлив сигнал. */
 var fs = require("fs"), kr = require("node:crypto"), path = require("path");
 var R = "D:/My Documents 2026/Cyber Hora/pesenta.bg/";
 var gr = 0;
 function lo(u) { gr++; console.log("    ✗ " + u); }
 
-["babo-asi", "cyal-edin-svyat"].forEach(function (slug) {
+["babo-asi", "cyal-edin-svyat", "nashiyat-otbor"].forEach(function (slug) {
   console.log("  == " + slug + " ==");
   var f = R + "pesni/" + slug + ".html";
   var syr = fs.readFileSync(f, "utf8");
@@ -24,8 +24,9 @@ function lo(u) { gr++; console.log("    ✗ " + u); }
     });
   console.log("    адреси с версия: " + vidyani);
 
-  /* 2. адреси БЕЗ версия — кешът ще ги задържи */
-  h.replace(/(?:src|href)="(\.\.\/assets\/[^"]+)"/g, function (_, u) {
+  /* 2. картини и аудио БЕЗ версия — кешът ще ги задържи. Шрифтовете, CSS и JS
+     са общи за целия сайт и не носят версия никъде — не са работа на тази страница. */
+  h.replace(/(?:src|href)="(\.\.\/assets\/(?:img|audio)\/[^"]+)"/g, function (_, u) {
     if (u.indexOf("?v=") < 0) lo("без версия: " + u);
     return _;
   });

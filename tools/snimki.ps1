@@ -1,9 +1,13 @@
 # Производни от мастерите. Мащабът е от целия кадър — режем само където
 # съотношението го налага, и то по вертикала, симетрично.
+#   .\snimki.ps1                      — всички песни от списъка долу
+#   .\snimki.ps1 -Samo nashiyat-otbor  — само една; старите производни остават
+#                                        непипнати, за да не им мръдне ?v=
+param([string]$Samo = "")
 Add-Type -AssemblyName System.Drawing
 
 $IZH = "D:\My Documents 2026\Cyber Hora\pesenta.bg\assets\img"
-$MAS = "D:\My Documents 2026\Cyber Hora\THIRD BRAIN\pesenta-flags\rojden-den-asi"
+$MAS = "D:\My Documents 2026\Cyber Hora\THIRD BRAIN\pesenta-flags"
 
 $kodek = [System.Drawing.Imaging.ImageCodecInfo]::GetImageEncoders() |
          Where-Object { $_.MimeType -eq "image/jpeg" }
@@ -52,10 +56,13 @@ function Izrejzi-I-Mashtabiray {
         (Split-Path $izhod -Leaf), $sirok, $visok, $cw, $ch, $kb
 }
 
-foreach ($p in @(@{s="babo-asi"; m="babo-asi-1.88.png"},
-                 @{s="cyal-edin-svyat"; m="cyal-svyat-1.88.png"})) {
+# s = слуг, p = папка в pesenta-flags, m = мастер 1.88:1
+foreach ($p in @(@{s="babo-asi";        p="rojden-den-asi"; m="babo-asi-1.88.png"},
+                 @{s="cyal-edin-svyat"; p="rojden-den-asi"; m="cyal-svyat-1.88.png"},
+                 @{s="nashiyat-otbor";  p="nashiyat-otbor"; m="nashiyat-otbor-1.88.png"})) {
+    if ($Samo -and $p.s -ne $Samo) { continue }
     "  == $($p.s) =="
-    $iz = "$MAS\$($p.m)"
+    $iz = "$MAS\$($p.p)\$($p.m)"
     Izrejzi-I-Mashtabiray $iz "$IZH\pesen-$($p.s)-hero.jpg"     1200 638
     Izrejzi-I-Mashtabiray $iz "$IZH\pesen-$($p.s)-hero-600.jpg"  600 319
     Izrejzi-I-Mashtabiray $iz "$IZH\og-$($p.s).jpg"             1200 630

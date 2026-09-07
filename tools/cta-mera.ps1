@@ -1,6 +1,8 @@
 # Measure the rendered CTA buttons, then save them as JPEG q82.
 # Contrast is measured on the BACKGROUND only: pixels brighter than 0.45
 # luminance are the white glyphs themselves and would pull the mean up.
+#   .\cta-mera.ps1 -Pesni nashiyat-otbor   — само една песен; без параметър — всички
+param([string[]]$Pesni = @("babo-asi","cyal-edin-svyat","nashiyat-otbor"))
 Add-Type -AssemblyName System.Drawing
 $SP  = "C:\Users\bauph\AppData\Local\Temp\claude\D--My-Documents-2026-Cyber-Hora-THIRD-BRAIN\45999605-2ab3-441d-a52f-ae2947501298\scratchpad"
 $OUT = "D:\My Documents 2026\Cyber Hora\pesenta.bg\assets\img"
@@ -12,7 +14,7 @@ $par.Param[0] = New-Object System.Drawing.Imaging.EncoderParameter([System.Drawi
 function Lin([double]$c) { $c = $c / 255.0; if ($c -le 0.03928) { return $c / 12.92 } return [math]::Pow(($c + 0.055) / 1.055, 2.4) }
 function Lum($p) { return 0.2126 * (Lin $p.R) + 0.7152 * (Lin $p.G) + 0.0722 * (Lin $p.B) }
 
-foreach ($n in @("babo-asi","cyal-edin-svyat")) {
+foreach ($n in $Pesni) {
   $i = New-Object System.Drawing.Bitmap("$SP\cta-$n.png")
 
   # glyph bounding box
