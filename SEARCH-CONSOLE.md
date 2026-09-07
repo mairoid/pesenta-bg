@@ -65,8 +65,16 @@ Disallow: /docs/
 Sitemap: https://pesenta.bg/sitemap.xml
 ```
 
-**`sitemap.xml`** съдържа **25 адреса**: началната, `poruchka.html`, осемте
-страници по повод, двете правни страници и тринайсетте от `novini/`.
+**`sitemap.xml`** съдържа **38 адреса** (07.09.2026): началната, `poruchka.html`,
+двайсетте страници по повод, двете правни страници, `rodeni-dnes.html` и
+тринайсетте от `novini/` (индексът и дванайсет статии).
+
+**Картата е изпратена в Search Console за първи път на 07.09.2026** — дотогава
+Google я знаеше само от `robots.txt`, а в Sitemaps стоеше „0 of 0“. Пътят:
+Indexing → Sitemaps → Add a new sitemap. За домейн имот се пише **пълният адрес**
+`https://pesenta.bg/sitemap.xml` — голото `sitemap.xml` дава „Invalid sitemap
+address“, защото при домейн имотите Google не добавя сам протокола и хоста.
+„Discovered pages 0“ веднага след изпращането е нормално; числото идва до ден.
 
 **Страниците-подаръци са невидими за търсачките, и то на две нива.** Всичките
 шест носят `<meta name="robots" content="noindex, nofollow">` и нито една не е в
