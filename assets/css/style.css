@@ -691,6 +691,21 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 .occasion-card:has([src*="povod-jubilej"])     { --glow: #EA9253; }
 .occasion-card:has([src*="povod-firmeno"])     { --glow: #EA5353; }
 .occasion-card:has([src*="povod-shega"])       { --glow: #EAB553; }
+/* Новите 13 (07.09.2026), мерени по същото правило — тонът от снимката,
+   S 0.78 и L 0.62 като горните — със скрипта pesenta-flags/povodi/povodi-snimki.ps1. */
+.occasion-card:has([src*="povod-mominsko"])         { --glow: #EA5C53; }
+.occasion-card:has([src*="povod-krashtene"])        { --glow: #EA9253; }
+.occasion-card:has([src*="povod-pensionirane"])     { --glow: #EAAA53; }
+.occasion-card:has([src*="povod-godej"])            { --glow: #EA535C; }
+.occasion-card:has([src*="povod-abiturientski-bal"]) { --glow: #EA6053; }
+.occasion-card:has([src*="povod-imen-den"])         { --glow: #EA7753; }
+.occasion-card:has([src*="povod-mama"])             { --glow: #EA5360; }
+.occasion-card:has([src*="povod-palnoletie"])       { --glow: #EA9553; }
+.occasion-card:has([src*="povod-diplomirane"])      { --glow: #EA9253; }
+.occasion-card:has([src*="povod-nov-dom"])          { --glow: #EAAC53; }
+.occasion-card:has([src*="povod-uchitel"])          { --glow: #EA9453; }
+.occasion-card:has([src*="povod-kumove"])           { --glow: #EA5360; }
+.occasion-card:has([src*="povod-lovec"])            { --glow: #EA9253; }
 
 .occasion-photo { transition: transform var(--dur-base) var(--ease); }
 
