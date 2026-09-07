@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html lang="bg">
+<!-- Страница за повод по таблицата в pesenta-flags/povodi-razshirenie.md (07.09.2026).
+     Направена по podarak-pesen-za-jubilej.html; демо песните са три от публичните. -->
 <head>
   <meta charset="UTF-8">
   <!-- resizes-content: при отворена клавиатура layout-ът се свива, вместо да се
@@ -9,11 +11,9 @@
   <meta name="theme-color" content="#0b0a1a">
   <meta name="application-name" content="Песента">
   <meta name="apple-mobile-web-app-title" content="Песента">
-  <!-- 07.09.2026: кръщенето излезе на своя страница (podarak-pesen-za-krashtene.html);
-       тук остава бебето — раждане, погача, 40 дни, първи рожден ден. -->
-  <title>Подарък за бебе: песен по поръчка | 19,90 € | Pesenta.bg</title>
-  <meta name="description" content="Търсиш нежен подарък за бебе — за раждане, за погачата, за 40-ия ден, за първия рожден ден? Песен по поръчка за новия човек — 19,90 €, готова до 48 часа.">
-  <link rel="canonical" href="https://pesenta.bg/podarak-pesen-za-bebeski.html">
+  <title>Подарък за пенсиониране: песен по поръчка | 19,90 € | Pesenta.bg</title>
+  <meta name="description" content="Търсиш подарък за пенсиониране — на колега, на жена, на мъж, на учителка? Песен по поръчка за целия трудов път — 19,90 €, готова до 48 часа.">
+  <link rel="canonical" href="https://pesenta.bg/podarak-pesen-za-pensionirane.html">
   <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
   <!-- PNG резерви: Safari на iOS не ползва SVG фавикон, а apple-touch-icon
        не бива да е прозрачен — иначе iOS го слага върху черно. -->
@@ -24,9 +24,9 @@
   <meta property="og:type" content="website">
   <meta property="og:locale" content="bg_BG">
   <meta property="og:site_name" content="Песента">
-  <meta property="og:title" content="Подарък за бебе: песен по поръчка | Pesenta.bg">
-  <meta property="og:description" content="Нежен подарък за новороденото — песен по поръчка, 19,90 €, готова до 48 часа.">
-  <meta property="og:url" content="https://pesenta.bg/podarak-pesen-za-bebeski.html">
+  <meta property="og:title" content="Подарък за пенсиониране: песен по поръчка | Pesenta.bg">
+  <meta property="og:description" content="Подарък за пенсиониране от колегите — песен по поръчка за целия път във фирмата, 19,90 €, готова до 48 часа.">
+  <meta property="og:url" content="https://pesenta.bg/podarak-pesen-za-pensionirane.html">
   <meta property="og:image" content="https://pesenta.bg/assets/img/og-image.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -34,8 +34,8 @@
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Подарък за бебе: песен по поръчка | Pesenta.bg">
-  <meta name="twitter:description" content="Първият подарък, посветен лично на бебето. За 19,90 €, готова до 48 часа.">
+  <meta name="twitter:title" content="Подарък за пенсиониране: песен по поръчка | Pesenta.bg">
+  <meta name="twitter:description" content="Последният работен ден заслужава повече от торта в кухнята. Песен за 19,90 €, готова до 48 часа.">
   <meta name="twitter:image" content="https://pesenta.bg/assets/img/og-image.jpg">
 
   <!-- Шрифтове -->
@@ -56,9 +56,9 @@
   {
     "@context": "https://schema.org",
     "@type": "Service",
-    "serviceType": "Подарък за бебе — песен по поръчка",
-    "name": "Подарък за бебе: песен по поръчка",
-    "description": "Нежен подарък по случай раждане, погача или първи рожден ден — песен по поръчка по вашата история, готова до 48 часа.",
+    "serviceType": "Подарък за пенсиониране — песен по поръчка",
+    "name": "Подарък за пенсиониране: песен по поръчка",
+    "description": "Песен по поръчка за пенсиониране — трудовият път на колега, учителка, полицай или военен, разказан като лична история.",
     "provider": {
       "@type": "Organization",
       "name": "Песента",
@@ -68,13 +68,13 @@
     "areaServed": "BG",
     "audience": {
       "@type": "Audience",
-      "audienceType": "Родители, баби и дядовци на новородено"
+      "audienceType": "Колеги, семейство и приятели, изпращащи някого в пенсия"
     },
     "offers": {
       "@type": "Offer",
       "price": "19.90",
       "priceCurrency": "EUR",
-      "url": "https://pesenta.bg/poruchka.html?povod=bebeski",
+      "url": "https://pesenta.bg/poruchka.html?povod=pensionirane",
       "availability": "https://schema.org/InStock"
     }
   }
@@ -97,39 +97,49 @@
     </a>
     <nav class="main-nav open" aria-label="Основна навигация" style="display:flex;position:static;padding:0;background:none;border:none;box-shadow:none;">
       <a href="index.html">Начало</a>
-      <a class="btn btn-primary" href="poruchka.html?povod=bebeski">Поръчай песен</a>
+      <a class="btn btn-primary" href="poruchka.html?povod=pensionirane">Поръчай песен</a>
     </nav>
   </div>
 </header>
 
 <main id="main">
   <article class="article" style="padding-bottom:0;">
-    <span class="kicker">Първата песен, посветена лично на него</span>
-    <h1>Подарък за <span class="grad-text">бебе</span>: песен по поръчка</h1>
+    <span class="kicker">Последният работен ден, първата песен</span>
+    <h1>Подарък за <span class="grad-text">пенсиониране</span>: песен по поръчка</h1>
 
-    <p>Новото бебе получава дрешки, играчки, пелени — всичко нужно, но временно. Песен, писана специално за неговото раждане, е различен вид подарък: остава, докато порасне, и някой ден ще му я пуснат и той ще разбере колко е бил очакван.</p>
+    <p>Трийсет години в една фирма, цял живот в едно училище, в участъка, в поделението — а на последния ден има торта в кухнята и плик от колегите. Подарък за пенсиониране, който помни какво е било, е друг вид подарък: песен по поръчка, в която са годините, хората и историите, които само вие знаете.</p>
 
-    <p>Разкажи ни историята — как са го посрещнали родителите, какво е името му, кой момент от бременността или раждането искаш да остане в текста. От тези детайли пишем нежен, личен текст — не общи бебешки рими.</p>
+    <p>Разкажи ни за човека — как е започнал, с какво го помнят колегите, кои са прякорите, шегите и случките от кабинета, класната стая или смяната. Става за колежка и за колега, за учителка, за полицай или военен след дълга служба, и за колега, който напуска, не само за пенсия. От тези детайли пишем текст, който звучи като благодарност от хора, които са били там.</p>
 
-    <p>Стилът обичайно е топъл и мек — приспивна балада, акустична китара, нежен поп — но може да е и по-жизнерадостен, ако случаят го изисква. Може да звучи и от името на баба и дядо или по-големи братя и сестри.</p>
+    <p>Стилът е твой избор: тържествена балада за официалното изпращане, весела естрада за масата след него или нещо, което той е слушал цял живот в колата. Може да е и от името на целия отдел — с имената на всички, които са се събрали за подаръка.</p>
 
-    <p>Песента пристига до 48 часа — точно навреме за изписването от родилния дом, за погачата на 40-ия ден или като подарък за първия рожден ден на бебето, ако предпочиташ да изчакаш.</p>
+    <p>Готова до 48 часа — навреме за последния работен ден, за прощалния обяд или за вечерта, на която колегите ще станат и ще пеят неговата история.</p>
 
     <div class="article-cta">
-      <p><strong>Играчките се забравят до следващата година. Песента остава негова завинаги.</strong></p>
-      <a class="btn btn-primary" href="poruchka.html?povod=bebeski">Поръчай песен за бебе — 19,90 €</a>
+      <p><strong>Тортата се изяжда на последния ден. Песента остава за всички след него.</strong></p>
+      <a class="btn btn-primary" href="poruchka.html?povod=pensionirane">Поръчай песен за пенсиониране — 19,90 €</a>
     </div>
   </article>
 
-  <!-- ДЕМО ПЕСНИ -->
+  <!-- ДЕМО ПЕСНИ — три от публичните на началната; подаръчните не се ползват -->
   <section class="section" id="demo">
     <div class="container">
       <div class="section-head reveal">
         <span class="kicker">Чуй сам</span>
-        <h2>Топлина, пренесена в песен</h2>
-        <p>Същата нежност и внимание към детайла — само нагласени към най-крехкия повод от всички.</p>
+        <h2>Песни с благодарност и усмивка</h2>
+        <p>Такъв тон работи за изпращане в пенсия — искрен, топъл, с място за шегите от офиса.</p>
       </div>
       <div class="tracks-list">
+        <div class="track-row player reveal" data-src="assets/audio/za-teb-brate-tutso.mp3" role="button" tabindex="0" aria-label="Пусни „За теб, брате Туцо“">
+          <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+          <img class="track-thumb" src="assets/img/cover-tutso.jpg" alt="" loading="lazy" width="600" height="600">
+          <div class="track-info">
+            <h3>За теб, брате Туцо</h3>
+            <span>За приятел · песен-послание</span>
+          </div>
+          <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
+          <span class="time">5:06</span>
+        </div>
         <div class="track-row player reveal" data-src="assets/audio/za-teb-brate-vladi.mp3" role="button" tabindex="0" aria-label="Пусни „За теб, брате Влади“">
           <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
           <img class="track-thumb" src="assets/img/cover-vladi.jpg" alt="" loading="lazy" width="600" height="600">
@@ -140,25 +150,15 @@
           <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
           <span class="time">4:27</span>
         </div>
-        <div class="track-row player reveal" data-src="assets/audio/rocco-di-catania.mp3" role="button" tabindex="0" aria-label="Пусни „Rocco di Catania“">
+        <div class="track-row player reveal" data-src="assets/audio/rosen-abi.mp3" role="button" tabindex="0" aria-label="Пусни „Rosen Abi“">
           <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
-          <img class="track-thumb" src="assets/img/cover-rocco.jpg" alt="" loading="lazy" width="600" height="600">
+          <img class="track-thumb" src="assets/img/cover-rosen-abi.jpg" alt="" loading="lazy" width="600" height="600">
           <div class="track-info">
-            <h3>Rocco di Catania</h3>
-            <span>Италиански вайб · серенада с усмивка</span>
+            <h3>Rosen Abi</h3>
+            <span>Турски вайб · песен за приятел</span>
           </div>
           <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
-          <span class="time">3:34</span>
-        </div>
-        <div class="track-row player reveal" data-src="assets/audio/za-teb-brate-tutso.mp3" role="button" tabindex="0" aria-label="Пусни „За теб, брате Туцо“">
-          <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
-          <img class="track-thumb" src="assets/img/cover-tutso.jpg" alt="" loading="lazy" width="600" height="600">
-          <div class="track-info">
-            <h3>За теб, брате Туцо</h3>
-            <span>За приятел · песен-послание</span>
-          </div>
-          <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
-          <span class="time">5:06</span>
+          <span class="time">3:18</span>
         </div>
       </div>
     </div>
@@ -173,20 +173,20 @@
       </div>
       <div class="faq-list reveal">
         <details class="faq-item">
-          <summary>Може ли песента да е от името на баба и дядо?</summary>
-          <div class="faq-body">Да — кажи ни от чие име е посвещението (родители, баба и дядо, по-големи братя/сестри), а ние оформяме текста съответно, сякаш точно те говорят на бебето.</div>
+          <summary>Кога ще е готова, ако изпращането е тази седмица?</summary>
+          <div class="faq-body">До 48 часа от поръчката. Песента идва на имейла — MP3 и страница за слушане и споделяне. За по-спешно във формата има експресна изработка. Плащаш с карта, документът за продажбата идва веднага.</div>
         </details>
         <details class="faq-item">
-          <summary>Става ли и за погачата или за първия рожден ден?</summary>
-          <div class="faq-body">Да — много поръчки са точно за погачата на 40-ия ден или за първия рожден ден, с историята от първата година. За кръщене има <a href="podarak-pesen-za-krashtene.html">отделна страница</a> — там песента е с кръщелното име и кръстника.</div>
+          <summary>Какво да разкажем за колегата?</summary>
+          <div class="faq-body">Годините във фирмата, какво е правил, с какво го помнят хората — и най-вече дребните неща: прякора, любимата реплика, случката, която всички разказват на обяд. Колкото по-конкретно, толкова повече песента звучи като него, а не като картичка.</div>
         </details>
         <details class="faq-item">
-          <summary>Може ли песента да звучи като приспивна песен?</summary>
-          <div class="faq-body">Да — това е един от най-търсените стилове за този повод. Отбележи желания стил (нежен, акустичен, приспивен) в поръчката и правим песента такава.</div>
+          <summary>Става ли за подарък от целия колектив?</summary>
+          <div class="faq-body">Точно така се поръчва най-често. Песента може да е от името на отдела или на цялата фирма, с имената на хората, които са се събрали за нея. Един човек попълва формата, останалите само се появяват в текста.</div>
         </details>
         <details class="faq-item">
-          <summary>Защо песен е специален подарък за бебе?</summary>
-          <div class="faq-body">Защото расте с него — дрешките стават малки след месеци, а песента си остава негова, докато порасне достатъчно, за да разбере какъв подарък е получил при раждането си.</div>
+          <summary>Колко струва и може ли фактура на фирмата?</summary>
+          <div class="faq-body">19,90 € за всичко — текст, песен, две версии, от които избираме по-добрата. Без абонамент и без доплащане за стил или език. Фактура на фирмата — да, отбелязваш го при поръчката.</div>
         </details>
       </div>
     </div>
@@ -196,10 +196,10 @@
   <section class="section">
     <div class="container">
       <div class="cta-band reveal">
-        <h2>Посрещнете новия човек с песен, писана само за него</h2>
-        <p>Дрешките му стават малки след месеци. Песента остава негова за цял живот.</p>
+        <h2>Изпрати го в пенсия с песен, която знае целия път</h2>
+        <p>Пликът с парите се харчи. Песента ще я пуска на внуците.</p>
         <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
-          <a class="btn btn-primary btn-lg" href="poruchka.html?povod=bebeski">Поръчай сега — 19,90 €</a>
+          <a class="btn btn-primary btn-lg" href="poruchka.html?povod=pensionirane">Поръчай сега — 19,90 €</a>
           <a class="btn btn-ghost btn-lg" href="poruchka.html">Всички поводи</a>
         </div>
       </div>

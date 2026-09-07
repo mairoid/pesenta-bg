@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html lang="bg">
+<!-- Страница за повод по таблицата в pesenta-flags/povodi-razshirenie.md (07.09.2026).
+     Направена по podarak-pesen-za-jubilej.html; демо песните са три от публичните. -->
 <head>
   <meta charset="UTF-8">
   <!-- resizes-content: при отворена клавиатура layout-ът се свива, вместо да се
@@ -9,11 +11,9 @@
   <meta name="theme-color" content="#0b0a1a">
   <meta name="application-name" content="Песента">
   <meta name="apple-mobile-web-app-title" content="Песента">
-  <!-- 07.09.2026: кръщенето излезе на своя страница (podarak-pesen-za-krashtene.html);
-       тук остава бебето — раждане, погача, 40 дни, първи рожден ден. -->
-  <title>Подарък за бебе: песен по поръчка | 19,90 € | Pesenta.bg</title>
-  <meta name="description" content="Търсиш нежен подарък за бебе — за раждане, за погачата, за 40-ия ден, за първия рожден ден? Песен по поръчка за новия човек — 19,90 €, готова до 48 часа.">
-  <link rel="canonical" href="https://pesenta.bg/podarak-pesen-za-bebeski.html">
+  <title>Подарък за мама: песен по поръчка за 8 март и рожден ден | 19,90 € | Pesenta.bg</title>
+  <meta name="description" content="Търсиш подарък за мама — за 8 март, за рожден ден, за юбилей? Песен по поръчка с нейната история, от децата — 19,90 €, готова до 48 часа.">
+  <link rel="canonical" href="https://pesenta.bg/podarak-pesen-za-mama.html">
   <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
   <!-- PNG резерви: Safari на iOS не ползва SVG фавикон, а apple-touch-icon
        не бива да е прозрачен — иначе iOS го слага върху черно. -->
@@ -24,9 +24,9 @@
   <meta property="og:type" content="website">
   <meta property="og:locale" content="bg_BG">
   <meta property="og:site_name" content="Песента">
-  <meta property="og:title" content="Подарък за бебе: песен по поръчка | Pesenta.bg">
-  <meta property="og:description" content="Нежен подарък за новороденото — песен по поръчка, 19,90 €, готова до 48 часа.">
-  <meta property="og:url" content="https://pesenta.bg/podarak-pesen-za-bebeski.html">
+  <meta property="og:title" content="Подарък за мама: песен по поръчка | Pesenta.bg">
+  <meta property="og:description" content="Подарък за мама — песен по поръчка за 8 март или рожден ден, с нейната история, 19,90 €, готова до 48 часа.">
+  <meta property="og:url" content="https://pesenta.bg/podarak-pesen-za-mama.html">
   <meta property="og:image" content="https://pesenta.bg/assets/img/og-image.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -34,8 +34,8 @@
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Подарък за бебе: песен по поръчка | Pesenta.bg">
-  <meta name="twitter:description" content="Първият подарък, посветен лично на бебето. За 19,90 €, готова до 48 часа.">
+  <meta name="twitter:title" content="Подарък за мама: песен по поръчка | Pesenta.bg">
+  <meta name="twitter:description" content="Единствената, на която не можеш да купиш нищо. Освен това. Песен за 19,90 €, готова до 48 часа.">
   <meta name="twitter:image" content="https://pesenta.bg/assets/img/og-image.jpg">
 
   <!-- Шрифтове -->
@@ -56,9 +56,9 @@
   {
     "@context": "https://schema.org",
     "@type": "Service",
-    "serviceType": "Подарък за бебе — песен по поръчка",
-    "name": "Подарък за бебе: песен по поръчка",
-    "description": "Нежен подарък по случай раждане, погача или първи рожден ден — песен по поръчка по вашата история, готова до 48 часа.",
+    "serviceType": "Подарък за мама — песен по поръчка за 8 март и рожден ден",
+    "name": "Подарък за мама: песен по поръчка за 8 март и рожден ден",
+    "description": "Песен по поръчка за мама — от децата, за 8 март, рожден ден или юбилей, с историите, които само семейството знае.",
     "provider": {
       "@type": "Organization",
       "name": "Песента",
@@ -68,13 +68,13 @@
     "areaServed": "BG",
     "audience": {
       "@type": "Audience",
-      "audienceType": "Родители, баби и дядовци на новородено"
+      "audienceType": "Синове и дъщери, търсещи подарък за майка си"
     },
     "offers": {
       "@type": "Offer",
       "price": "19.90",
       "priceCurrency": "EUR",
-      "url": "https://pesenta.bg/poruchka.html?povod=bebeski",
+      "url": "https://pesenta.bg/poruchka.html?povod=mama",
       "availability": "https://schema.org/InStock"
     }
   }
@@ -97,39 +97,49 @@
     </a>
     <nav class="main-nav open" aria-label="Основна навигация" style="display:flex;position:static;padding:0;background:none;border:none;box-shadow:none;">
       <a href="index.html">Начало</a>
-      <a class="btn btn-primary" href="poruchka.html?povod=bebeski">Поръчай песен</a>
+      <a class="btn btn-primary" href="poruchka.html?povod=mama">Поръчай песен</a>
     </nav>
   </div>
 </header>
 
 <main id="main">
   <article class="article" style="padding-bottom:0;">
-    <span class="kicker">Първата песен, посветена лично на него</span>
-    <h1>Подарък за <span class="grad-text">бебе</span>: песен по поръчка</h1>
+    <span class="kicker">За единствената</span>
+    <h1>Подарък за <span class="grad-text">мама</span>: песен по поръчка за 8 март и рожден ден</h1>
 
-    <p>Новото бебе получава дрешки, играчки, пелени — всичко нужно, но временно. Песен, писана специално за неговото раждане, е различен вид подарък: остава, докато порасне, и някой ден ще му я пуснат и той ще разбере колко е бил очакван.</p>
+    <p>На мама не можеш да купиш нищо, което вече няма или което да ѝ трябва — затова всяка година е цветя и парфюм. Подарък за мама, който наистина е от теб, е песен по поръчка: за нейната история, с думите, които на маса не се казват, изпети така, че да ги чуе.</p>
 
-    <p>Разкажи ни историята — как са го посрещнали родителите, какво е името му, кой момент от бременността или раждането искаш да остане в текста. От тези детайли пишем нежен, личен текст — не общи бебешки рими.</p>
+    <p>Разкажи ни за нея — къде е израснала, какво е жертвала, кои са фразите, с които те е отгледала, какво прави всяка неделя, коя е случката, която семейството разказва на всяка сбирка. Може да е от едно дете или от всички, с внуците накрая. От тези детайли пишем текст, който е за твоята майка, не за майките изобщо.</p>
 
-    <p>Стилът обичайно е топъл и мек — приспивна балада, акустична китара, нежен поп — но може да е и по-жизнерадостен, ако случаят го изисква. Може да звучи и от името на баба и дядо или по-големи братя и сестри.</p>
+    <p>Стилът е нейният: балада за момента, в който ще я слуша сама, естрада или народна, ако ще звучи на масата с роднините, или песента от младостта ѝ, направена наново за нея. Става за 8 март, за рожден ден, за юбилей и за ден без повод.</p>
 
-    <p>Песента пристига до 48 часа — точно навреме за изписването от родилния дом, за погачата на 40-ия ден или като подарък за първия рожден ден на бебето, ако предпочиташ да изчакаш.</p>
+    <p>Готова до 48 часа — навреме за 8 март, за рождения ден или за неделния обяд, на който ще я пуснеш без предупреждение.</p>
 
     <div class="article-cta">
-      <p><strong>Играчките се забравят до следващата година. Песента остава негова завинаги.</strong></p>
-      <a class="btn btn-primary" href="poruchka.html?povod=bebeski">Поръчай песен за бебе — 19,90 €</a>
+      <p><strong>Цветята увяхват до петък. Песента ще я пуска на приятелките си.</strong></p>
+      <a class="btn btn-primary" href="poruchka.html?povod=mama">Поръчай песен за мама — 19,90 €</a>
     </div>
   </article>
 
-  <!-- ДЕМО ПЕСНИ -->
+  <!-- ДЕМО ПЕСНИ — три от публичните на началната; подаръчните не се ползват -->
   <section class="section" id="demo">
     <div class="container">
       <div class="section-head reveal">
         <span class="kicker">Чуй сам</span>
-        <h2>Топлина, пренесена в песен</h2>
-        <p>Същата нежност и внимание към детайла — само нагласени към най-крехкия повод от всички.</p>
+        <h2>Песни-послания, изпети от сърце</h2>
+        <p>Топлина без захар и конкретни думи — така звучи подарък за мама, който тя ще слуша сама.</p>
       </div>
       <div class="tracks-list">
+        <div class="track-row player reveal" data-src="assets/audio/za-teb-brate-tutso.mp3" role="button" tabindex="0" aria-label="Пусни „За теб, брате Туцо“">
+          <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+          <img class="track-thumb" src="assets/img/cover-tutso.jpg" alt="" loading="lazy" width="600" height="600">
+          <div class="track-info">
+            <h3>За теб, брате Туцо</h3>
+            <span>За приятел · песен-послание</span>
+          </div>
+          <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
+          <span class="time">5:06</span>
+        </div>
         <div class="track-row player reveal" data-src="assets/audio/za-teb-brate-vladi.mp3" role="button" tabindex="0" aria-label="Пусни „За теб, брате Влади“">
           <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
           <img class="track-thumb" src="assets/img/cover-vladi.jpg" alt="" loading="lazy" width="600" height="600">
@@ -140,25 +150,15 @@
           <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
           <span class="time">4:27</span>
         </div>
-        <div class="track-row player reveal" data-src="assets/audio/rocco-di-catania.mp3" role="button" tabindex="0" aria-label="Пусни „Rocco di Catania“">
+        <div class="track-row player reveal" data-src="assets/audio/rosen-abi.mp3" role="button" tabindex="0" aria-label="Пусни „Rosen Abi“">
           <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
-          <img class="track-thumb" src="assets/img/cover-rocco.jpg" alt="" loading="lazy" width="600" height="600">
+          <img class="track-thumb" src="assets/img/cover-rosen-abi.jpg" alt="" loading="lazy" width="600" height="600">
           <div class="track-info">
-            <h3>Rocco di Catania</h3>
-            <span>Италиански вайб · серенада с усмивка</span>
+            <h3>Rosen Abi</h3>
+            <span>Турски вайб · песен за приятел</span>
           </div>
           <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
-          <span class="time">3:34</span>
-        </div>
-        <div class="track-row player reveal" data-src="assets/audio/za-teb-brate-tutso.mp3" role="button" tabindex="0" aria-label="Пусни „За теб, брате Туцо“">
-          <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
-          <img class="track-thumb" src="assets/img/cover-tutso.jpg" alt="" loading="lazy" width="600" height="600">
-          <div class="track-info">
-            <h3>За теб, брате Туцо</h3>
-            <span>За приятел · песен-послание</span>
-          </div>
-          <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
-          <span class="time">5:06</span>
+          <span class="time">3:18</span>
         </div>
       </div>
     </div>
@@ -173,20 +173,20 @@
       </div>
       <div class="faq-list reveal">
         <details class="faq-item">
-          <summary>Може ли песента да е от името на баба и дядо?</summary>
-          <div class="faq-body">Да — кажи ни от чие име е посвещението (родители, баба и дядо, по-големи братя/сестри), а ние оформяме текста съответно, сякаш точно те говорят на бебето.</div>
+          <summary>8 март е след два дни — ще стане ли?</summary>
+          <div class="faq-body">До 48 часа от поръчката. Песента идва на имейла — MP3 и страница за слушане и споделяне. За по-спешно във формата има експресна изработка. Страницата можеш да ѝ пратиш направо.</div>
         </details>
         <details class="faq-item">
-          <summary>Става ли и за погачата или за първия рожден ден?</summary>
-          <div class="faq-body">Да — много поръчки са точно за погачата на 40-ия ден или за първия рожден ден, с историята от първата година. За кръщене има <a href="podarak-pesen-za-krashtene.html">отделна страница</a> — там песента е с кръщелното име и кръстника.</div>
+          <summary>Какво да разкажа за мама, за да е песента наистина за нея?</summary>
+          <div class="faq-body">Откъде е, как те е отгледала, кои са нейните фрази, какво прави всеки ден и какво никога не си ѝ казал. Три-четири конкретни неща стигат. Ако не знаеш откъде да започнеш, във формата има подсказки.</div>
         </details>
         <details class="faq-item">
-          <summary>Може ли песента да звучи като приспивна песен?</summary>
-          <div class="faq-body">Да — това е един от най-търсените стилове за този повод. Отбележи желания стил (нежен, акустичен, приспивен) в поръчката и правим песента такава.</div>
+          <summary>Може ли да е от всички деца и внуци заедно?</summary>
+          <div class="faq-body">Да — кажи от чие име е и кои имена да влязат в текста. Много семейства я поръчват за юбилей на майката, от всички наведнъж. Един човек попълва формата.</div>
         </details>
         <details class="faq-item">
-          <summary>Защо песен е специален подарък за бебе?</summary>
-          <div class="faq-body">Защото расте с него — дрешките стават малки след месеци, а песента си остава негова, докато порасне достатъчно, за да разбере какъв подарък е получил при раждането си.</div>
+          <summary>Колко струва?</summary>
+          <div class="faq-body">19,90 € за текст, песен и две версии, от които избираме по-добрата. Без абонамент и без доплащане за стил или език. Плащаш при поръчката с карта.</div>
         </details>
       </div>
     </div>
@@ -196,10 +196,10 @@
   <section class="section">
     <div class="container">
       <div class="cta-band reveal">
-        <h2>Посрещнете новия човек с песен, писана само за него</h2>
-        <p>Дрешките му стават малки след месеци. Песента остава негова за цял живот.</p>
+        <h2>Подари на мама песен, в която е нейният живот</h2>
+        <p>Парфюмът свършва. Песента тя ще я пази.</p>
         <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
-          <a class="btn btn-primary btn-lg" href="poruchka.html?povod=bebeski">Поръчай сега — 19,90 €</a>
+          <a class="btn btn-primary btn-lg" href="poruchka.html?povod=mama">Поръчай сега — 19,90 €</a>
           <a class="btn btn-ghost btn-lg" href="poruchka.html">Всички поводи</a>
         </div>
       </div>
