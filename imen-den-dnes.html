@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="bg">
+<!-- „Кой има имен ден днес“ (11.09.2026) — по механизма на rodeni-dnes.html: календарът
+     по месеци е статичен (генериран от assets/data/imenni-dni.json в hora-gen.js), а
+     днешният ден го пише imenni-dni.js от същия JSON. Подвижните празници са по
+     православния Великден. -->
+<head>
+  <meta charset="UTF-8">
+  <!-- resizes-content: при отворена клавиатура layout-ът се свива, вместо да се
+       скролва — фиксираните елементи сядат НАД клавиатурата, не под нея.
+       Безопасно е: в style.css няма нито една vh-базирана височина. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
+  <meta name="theme-color" content="#0b0a1a">
+  <meta name="application-name" content="Песента">
+  <meta name="apple-mobile-web-app-title" content="Песента">
+  <title>Кой има имен ден днес — календар на именните дни | Pesenta.bg</title>
+  <meta name="description" content="Кой има имен ден днес: имената по дата, всички български именни дни по месеци, подвижните по Великден — и какво се подарява на именник.">
+  <link rel="canonical" href="https://pesenta.bg/imen-den-dnes.html">
+  <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+  <!-- PNG резерви: Safari на iOS не ползва SVG фавикон, а apple-touch-icon
+       не бива да е прозрачен — иначе iOS го слага върху черно. -->
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="bg_BG">
+  <meta property="og:site_name" content="Песента">
+  <meta property="og:title" content="Кой има имен ден днес — календар на именните дни | Pesenta.bg">
+  <meta property="og:description" content="Кой има имен ден днес — календарът на българските именни дни по дата, с подвижните празници по Великден.">
+  <meta property="og:url" content="https://pesenta.bg/imen-den-dnes.html">
+  <meta property="og:image" content="https://pesenta.bg/assets/img/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:type" content="image/jpeg">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Кой има имен ден днес — календар на именните дни | Pesenta.bg">
+  <meta name="twitter:description" content="Кой има имен ден днес. Имената по дата, подвижните по Великден, какво се подарява.">
+  <meta name="twitter:image" content="https://pesenta.bg/assets/img/og-image.jpg">
+
+  <!-- Шрифтове -->
+  <!-- Критичните (кирилски) шрифтове тръгват веднага, вместо да чакат CSS-а -->
+  <link rel="preload" href="assets/fonts/unbounded-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <!-- Латинските подмножества се теглят на ВСЯКА страница: запетаята, точката,
+       тирето, кавичките и цифрите живеят в тях, не в кирилските. Без preload
+       браузърът ги открива чак след като разбере CSS-а — цял round-trip по-късно,
+       заради което пунктуацията в заглавията за миг е с резервния шрифт. -->
+  <link rel="preload" href="assets/fonts/unbounded-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/fonts.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+
+  <!-- Structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Кой има имен ден днес",
+    "description": "Кой има имен ден днес: имената по дата, всички български именни дни по месеци, подвижните по Великден — и какво се подарява на именник.",
+    "url": "https://pesenta.bg/imen-den-dnes.html",
+    "inLanguage": "bg",
+    "isPartOf": {
+      "@type": "WebSite",
+      "url": "https://pesenta.bg/",
+      "name": "Pesenta.bg — песен по поръчка"
+    }
+  }
+  </script>
+  <!-- Cloudflare Web Analytics. Без бисквитки и без localStorage — затова
+       сайтът пак няма нужда от банер за съгласие. Смени Plausible, който
+       зареждаше скрипт на всяка страница, но домейнът никога не беше
+       регистриран — тоест месеци наред всеки посетител плащаше заявка към
+       чужд сървър, а нищо не се записваше. -->
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon='{"token": "902a1340b733442da0ef0ebfe90903dc"}'></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Към съдържанието</a>
+
+<header class="site-header">
+  <div class="container header-in">
+    <a class="logo" href="index.html" aria-label="Песента — начало">
+      <img src="assets/img/logo.svg" alt="Песента — песен по поръчка" width="190" height="44">
+    </a>
+    <nav class="main-nav open" aria-label="Основна навигация" style="display:flex;position:static;padding:0;background:none;border:none;box-shadow:none;">
+      <a href="index.html">Начало</a>
+      <a class="btn btn-primary" href="poruchka.html?povod=imen-den">Поръчай песен</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <article class="article" style="padding-bottom:0;">
+    <span class="kicker">Календарът, който се проверява сутрин</span>
+    <h1 id="imen-h1">Кой има имен ден <span class="grad-text">днес</span></h1>
+
+    <p>Всяка сутрин някой се сеща късно, че някого трябва да поздрави. Тук са имената по дата — днешните горе, всички по месеци надолу, подвижните по Великден отделно. И едно предложение какво се подарява, когато букетът не стига.</p>
+
+    <!-- Днешният ден го пише assets/js/imenni-dni.js от assets/data/imenni-dni.json.
+         Блокът е скрит, докато данните не дойдат; ако не дойдат, страницата е
+         календарът отдолу — никога празна рамка. -->
+    <div id="imen-dnes" hidden>
+      <p class="imen-data" id="imen-data"></p>
+      <div class="chips imena" id="imen-imena" aria-label="Имена, които празнуват днес"></div>
+      <p class="imen-podarak" id="imen-podarak"></p>
+      <p class="imen-utre" id="imen-utre" hidden></p>
+    </div>
+
+    <div class="article-cta">
+      <p><strong>Букетът е за всички именници. Песента е за твоя.</strong></p>
+      <a class="btn btn-primary" href="poruchka.html?povod=imen-den">Поръчай песен за имен ден — 19,90 €</a>
+    </div>
+
+    <h2>Именните дни по месеци</h2>
+    <p>Фиксираните дати. Подвижните — Тодоровден, Лазаровден, Цветница, Великден и Спасовден — са в отделен списък след месеците, защото се броят от Великден.</p>
+
+    <div class="imen-mesec">
+      <h3>Януари</h3>
+      <p><strong>1 януари</strong> — Васильовден: Васил, Василка, Василена, Веселин, Веселина, Весела, Веско</p>
+      <p><strong>6 януари</strong> — Богоявление (Йордановден): Йордан, Йорданка, Йордана, Данчо, Богдан, Богдана, Богомил, Божидар, Божидара, Бистра</p>
+      <p><strong>7 януари</strong> — Ивановден: Иван, Иванка, Иво, Ива, Ивайло, Ивайла, Йоан, Йоана, Ваньо, Ваня, Жан, Жана, Калоян, Йовко, Йова · <a href="podarak-za-ivanovden.html">песен за Ивановден</a></p>
+      <p><strong>17 януари</strong> — Антоновден: Антон, Антония, Антоанета, Андон, Дончо, Тони, Тоня</p>
+      <p><strong>18 януари</strong> — Атанасовден: Атанас, Атанаска, Наско, Наска, Танас, Тинка</p>
+      <p><strong>25 януари</strong> — Св. Григорий Богослов: Григор, Григорий</p>
+    </div>
+
+    <div class="imen-mesec">
+      <h3>Февруари</h3>
+      <p><strong>1 февруари</strong> — Трифон Зарезан: Трифон, Трифонка</p>
+      <p><strong>3 февруари</strong> — Св. Симеон Богоприимец: Симеон, Симеона, Симона, Моньо</p>
+      <p><strong>10 февруари</strong> — Св. Харалампий: Харалампи, Ламби, Ламбо</p>
+    </div>
+
+    <div class="imen-mesec">
+      <h3>Март</h3>
+      <p><strong>1 март</strong> — Баба Марта: Марта, Мартин, Мартина</p>
+      <p><strong>9 март</strong> — Св. 40 мъченици (Младенци): Младен, Младена</p>
+      <p><strong>25 март</strong> — Благовещение: Благовест, Благовеста, Блага, Благой, Благо, Евангелина</p>
+    </div>
+
+    <div class="imen-mesec">
+      <h3>Май</h3>
+      <p><strong>6 май</strong> — Гергьовден: Георги, Гергана, Гергина, Ганчо, Ганка, Гошо, Гошка, Жоро, Гюро, Гера, Герга · <a href="podarak-za-gergyovden.html">песен за Гергьовден</a></p>
+      <p><strong>11 май</strong> — Св. Кирил и Методий: Кирил, Кирилка, Методи, Методий, Кира</p>
+      <p><strong>21 май</strong> — Св. Константин и Елена: Константин, Костадин, Костадинка, Коста, Косьо, Елена, Еленка, Елка, Ели, Лена, Ленче</p>
+    </div>
+
+    <div class="imen-mesec">
+      <h3>Юни</h3>
+      <p><strong>24 юни</strong> — Еньовден: Еньо, Енчо, Яна, Янко, Янка, Янина, Яница</p>
+      <p><strong>29 юни</strong> — Петровден и Павловден: Петър, Петра, Петранка, Петя, Петьо, Пепа, Пенка, Камен, Павел, Павлина, Павлета, Полина</p>
+    </div>
+
+    <div class="imen-mesec">
+      <h3>Юли</h3>
+      <p><strong>1 юли</strong> — Св. Козма и Дамян: Козма, Дамян, Дамяна</p>
+      <p><strong>7 юли</strong> — Св. Неделя: Неделя, Недялка, Недко, Неделчо</p>
+      <p><strong>15 юли</strong> — Св. Владимир: Владимир, Владо, Влади, Владислав, Владислава</p>
+      <p><strong>17 юли</strong> — Св. Марина: Марина, Марин, Маринка</p>
+      <p><strong>20 юли</strong> — Илинден: Илия, Илиян, Илияна, Илко, Илка</p>
+      <p><strong>25 юли</strong> — Успение на св. Анна: Анна, Ана, Анка, Анета</p>
+      <p><strong>27 юли</strong> — Св. Пантелеймон: Пантелей, Панталей</p>
+    </div>
+
+    <div class="imen-mesec">
+      <h3>Август</h3>
+      <p><strong>6 август</strong> — Преображение: Преслав, Преслава</p>
+      <p><strong>15 август</strong> — Голяма Богородица: Мария, Мариана, Мариела, Мариета, Марио, Марийка, Мара, Мими</p>
+    </div>
+
+    <div class="imen-mesec">
+      <h3>Септември</h3>
+      <p><strong>1 септември</strong> — Симеоновден: Симеон, Симеона, Симона, Моньо, Симо</p>
+      <p><strong>14 септември</strong> — Кръстовден: Кръстьо, Кръстю, Кръстина, Кристина, Кристиян, Кръстан, Ставри</p>
+      <p><strong>17 септември</strong> — Св. София, Вяра, Надежда и Любов: София, Софка, Вяра, Надежда, Надя, Любов, Люба, Любен</p>
+    </div>
+
+    <div class="imen-mesec">
+      <h3>Октомври</h3>
+      <p><strong>6 октомври</strong> — Св. Тома: Тома, Томислав, Томислава</p>
+      <p><strong>14 октомври</strong> — Петковден: Петка, Петко, Параскева</p>
+      <p><strong>18 октомври</strong> — Св. Лука: Лука, Лукан</p>
+      <p><strong>26 октомври</strong> — Димитровден: Димитър, Димитрина, Митко, Митра, Димо, Димка, Димана, Митьо, Мима · <a href="podarak-za-dimitrovden.html">песен за Димитровден</a></p>
+    </div>
+
+    <div class="imen-mesec">
+      <h3>Ноември</h3>
+      <p><strong>1 ноември</strong> — Св. безсребърници Козма и Дамян: Козма, Дамян, Дамяна</p>
+      <p><strong>8 ноември</strong> — Архангеловден: Михаил, Михаела, Мишо, Гавраил, Гаврил, Рафаил, Рафаел, Ангел, Ангелина, Серафим</p>
+      <p><strong>11 ноември</strong> — Св. Мина и св. Виктор: Мина, Минчо, Минка, Минко, Виктор, Виктория</p>
+      <p><strong>13 ноември</strong> — Св. Йоан Златоуст: Златка, Златко, Злати, Златина</p>
+      <p><strong>14 ноември</strong> — Св. Филип: Филип, Филипа</p>
+      <p><strong>16 ноември</strong> — Св. Матей: Матей, Матея</p>
+      <p><strong>24 ноември</strong> — Св. Екатерина: Екатерина, Катя, Катерина, Катина</p>
+      <p><strong>25 ноември</strong> — Св. Климент Охридски: Климент, Климентина</p>
+      <p><strong>30 ноември</strong> — Андреевден: Андрей, Андрея, Андреа, Андриана</p>
+    </div>
+
+    <div class="imen-mesec">
+      <h3>Декември</h3>
+      <p><strong>4 декември</strong> — Св. Варвара: Варвара, Барбара</p>
+      <p><strong>5 декември</strong> — Св. Сава: Сава, Савка</p>
+      <p><strong>6 декември</strong> — Никулден: Никола, Николай, Николина, Николета, Нина, Нено, Ненка, Кольо, Ники, Нико, Николинка · <a href="podarak-za-nikulden.html">песен за Никулден</a></p>
+      <p><strong>9 декември</strong> — Зачатие на св. Анна: Анна, Ана, Анка, Анета</p>
+      <p><strong>12 декември</strong> — Св. Спиридон: Спиридон</p>
+      <p><strong>20 декември</strong> — Игнажден: Игнат, Огнян, Огняна, Пламен, Пламена</p>
+      <p><strong>24 декември</strong> — Бъдни вечер (преп. Евгения): Евгени, Евгения, Жени</p>
+      <p><strong>25 декември</strong> — Коледа: Христо, Христина, Христиан, Христиана, Христофор, Ицо, Радостин, Радостина</p>
+      <p><strong>27 декември</strong> — Стефановден: Стефан, Стефка, Стефания, Стефани, Стойко, Стойка, Стоян, Стоянка, Запрян</p>
+    </div>
+
+    <h2>Подвижните — по Великден</h2>
+    <div class="imen-mesec">
+      <p><strong>Тодоровден</strong> — 28 февруари 2026, 20 март 2027 (съботата на първата седмица от Великия пост): Тодор, Теодор, Теодора, Тодорка, Тошко, Дора, Теди, Божидар</p>
+      <p><strong>Лазаровден</strong> — 4 април 2026, 24 април 2027 (съботата преди Цветница): Лазар, Лазарина</p>
+      <p><strong>Цветница</strong> — 5 април 2026, 25 април 2027 (неделята преди Великден): Цветан, Цветанка, Цветелина, Цвета, Цветомир, Цветомира, Цветослав, Цветозар, Виолета, Лилия, Лиляна, Роза, Росица, Маргарита, Ралица, Ружа, Здравко, Здравка, Явор, Ясен, Върбан, Калина, Малина, Невена, Невен, Теменужка, Иглика, Камелия, Божура, Латинка, Кремена, Далия, Магнолия · <a href="podarak-za-tsvetnitsa.html">песен за Цветница</a></p>
+      <p><strong>Великден</strong> — 12 април 2026, 2 май 2027 (Възкресение Христово): Величко, Велика, Велислав, Велислава, Велко, Величка</p>
+      <p><strong>Спасовден</strong> — 21 май 2026, 10 юни 2027 (четвъртък, четирийсет дни след Великден): Спас, Спаска, Спасимир</p>
+      <p><strong>Гергьовден</strong> — 6 май 2026, 6 май 2027: на 6 май, освен когато 6 май се падне до Великден включително — тогава в понеделника след него.</p>
+    </div>
+  </article>
+
+  <!-- FAQ -->
+  <section class="section" id="vaprosi">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="kicker">Питай смело</span>
+        <h2>Често задавани въпроси</h2>
+      </div>
+      <div class="faq-list reveal">
+        <details class="faq-item">
+          <summary>Защо някои именни дни са на различна дата всяка година?</summary>
+          <div class="faq-body">Защото се броят от Великден, а той се мести: Тодоровден, Лазаровден, Цветница, самият Великден и Спасовден. На тази страница са с датите за тази и следващата година. Гергьовден е на 6 май, освен когато 6 май се падне до Великден — тогава минава на понеделника след него.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Какво се подарява на имен ден?</summary>
+          <div class="faq-body">На имен ден не се кани — идва се, и се носи нещо. Обикновено е бутилка, цветя или торта, защото именникът черпи и не очаква подарък. Точно затова подарък с името му — песен, в която то е в припева — е този, който ще запомни.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Ако именният ден е утре — ще стигне ли песента?</summary>
+          <div class="faq-body">Стандартният срок е до 48 часа, експресът — до 24, тоест поръчка днес с експрес е готова утре. Ако е за самия ден, пиши ни на sales@pesenta.bg преди да поръчаш. Подробно на <a href="podarak-pesen-za-imen-den.html">подарък за имен ден</a>.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Липсва име или дата — къде да пиша?</summary>
+          <div class="faq-body">На <a href="mailto:sales@pesenta.bg">sales@pesenta.bg</a>. Календарът следва най-разпространената традиция; за някои имена има повече от една дата и хората празнуват на различни.</div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-band reveal">
+        <h2>Имен ден утре? Песен с името му за 48 часа</h2>
+        <p>Разказваш ни за именника, ние правим песента. По имейл, без куриер.</p>
+        <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+          <a class="btn btn-primary btn-lg" href="poruchka.html?povod=imen-den">Поръчай сега — 19,90 €</a>
+          <a class="btn btn-ghost btn-lg" href="podarak-pesen-za-imen-den.html">Подарък за имен ден</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-col" style="max-width: 320px;">
+        <img src="assets/img/logo.svg" alt="Песента" width="160" style="margin-bottom: 1rem;">
+        <p>Персонализирани песни по поръчка за всеки повод. Твоята история, нашата музика.</p>
+        <div class="footer-social">
+    <a href="https://www.tiktok.com/@pesentabg" target="_blank" rel="noopener" aria-label="Песента в TikTok">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.53.02C13.84 0 15.14.01 16.44 0c.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+    </a>
+    <a href="https://www.instagram.com/pesenta.bg/" target="_blank" rel="noopener" aria-label="Песента в Instagram">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41-.56-.22-.96-.48-1.38-.9-.42-.42-.68-.82-.9-1.38-.16-.42-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41 1.27-.06 1.65-.07 4.85-.07M12 0C8.74 0 8.33.01 7.05.07c-1.28.06-2.15.26-2.91.56-.79.31-1.46.72-2.13 1.39C1.35 2.68.94 3.35.63 4.14c-.3.76-.5 1.63-.56 2.91C.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.28.26 2.15.56 2.91.31.79.72 1.46 1.39 2.13.67.67 1.34 1.08 2.13 1.39.76.3 1.63.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.28-.06 2.15-.26 2.91-.56.79-.31 1.46-.72 2.13-1.39.67-.67 1.08-1.34 1.39-2.13.3-.76.5-1.63.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.28-.26-2.15-.56-2.91-.31-.79-.72-1.46-1.39-2.13C20.32 1.35 19.65.94 18.86.63c-.76-.3-1.63-.5-2.91-.56C15.67.01 15.26 0 12 0zm0 5.84A6.16 6.16 0 1 0 12 18.16 6.16 6.16 0 0 0 12 5.84zm0 10.16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.41-10.44a1.44 1.44 0 1 1-2.88 0 1.44 1.44 0 0 1 2.88 0z"/></svg>
+    </a>
+    <a href="https://www.facebook.com/pesenta.bg" target="_blank" rel="noopener" aria-label="Песента във Facebook">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22.68 0H1.32C.59 0 0 .59 0 1.32v21.36C0 23.41.59 24 1.32 24h11.5v-9.29H9.69v-3.62h3.13V8.41c0-3.1 1.89-4.79 4.66-4.79 1.32 0 2.46.1 2.79.14v3.24h-1.92c-1.5 0-1.79.72-1.79 1.76v2.31h3.59l-.47 3.62h-3.12V24h6.12c.73 0 1.32-.59 1.32-1.32V1.32C24 .59 23.41 0 22.68 0z"/></svg>
+    </a>
+    <a href="https://www.youtube.com/@pesenta" target="_blank" rel="noopener" aria-label="Песента в YouTube">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.5 6.2s-.23-1.64-.94-2.36c-.9-.94-1.91-.95-2.37-1C16.89 2.5 12 2.5 12 2.5h-.01s-4.89 0-8.19.34c-.46.05-1.47.06-2.37 1C.72 4.56.5 6.2.5 6.2S.26 8.13.26 10.06v1.72c0 1.93.24 3.86.24 3.86s.23 1.64.94 2.36c.9.94 2.08.91 2.6 1.01 1.89.18 8 .24 8 .24s4.89-.01 8.19-.35c.46-.05 1.47-.06 2.37-1 .71-.72.94-2.36.94-2.36s.24-1.93.24-3.86v-1.72c0-1.93-.24-3.86-.24-3.86zM9.75 14.85V7.85l6.5 3.5-6.5 3.5z"/></svg>
+    </a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h3>Навигация</h3>
+        <a href="index.html#kak-raboti">Как работи</a>
+        <a href="index.html#demo">Демо песни</a>
+        <a href="index.html#ceni">Цени</a>
+        <a href="novini/">Музикални новини</a>
+        <a href="rodeni-dnes.html">Родени на този ден</a>
+        <a href="podarak-v-poslednia-moment.html">В последния момент</a>
+        <a href="poruchka.html">Поръчай песен</a>
+      </div>
+      <div class="footer-col">
+        <h3>Поводи</h3>
+        <a href="podarak-pesen-za-rojden-den.html">Подарък за рожден ден</a>
+        <a href="podarak-pesen-za-svatba.html">Подарък за сватба</a>
+        <a href="podarak-pesen-za-ergensko.html">Подарък за ергенско парти</a>
+        <a href="podarak-pesen-za-mominsko.html">Подарък за моминско парти</a>
+        <a href="podarak-pesen-za-godishnina.html">Подарък за годишнина</a>
+        <a href="podarak-pesen-za-bebeski.html">Подарък за бебе</a>
+        <a href="podarak-pesen-za-krashtene.html">Подарък за кръщене</a>
+        <a href="podarak-pesen-za-jubilej.html">Подарък за юбилей</a>
+        <a href="podarak-pesen-za-pensionirane.html">Подарък за пенсиониране</a>
+        <a href="podarak-pesen-za-godej.html">Подарък за годеж</a>
+        <a href="podarak-pesen-za-abiturientski-bal.html">Подарък за абитуриент</a>
+        <a href="podarak-pesen-za-imen-den.html">Подарък за имен ден</a>
+        <a href="podarak-pesen-za-mama.html">Подарък за мама</a>
+        <a href="podarak-pesen-za-palnoletie.html">Подарък за 18-и рожден ден</a>
+        <a href="podarak-pesen-za-firmeno.html">Подарък за фирмено събитие</a>
+        <a href="podarak-pesen-za-diplomirane.html">Подарък за дипломиране</a>
+        <a href="podarak-pesen-za-nov-dom.html">Подарък за нов дом</a>
+        <a href="podarak-pesen-za-uchitel.html">Подарък за учител</a>
+        <a href="podarak-pesen-za-kumove.html">Подарък за кумовете</a>
+        <a href="podarak-pesen-za-lovec.html">Подарък за ловец</a>
+      </div>
+      <div class="footer-col">
+        <h3>За кого</h3>
+        <a href="podarak-za-tatko.html">Подарък за татко</a>
+        <a href="podarak-za-baba.html">Подарък за баба</a>
+        <a href="podarak-za-dyado.html">Подарък за дядо</a>
+        <a href="podarak-za-sestra.html">Подарък за сестра</a>
+        <a href="podarak-za-brat.html">Подарък за брат</a>
+        <a href="podarak-za-saprug.html">Подарък за съпруг</a>
+        <a href="podarak-za-sapruga.html">Подарък за съпруга</a>
+        <a href="podarak-za-gadzhe.html">Подарък за гадже</a>
+        <a href="podarak-za-priyatelka.html">Подарък за приятелка</a>
+        <a href="podarak-za-shef.html">Подарък за шеф и колега</a>
+        <a href="podarak-za-trenyor.html">Подарък за треньор</a>
+        <a href="podarak-za-krastnik.html">Подарък за кръстник</a>
+      </div>
+      <div class="footer-col">
+        <h3>Календар</h3>
+        <a href="imen-den-dnes.html">Кой има имен ден днес</a>
+        <a href="podarak-za-tsvetnitsa.html">Подарък за Цветница</a>
+        <a href="podarak-za-gergyovden.html">Подарък за Гергьовден</a>
+        <a href="podarak-za-nikulden.html">Подарък за Никулден</a>
+        <a href="podarak-za-ivanovden.html">Подарък за Ивановден</a>
+        <a href="podarak-za-dimitrovden.html">Подарък за Димитровден</a>
+      </div>
+      <div class="footer-col">
+        <h3>Контакти</h3>
+        <a href="mailto:sales@pesenta.bg">sales@pesenta.bg</a>
+        <a href="poruchka.html">Направи запитване</a>
+        <a href="usloviya.html">Общи условия</a>
+        <a href="poveritelnost.html">Поверителност</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © <span id="year">2026</span> Pesenta.bg — „БАУФИЗИК“ ЕООД, ЕИК 207427793. Всички права запазени. Сайт без проследяващи бисквитки.
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/main.js" defer></script>
+<script src="assets/js/imenni-dni.js" defer></script>
+<!-- Плаващ бутон за връзка: Viber на мобилно (+359899456326 — ПЛЕЙСХОЛЪР номер, смени с реалния), имейл при десктоп -->
+<a class="float-contact float-contact--mobile" href="viber://chat?number=+359899456326" aria-label="Пиши ни във Viber">
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+</a>
+<a class="float-contact float-contact--desktop" href="mailto:sales@pesenta.bg" aria-label="Пиши ни на имейл">
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
+</a>
+</body>
+</html>

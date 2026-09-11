@@ -212,6 +212,42 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://pesenta.bg/podarak-za-tsvetnitsa.html</loc>
+    <lastmod>2026-09-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://pesenta.bg/podarak-za-gergyovden.html</loc>
+    <lastmod>2026-09-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://pesenta.bg/podarak-za-nikulden.html</loc>
+    <lastmod>2026-09-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://pesenta.bg/podarak-za-ivanovden.html</loc>
+    <lastmod>2026-09-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://pesenta.bg/podarak-za-dimitrovden.html</loc>
+    <lastmod>2026-09-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://pesenta.bg/imen-den-dnes.html</loc>
+    <lastmod>2026-09-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://pesenta.bg/usloviya.html</loc>
     <lastmod>2026-07-05</lastmod>
     <changefreq>yearly</changefreq>

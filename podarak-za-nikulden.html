@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="bg">
-<!-- Страница „за кого“ по таблицата в pesenta-flags/hukove-poslednia-moment.md (11.09.2026): кръстник и кръстница.
-     Човекът не е повод — CTA без ?povod=.
+<!-- Страница по календара (pesenta-flags/hukove-poslednia-moment.md, 11.09.2026): Никулден.
      Направена от pesenta-flags/hora/hora-gen.js по podarak-pesen-za-jubilej.html;
-     демо песните са три от публичните. Текстът е в hora-danni.js. -->
+     демо песните са три от публичните. -->
 <head>
   <meta charset="UTF-8">
   <!-- resizes-content: при отворена клавиатура layout-ът се свива, вместо да се
@@ -13,9 +12,9 @@
   <meta name="theme-color" content="#0b0a1a">
   <meta name="application-name" content="Песента">
   <meta name="apple-mobile-web-app-title" content="Песента">
-  <title>Подарък за кръстник и кръстница: песен от кръщелника | 19,90 € | Pesenta.bg</title>
-  <meta name="description" content="Подарък за кръстник и кръстница — от кръщелника или от младоженците: песен по поръчка за кръщене, сватба или рожден ден, 19,90 €, готова до 48 часа.">
-  <link rel="canonical" href="https://pesenta.bg/podarak-za-krastnik.html">
+  <title>Подарък за Никулден: песен за имен ден | 19,90 € | Pesenta.bg</title>
+  <meta name="description" content="Подарък за Никулден — за Никола, Николай, Николина, Нина, Кольо и всички именници на 6 декември: песен по поръчка, 19,90 €, готова до 48 часа.">
+  <link rel="canonical" href="https://pesenta.bg/podarak-za-nikulden.html">
   <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
   <!-- PNG резерви: Safari на iOS не ползва SVG фавикон, а apple-touch-icon
        не бива да е прозрачен — иначе iOS го слага върху черно. -->
@@ -26,9 +25,9 @@
   <meta property="og:type" content="website">
   <meta property="og:locale" content="bg_BG">
   <meta property="og:site_name" content="Песента">
-  <meta property="og:title" content="Подарък за кръстник и кръстница: песен от кръщелника | Pesenta.bg">
-  <meta property="og:description" content="Подарък за кръстник и кръстница — песен по поръчка от кръщелника или от младоженците, 19,90 €, готова до 48 часа.">
-  <meta property="og:url" content="https://pesenta.bg/podarak-za-krastnik.html">
+  <meta property="og:title" content="Подарък за Никулден: песен за имен ден | Pesenta.bg">
+  <meta property="og:description" content="Подарък за Никулден — песен по поръчка за Никола или Николина, 19,90 €, готова до 48 часа.">
+  <meta property="og:url" content="https://pesenta.bg/podarak-za-nikulden.html">
   <meta property="og:image" content="https://pesenta.bg/assets/img/og-image.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -36,8 +35,8 @@
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Подарък за кръстник и кръстница: песен от кръщелника | Pesenta.bg">
-  <meta name="twitter:description" content="Кръстникът е бил там в най-важния ден. Кръщелникът му връща с песен. 19,90 €.">
+  <meta name="twitter:title" content="Подарък за Никулден: песен за имен ден | Pesenta.bg">
+  <meta name="twitter:description" content="На Никулден има риба на масата и еднакви подаръци. Песента с името му е различна. 19,90 €.">
   <meta name="twitter:image" content="https://pesenta.bg/assets/img/og-image.jpg">
 
   <!-- Шрифтове -->
@@ -58,9 +57,9 @@
   {
     "@context": "https://schema.org",
     "@type": "Service",
-    "serviceType": "Подарък за кръстник и кръстница — песен от кръщелника",
-    "name": "Подарък за кръстник и кръстница: песен от кръщелника",
-    "description": "Песен по поръчка като подарък за кръстник и кръстница — от кръщелника, от родителите или от младоженците, за кръщене, сватба или рожден ден.",
+    "serviceType": "Подарък за Никулден — песен за имен ден",
+    "name": "Подарък за Никулден: песен за имен ден",
+    "description": "Песен по поръчка като подарък за Никулден — за Никола, Николай, Николина, Нина и другите именници на 6 декември.",
     "provider": {
       "@type": "Organization",
       "name": "Песента",
@@ -70,13 +69,13 @@
     "areaServed": "BG",
     "audience": {
       "@type": "Audience",
-      "audienceType": "Кръщелници, родители и младоженци, търсещи подарък за кръстниците"
+      "audienceType": "Хора, търсещи подарък за именник на Никулден"
     },
     "offers": {
       "@type": "Offer",
       "price": "19.90",
       "priceCurrency": "EUR",
-      "url": "https://pesenta.bg/poruchka.html",
+      "url": "https://pesenta.bg/poruchka.html?povod=imen-den",
       "availability": "https://schema.org/InStock"
     }
   }
@@ -99,32 +98,35 @@
     </a>
     <nav class="main-nav open" aria-label="Основна навигация" style="display:flex;position:static;padding:0;background:none;border:none;box-shadow:none;">
       <a href="index.html">Начало</a>
-      <a class="btn btn-primary" href="poruchka.html">Поръчай песен</a>
+      <a class="btn btn-primary" href="poruchka.html?povod=imen-den">Поръчай песен</a>
     </nav>
   </div>
 </header>
 
 <main id="main">
   <article class="article" style="padding-bottom:0;">
-    <span class="kicker">От кръщелника, от младоженците — за хората, които са казали „да“ за вас</span>
-    <h1>Подарък за <span class="grad-text">кръстник и кръстница</span>: песен от кръщелника</h1>
+    <span class="kicker">Шести декември — Никола, Николай, Нина</span>
+    <h1>Подарък за <span class="grad-text">Никулден</span>: песен за имен ден</h1>
 
-    <p>Кръстниците са хората, които са застанали до вас в най-важния ден и после са останали — за рождените дни, за първия учебен ден, за всичко. Подарък за кръстник, който отговаря на това, е песен от кръщелника: с историята на кръщенето, с това какви са те за него, от името на детето, ако е малко, или от неговото собствено, ако вече е голямо.</p>
+    <p>Никулден е първият голям имен ден на зимата и последният преди коледната суматоха. Рибата е на масата, гостите идват без покана, а подаръкът за Никола е този, за който си се сетил на пазара. Подарък за Никулден, който не е бутилка и не е риза, е песен с името му — за рибаря, за моряка, за дядото, за детето, което празнува за първи път.</p>
 
-    <p>Разказвате ни за тях и за връзката ви, ние пишем текста и правим песента. Пуска се на кръщенето, на сватбата или на рождения им ден — пред всички.</p>
+    <p>Разказваш ни за именника, ние пишем текста и правим песента. Пуска се, когато всички са седнали — преди рибата или след нея.</p>
 
-    <h2>За кръщене</h2>
-    <p>Песен от родителите за кръстниците на детето, пусната на самото кръщене — благодарност за това, че са казали „да“. Виж и <a href="podarak-pesen-za-krashtene.html">подарък за кръщене</a>.</p>
+    <h2>Кои имена празнуват</h2>
+    <p>Никола, Николай, Николина, Николета, Нина, Нено, Ненка, Кольо, Ники, Нико, Николинка. Всички дни са на страницата <a href="imen-den-dnes.html">кой има имен ден днес</a>.</p>
 
-    <h2>От младоженците</h2>
-    <p>Кумовете на сватбата са утрешните кръстници на децата. Песен от младоженците за кумовете — за приятелството, за това, че са били там от началото — се пуска на сватбата. Има отделна страница: <a href="podarak-pesen-za-kumove.html">подарък за кумовете</a>.</p>
+    <h2>Кога е Никулден</h2>
+    <p>На 6 декември, всяка година. Свети Никола е покровител на моряците, рибарите и банкерите — ако именникът е от тях, това е готов куплет.</p>
 
-    <h2>От порасналия кръщелник</h2>
-    <p>Когато кръщелникът вече е голям, песента е от него — за кръстника, който го е водил на мач, и за кръстницата, която е помнила всеки рожден ден. Най-често за кръгла годишнина.</p>
+    <h2>На мъж, на жена, на дете</h2>
+    <p>На мъж — Никола, Николай, Кольо — за характера, за работата, за шегите от компанията. На жена — Николина, Нина — за това, което тя държи на раменете си. На дете — Ники на шест — първата песен с името му, която ще пусне на всички в градината.</p>
+
+    <h2>Песента като подарък</h2>
+    <p>Готова до 48 часа, идва по имейл — MP3 и страница с текста. Ако си се сетил на 4 декември, има експрес до 24 часа. Стилът избираш ти.</p>
 
     <div class="article-cta">
-      <p><strong>Те са казали „да“ за вас. Кажете им го с песен.</strong></p>
-      <a class="btn btn-primary" href="poruchka.html">Поръчай песен за кръстниците — 19,90 €</a>
+      <p><strong>Рибата се изяжда. Песента остава за всеки следващи Никулден.</strong></p>
+      <a class="btn btn-primary" href="poruchka.html?povod=imen-den">Поръчай песен за Никулден — 19,90 €</a>
     </div>
   </article>
 
@@ -133,20 +135,10 @@
     <div class="container">
       <div class="section-head reveal">
         <span class="kicker">Чуй сам</span>
-        <h2>Песни с благодарност</h2>
-        <p>Топъл тон, който се пее пред всички — така звучи песен за кръстник.</p>
+        <h2>Песни за именник</h2>
+        <p>Топъл тон за маса с гости — така звучи песен за Никулден.</p>
       </div>
       <div class="tracks-list">
-        <div class="track-row player reveal" data-src="assets/audio/angel-s-torbata.mp3" role="button" tabindex="0" aria-label="Пусни „Ангел с торбата“">
-          <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
-          <img class="track-thumb" src="assets/img/cover-angel.jpg" alt="" loading="lazy" width="600" height="600">
-          <div class="track-info">
-            <h3>Ангел с торбата</h3>
-            <span>За Пламен и Ангел · <a href="pesni/angel-s-torbata.html">виж песента →</a></span>
-          </div>
-          <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
-          <span class="time">3:38</span>
-        </div>
         <div class="track-row player reveal" data-src="assets/audio/za-teb-brate-tutso.mp3" role="button" tabindex="0" aria-label="Пусни „За теб, брате Туцо“">
           <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
           <img class="track-thumb" src="assets/img/cover-tutso.jpg" alt="" loading="lazy" width="600" height="600">
@@ -157,15 +149,25 @@
           <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
           <span class="time">5:06</span>
         </div>
-        <div class="track-row player reveal" data-src="assets/audio/rocco-di-catania.mp3" role="button" tabindex="0" aria-label="Пусни „Rocco di Catania“">
+        <div class="track-row player reveal" data-src="assets/audio/za-teb-brate-vladi.mp3" role="button" tabindex="0" aria-label="Пусни „За теб, брате Влади“">
           <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
-          <img class="track-thumb" src="assets/img/cover-rocco.jpg" alt="" loading="lazy" width="600" height="600">
+          <img class="track-thumb" src="assets/img/cover-vladi.jpg" alt="" loading="lazy" width="600" height="600">
           <div class="track-info">
-            <h3>Rocco di Catania</h3>
-            <span>Италиански вайб · серенада с усмивка</span>
+            <h3>За теб, брате Влади</h3>
+            <span>За приятел · песен-послание</span>
           </div>
           <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
-          <span class="time">3:34</span>
+          <span class="time">4:27</span>
+        </div>
+        <div class="track-row player reveal" data-src="assets/audio/angel-s-torbata.mp3" role="button" tabindex="0" aria-label="Пусни „Ангел с торбата“">
+          <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+          <img class="track-thumb" src="assets/img/cover-angel.jpg" alt="" loading="lazy" width="600" height="600">
+          <div class="track-info">
+            <h3>Ангел с торбата</h3>
+            <span>За Пламен и Ангел · <a href="pesni/angel-s-torbata.html">виж песента →</a></span>
+          </div>
+          <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
+          <span class="time">3:38</span>
         </div>
       </div>
     </div>
@@ -180,16 +182,16 @@
       </div>
       <div class="faq-list reveal">
         <details class="faq-item">
-          <summary>Какво да разкажем за кръстниците?</summary>
-          <div class="faq-body">Откъде ги познавате, как са станали кръстници, една история от кръщенето или от сватбата, какво правят за детето сега. Имената им и на детето. Ако песента е от детето — на колко години е, за да звучи като него.</div>
+          <summary>Никулден е вдругиден — ще стигне ли?</summary>
+          <div class="faq-body">Стандартният срок е до 48 часа; с експрес — до 24. Ако е за самия ден, пиши ни на sales@pesenta.bg преди да поръчаш.</div>
         </details>
         <details class="faq-item">
-          <summary>За кръстник и кръстница заедно ли е?</summary>
-          <div class="faq-body">Може за двамата, може само за единия. Казвате ни и песента е за тях така, както са в живота ви — заедно или всеки поотделно.</div>
+          <summary>Какво да разкажа за именника?</summary>
+          <div class="faq-body">На кого е кръстен. Как го наричат. Какво е правил тази година, кои са хората, които идват за него на 6 декември, коя е историята, която всички знаят. Ако е рибар или моряк — задължително.</div>
         </details>
         <details class="faq-item">
-          <summary>Кога ще е готова?</summary>
-          <div class="faq-body">До 48 часа от поръчката, с експрес — до 24. Песента идва на имейла: MP3 и лична страница с текста, която се отваря на всеки телефон.</div>
+          <summary>Може ли да е за баща и син, и двамата Никола?</summary>
+          <div class="faq-body">Да. По куплет за всеки и общ припев с името — най-честият вариант точно на Никулден.</div>
         </details>
         <details class="faq-item">
           <summary>Колко струва?</summary>
@@ -203,10 +205,10 @@
   <section class="section">
     <div class="container">
       <div class="cta-band reveal">
-        <h2>Благодарността се казва пред всички</h2>
-        <p>На кръщенето, на сватбата или на рождения ден — с песен от кръщелника.</p>
+        <h2>Този Никулден — с песен на масата</h2>
+        <p>Името в припева, историята в куплетите. До 48 часа.</p>
         <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
-          <a class="btn btn-primary btn-lg" href="poruchka.html">Поръчай сега — 19,90 €</a>
+          <a class="btn btn-primary btn-lg" href="poruchka.html?povod=imen-den">Поръчай сега — 19,90 €</a>
           <a class="btn btn-ghost btn-lg" href="poruchka.html">Всички поводи</a>
         </div>
       </div>

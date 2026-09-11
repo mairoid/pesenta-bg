@@ -1917,6 +1917,15 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 .hero-late { margin: calc(-1 * var(--sp-4)) 0 var(--sp-4); font-size: var(--fs-sm); }
 .hero-late a { color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
 .hero-late a:hover { color: #f4f2ff; }
+/* Именните дни (11.09.2026): имената като чипове, но без действие; датата
+   в h1 идва от скрипта и е по-тиха от самото заглавие. */
+.imena { margin: var(--sp-4) 0; }
+.imena .chip { cursor: default; color: var(--text); }
+.imen-data { font-size: var(--fs-xl); font-weight: 700; margin: 0 0 var(--sp-2); }
+.imen-h1-data { color: var(--muted); font-weight: 500; }
+.imen-podarak, .imen-utre { color: var(--muted); }
+.imen-mesec h3 { margin-top: 1.4em; }
+.imen-mesec p { margin: 0 0 var(--sp-3); }
 
 
 /* gap махнат оттук — спацирането мина на margin-bottom на самите редове,
