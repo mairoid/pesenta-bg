@@ -83,6 +83,12 @@
       <p id="beleshka-ready" hidden>
         <a class="btn btn-primary" id="beleshka-link" href="#" target="_blank" rel="noopener">Отвори документа за продажбата</a>
       </p>
+      <!-- Картичката „песента пътува“ (11.09.2026): за подарък, който е за днес.
+           Идва със същия отговор от worker-а като документа. -->
+      <p id="kartichka-ready" hidden>
+        <a class="btn btn-ghost" id="kartichka-link" href="#" target="_blank" rel="noopener">Картичката за днес — печат или телефон</a>
+        <span class="hint" style="display:block;margin-top:.5rem;">„Песента ти пътува. Утре е при теб.“ — с името на човека и QR код към песента. Връчваш я днес, песента идва утре.</span>
+      </p>
       <p id="beleshka-late" hidden class="hint">Документът се издава до минута и пристига на имейла ти. Ако не дойде, пиши ни на <a href="mailto:sales@pesenta.bg" style="color:var(--orange);text-decoration:underline;">sales@pesenta.bg</a>.</p>
     </div>
 
@@ -127,6 +133,10 @@
       .then(function (d) {
         if (d && d.ready && d.url) {
           document.getElementById("beleshka-link").href = d.url;
+          if (d.kartichka) {
+            document.getElementById("kartichka-link").href = d.kartichka;
+            document.getElementById("kartichka-ready").hidden = false;
+          }
           wait.hidden = true;
           ready.hidden = false;
           return;

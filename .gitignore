@@ -8,3 +8,6 @@ marketing/
 
 # Ключовете към частното аудио в R2 — НИКОГА в публично repo
 .r2-kliuchove.txt
+
+# Локалните тайни на worker-а (wrangler dev) — никога в repo-то
+worker/.dev.vars

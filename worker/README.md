@@ -266,3 +266,29 @@ https://pesenta-nap.<subdomain>.workers.dev/beleshka/PSN-260803-0001?t=<токе
 Потвърдено от [страницата на НАП за алтернативния режим](https://nra.bg/wps/portal/nra/fiskalni-ustroystva-supto-i-e-magazini/page.turgovia-v-internet-i-e-magazini/page.lternativen-rejim-za-registrirane-i-otchitane-na-prodajbite),
 където двумерният баркод е изрично изброен сред реквизитите по чл. 52о, ал. 1.
 Построен и проверен с обратно декодиране.
+
+## Картичката „песента пътува“ (11.09.2026)
+
+За подарък, който е за днес: веднага след плащането клиентът получава картичка за
+печат (А6) или за телефона — „Песента ти пътува. Утре е при теб.“, името на получателя
+от брифа и QR код. Кодът е `src/kartichka.js`; маршрутите са в `index.js`.
+
+- `GET /kartichka/<поръчка>?t=…` — картичката; подписана като бележката, но с друг
+  префикс (`kartichka:`), така че линкът към документа не отваря картичката.
+- `GET /p/<поръчка>?t=…` — накъде сочи QR-ът. Докато `sales.page_url` е празен —
+  чакалня („песента пътува“); щом е зададен — 302 към страницата на песента.
+- `/beleshka-link` връща и `kartichka`; писмото с документа носи линк към нея.
+- `POST /admin/status` приема и `page_url` (само `https://pesenta.bg/…`).
+
+Преди първото качване базата иска една колона:
+
+```
+npx wrangler d1 execute pesenta-nap --remote --command "ALTER TABLE sales ADD COLUMN page_url TEXT"
+```
+
+При връчване на песента `page_url` се задава от админ панела или с
+`UPDATE sales SET page_url = ... WHERE order_no = ...` — от този момент картичката води
+право към песента.
+
+Локална проба: `.dev.vars` с тестов `AUDIT_TOKEN` (файлът е в .gitignore),
+`wrangler d1 execute pesenta-nap --local --file=schema.sql`, `wrangler dev --local`.

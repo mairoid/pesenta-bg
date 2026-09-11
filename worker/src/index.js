@@ -10,6 +10,8 @@
      GET  /audit/YYYY-MM       — одиторски XML за месеца (иска AUDIT_TOKEN)
      GET  /health              — жив ли е Worker-ът
      GET  /admin               — админ панел (иска AUDIT_TOKEN в заглавка)
+     GET  /kartichka/<поръчка>?t=… — картичката „песента пътува“ за печат/телефон (подписан линк)
+     GET  /p/<поръчка>?t=…      — чакалнята на песента; 302 към страницата ѝ, щом page_url е зададен
 
    Тайните се задават с `wrangler secret put`, никога в кода — виж README.md.
    ───────────────────────────────────────────────────────────────────── */
@@ -19,6 +21,7 @@
    не намират default export. Съдържанието ѝ не е пипано. */
 import qrcode from "./qrcode.cjs";
 import { ADMIN_HTML } from "./admin.js";
+import { renderKartichka, renderPesenChaka } from "./kartichka.js";
 
 export default {
   async fetch(request, env) {
@@ -41,6 +44,13 @@ export default {
     if (belMatch && request.method === "GET") {
       return handleBeleshka(request, env, belMatch[1]);
     }
+
+    /* Картичката и чакалнята на песента (kartichka.js). Подписани като
+       бележката — адресите носят името на получателя. */
+    const karMatch = url.pathname.match(/^\/kartichka\/([A-Za-z0-9\-]{1,64})$/);
+    if (karMatch && request.method === "GET") return handleKartichka(request, env, karMatch[1]);
+    const pMatch = url.pathname.match(/^\/p\/([A-Za-z0-9\-]{1,64})$/);
+    if (pMatch && request.method === "GET") return handlePesen(request, env, pMatch[1]);
 
     /* Страницата след плащане пита оттук къде е бележката на клиента.
        Отваря се от чужд домейн (pesenta.bg), затова носи CORS. */
@@ -411,6 +421,14 @@ async function handleAdminStatus(request, env) {
     await env.DB.prepare("UPDATE sales SET note = ? WHERE order_no = ?")
       .bind(b || null, orderNo).run();
   }
+  /* Адресът на страницата на песента — накъде води QR-ът на картичката.
+     Само наш адрес; празно = чакалнята. */
+  if (telo.page_url !== undefined) {
+    const u = String(telo.page_url).trim();
+    if (u && !/^https:\/\/pesenta\.bg\/[A-Za-z0-9\-._\/]+$/.test(u)) return json({ error: "невалиден адрес" }, 400);
+    await env.DB.prepare("UPDATE sales SET page_url = ? WHERE order_no = ?")
+      .bind(u || null, orderNo).run();
+  }
   return json({ ok: true });
 }
 
@@ -441,7 +459,8 @@ async function handleBeleshkaLink(request, env) {
      с „готово" — страницата ще му каже, че документът идва по имейл. */
   if (!url) return cors(json({ ready: false, reason: "линкът не е конфигуриран" }));
 
-  return cors(json({ ready: true, doc_n: padDoc(sale.doc_n), url: url }));
+  return cors(json({ ready: true, doc_n: padDoc(sale.doc_n), url: url,
+                     kartichka: await kartichkaUrl(env, sale.order_no) }));
 }
 
 /* Връща null, ако липсва нещо от нужното, вместо адрес, който после ще
@@ -450,6 +469,62 @@ async function beleshkaUrl(env, orderNo) {
   if (!env.AUDIT_TOKEN || !env.PUBLIC_BASE) return null;
   return env.PUBLIC_BASE + "/beleshka/" + encodeURIComponent(orderNo) +
          "?t=" + (await beleshkaToken(orderNo, env.AUDIT_TOKEN));
+}
+
+/* ============ Картичката „песента пътува“ (11.09.2026) ============ */
+
+async function kartichkaUrl(env, orderNo) {
+  if (!env.AUDIT_TOKEN || !env.PUBLIC_BASE) return null;
+  return env.PUBLIC_BASE + "/kartichka/" + encodeURIComponent(orderNo) +
+         "?t=" + (await kartichkaToken(orderNo, env.AUDIT_TOKEN));
+}
+async function pesenUrl(env, orderNo) {
+  if (!env.AUDIT_TOKEN || !env.PUBLIC_BASE) return null;
+  return env.PUBLIC_BASE + "/p/" + encodeURIComponent(orderNo) +
+         "?t=" + (await pesenToken(orderNo, env.AUDIT_TOKEN));
+}
+
+/* Името на получателя е в брифа (полето „Име или прякор на получателя“ от
+   пълната форма). При бързата текстова поръчка го няма — тогава картичката
+   оставя празен ред за писане на ръка. Никога не се гадае от разказа. */
+async function briefIme(env, orderNo) {
+  const b = await env.DB.prepare("SELECT poleta FROM briefs WHERE order_no = ?").bind(orderNo).first();
+  if (!b || !b.poleta) return "";
+  try {
+    const p = JSON.parse(b.poleta);
+    return String(p.recipient || "").replace(/\s+/g, " ").trim().slice(0, 40);
+  } catch (e) { return ""; }
+}
+
+async function handleKartichka(request, env, orderNo) {
+  if (!env.AUDIT_TOKEN) return new Response("AUDIT_TOKEN не е зададен", { status: 500 });
+  const given = new URL(request.url).searchParams.get("t") || "";
+  if (!timingSafeEqual(given, await kartichkaToken(orderNo, env.AUDIT_TOKEN))) return new Response("Забранено", { status: 403 });
+  const sale = await env.DB.prepare("SELECT * FROM sales WHERE order_no = ?").bind(orderNo).first();
+  if (!sale) return new Response("Няма такава поръчка", { status: 404 });
+  const ime = await briefIme(env, orderNo);
+  const qr = qrSvg(await pesenUrl(env, orderNo));
+  return new Response(renderKartichka(env, sale, ime, qr), {
+    headers: { "Content-Type": "text/html; charset=utf-8", "X-Robots-Tag": "noindex, nofollow", "Cache-Control": "no-store" }
+  });
+}
+
+/* Адресът от QR-а. Щом при връчването page_url е записан (админ панелът или
+   wrangler d1), картичката вече води направо към песента. no-store, за да не
+   остане чакалнята в кеша на телефона след това. */
+async function handlePesen(request, env, orderNo) {
+  if (!env.AUDIT_TOKEN) return new Response("AUDIT_TOKEN не е зададен", { status: 500 });
+  const given = new URL(request.url).searchParams.get("t") || "";
+  if (!timingSafeEqual(given, await pesenToken(orderNo, env.AUDIT_TOKEN))) return new Response("Забранено", { status: 403 });
+  const sale = await env.DB.prepare("SELECT * FROM sales WHERE order_no = ?").bind(orderNo).first();
+  if (!sale) return new Response("Няма такава поръчка", { status: 404 });
+  if (sale.page_url && /^https:\/\/pesenta\.bg\//.test(sale.page_url)) {
+    return new Response(null, { status: 302, headers: { Location: sale.page_url, "Cache-Control": "no-store" } });
+  }
+  const ime = await briefIme(env, orderNo);
+  return new Response(renderPesenChaka(env, sale, ime), {
+    headers: { "Content-Type": "text/html; charset=utf-8", "X-Robots-Tag": "noindex, nofollow", "Cache-Control": "no-store" }
+  });
 }
 
 /* Изпращане по имейл през Brevo — акаунтът вече се ползва за бюлетина,
@@ -465,6 +540,7 @@ async function sendBeleshkaEmail(env, sale) {
 
   const url = await beleshkaUrl(env, sale.order_no);
   if (!url) return { ok: false, error: "липсва AUDIT_TOKEN или PUBLIC_BASE — линкът не може да се подпише" };
+  const kart = await kartichkaUrl(env, sale.order_no);
 
   const body = {
     sender: { name: env.MAIL_SENDER_NAME || "Песента", email: env.MAIL_SENDER },
@@ -477,6 +553,9 @@ async function sendBeleshkaEmail(env, sale) {
       "<strong>" + xmlEscape(sale.order_no) + "</strong>:</p>" +
       '<p><a href="' + url + '">Отвори документа</a></p>' +
       "<p>Песента пристига до 48 часа на този имейл, заедно с текста.</p>" +
+      (kart ? '<p>Подаръкът е за днес? <a href="' + kart + '">Ето картичката</a> — за печат на А6 или ' +
+              'направо на телефона: „Песента ти пътува. Утре е при теб.“, с името на човека и QR код, ' +
+              'който води към песента, щом е готова.</p>' : "") +
       "<p>Песента · pesenta.bg</p>"
   };
 
@@ -764,15 +843,19 @@ export function buildAuditXml(env, year, month, sales, refunds) {
    номер на трансакция. Токенът се извежда от номера на поръчката с
    AUDIT_TOKEN, вместо да се пази в базата: така няма какво да изтече и
    няма миграция на схемата. */
-export async function beleshkaToken(orderNo, secret) {
+export async function signedToken(prefix, orderNo, secret) {
   const enc = new TextEncoder();
   const key = await crypto.subtle.importKey(
     "raw", enc.encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]
   );
-  const mac = await crypto.subtle.sign("HMAC", key, enc.encode("beleshka:" + orderNo));
+  const mac = await crypto.subtle.sign("HMAC", key, enc.encode(prefix + ":" + orderNo));
   return [...new Uint8Array(mac)].slice(0, 8)
     .map((b) => b.toString(16).padStart(2, "0")).join("");
 }
+/* Три различни префикса: линкът към бележката не отваря картичката и обратно. */
+export const beleshkaToken = (orderNo, secret) => signedToken("beleshka", orderNo, secret);
+export const kartichkaToken = (orderNo, secret) => signedToken("kartichka", orderNo, secret);
+export const pesenToken = (orderNo, secret) => signedToken("pesen", orderNo, secret);
 
 async function handleBeleshka(request, env, orderNo) {
   if (!env.AUDIT_TOKEN) return new Response("AUDIT_TOKEN не е зададен", { status: 500 });

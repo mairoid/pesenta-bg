@@ -119,3 +119,4 @@ CREATE INDEX IF NOT EXISTS idx_briefs_created ON briefs(created_at);
 -- не може да се изведе автоматично: изпращането става на ръка.
 --   ALTER TABLE sales ADD COLUMN delivered_at TEXT;   -- ISO, NULL = още не
 --   ALTER TABLE sales ADD COLUMN note         TEXT;   -- свободна бележка
+--   ALTER TABLE sales ADD COLUMN page_url     TEXT;   -- страницата на песента; накъде води QR-ът на картичката (11.09.2026)
