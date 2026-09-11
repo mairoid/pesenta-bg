@@ -31,7 +31,9 @@ const LOGO = `<svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 
   <text x="60" y="30" font-family="'Unbounded','Segoe UI',sans-serif" font-size="19" font-weight="700" fill="#F4F2FF">pesenta.bg</text>
 </svg>`;
 
-const FONTS = `<link rel="stylesheet" href="https://pesenta.bg/assets/css/fonts.css">`;
+/* Шрифтовете и иконата са от сайта; без иконата всяко отваряне дава 404 в конзолата. */
+const FONTS = `<link rel="stylesheet" href="https://pesenta.bg/assets/css/fonts.css">
+<link rel="icon" type="image/svg+xml" href="https://pesenta.bg/assets/img/favicon.svg">`;
 
 /* s — редът от sales; ime — получателят от брифа ("" ако няма);
    qr — SVG на QR кода; pUrl — адресът, към който сочи QR-ът (за резервния ред). */
