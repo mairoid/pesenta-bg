@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 <html lang="bg">
+<!-- Страница „за кого“ по таблицата в pesenta-flags/hukove-poslednia-moment.md (11.09.2026): брат.
+     Човекът не е повод — CTA без ?povod=.
+     Направена от pesenta-flags/hora/hora-gen.js по podarak-pesen-za-jubilej.html;
+     демо песните са три от публичните. Текстът е в hora-danni.js. -->
 <head>
   <meta charset="UTF-8">
   <!-- resizes-content: при отворена клавиатура layout-ът се свива, вместо да се
@@ -9,14 +13,34 @@
   <meta name="theme-color" content="#0b0a1a">
   <meta name="application-name" content="Песента">
   <meta name="apple-mobile-web-app-title" content="Песента">
-  <title>Общи условия | Pesenta.bg</title>
-  <meta name="description" content="Общи условия за ползване на Pesenta.bg — поръчка на персонализирани песни, плащане, право на отказ, авторски права и защита на личните данни.">
-  <link rel="canonical" href="https://pesenta.bg/usloviya.html">
+  <title>Подарък за брат: песен по поръчка | 19,90 € | Pesenta.bg</title>
+  <meta name="description" content="Подарък за брат от сестра или от брат — сантиментална или смешна песен по поръчка за вашата история, 19,90 €, готова до 48 часа.">
+  <link rel="canonical" href="https://pesenta.bg/podarak-za-brat.html">
   <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
   <!-- PNG резерви: Safari на iOS не ползва SVG фавикон, а apple-touch-icon
        не бива да е прозрачен — иначе iOS го слага върху черно. -->
   <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
   <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="bg_BG">
+  <meta property="og:site_name" content="Песента">
+  <meta property="og:title" content="Подарък за брат: песен по поръчка | Pesenta.bg">
+  <meta property="og:description" content="Подарък за брат — песен по поръчка от сестра или от брат, 19,90 €, готова до 48 часа.">
+  <meta property="og:url" content="https://pesenta.bg/podarak-za-brat.html">
+  <meta property="og:image" content="https://pesenta.bg/assets/img/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:type" content="image/jpeg">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Подарък за брат: песен по поръчка | Pesenta.bg">
+  <meta name="twitter:description" content="Брат ти не иска подарък. Иска да го споменеш в песен пред всички. 19,90 €.">
+  <meta name="twitter:image" content="https://pesenta.bg/assets/img/og-image.jpg">
+
+  <!-- Шрифтове -->
   <!-- Критичните (кирилски) шрифтове тръгват веднага, вместо да чакат CSS-а -->
   <link rel="preload" href="assets/fonts/unbounded-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
@@ -28,22 +52,35 @@
   <link rel="preload" href="assets/fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/css/fonts.css">
   <link rel="stylesheet" href="assets/css/style.css">
-  <style>
-    .legal { max-width: 780px; margin: 0 auto; padding: 56px 0 96px; }
-    .legal h1 { margin-bottom: 0.4em; }
-    .legal h2 { font-size: 1.25rem; margin-top: 2.2em; }
-    .legal p, .legal li { color: var(--muted); font-size: 0.98rem; }
-    .legal strong { color: var(--text); }
-    .legal .updated { font-size: 0.85rem; color: var(--muted); }
-    .legal .box {
-      padding: 1.2rem 1.4rem;
-      border-radius: var(--radius-sm);
-      background: rgba(255, 161, 77, 0.08);
-      border: 1px solid rgba(255, 161, 77, 0.35);
-      margin: 1.2rem 0;
+
+  <!-- Structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "serviceType": "Подарък за брат — песен по поръчка",
+    "name": "Подарък за брат: песен по поръчка",
+    "description": "Песен по поръчка като подарък за брат или братовчед — от сестра или от брат, сантиментална или с шега, по общата история.",
+    "provider": {
+      "@type": "Organization",
+      "name": "Песента",
+      "url": "https://pesenta.bg/",
+      "email": "sales@pesenta.bg"
+    },
+    "areaServed": "BG",
+    "audience": {
+      "@type": "Audience",
+      "audienceType": "Сестри и братя, търсещи подарък за брат си"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "19.90",
+      "priceCurrency": "EUR",
+      "url": "https://pesenta.bg/poruchka.html",
+      "availability": "https://schema.org/InStock"
     }
-    .legal .box p { margin: 0; color: var(--text); }
-  </style>
+  }
+  </script>
   <!-- Cloudflare Web Analytics. Без бисквитки и без localStorage — затова
        сайтът пак няма нужда от банер за съгласие. Смени Plausible, който
        зареждаше скрипт на всяка страница, но домейнът никога не беше
@@ -61,74 +98,120 @@
       <img src="assets/img/logo.svg" alt="Песента — песен по поръчка" width="190" height="44">
     </a>
     <nav class="main-nav open" aria-label="Основна навигация" style="display:flex;position:static;padding:0;background:none;border:none;box-shadow:none;">
-      <a href="index.html#ceni">Цени</a>
-      <a href="poruchka.html">Поръчай</a>
+      <a href="index.html">Начало</a>
+      <a class="btn btn-primary" href="poruchka.html">Поръчай песен</a>
     </nav>
   </div>
 </header>
 
-<main id="main" class="container legal">
-  <h1>Общи условия</h1>
-  <p class="updated">В сила от 05.07.2026 г.</p>
+<main id="main">
+  <article class="article" style="padding-bottom:0;">
+    <span class="kicker">Сантиментално, но по мъжки</span>
+    <h1>Подарък за <span class="grad-text">брат</span>: песен по поръчка</h1>
 
-  <h2>1. Кой стои зад Pesenta.bg</h2>
-  <p>Сайтът pesenta.bg се управлява от <strong>„БАУФИЗИК“ ЕООД</strong>, ЕИК 207427793, със седалище и адрес на управление: гр. Велико Търново 5000, ул. „Цанко Церковски“ № 39, офис 214, представлявано от управителя Аврам Русев Аврамов („ние“, „Изпълнителят“).</p>
-  <p>Контакт: <a href="mailto:sales@pesenta.bg">sales@pesenta.bg</a> · фирмен имейл: <a href="mailto:bauphysik@russev.net">bauphysik@russev.net</a></p>
+    <p>На брат си не купуваш подарък. Даваш му нещо, което ще извади на масата пред приятелите си: „Виж какво ми направи сестра ми.“ Песен по поръчка за брат е точно такова нещо — неговата история, с всички издънки и с всичко, за което си му длъжник.</p>
 
-  <h2>2. Какво предлагаме</h2>
-  <p>Изработваме <strong>персонализирани песни по индивидуална поръчка</strong> — авторски текст и музикална композиция, създадени специално по историята, имената и указанията, предоставени от клиента. Готовата песен се доставя по електронен път (MP3 файл и текстът) на посочения от клиента имейл. Песента е <strong>цифрово съдържание, което не се доставя на материален носител</strong>, изработено по индивидуални изисквания на клиента.</p>
+    <p>Разказваш ни за него, ние правим песента. Ако сте от тия, дето не си казвате нищо — правим я така, че да не му е неудобно: с шега отгоре и с истината отдолу.</p>
 
-  <h2>3. Поръчка и изпълнение</h2>
-  <ul>
-    <li>Поръчката се подава през формата на сайта и се <strong>заплаща предварително</strong>. Договорът се счита за сключен в момента на плащането.</li>
-    <li>По предоставената от теб информация изработваме песента — авторски текст и музикална композиция в избраните от теб стилове. Правим две версии и ти изпращаме по-добрата.</li>
-    <li>Заедно с песента получаваш <strong>право на една безплатна корекция</strong> в срок от 7 дни от доставката, ако нещо не отговаря на подадената от теб информация.</li>
-    <li>Доставяме финалните файлове (MP3 и текста) на посочения имейл и издаваме фактура.</li>
-    <li>Срокове: стандартно <strong>до 48 часа</strong>; с опция „Експрес“ — до 24 часа. Сроковете текат от постъпване на плащането и получаване на пълната информация по поръчката.</li>
-  </ul>
+    <h2>От сестра</h2>
+    <p>Сестра за брат — за това, че той е бил там, когато е трябвало, макар да сте се карали през останалото време. Най-силните песни за брат са от сестри.</p>
 
-  <h2>4. Цени и плащане</h2>
-  <ul>
-    <li>Цените са посочени в евро (EUR) и са крайни. ДДС не се начислява на основание чл. 113, ал. 9 във връзка с чл. 97а ЗДДС — дружеството е регистрирано по чл. 97а, а не по общия ред на закона.</li>
-    <li>Плащането се извършва <strong>предварително, при подаване на поръчката</strong> — с банкова карта онлайн или по банков път по издадената фактура. Изработката започва след постъпване на сумата и от този момент се броят сроковете за доставка.</li>
-    <li>Промоционалните кодове се прилагат към момента на заявката и важат при съответните условия на промоцията.</li>
-  </ul>
+    <h2>Сантиментална или смешна</h2>
+    <p>Може да е балада, може да е рап с изброени всичките му коли. Питаме те какъв е и правим песента в неговия стил, не в нашия.</p>
 
-  <h2>5. Право на отказ — важно</h2>
-  <div class="box">
-    <p><strong>За поръчаните песни не се прилага 14-дневното право на отказ</strong> по чл. 50 от Закона за защита на потребителите (ЗЗП), на основание чл. 57, т. 3 ЗЗП (стоки/услуги, изработени по индивидуална поръчка на потребителя) и чл. 57, т. 13 ЗЗП (цифрово съдържание, което не се доставя на материален носител, когато изпълнението е започнало с изричното предварително съгласие на потребителя и той е потвърдил, че знае, че губи правото си на отказ).</p>
-  </div>
-  <p>С подаването на поръчката и отбелязването на изричното съгласие във формата ти потвърждаваш, че: (а) искаш изпълнението да започне веднага след плащането; (б) знаеш, че губиш правото на отказ по чл. 50 ЗЗП; (в) песента се изработва специално за теб по подадените от теб указания и не подлежи на връщане или възстановяване на сумата след доставка. Без това изрично съгласие поръчка не се приема.</p>
-  <p><strong>Тъй като плащането е предварително, вместо право на отказ имаш следното:</strong></p>
-  <ul>
-    <li><strong>Безплатна корекция.</strong> Ако в текста или музиката нещо не отговаря на подадената от теб информация, съобщаваш ни в срок от 7 дни от доставката и коригираме песента без допълнително плащане.</li>
-    <li><strong>Възстановяване при неизпълнение от наша страна.</strong> Ако не доставим песента в срок или изобщо, платената сума се възстановява в пълен размер по същия платежен способ, в срок до 14 дни.</li>
-    <li><strong>Отказ преди започване на работа.</strong> Ако се откажеш, преди да сме започнали изработката, сумата се възстановява в пълен размер.</li>
-  </ul>
-  <p class="muted" style="font-size:0.9375rem;">Субективното „не ми хареса“ след доставка не е основание за възстановяване — песента е изработена по индивидуална поръчка. Затова питаме подробно във формата и предлагаме безплатната корекция.</p>
+    <h2>За братовчед</h2>
+    <p>Братовчедът е брат, с когото не се караш за наследство. Песен за братовчед е чест подарък за сватба и за кръгъл рожден ден — от всички братовчеди заедно.</p>
 
-  <h2>6. Съдържание на песента и отговорност на клиента</h2>
-  <ul>
-    <li>Ти отговаряш за верността на предоставената информация и декларираш, че имаш право да споделиш включените в историята лични данни и факти за трети лица.</li>
-    <li>Не изработваме съдържание, което е клеветническо, дискриминационно или нарушава права на трети лица. Запазваме си правото да откажем поръчка с такова съдържание, като те уведомим.</li>
-    <li><strong>Нецензурни/пиперливи изрази</strong> се включват в текста само ако изрично си отбелязал това във формата за поръчка (отметка „18+“). В такъв случай ти отговаряш песента да не се представя на лица под 18 г. и на неподходящи аудитории.</li>
-  </ul>
+    <div class="article-cta">
+      <p><strong>Ще каже, че е глупост. Ще я пусне на всеки, когото познава.</strong></p>
+      <a class="btn btn-primary" href="poruchka.html">Поръчай песен за брат — 19,90 €</a>
+    </div>
+  </article>
 
-  <h2>7. Авторски права и ползване</h2>
-  <ul>
-    <li>След пълно плащане получаваш <strong>неограничено право на лична употреба</strong> на песента: да я подаряваш, споделяш в социални мрежи и пускаш на лични и семейни събития.</li>
-    <li>Комерсиална употреба (реклами, монетизирано съдържание, препродажба) — само след отделна писмена уговорка с нас.</li>
-    <li>Ние не публикуваме твоята песен и не я използваме за промоционални цели без твоето изрично съгласие.</li>
-  </ul>
+  <!-- ДЕМО ПЕСНИ — три от публичните на началната; подаръчните не се ползват -->
+  <section class="section" id="demo">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="kicker">Чуй сам</span>
+        <h2>Песни за свой човек</h2>
+        <p>Така звучат песните между братя и приятели — направо, с усмивка, без захар.</p>
+      </div>
+      <div class="tracks-list">
+        <div class="track-row player reveal" data-src="assets/audio/za-teb-brate-vladi.mp3" role="button" tabindex="0" aria-label="Пусни „За теб, брате Влади“">
+          <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+          <img class="track-thumb" src="assets/img/cover-vladi.jpg" alt="" loading="lazy" width="600" height="600">
+          <div class="track-info">
+            <h3>За теб, брате Влади</h3>
+            <span>За приятел · песен-послание</span>
+          </div>
+          <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
+          <span class="time">4:27</span>
+        </div>
+        <div class="track-row player reveal" data-src="assets/audio/za-teb-brate-tutso.mp3" role="button" tabindex="0" aria-label="Пусни „За теб, брате Туцо“">
+          <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+          <img class="track-thumb" src="assets/img/cover-tutso.jpg" alt="" loading="lazy" width="600" height="600">
+          <div class="track-info">
+            <h3>За теб, брате Туцо</h3>
+            <span>За приятел · песен-послание</span>
+          </div>
+          <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
+          <span class="time">5:06</span>
+        </div>
+        <div class="track-row player reveal" data-src="assets/audio/rosen-abi.mp3" role="button" tabindex="0" aria-label="Пусни „Rosen Abi“">
+          <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+          <img class="track-thumb" src="assets/img/cover-rosen-abi.jpg" alt="" loading="lazy" width="600" height="600">
+          <div class="track-info">
+            <h3>Rosen Abi</h3>
+            <span>Турски вайб · песен за приятел</span>
+          </div>
+          <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
+          <span class="time">3:18</span>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  <h2>8. Лични данни</h2>
-  <p>Администратор на личните данни е „БАУФИЗИК“ ЕООД. Как точно събираме, ползваме и пазим данните ти — включително пълния списък с доставчици, сроковете за съхранение и правата ти по GDPR — е описано подробно в <a href="poveritelnost.html">Политиката за поверителност</a>, която е неразделна част от тези условия.</p>
+  <!-- FAQ -->
+  <section class="section" id="vaprosi">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="kicker">Питай смело</span>
+        <h2>Често задавани въпроси</h2>
+      </div>
+      <div class="faq-list reveal">
+        <details class="faq-item">
+          <summary>Какво да разкажа за брат ми?</summary>
+          <div class="faq-body">Как се е държал като малък, с какво се занимава сега, какви са му страстите — колата, футболът, риболовът. Една история, за която още се смеете. И едно нещо, което е направил за теб. Това стига.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Може ли да е шега от начало до край?</summary>
+          <div class="faq-body">Да, ако това е вашият език. Пиши какви са шегите между вас и ги слагаме вътре. Песента може да е роуст — но такъв, който после се слуша с удоволствие, не с неудобство.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Кога ще е готова?</summary>
+          <div class="faq-body">До 48 часа от поръчката, с експрес — до 24. Песента идва на имейла: MP3 и лична страница с текста, която се отваря на всеки телефон.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Колко струва?</summary>
+          <div class="faq-body">19,90 € за текст, песен и две версии, от които избираме по-добрата. Без абонамент и без доплащане за стил или език. Експресът до 24 часа е +9,90 €. Плащаш при поръчката с карта.</div>
+        </details>
+      </div>
+    </div>
+  </section>
 
-  <h2>9. Рекламации и спорове</h2>
-  <p>При проблем с получените файлове (технически дефект, липсващ файл) се свържи с нас — отстраняваме го безплатно. Като потребител можеш да подадеш жалба и до Комисията за защита на потребителите (<a href="https://kzp.bg" rel="noopener" target="_blank">kzp.bg</a>). Приложимо е българското право.</p>
-
-  <h2>10. Промени</h2>
-  <p>Можем да актуализираме тези условия, като публикуваме новата версия на тази страница с дата на влизане в сила. За вече направени поръчки важат условията към момента на заявката.</p>
+  <!-- CTA -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-band reveal">
+        <h2>Направи му песен. После се дръж, все едно нищо не е било</h2>
+        <p>Той ще направи същото. Така си говорите.</p>
+        <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+          <a class="btn btn-primary btn-lg" href="poruchka.html">Поръчай сега — 19,90 €</a>
+          <a class="btn btn-ghost btn-lg" href="poruchka.html">Всички поводи</a>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer class="site-footer">
@@ -214,7 +297,7 @@
   </div>
 </footer>
 
-<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+<script src="assets/js/main.js" defer></script>
 <!-- Плаващ бутон за връзка: Viber на мобилно (+359899456326 — ПЛЕЙСХОЛЪР номер, смени с реалния), имейл при десктоп -->
 <a class="float-contact float-contact--mobile" href="viber://chat?number=+359899456326" aria-label="Пиши ни във Viber">
   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
