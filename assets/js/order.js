@@ -865,6 +865,13 @@
     var povodChip = document.querySelector('#occasion-chips .chip[data-value="' + POVOD_MAP[urlPovod] + '"]');
     if (povodChip) povodChip.classList.add("selected");
   }
+  /* Експрес от URL: poruchka.html?express=1 — от страницата „В последния
+     момент“ (11.09.2026). Отметката се слага и се пуска change, за да се
+     преизчислят цената и срокът точно както при ръчно щракване. */
+  if (params.get("express") === "1") {
+    var expressOtUrl = document.getElementById("express");
+    if (expressOtUrl && !expressOtUrl.checked) { expressOtUrl.checked = true; expressOtUrl.dispatchEvent(new Event("change")); }
+  }
   /* Стил от URL: poruchka.html?stil=Рок
      Идва от чиповете в секция „19 стила" на началната страница — човек
      цъка стил и попада направо във формата, вместо да се лута.

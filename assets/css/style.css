@@ -1911,6 +1911,12 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 .hero-photo img,
 .hero-photo .hero-video { width: 100%; height: 100%; object-fit: cover; display: block; }
 .hero-sub { color: var(--muted); font-size: var(--fs-md); margin-top: var(--sp-4); }
+/* Тихият ред под бутоните на героя (11.09.2026): текстов линк, не бутон.
+   Отрицателният горен отстъп го вкарва в долното поле на .hero-ctas, така
+   че героят расте с един ред, не с два. */
+.hero-late { margin: calc(-1 * var(--sp-4)) 0 var(--sp-4); font-size: var(--fs-sm); }
+.hero-late a { color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
+.hero-late a:hover { color: #f4f2ff; }
 
 
 /* gap махнат оттук — спацирането мина на margin-bottom на самите редове,
