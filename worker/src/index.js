@@ -459,8 +459,11 @@ async function handleBeleshkaLink(request, env) {
      с „готово" — страницата ще му каже, че документът идва по имейл. */
   if (!url) return cors(json({ ready: false, reason: "линкът не е конфигуриран" }));
 
+  /* pesen: адресът, към който сочи QR-ът на картичката — за проверка и за
+     админ панела; сесията на Stripe е тайната, която го пази. */
   return cors(json({ ready: true, doc_n: padDoc(sale.doc_n), url: url,
-                     kartichka: await kartichkaUrl(env, sale.order_no) }));
+                     kartichka: await kartichkaUrl(env, sale.order_no),
+                     pesen: await pesenUrl(env, sale.order_no) }));
 }
 
 /* Връща null, ако липсва нещо от нужното, вместо адрес, който после ще
