@@ -11,3 +11,6 @@ marketing/
 
 # Локалните тайни на worker-а (wrangler dev) — никога в repo-то
 worker/.dev.vars
+
+# Профилите на headless Chrome, които пробите в tools/ си правят
+tools/cp-*/

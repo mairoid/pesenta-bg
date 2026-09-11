@@ -744,3 +744,34 @@
       });
   });
 })();
+
+/* ---------- Сгъваемият подвал (11.09.2026) ----------
+   Под 769 px трите големи групи са затворени, от 769 нагоре — отворени и
+   summary не реагира на клик (и на Enter/Space — те също пращат click).
+   Ако човек вече е отворил група на телефон в тази страница (data-tap),
+   смяната на размера не я пипа. Връзките са в HTML-а независимо от това. */
+(function () {
+  var folds = document.querySelectorAll(".footer-fold");
+  if (!folds.length || !window.matchMedia) return;
+  var mq = window.matchMedia("(min-width: 769px)");
+  function prilozhi() {
+    for (var i = 0; i < folds.length; i++) {
+      var d = folds[i];
+      if (mq.matches) d.open = true;
+      else if (!d.hasAttribute("data-tap")) d.open = false;
+    }
+  }
+  for (var j = 0; j < folds.length; j++) {
+    (function (d) {
+      var s = d.querySelector("summary");
+      if (!s) return;
+      s.addEventListener("click", function (e) {
+        if (mq.matches) { e.preventDefault(); return; }
+        d.setAttribute("data-tap", "1");
+      });
+    })(folds[j]);
+  }
+  prilozhi();
+  if (mq.addEventListener) mq.addEventListener("change", prilozhi);
+  else if (mq.addListener) mq.addListener(prilozhi);
+})();

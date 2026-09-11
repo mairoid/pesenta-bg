@@ -1277,6 +1277,28 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   .footer-grid a:hover { color: var(--text); }
 }
 .footer-col h3 { font-size: var(--fs-sm); text-transform: uppercase; letter-spacing: 0.12em; color: var(--text); }
+
+/* ---------- Сгъваемият подвал (11.09.2026) ----------
+   На телефон подвалът беше 2962 px: три колони по 20, 12 и 9 връзки. Трите са
+   <details class="footer-fold">: затворени под 769 px, отворени от 769 нагоре
+   (main.js слага и маха open; summary там не реагира и е без маркер). Връзките
+   са в HTML-а и в двата случая — нищо не се вкарва с JS, търсачките ги виждат.
+   Без трикове върху ::details-content — не е поддържано навсякъде.
+   summary изглежда точно като .footer-col h3, за да не се различават колоните. */
+.footer-fold summary {
+  font-family: var(--font-display); font-weight: 600; line-height: 1.15;
+  font-size: var(--fs-sm); text-transform: uppercase; letter-spacing: 0.12em; color: var(--text);
+  margin: 0 0 0.5em; display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3);
+  min-height: 44px; cursor: pointer; list-style: none; -webkit-tap-highlight-color: transparent;
+}
+.footer-fold summary::-webkit-details-marker { display: none; }
+.footer-fold summary::after { content: "▾"; font-size: 1.1em; transition: transform var(--dur-fast) var(--ease); }
+.footer-fold[open] summary::after { transform: rotate(180deg); }
+.footer-fold summary:focus-visible { outline: 2px solid var(--kekhlibar); outline-offset: 3px; }
+@media (min-width: 769px) {
+  .footer-fold summary { cursor: default; min-height: 0; }
+  .footer-fold summary::after { display: none; }
+}
 .footer-bottom { border-top: 1px solid var(--border); padding-top: var(--sp-6); font-size: var(--fs-sm); }
 
 /* ---------- Плаващ бутон за връзка (Viber/имейл) ----------
