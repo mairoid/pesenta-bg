@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="bg">
-<!-- Страница за повод по таблицата в pesenta-flags/povodi-razshirenie.md (07.09.2026).
-     Направена по podarak-pesen-za-jubilej.html; демо песните са три от публичните. -->
+<!-- Страница по календара (pesenta-flags/hukove-poslednia-moment.md, 11.09.2026): Коледа.
+     Направена от pesenta-flags/hora/hora-gen.js по podarak-pesen-za-jubilej.html;
+     демо песните са три от публичните. -->
 <head>
   <meta charset="UTF-8">
   <!-- resizes-content: при отворена клавиатура layout-ът се свива, вместо да се
@@ -11,9 +12,9 @@
   <meta name="theme-color" content="#0b0a1a">
   <meta name="application-name" content="Песента">
   <meta name="apple-mobile-web-app-title" content="Песента">
-  <title>Подарък за 18-и рожден ден: песен по поръчка | 19,90 € | Pesenta.bg</title>
-  <meta name="description" content="Търсиш подарък за 18-и рожден ден — за син, за дъщеря, за момче или момиче? Песен по поръчка за целия път дотук — 19,90 €, готова до 48 часа.">
-  <link rel="canonical" href="https://pesenta.bg/podarak-pesen-za-palnoletie.html">
+  <title>Подарък за Коледа: песен по поръчка | 19,90 € | Pesenta.bg</title>
+  <meta name="description" content="Подарък за Коледа на мъж, на жена, за цялото семейство или за приятелка — песен по поръчка по вашата история, 19,90 €, готова до 48 часа, идва по имейл.">
+  <link rel="canonical" href="https://pesenta.bg/podarak-za-koleda.html">
   <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
   <!-- PNG резерви: Safari на iOS не ползва SVG фавикон, а apple-touch-icon
        не бива да е прозрачен — иначе iOS го слага върху черно. -->
@@ -24,9 +25,9 @@
   <meta property="og:type" content="website">
   <meta property="og:locale" content="bg_BG">
   <meta property="og:site_name" content="Песента">
-  <meta property="og:title" content="Подарък за 18-и рожден ден: песен по поръчка | Pesenta.bg">
-  <meta property="og:description" content="Подарък за пълнолетие — песен по поръчка за 18-ия рожден ден, от родителите или от приятелите, 19,90 €, готова до 48 часа.">
-  <meta property="og:url" content="https://pesenta.bg/podarak-pesen-za-palnoletie.html">
+  <meta property="og:title" content="Подарък за Коледа: песен по поръчка | Pesenta.bg">
+  <meta property="og:description" content="Подарък за Коледа — песен по поръчка по вашата история, 19,90 €, готова до 48 часа.">
+  <meta property="og:url" content="https://pesenta.bg/podarak-za-koleda.html">
   <meta property="og:image" content="https://pesenta.bg/assets/img/og-image.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -34,8 +35,8 @@
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Подарък за 18-и рожден ден: песен по поръчка | Pesenta.bg">
-  <meta name="twitter:description" content="Осемнайсет, книжката в джоба — и песен за целия път дотук. За 19,90 €, готова до 48 часа.">
+  <meta name="twitter:title" content="Подарък за Коледа: песен по поръчка | Pesenta.bg">
+  <meta name="twitter:description" content="Под елхата има чорапи. Песента с името му е подаръкът, за който ще се говори на Нова година. 19,90 €.">
   <meta name="twitter:image" content="https://pesenta.bg/assets/img/og-image.jpg">
 
   <!-- Шрифтове -->
@@ -56,9 +57,9 @@
   {
     "@context": "https://schema.org",
     "@type": "Service",
-    "serviceType": "Подарък за 18-и рожден ден — песен по поръчка",
-    "name": "Подарък за 18-и рожден ден: песен по поръчка",
-    "description": "Песен по поръчка за пълнолетие — за сина или дъщерята, за момче или момиче, с историите от осемнайсетте години и с това, което родителите искат да кажат.",
+    "serviceType": "Подарък за Коледа — песен по поръчка",
+    "name": "Подарък за Коледа: песен по поръчка",
+    "description": "Песен по поръчка като подарък за Коледа — за мъж, жена, семейство или приятелка, по историята на човека.",
     "provider": {
       "@type": "Organization",
       "name": "Песента",
@@ -68,13 +69,13 @@
     "areaServed": "BG",
     "audience": {
       "@type": "Audience",
-      "audienceType": "Родители, роднини и приятели на навършващи 18"
+      "audienceType": "Хора, търсещи коледен подарък за близък"
     },
     "offers": {
       "@type": "Offer",
       "price": "19.90",
       "priceCurrency": "EUR",
-      "url": "https://pesenta.bg/poruchka.html?povod=palnoletie",
+      "url": "https://pesenta.bg/poruchka.html",
       "availability": "https://schema.org/InStock"
     }
   }
@@ -97,30 +98,35 @@
     </a>
     <nav class="main-nav open" aria-label="Основна навигация" style="display:flex;position:static;padding:0;background:none;border:none;box-shadow:none;">
       <a href="index.html">Начало</a>
-      <a class="btn btn-primary" href="poruchka.html?povod=palnoletie">Поръчай песен</a>
+      <a class="btn btn-primary" href="poruchka.html">Поръчай песен</a>
     </nav>
   </div>
 </header>
 
 <main id="main">
   <article class="article" style="padding-bottom:0;">
-    <span class="kicker">Осемнайсет, и целият път дотук</span>
-    <h1>Подарък за <span class="grad-text">18-и рожден ден</span>: песен по поръчка</h1>
+    <span class="kicker">Под елхата, без кутия</span>
+    <h1>Подарък за <span class="grad-text">Коледа</span>: песен по поръчка</h1>
 
-    <p>Осемнайсет. Книжката е в джоба, ключовете от колата се обсъждат, а родителите изведнъж имат възрастен вкъщи. Подарък за 18-и рожден ден, който не е нито пари в плик, нито поредният телефон, е песен по поръчка — за целия път от първата стъпка до първата книжка.</p>
+    <p>Коледа е празникът с най-много подаръци и най-малко изненади: чорапи, парфюм, ваучер, нещо за кухнята. Подарък за Коледа, който не е в кутия, е песен по поръчка — за човека, с неговата история, пусната на масата на Бъдни вечер, когато всички са седнали.</p>
 
-    <p>Разкажи ни за него или за нея — как беше като малък, с какво ви влудяваше, коя е историята, която семейството разказва на всяка сбирка, кои са приятелите, които ще са на партито. Може да е от родителите, от баба и дядо, от брата или сестрата, или от компанията. От тези детайли пишем текст, който ще го накара да се направи, че не му пука, и да го пусне пак сам вечерта.</p>
+    <p>Разказваш ни за него, ние пишем текста и правим песента. Идва по имейл — нищо не зависи от куриера в най-натоварената му седмица.</p>
 
-    <p>Стилът е неговият, не вашият: рап, поп, нещо за партито след официалната част. За дъщеря вероятно ще искате друго, отколкото за син — казвате ни, ние правим.</p>
+    <h2>На мъж</h2>
+    <p>Мъжът, който „нищо не иска“, получава чорапи всяка година. Песен за него — за работата, за колата, за шегите — ще пусне в колата на 26 декември и ще се прави, че не е трогнат. Ако е съпругът ти, има и страница <a href="podarak-za-saprug.html">подарък за съпруг</a>.</p>
 
-    <p>Готова до 48 часа — навреме за партито, за семейната вечеря или за сутринта, в която ще я намери пусната в кухнята.</p>
+    <h2>На жена</h2>
+    <p>Тя е организирала Коледата: вечерята, подаръците на всички, гостите. Песента е за това — за нещата, които прави и никой не вижда. За жена ти — <a href="podarak-za-sapruga.html">подарък за съпруга</a>; за майка ти — <a href="podarak-pesen-za-mama.html">подарък за мама</a>.</p>
 
-    <!-- za-kogo -->
-    <p>Ако пълнолетният е брат или сестра: <a href="podarak-za-brat.html">подарък за брат</a>, <a href="podarak-za-sestra.html">подарък за сестра</a>.</p>
+    <h2>Семеен подарък под елхата</h2>
+    <p>Песен от всички за всички: за родителите от децата, за баба и дядо от внуците, за цялото семейство за годината, която минава. Пуска се след вечерята и е единственият подарък, за който на другия ден още се говори.</p>
+
+    <h2>За приятелка</h2>
+    <p>Коледата с приятелките е преди самата Коледа — вечерята, на която се разменят подаръци. Песен за най-добрата приятелка е подаръкът, който тя ще пусне на всички останали още на масата. Виж и <a href="podarak-za-priyatelka.html">подарък за приятелка</a>.</p>
 
     <div class="article-cta">
-      <p><strong>Пликът с парите се харчи за седмица. Песента ще я пусне на своите деца.</strong></p>
-      <a class="btn btn-primary" href="poruchka.html?povod=palnoletie">Поръчай песен за 18-и рожден ден — 19,90 €</a>
+      <p><strong>Чорапите се носят. Песента се пуска всяка Коледа.</strong></p>
+      <a class="btn btn-primary" href="poruchka.html">Поръчай песен за Коледа — 19,90 €</a>
     </div>
   </article>
 
@@ -129,39 +135,39 @@
     <div class="container">
       <div class="section-head reveal">
         <span class="kicker">Чуй сам</span>
-        <h2>Песни за партито и за след него</h2>
-        <p>Шега за компанията, носталгия за родителите и послание, което остава — трите тона, които работят за пълнолетие.</p>
+        <h2>Песни за масата на Бъдни вечер</h2>
+        <p>Топъл тон, с усмивка — така звучи песен под елхата.</p>
       </div>
       <div class="tracks-list">
-        <div class="track-row player reveal" data-src="assets/audio/habibi-rusi.mp3" role="button" tabindex="0" aria-label="Пусни „Habibi Rusi“">
+        <div class="track-row player reveal" data-src="assets/audio/za-teb-brate-tutso.mp3" role="button" tabindex="0" aria-label="Пусни „За теб, брате Туцо“">
           <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
-          <img class="track-thumb" src="assets/img/cover-habibi.jpg" alt="" loading="lazy" width="600" height="600">
+          <img class="track-thumb" src="assets/img/cover-tutso.jpg" alt="" loading="lazy" width="600" height="600">
           <div class="track-info">
-            <h3>Habibi Rusi</h3>
-            <span>Шега за приятел · ориенталски вайб</span>
-          </div>
-          <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
-          <span class="time">2:01</span>
-        </div>
-        <div class="track-row player reveal" data-src="assets/audio/veche-nyama-koy.mp3" role="button" tabindex="0" aria-label="Пусни „Вече няма кой…“">
-          <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
-          <img class="track-thumb" src="assets/img/cover-veche-nyama.jpg" alt="" loading="lazy" width="600" height="600">
-          <div class="track-info">
-            <h3>Вече няма кой…</h3>
-            <span>Носталгия · след ергенското</span>
-          </div>
-          <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
-          <span class="time">3:59</span>
-        </div>
-        <div class="track-row player reveal" data-src="assets/audio/za-teb-brate-vladi.mp3" role="button" tabindex="0" aria-label="Пусни „За теб, брате Влади“">
-          <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
-          <img class="track-thumb" src="assets/img/cover-vladi.jpg" alt="" loading="lazy" width="600" height="600">
-          <div class="track-info">
-            <h3>За теб, брате Влади</h3>
+            <h3>За теб, брате Туцо</h3>
             <span>За приятел · песен-послание</span>
           </div>
           <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
-          <span class="time">4:27</span>
+          <span class="time">5:06</span>
+        </div>
+        <div class="track-row player reveal" data-src="assets/audio/angel-s-torbata.mp3" role="button" tabindex="0" aria-label="Пусни „Ангел с торбата“">
+          <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+          <img class="track-thumb" src="assets/img/cover-angel.jpg" alt="" loading="lazy" width="600" height="600">
+          <div class="track-info">
+            <h3>Ангел с торбата</h3>
+            <span>За Пламен и Ангел · <a href="pesni/angel-s-torbata.html">виж песента →</a></span>
+          </div>
+          <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
+          <span class="time">3:38</span>
+        </div>
+        <div class="track-row player reveal" data-src="assets/audio/rocco-di-catania.mp3" role="button" tabindex="0" aria-label="Пусни „Rocco di Catania“">
+          <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+          <img class="track-thumb" src="assets/img/cover-rocco.jpg" alt="" loading="lazy" width="600" height="600">
+          <div class="track-info">
+            <h3>Rocco di Catania</h3>
+            <span>Италиански вайб · серенада с усмивка</span>
+          </div>
+          <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
+          <span class="time">3:34</span>
         </div>
       </div>
     </div>
@@ -176,20 +182,20 @@
       </div>
       <div class="faq-list reveal">
         <details class="faq-item">
-          <summary>Партито е в събота — ще стигне ли?</summary>
-          <div class="faq-body">До 48 часа от поръчката, значи да, ако поръчаш до четвъртък. Песента идва на имейла — MP3 и страница за слушане и споделяне. За по-спешно във формата има експресна изработка.</div>
+          <summary>Кога най-късно да поръчам за Коледа?</summary>
+          <div class="faq-body">Стандартният срок е до 48 часа, експресът — до 24. Поръчка до 22 декември е при теб навреме; с експрес — и на 23-ти. Пред празниците не чакай последния ден — пиши ни, ако е спешно.</div>
         </details>
         <details class="faq-item">
-          <summary>Какво да разкажем за детето си?</summary>
-          <div class="faq-body">Как е било като малко, прякорите, страховете и победите, приятелите, първата книжка, каквото ви разсмива и каквото ви разплаква. Три-четири конкретни истории стигат — от тях песента става за него, не за всеки на 18.</div>
+          <summary>Може ли песента да е за цялото семейство?</summary>
+          <div class="faq-body">Да, и това е най-коледният вариант: от децата за родителите, от внуците за баба и дядо, или за всички за годината, която минава. Казваш ни от кого е и за кого, с имената.</div>
         </details>
         <details class="faq-item">
-          <summary>Може ли да е от приятелите, а не от родителите?</summary>
-          <div class="faq-body">Да — компанията често поръчва песен-шега за партито, с вътрешните истории и имената на всички. Казвате от чие име е, и текстът говори от него. Един човек попълва формата.</div>
+          <summary>Как се връчва под елхата, като няма кутия?</summary>
+          <div class="faq-body">Три начина: пускаш я на масата от телефона или колоната; слагаш в плик картичка с линка към страницата на песента; записваш я на флашка и я увиваш като всеки друг подарък.</div>
         </details>
         <details class="faq-item">
           <summary>Колко струва?</summary>
-          <div class="faq-body">19,90 € за текст, песен и две версии, от които избираме по-добрата. Без абонамент и без доплащане за стил или език. Плащаш при поръчката с карта.</div>
+          <div class="faq-body">19,90 € за текст, песен и две версии, от които избираме по-добрата. Без абонамент и без доплащане за стил или език. Експресът до 24 часа е +9,90 €. Плащаш при поръчката с карта.</div>
         </details>
       </div>
     </div>
@@ -199,10 +205,10 @@
   <section class="section">
     <div class="container">
       <div class="cta-band reveal">
-        <h2>На осемнайсет — песен за всичко дотук</h2>
-        <p>Телефонът ще се смени догодина. Песента остава от родителите.</p>
+        <h2>Тази Коледа — подарък, който не е в кутия</h2>
+        <p>Историята на човека, пусната на масата. До 48 часа, по имейл.</p>
         <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
-          <a class="btn btn-primary btn-lg" href="poruchka.html?povod=palnoletie">Поръчай сега — 19,90 €</a>
+          <a class="btn btn-primary btn-lg" href="poruchka.html">Поръчай сега — 19,90 €</a>
           <a class="btn btn-ghost btn-lg" href="poruchka.html">Всички поводи</a>
         </div>
       </div>
