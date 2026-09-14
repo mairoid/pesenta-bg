@@ -1484,62 +1484,6 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 
 .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4); }
 
-/* Гласова бърза поръчка */
-
-.fast-voice {
-  position: relative;
-  padding: var(--sp-6) var(--sp-6) var(--sp-6);
-  border-radius: var(--radius);
-  background: linear-gradient(160deg, rgba(255, 77, 141, 0.1), rgba(255, 161, 77, 0.08)), var(--surface);
-  border: 1px solid rgba(255, 77, 141, 0.4);
-  box-shadow: var(--shadow);
-  margin-bottom: var(--sp-10);
-}
-.fast-voice-head h2 { margin-bottom: var(--sp-1); font-size: var(--fs-2xl); }
-.fast-voice-head p { color: var(--muted); font-size: var(--fs-md); margin: 0 0 var(--sp-6); }
-
-.fast-or {
-  text-align: center;
-  margin-top: var(--sp-6);
-  position: relative;
-}
-.fast-or::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  border-top: 1px dashed var(--border);
-}
-.fast-or span {
-  position: relative;
-  padding: 0 var(--sp-4);
-  background: #17142e;
-  color: var(--muted);
-  font-size: var(--fs-sm);
-}
-
-/* Изход към писмената форма, ГОРЕ до гласовия бутон.
-   Разделителят .fast-or стои между двете форми, но на телефон е на
-   1720px от началото — замерено при 390px екран, гласовата секция е
-   1306px висока. Тоест човек, дошъл от бутона „Поръчай“ на началната
-   страница, вижда само гласовата и трябва да скролва 876px, за да
-   разбере, че има и писмена. Затова указанието е и тук, отгоре.
-   Дискретно е нарочно — не бива да се бори с гласовия бутон. */
-.prefer-write {
-  margin-top: var(--sp-3);
-  font-size: var(--fs-sm);
-  color: var(--muted);
-}
-.prefer-write a {
-  color: var(--orange);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-@media (hover: hover) {
-  .prefer-write a:hover { color: var(--text); }
-}
-
 /* Гласово съобщение */
 
 .voice-box {

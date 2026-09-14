@@ -442,7 +442,7 @@
     function stopEverything() {
       recording = false;
       recBtn.classList.remove("recording");
-      label.textContent = voiceBlob ? "Запиши наново" : "Разкажи с глас";
+      label.textContent = voiceBlob ? "Запиши наново" : "Разкажи с гласово";
       if (recognition) { try { recognition.stop(); } catch (e) {} }
       if (mediaRecorder && mediaRecorder.state !== "inactive") { try { mediaRecorder.stop(); } catch (e) {} }
       if (stream) { stream.getTracks().forEach(function (t) { t.stop(); }); stream = null; }
@@ -523,14 +523,14 @@
       voiceBlob = null;
       if (audioEl.src) { URL.revokeObjectURL(audioEl.src); audioEl.removeAttribute("src"); }
       playWrap.hidden = true;
-      label.textContent = "Разкажи с глас";
+      label.textContent = "Разкажи с гласово";
       setStatus("Записът е изтрит. Можеш да запишеш наново или да пишеш ръчно.", null);
     });
   })();
 
-  /* ============ Гласова бърза поръчка ============ */
-  /* Изнесена в assets/js/voice-order.js, защото върви и в hero-а на
-     началната страница. Тук остава само съветникът от три стъпки. */
+  /* Гласовата бърза поръчка (voice-order.js, секцията #glas) отпадна на
+     14.09.2026 по решение на Мирослав. Гласът остана само като „Разкажи с
+     гласово“ в полето за историята — кодът е по-горе, самостоятелен. */
 
   /* ============ Claude бриф (за композиране на текста и стила) ============ */
 

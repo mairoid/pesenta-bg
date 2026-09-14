@@ -485,7 +485,6 @@
      паралелно. Всеки елемент, чийто видим текст съдържа „Поръчай“ (навигация,
      цени, CTA-тата), плюс footer линкът към poruchka.html. */
   document.querySelectorAll("a, button").forEach(function (el) {
-    if (el.id === "fast-rec") return; /* стейтфул бутон — проследява се отделно по-долу */
     var label = (el.textContent || "").replace(/\s+/g, " ").trim();
     if (!/Поръчай/.test(label)) return;
     el.addEventListener("click", function () {
@@ -493,21 +492,6 @@
     });
   });
 
-  /* Hero бутонът за гласова поръчка е стейтфул (сменя надпис/клас между
-     „Поръчай с глас“ → „Спри записа“ → „Запиши наново“, логиката е в
-     voice-order.js). Слушателят тук е ДОБАВЪЧЕН и НЕ променя нищо в
-     voice-order.js; тъй като main.js се зарежда преди voice-order.js,
-     този клик стига до нас първи, докато класът все още не е сменен —
-     затова classList.contains("recording") надеждно различава „старт на
-     запис“ (истинската CTA стъпка) от „спри записа“/„запиши наново“. */
-  var heroRecBtn = document.getElementById("fast-rec");
-  if (heroRecBtn) {
-    heroRecBtn.addEventListener("click", function () {
-      if (!heroRecBtn.classList.contains("recording")) {
-        trackPlausible("Order CTA Click", { label: "Поръчай с глас (hero запис)" });
-      }
-    });
-  }
 })();
 
 /* ---------- Музикален поздрав: тих припев на началната страница ----------
