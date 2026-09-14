@@ -1299,6 +1299,32 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   .footer-fold summary { cursor: default; min-height: 0; }
   .footer-fold summary::after { display: none; }
 }
+
+/* На компютър (≥1024 px) подвалът е решетка на два реда, не шест колони, които
+   не се събират в 1120 px и падат една под друга (14.09.2026). Горе: логото,
+   Навигация, Календар, Контакти; долу: Поводи и За кого, всеки в две подколони.
+   Връзките са същите и в същия ред в HTML-а — само мястото на екрана е друго
+   (grid-area по nth-child; редът на колоните е еднакъв във всичките 64 файла).
+   Редовете са малко по-сбити, само тук. */
+@media (min-width: 1024px) {
+  .footer-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-areas: "logo nav kalendar kont" "povodi povodi zakogo zakogo";
+    gap: var(--sp-6) var(--sp-8);
+    align-items: start;
+  }
+  .footer-col:nth-child(1) { grid-area: logo; }
+  .footer-col:nth-child(2) { grid-area: nav; }
+  .footer-col:nth-child(3) { grid-area: povodi; }
+  .footer-col:nth-child(4) { grid-area: zakogo; }
+  .footer-col:nth-child(5) { grid-area: kalendar; }
+  .footer-col:nth-child(6) { grid-area: kont; }
+  .footer-col:nth-child(3) .footer-links,
+  .footer-col:nth-child(4) .footer-links { column-count: 2; column-gap: var(--sp-8); }
+  .footer-links a { break-inside: avoid; }
+  .footer-grid a { padding: 2px 0; line-height: 1.45; }
+}
 .footer-bottom { border-top: 1px solid var(--border); padding-top: var(--sp-6); font-size: var(--fs-sm); }
 
 /* ---------- Плаващ бутон за връзка (Viber/имейл) ----------

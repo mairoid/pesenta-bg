@@ -46,7 +46,16 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   const evalJS = async expr => { const r = await send("Runtime.evaluate", { expression: expr, returnByValue: true, awaitPromise: true }); if (r.exceptionDetails) throw new Error("eval: " + JSON.stringify(r.exceptionDetails).slice(0, 200)); return r.result.value; };
   await send("Page.enable"); await send("Runtime.enable"); await send("Log.enable");
   const telefon = async () => { mobilen = true; await send("Emulation.setDeviceMetricsOverride", { width: 375, height: 812, deviceScaleFactor: 1, mobile: true }); await send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 }); };
-  const desktop = async () => { mobilen = false; await send("Emulation.setDeviceMetricsOverride", { width: 1366, height: 900, deviceScaleFactor: 1, mobile: false }); await send("Emulation.setTouchEmulationEnabled", { enabled: false }); };
+  const desktop = async (w) => { mobilen = false; await send("Emulation.setDeviceMetricsOverride", { width: w || 1366, height: 900, deviceScaleFactor: 1, mobile: false }); await send("Emulation.setTouchEmulationEnabled", { enabled: false }); };
+  /* снимка на самия подвал (clip по елемента), за да се види как е подреден */
+  const OUT = process.argv[3] || null;
+  const snimkaPodval = async (ime) => {
+    if (!OUT) return;
+    const b = await evalJS(`(function(){var f=document.querySelector(".site-footer");f.scrollIntoView({behavior:"instant"});var r=f.getBoundingClientRect();return {x:0,y:Math.max(0,r.top+window.scrollY),w:document.documentElement.clientWidth,h:Math.min(r.height,3000)}})()`);
+    await sleep(300);
+    const r = await send("Page.captureScreenshot", { format: "png", captureBeyondViewport: true, clip: { x: b.x, y: b.y, width: b.w, height: b.h, scale: 1 } });
+    require("fs").writeFileSync(path.join(OUT, ime), Buffer.from(r.data, "base64"));
+  };
   const otvori = async () => { const l = waitFor("Page.loadEventFired"); await send("Page.navigate", { url: URL }); await l; await sleep(400); };
   const sastoyanie = () => evalJS(`(function(){var f=document.querySelector(".site-footer");var d=[].slice.call(document.querySelectorAll(".footer-fold"));return {podval:Math.round(f.getBoundingClientRect().height),stranica:document.documentElement.scrollHeight,otvoreni:d.filter(function(x){return x.open}).length,vsichki:d.length,vrazki:f.querySelectorAll("a[href]").length,tap:d.filter(function(x){return x.hasAttribute("data-tap")}).length}})()`);
   /* Скролът на сайта е плавен: координатите се мерят СЛЕД като спре, иначе
@@ -84,12 +93,22 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   const otvorenaSled = await evalJS(`(function(){var d=document.querySelector(".footer-fold[data-tap]");return d&&d.open&&d.querySelector("a").getBoundingClientRect().height>0})()`);
   ok("375: връзките в отворената група се виждат", otvorenaSled === true);
 
+  await snimkaPodval("podval-375.png");
+
   /* 3) десктоп */
   await desktop(); await otvori(); s = await sastoyanie();
   ok("1366: трите групи са отворени", s.otvoreni === 3, s.otvoreni + "/3");
   const klD = await klik("За кого"); s = await sastoyanie();
   ok("1366: клик на summary не затваря", klD && s.otvoreni === 3 && s.tap === 0, s.otvoreni + "/3 отворени, tap=" + s.tap);
-  ok("1366: подвал " + s.podval + " px", true);
+  const prep = await evalJS(`document.documentElement.scrollWidth - document.documentElement.clientWidth`);
+  ok("1366: подвал " + s.podval + " px, без хоризонтално препълване", prep === 0, prep ? "препълване " + prep + " px" : undefined);
+  await snimkaPodval("podval-1366.png");
+  for (const w of [1200, 1024]) {
+    await desktop(w); await sleep(300); const t = await sastoyanie();
+    const pr = await evalJS(`document.documentElement.scrollWidth - document.documentElement.clientWidth`);
+    ok(w + ": подвал " + t.podval + " px, " + t.otvoreni + "/3 отворени, без препълване", t.otvoreni === 3 && pr === 0, pr ? "препълване " + pr + " px" : undefined);
+  }
+  await desktop(); await sleep(200);
 
   /* 4) смяна на размера без презареждане */
   await telefon(); await sleep(400); s = await sastoyanie();
