@@ -24,7 +24,8 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 (async () => {
   /* 1) статично */
-  const html = await getText(URL);
+  /* fetch, не http.get — за да работи и срещу живия сайт (https). */
+  const html = await (await fetch(URL, { headers: { "Cache-Control": "no-cache" } })).text();
   const podvalHtml = html.slice(html.indexOf('<footer class="site-footer">'), html.indexOf("</footer>"));
   const vHtml = (podvalHtml.match(/<a href/g) || []).length;
   const detHtml = (podvalHtml.match(/<details class="footer-fold">/g) || []).length;
