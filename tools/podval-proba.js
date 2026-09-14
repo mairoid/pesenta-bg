@@ -45,6 +45,9 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   const waitFor = method => new Promise(res => waiters.push({ method, res }));
   const evalJS = async expr => { const r = await send("Runtime.evaluate", { expression: expr, returnByValue: true, awaitPromise: true }); if (r.exceptionDetails) throw new Error("eval: " + JSON.stringify(r.exceptionDetails).slice(0, 200)); return r.result.value; };
   await send("Page.enable"); await send("Runtime.enable"); await send("Log.enable");
+  /* Профилът на Chrome е траен (cp-podval) и кешира style.css от предишното
+     пускане — на 14.09 показа стария подвал, докато сървърът вече даваше новия. */
+  await send("Network.enable"); await send("Network.setCacheDisabled", { cacheDisabled: true });
   const telefon = async () => { mobilen = true; await send("Emulation.setDeviceMetricsOverride", { width: 375, height: 812, deviceScaleFactor: 1, mobile: true }); await send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 }); };
   const desktop = async (w) => { mobilen = false; await send("Emulation.setDeviceMetricsOverride", { width: w || 1366, height: 900, deviceScaleFactor: 1, mobile: false }); await send("Emulation.setTouchEmulationEnabled", { enabled: false }); };
   /* снимка на самия подвал (clip по елемента), за да се види как е подреден */
