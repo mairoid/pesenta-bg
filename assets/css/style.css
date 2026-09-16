@@ -1278,26 +1278,40 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 }
 .footer-col h3 { font-size: var(--fs-sm); text-transform: uppercase; letter-spacing: 0.12em; color: var(--text); }
 
-/* ---------- Сгъваемият подвал (11.09.2026) ----------
-   На телефон подвалът беше 2962 px: три колони по 20, 12 и 9 връзки. Трите са
-   <details class="footer-fold">: затворени под 769 px, отворени от 769 нагоре
-   (main.js слага и маха open; summary там не реагира и е без маркер). Връзките
-   са в HTML-а и в двата случая — нищо не се вкарва с JS, търсачките ги виждат.
-   Без трикове върху ::details-content — не е поддържано навсякъде.
-   summary изглежда точно като .footer-col h3, за да не се различават колоните. */
+/* ---------- Сгъваемият подвал (11.09 / 16.09.2026) ----------
+   На телефон подвалът беше 2962 px. Петте колони с връзки са <details
+   class="footer-fold">: под 769 px — една колона, всички затворени, тънка
+   линия между групите, summary на цял ред с цел ≥ 44 px; от 769 нагоре —
+   отворени, без стрелка, summary не реагира (main.js слага и маха open;
+   data-tap пази отворената с ръка при смяна на размера). Логото и описанието
+   не са details. Връзките са в HTML-а и в двата случая — нищо не се вкарва с
+   JS. Без трикове върху ::details-content — не е поддържано навсякъде.
+   summary изглежда точно като досегашния .footer-col h3. */
 .footer-fold summary {
   font-family: var(--font-display); font-weight: 600; line-height: 1.15;
   font-size: var(--fs-sm); text-transform: uppercase; letter-spacing: 0.12em; color: var(--text);
-  margin: 0 0 0.5em; display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3);
-  min-height: 44px; cursor: pointer; list-style: none; -webkit-tap-highlight-color: transparent;
+  margin: 0 0 0.5em; display: flex; align-items: center; gap: 0.35em;
+  cursor: pointer; list-style: none; -webkit-tap-highlight-color: transparent;
 }
 .footer-fold summary::-webkit-details-marker { display: none; }
-.footer-fold summary::after { content: "▾"; font-size: 1.1em; transition: transform var(--dur-fast) var(--ease); }
-.footer-fold[open] summary::after { transform: rotate(180deg); }
+.footer-fold summary .arrow { margin-left: auto; font-size: 1.1em; transition: transform var(--dur-fast) var(--ease); }
+.footer-fold[open] summary .arrow { transform: rotate(180deg); }
 .footer-fold summary:focus-visible { outline: 2px solid var(--kekhlibar); outline-offset: 3px; }
+@media (max-width: 768px) {
+  /* Отстъпите са свити, за да е подвалът под 600 px с пет цели по 44 px:
+     логото 211 + 5×45 + долният ред 94 вече са 530. */
+  .site-footer { padding: var(--sp-8) 0 var(--sp-6); }
+  .footer-grid { display: grid; grid-template-columns: 1fr; gap: 0; margin-bottom: var(--sp-5); }
+  .footer-bottom { padding-top: var(--sp-5); }
+  .footer-col:first-child { padding-bottom: var(--sp-3); }
+  /* Линията е сянка, не border: border-top от 1 px върху пет групи са 5 px. */
+  .footer-fold { box-shadow: 0 -1px 0 var(--border); }
+  .footer-fold summary { min-height: 44px; margin: 0; }
+  .footer-links { padding-bottom: var(--sp-3); }
+}
 @media (min-width: 769px) {
-  .footer-fold summary { cursor: default; min-height: 0; }
-  .footer-fold summary::after { display: none; }
+  .footer-fold summary { cursor: default; pointer-events: none; }
+  .footer-fold summary .arrow { display: none; }
 }
 
 /* На компютър (≥1024 px) подвалът е решетка на два реда, не шест колони, които

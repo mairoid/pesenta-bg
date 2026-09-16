@@ -6,9 +6,10 @@
 
    1) статично: връзките в подвала са в HTML-а (не са вкарани с JS) — броят от
       curl-а е същият като този в DOM-а;
-   2) 375×812 (mobile:true, докосване): трите групи са затворени, подвалът е под
-      900 px, страницата под 11 500 px; истински клик на „Поводи (20)“ ги отваря;
-   3) 1366×900: трите са отворени; клик на summary не ги затваря; височина;
+   2) 375×812 (mobile:true, докосване): една колона, петте групи затворени, подвалът
+      под 600 px, страницата под 11 200 px; докосване на „Поводи (20)“ ги отваря, второ
+      ги затваря; двете правни връзки са в „Контакти“;
+   3) 1366×900: петте са отворени, без стрелки, summary с pointer-events: none; височина;
    4) смяна на размера 1366 → 375 без презареждане: групите се затварят, а тази
       с data-tap остава както е;
    5) конзолата чиста. Код 1 при FAIL. */
@@ -29,7 +30,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   const podvalHtml = html.slice(html.indexOf('<footer class="site-footer">'), html.indexOf("</footer>"));
   const vHtml = (podvalHtml.match(/<a href/g) || []).length;
   const detHtml = (podvalHtml.match(/<details class="footer-fold">/g) || []).length;
-  ok("HTML: " + detHtml + " details в подвала, " + vHtml + " връзки в самия HTML", detHtml === 3 && vHtml > 0);
+  ok("HTML: " + detHtml + " details в подвала, " + vHtml + " връзки в самия HTML", detHtml === 5 && vHtml > 0);
 
   const chrome = spawn(CHROME, ["--headless=new", "--disable-gpu", "--hide-scrollbars", "--remote-debugging-port=" + PORT, "--user-data-dir=" + path.join(__dirname, "cp-podval"), "--window-size=1366,900", "about:blank"], { stdio: "ignore" });
   let targets = null; for (let i = 0; i < 50 && !targets; i++) { await sleep(200); try { targets = await getJSON("http://localhost:" + PORT + "/json/list"); } catch (e) {} }
@@ -86,30 +87,39 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   await telefon(); await otvori();
   let s = await sastoyanie();
   ok("375: връзките в DOM-а = в HTML-а", s.vrazki === vHtml, s.vrazki + " / " + vHtml);
-  ok("375: трите групи са затворени", s.otvoreni === 0 && s.vsichki === 3, s.otvoreni + "/" + s.vsichki + " отворени");
-  ok("375: подвалът под 900 px", s.podval < 900, s.podval + " px");
+  ok("375: петте групи са затворени", s.otvoreni === 0 && s.vsichki === 5, s.otvoreni + "/" + s.vsichki + " отворени");
+  const koloni = await evalJS(`getComputedStyle(document.querySelector(".footer-grid")).gridTemplateColumns.trim().split(/\\s+/).length`);
+  ok("375: подвалът е една колона", koloni === 1, koloni + " колони");
+  ok("375: подвалът под 600 px", s.podval < 600, s.podval + " px");
   const razbivka = await evalJS(`(function(){var f=document.querySelector(".site-footer");var cs=getComputedStyle(f);var out=[].slice.call(f.querySelectorAll(".footer-col")).map(function(c){var h=c.querySelector("h3, summary");return (h?h.textContent.trim().slice(0,12):"лого")+" "+Math.round(c.getBoundingClientRect().height)});out.push("долен ред "+Math.round(f.querySelector(".footer-bottom").getBoundingClientRect().height));out.push("отстъпи "+parseInt(cs.paddingTop)+"+"+parseInt(cs.paddingBottom));out.push("разстояние между колоните "+parseInt(getComputedStyle(f.querySelector(".footer-grid")).rowGap)+"×5");return out.join(", ")})()`);
   R.push("info  375, откъде идват px: " + razbivka);
-  ok("375: страницата под 11 500 px", s.stranica < 11500, s.stranica + " px");
+  ok("375: страницата под 11 200 px", s.stranica < 11200, s.stranica + " px");
   const kl = await klik("Поводи"); s = await sastoyanie();
   ok("375: клик на „Поводи (…)“ ги отваря и слага data-tap", kl && s.otvoreni === 1 && s.tap === 1, s.otvoreni + " отворени, tap=" + s.tap);
   const otvorenaSled = await evalJS(`(function(){var d=document.querySelector(".footer-fold[data-tap]");return d&&d.open&&d.querySelector("a").getBoundingClientRect().height>0})()`);
   ok("375: връзките в отворената група се виждат", otvorenaSled === true);
+  await klik("Поводи"); s = await sastoyanie();
+  ok("375: второ докосване затваря „Поводи“", s.otvoreni === 0, s.otvoreni + " отворени");
+  const pravni = await evalJS(`(function(){var d=[].slice.call(document.querySelectorAll(".footer-fold")).find(function(x){return x.querySelector("summary").textContent.indexOf("Контакти")===0});return d?d.querySelectorAll('a[href$="usloviya.html"], a[href$="poveritelnost.html"]').length:-1})()`);
+  ok("375: двете правни връзки са в „Контакти“", pravni === 2, pravni + " намерени");
 
   await snimkaPodval("podval-375.png");
 
   /* 3) десктоп */
   await desktop(); await otvori(); s = await sastoyanie();
-  ok("1366: трите групи са отворени", s.otvoreni === 3, s.otvoreni + "/3");
+  ok("1366: петте групи са отворени", s.otvoreni === 5, s.otvoreni + "/5");
+  const strelki = await evalJS(`[].slice.call(document.querySelectorAll(".footer-fold .arrow")).filter(function(a){return getComputedStyle(a).display!=="none"}).length`);
+  const pe = await evalJS(`getComputedStyle(document.querySelector(".footer-fold summary")).pointerEvents`);
+  ok("1366: без стрелки, summary с pointer-events: none", strelki === 0 && pe === "none", strelki + " видими стрелки, pointer-events " + pe);
   const klD = await klik("За кого"); s = await sastoyanie();
-  ok("1366: клик на summary не затваря", klD && s.otvoreni === 3 && s.tap === 0, s.otvoreni + "/3 отворени, tap=" + s.tap);
+  ok("1366: клик на summary не затваря", klD && s.otvoreni === 5 && s.tap === 0, s.otvoreni + "/5 отворени, tap=" + s.tap);
   const prep = await evalJS(`document.documentElement.scrollWidth - document.documentElement.clientWidth`);
   ok("1366: подвал " + s.podval + " px, без хоризонтално препълване", prep === 0, prep ? "препълване " + prep + " px" : undefined);
   await snimkaPodval("podval-1366.png");
   for (const w of [1200, 1024]) {
     await desktop(w); await sleep(300); const t = await sastoyanie();
     const pr = await evalJS(`document.documentElement.scrollWidth - document.documentElement.clientWidth`);
-    ok(w + ": подвал " + t.podval + " px, " + t.otvoreni + "/3 отворени, без препълване", t.otvoreni === 3 && pr === 0, pr ? "препълване " + pr + " px" : undefined);
+    ok(w + ": подвал " + t.podval + " px, " + t.otvoreni + "/5 отворени, без препълване", t.otvoreni === 5 && pr === 0, pr ? "препълване " + pr + " px" : undefined);
   }
   await desktop(); await sleep(200);
 
@@ -117,7 +127,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   await telefon(); await sleep(400); s = await sastoyanie();
   ok("1366 → 375 без презареждане: групите се затварят", s.otvoreni === 0, s.otvoreni + " отворени");
   await klik("Календар"); await desktop(); await sleep(400); s = await sastoyanie();
-  ok("375 (една отворена с ръка) → 1366: и трите отворени", s.otvoreni === 3, s.otvoreni + "/3");
+  ok("375 (една отворена с ръка) → 1366: и петте отворени", s.otvoreni === 5, s.otvoreni + "/5");
   await telefon(); await sleep(400); s = await sastoyanie();
   ok("1366 → 375: отворената с ръка остава, другите се затварят", s.otvoreni === 1 && s.tap === 1, s.otvoreni + " отворени, tap=" + s.tap);
 
