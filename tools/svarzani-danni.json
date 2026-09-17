@@ -1,0 +1,90 @@
+{
+  "_": "Свързани поводи, хора и статии (17.09.2026). klasteri: групи с поводи, хора и статия; zashto: един ред на цел, показва се до връзката. tools/svarzani.js строи блока по тези данни.",
+  "klasteri": {
+    "semeyni": {
+      "povodi": ["podarak-pesen-za-rojden-den", "podarak-pesen-za-jubilej", "podarak-pesen-za-palnoletie", "podarak-pesen-za-mama", "podarak-pesen-za-imen-den", "podarak-pesen-za-godishnina", "podarak-pesen-za-nov-dom", "podarak-pesen-za-pensionirane", "podarak-pesen-za-diplomirane", "podarak-pesen-za-lovec"],
+      "hora": ["podarak-za-tatko", "podarak-za-baba", "podarak-za-dyado", "podarak-za-saprug", "podarak-za-sapruga", "podarak-za-sestra", "podarak-za-brat", "podarak-za-krastnik", "podarak-za-shef"],
+      "statia": "novini/kakvo-da-razkazhesh-lichna-pesen"
+    },
+    "svatbeni": {
+      "povodi": ["podarak-pesen-za-svatba", "podarak-pesen-za-godej", "podarak-pesen-za-ergensko", "podarak-pesen-za-mominsko", "podarak-pesen-za-kumove"],
+      "hora": ["podarak-za-gadzhe", "podarak-za-priyatelka", "podarak-za-krastnik"],
+      "statia": "novini/pesen-za-svatba-7-momenta"
+    },
+    "deca": {
+      "povodi": ["podarak-pesen-za-bebeski", "podarak-pesen-za-krashtene", "podarak-pesen-za-palnoletie", "podarak-pesen-za-imen-den"],
+      "hora": ["podarak-za-krastnik", "podarak-za-baba", "podarak-za-dyado", "podarak-za-trenyor"],
+      "statia": "novini/kakvo-da-razkazhesh-lichna-pesen"
+    },
+    "firmeni": {
+      "povodi": ["podarak-pesen-za-firmeno", "podarak-pesen-za-pensionirane", "podarak-pesen-za-uchitel", "podarak-pesen-za-diplomirane"],
+      "hora": ["podarak-za-shef", "podarak-za-trenyor"],
+      "statia": "novini/kakvo-da-razkazhesh-lichna-pesen"
+    },
+    "kalendar": {
+      "povodi": ["podarak-pesen-za-imen-den", "imen-den-dnes", "podarak-za-tsvetnitsa", "podarak-za-gergyovden", "podarak-za-nikulden", "podarak-za-ivanovden", "podarak-za-dimitrovden", "podarak-za-koleda", "podarak-za-nova-godina", "podarak-za-sveti-valentin"],
+      "hora": ["podarak-za-tatko", "podarak-za-baba", "podarak-za-dyado", "podarak-za-saprug", "podarak-za-sapruga", "podarak-za-sestra", "podarak-za-brat"],
+      "statia": "novini/kakvo-da-razkazhesh-lichna-pesen"
+    },
+    "sezonni": {
+      "povodi": ["podarak-za-koleda", "podarak-za-nova-godina", "podarak-za-sveti-valentin", "podarak-pesen-za-rojden-den"],
+      "hora": ["podarak-za-saprug", "podarak-za-sapruga", "podarak-za-gadzhe", "podarak-za-priyatelka"],
+      "statia": "novini/kakvo-da-podarya-na-mazha-si-za-rojdeniya-den"
+    }
+  },
+  "stranici": {
+    "podarak-pesen-za-rojden-den": "semeyni", "podarak-pesen-za-jubilej": "semeyni", "podarak-pesen-za-palnoletie": "semeyni", "podarak-pesen-za-mama": "semeyni", "podarak-pesen-za-imen-den": "kalendar", "podarak-pesen-za-godishnina": "semeyni", "podarak-pesen-za-nov-dom": "semeyni", "podarak-pesen-za-pensionirane": "firmeni", "podarak-pesen-za-diplomirane": "firmeni", "podarak-pesen-za-lovec": "semeyni", "podarak-pesen-za-uchitel": "firmeni", "podarak-pesen-za-firmeno": "firmeni",
+    "podarak-pesen-za-svatba": "svatbeni", "podarak-pesen-za-godej": "svatbeni", "podarak-pesen-za-ergensko": "svatbeni", "podarak-pesen-za-mominsko": "svatbeni", "podarak-pesen-za-kumove": "svatbeni",
+    "podarak-pesen-za-bebeski": "deca", "podarak-pesen-za-krashtene": "deca",
+    "podarak-za-tatko": "semeyni", "podarak-za-baba": "deca", "podarak-za-dyado": "deca", "podarak-za-saprug": "semeyni", "podarak-za-sapruga": "semeyni", "podarak-za-sestra": "semeyni", "podarak-za-brat": "semeyni", "podarak-za-gadzhe": "svatbeni", "podarak-za-priyatelka": "svatbeni", "podarak-za-krastnik": "deca", "podarak-za-shef": "firmeni", "podarak-za-trenyor": "firmeni",
+    "imen-den-dnes": "kalendar", "podarak-za-tsvetnitsa": "kalendar", "podarak-za-gergyovden": "kalendar", "podarak-za-nikulden": "kalendar", "podarak-za-ivanovden": "kalendar", "podarak-za-dimitrovden": "kalendar",
+    "podarak-za-koleda": "sezonni", "podarak-za-nova-godina": "sezonni", "podarak-za-sveti-valentin": "sezonni",
+    "podarak-v-poslednia-moment": "semeyni"
+  },
+  "zashto": {
+    "podarak-pesen-za-rojden-den": ["Подарък за рожден ден", "най-търсеният повод, с името в припева"],
+    "podarak-pesen-za-jubilej": ["Подарък за юбилей", "за кръглите години, когато трябва цялата история"],
+    "podarak-pesen-za-palnoletie": ["Подарък за 18-и рожден ден", "за сина или дъщерята, за целия път дотук"],
+    "podarak-pesen-za-mama": ["Подарък за мама", "нейната история с думите на децата"],
+    "podarak-pesen-za-imen-den": ["Подарък за имен ден", "името в припева, за жена, мъж или дете"],
+    "podarak-pesen-za-godishnina": ["Подарък за годишнина", "за двама, по вашата история"],
+    "podarak-pesen-za-nov-dom": ["Подарък за нов дом", "за хората, които се нанасят"],
+    "podarak-pesen-za-pensionirane": ["Подарък за пенсиониране", "за целия трудов път, от колегите"],
+    "podarak-pesen-za-diplomirane": ["Подарък за дипломиране", "за годините учене, от семейството"],
+    "podarak-pesen-za-lovec": ["Подарък за ловец", "за дружината, с всеки по име"],
+    "podarak-pesen-za-uchitel": ["Подарък за учител", "от целия клас, за края на годината"],
+    "podarak-pesen-za-firmeno": ["Подарък за фирмено събитие", "с вътрешните шеги на екипа, с фактура"],
+    "podarak-pesen-za-svatba": ["Подарък за сватба", "по любовната история, пуска се на сватбата"],
+    "podarak-pesen-za-godej": ["Подарък за годеж", "от приятели или родители, за двамата"],
+    "podarak-pesen-za-ergensko": ["Подарък за ергенско парти", "с вътрешните шеги за младоженеца"],
+    "podarak-pesen-za-mominsko": ["Подарък за моминско парти", "от приятелките, за булката"],
+    "podarak-pesen-za-kumove": ["Подарък за кумовете", "от младоженците, за приятелството"],
+    "podarak-pesen-za-bebeski": ["Подарък за бебе", "за раждане, погача или първия рожден ден"],
+    "podarak-pesen-za-krashtene": ["Подарък за кръщене", "с кръщелното име, от кръстника или бабата"],
+    "podarak-za-tatko": ["Подарък за татко", "неговата история, не общи думи"],
+    "podarak-za-baba": ["Подарък за баба", "песен от внуче по нейната история"],
+    "podarak-za-dyado": ["Подарък за дядо", "песен от внуче по неговите истории"],
+    "podarak-za-saprug": ["Подарък за съпруг", "за него като съпруг и баща"],
+    "podarak-za-sapruga": ["Подарък за съпруга", "по вашата обща история"],
+    "podarak-za-sestra": ["Подарък за сестра", "от брат или сестра, по общата ви история"],
+    "podarak-za-brat": ["Подарък за брат", "сантиментална или смешна, по избор"],
+    "podarak-za-gadzhe": ["Подарък за гадже", "за рожден ден или просто така"],
+    "podarak-za-priyatelka": ["Подарък за приятелка", "за приятелството, за рожден ден или юбилей"],
+    "podarak-za-krastnik": ["Подарък за кръстник", "от кръщелника или от младоженците"],
+    "podarak-za-shef": ["Подарък за шеф или колега", "от екипа, с вътрешните шеги"],
+    "podarak-za-trenyor": ["Подарък за треньор", "от отбора, с имената на децата"],
+    "imen-den-dnes": ["Кой има имен ден днес", "календарът на именните дни по дата"],
+    "podarak-za-tsvetnitsa": ["Подарък за Цветница", "за всички с име на цвете"],
+    "podarak-za-gergyovden": ["Подарък за Гергьовден", "за Георги, Гергана и именниците на 6 май"],
+    "podarak-za-nikulden": ["Подарък за Никулден", "за Никола, Николай и именниците на 6 декември"],
+    "podarak-za-ivanovden": ["Подарък за Ивановден", "за Иван, Иванка и именниците на 7 януари"],
+    "podarak-za-dimitrovden": ["Подарък за Димитровден", "за Димитър, Димитрина и именниците на 26 октомври"],
+    "podarak-za-koleda": ["Подарък за Коледа", "за семейството, идва по имейл навреме"],
+    "podarak-za-nova-godina": ["Подарък за Нова година", "за годината, която мина"],
+    "podarak-za-sveti-valentin": ["Подарък за Свети Валентин", "песен за двама, по вашата история"],
+    "podarak-v-poslednia-moment": ["Подарък в последния момент", "до 48 часа, експрес до 24, без куриер"],
+    "novini/kakvo-da-razkazhesh-lichna-pesen": ["Какво да разкажеш, за да стане песента лична", "12 идеи, преди да поръчаш"],
+    "novini/pesen-za-svatba-7-momenta": ["Песен за сватба: 7 момента", "кога на сватбата песента краде шоуто"],
+    "novini/kakvo-da-podarya-na-mazha-si-za-rojdeniya-den": ["Какво да подаря на мъжа си за рождения му ден", "7 идеи с цена и срок, честно сравнени"]
+  }
+}

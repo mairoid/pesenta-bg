@@ -1236,6 +1236,20 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 .faq-item[open] summary::after { transform: rotate(45deg); }
 .faq-item .faq-body { padding: 0 var(--sp-6) var(--sp-4); color: var(--muted); font-size: var(--fs-md); }
 
+/* „Свързани“ — 3 повода, 1 човек, 1 статия в тялото на всяка страница за повод
+   (17.09.2026). Списък, без карти и снимки; на телефон един ред на връзка. Секцията
+   е по-ниска от останалите — блокът е пътечка, не сцена. */
+.svarzani { padding: var(--sp-10) 0 0; }
+.svarzani .section-head { margin-bottom: var(--sp-6); }
+.svarzani .section-head h2 { font-size: var(--fs-2xl); }
+.svarzani-list { list-style: none; margin: 0; padding: 0; max-width: 760px; }
+.svarzani-list li { padding: var(--sp-3) 0; border-top: 1px solid var(--border); font-size: var(--fs-md); line-height: 1.5; }
+.svarzani-list li:last-child { border-bottom: 1px solid var(--border); }
+.svarzani-list a { color: var(--text); font-weight: 600; text-decoration: none; }
+.svarzani-list span { color: var(--muted); }
+@media (hover: hover) { .svarzani-list a:hover { color: var(--pink); } }
+@media (hover: none) and (pointer: coarse) { .svarzani-list li { padding: var(--sp-4) 0; } }
+
 /* ---------- CTA лента ---------- */
 
 .cta-band {
