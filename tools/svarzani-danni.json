@@ -2,7 +2,7 @@
   "_": "Свързани поводи, хора и статии (17.09.2026). klasteri: групи с поводи, хора и статия; zashto: един ред на цел, показва се до връзката. tools/svarzani.js строи блока по тези данни.",
   "klasteri": {
     "semeyni": {
-      "povodi": ["podarak-pesen-za-rojden-den", "podarak-pesen-za-jubilej", "podarak-pesen-za-palnoletie", "podarak-pesen-za-mama", "podarak-pesen-za-imen-den", "podarak-pesen-za-godishnina", "podarak-pesen-za-nov-dom", "podarak-pesen-za-pensionirane", "podarak-pesen-za-diplomirane", "podarak-pesen-za-lovec"],
+      "povodi": ["podarak-pesen-za-rojden-den", "podarak-pesen-za-jubilej", "podarak-pesen-za-palnoletie", "podarak-pesen-za-mama", "podarak-pesen-za-imen-den", "podarak-pesen-za-godishnina", "podarak-pesen-za-nov-dom", "podarak-pesen-za-pensionirane", "podarak-pesen-za-diplomirane", "podarak-pesen-za-abiturientski-bal", "podarak-pesen-za-lovec"],
       "hora": ["podarak-za-tatko", "podarak-za-baba", "podarak-za-dyado", "podarak-za-saprug", "podarak-za-sapruga", "podarak-za-sestra", "podarak-za-brat", "podarak-za-krastnik", "podarak-za-shef"],
       "statia": "novini/kakvo-da-razkazhesh-lichna-pesen"
     },
@@ -33,7 +33,7 @@
     }
   },
   "stranici": {
-    "podarak-pesen-za-rojden-den": "semeyni", "podarak-pesen-za-jubilej": "semeyni", "podarak-pesen-za-palnoletie": "semeyni", "podarak-pesen-za-mama": "semeyni", "podarak-pesen-za-imen-den": "kalendar", "podarak-pesen-za-godishnina": "semeyni", "podarak-pesen-za-nov-dom": "semeyni", "podarak-pesen-za-pensionirane": "firmeni", "podarak-pesen-za-diplomirane": "firmeni", "podarak-pesen-za-lovec": "semeyni", "podarak-pesen-za-uchitel": "firmeni", "podarak-pesen-za-firmeno": "firmeni",
+    "podarak-pesen-za-rojden-den": "semeyni", "podarak-pesen-za-jubilej": "semeyni", "podarak-pesen-za-palnoletie": "semeyni", "podarak-pesen-za-mama": "semeyni", "podarak-pesen-za-imen-den": "kalendar", "podarak-pesen-za-godishnina": "semeyni", "podarak-pesen-za-nov-dom": "semeyni", "podarak-pesen-za-pensionirane": "firmeni", "podarak-pesen-za-diplomirane": "firmeni", "podarak-pesen-za-lovec": "semeyni", "podarak-pesen-za-abiturientski-bal": "semeyni", "podarak-pesen-za-uchitel": "firmeni", "podarak-pesen-za-firmeno": "firmeni",
     "podarak-pesen-za-svatba": "svatbeni", "podarak-pesen-za-godej": "svatbeni", "podarak-pesen-za-ergensko": "svatbeni", "podarak-pesen-za-mominsko": "svatbeni", "podarak-pesen-za-kumove": "svatbeni",
     "podarak-pesen-za-bebeski": "deca", "podarak-pesen-za-krashtene": "deca",
     "podarak-za-tatko": "semeyni", "podarak-za-baba": "deca", "podarak-za-dyado": "deca", "podarak-za-saprug": "semeyni", "podarak-za-sapruga": "semeyni", "podarak-za-sestra": "semeyni", "podarak-za-brat": "semeyni", "podarak-za-gadzhe": "svatbeni", "podarak-za-priyatelka": "svatbeni", "podarak-za-krastnik": "deca", "podarak-za-shef": "firmeni", "podarak-za-trenyor": "firmeni",
@@ -52,6 +52,7 @@
     "podarak-pesen-za-pensionirane": ["Подарък за пенсиониране", "за целия трудов път, от колегите"],
     "podarak-pesen-za-diplomirane": ["Подарък за дипломиране", "за годините учене, от семейството"],
     "podarak-pesen-za-lovec": ["Подарък за ловец", "за дружината, с всеки по име"],
+    "podarak-pesen-za-abiturientski-bal": ["Подарък за абитуриентски бал", "за края на училището, от родителите или класа"],
     "podarak-pesen-za-uchitel": ["Подарък за учител", "от целия клас, за края на годината"],
     "podarak-pesen-za-firmeno": ["Подарък за фирмено събитие", "с вътрешните шеги на екипа, с фактура"],
     "podarak-pesen-za-svatba": ["Подарък за сватба", "по любовната история, пуска се на сватбата"],
