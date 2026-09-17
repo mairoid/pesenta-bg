@@ -170,11 +170,12 @@
       audio.preload = "metadata";
       audio.src = srcUrl;
     }
-    /* Разсредоточено зареждане на метаданните (продължителност), извън критичния
-       път на зареждане — 8-те едновременни заявки опашкуваха браузъра (замерено:
-       loadEvent 3.3s дори при малки файлове). При клик src се задава веднага. */
-    var idle = window.requestIdleCallback || function (fn) { setTimeout(fn, 300); };
-    idle(function () { setTimeout(ensureSrc, i * 120); });
+    /* Нищо не се тегли преди докосване (17.09.2026). Дотук тук стоеше отложено
+       ensureSrc за всеки ред „само за метаданните“ — но Chrome при preload="metadata"
+       сваля по ~1,5 MB на песен от GitHub Pages: 4,3 MB на страница за повод (62 % от
+       всички байтове), 11,8 MB на началната (77 %), без никой да е натиснал play.
+       Времетраенето е в HTML-а (.time) за всеки ред и е сверено с файловете —
+       loadedmetadata само го потвърждава, когато песента реално тръгне. */
 
     var btn = wrap.querySelector(".play-btn");
     var bar = wrap.querySelector(".progress");
