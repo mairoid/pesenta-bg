@@ -2,6 +2,17 @@
 (function () {
   "use strict";
 
+  /* ---------- Откъде е дошъл човекът (17.09.2026) ----------
+     Първата страница в посещението и първият външен източник, само за
+     сесията — без бисквитки, без localStorage. Формите ги пращат с брифа,
+     за да знаем коя от 60-те страници продава. В частен режим
+     sessionStorage може да хвърли — тогава тихо нищо. */
+  try {
+    if (!sessionStorage.getItem("psn_landing")) sessionStorage.setItem("psn_landing", location.pathname + location.search);
+    var ref = document.referrer || "";
+    if (ref && !sessionStorage.getItem("psn_ref") && ref.indexOf(location.origin + "/") !== 0) sessionStorage.setItem("psn_ref", ref.slice(0, 300));
+  } catch (e) { /* без запомняне */ }
+
   /* ---------- Plausible: помощник за custom events ----------
      Само добавя събития успоредно на съществуващото поведение — никога не
      блокира и не променя нищо, ако скриптът не се е заредил (adblock,

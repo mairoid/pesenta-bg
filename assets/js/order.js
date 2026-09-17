@@ -22,6 +22,11 @@
   var FORM_ENDPOINT = "https://formsubmit.co/ajax/" + FORM_TARGET;
   var FORM_ENDPOINT_NATIVE = "https://formsubmit.co/" + FORM_TARGET;
   var THANKS_URL = "https://pesenta.bg/blagodarim.html";
+  /* Брифът към worker-а (D1): дотук го пращаше само бързата форма (text-order.js),
+     затова пълните поръчки стояха в админа като „без разказ“, а картичката
+     нямаше откъде да вземе името на получателя. Същият beacon, същото text/plain. */
+  var BRIEF_ENDPOINT = "https://pesenta-nap.pesenta-nap.workers.dev/brief";
+  function atr(k) { try { return sessionStorage.getItem(k) || ""; } catch (e) { return ""; } }
   var ORDER_EMAIL = "sales@pesenta.bg";
 
   var PLANS = {
@@ -662,6 +667,31 @@
     var t = calcTotal();
     var orderNo = genOrderNo();
     var brief = buildBrief(d, orderNo);
+
+    try {
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(BRIEF_ENDPOINT, new Blob([JSON.stringify({
+          order_no: orderNo,
+          vid: "пълна форма",
+          povod: d.occasion || "",
+          event_date: d.event_date || "",
+          stilove: d.styles.join(", "),
+          ezik: d.language || "",
+          razkaz: d.story || "",
+          recipient: d.recipient || "",
+          relation: d.relation || "",
+          qualities: d.qualities || "",
+          jokes: d.jokes || "",
+          must_have: d.must_have || "",
+          avoid: d.avoid || "",
+          plan: state.plan,
+          express: !!state.express,
+          landing: atr("psn_landing"),
+          ref_parvi: atr("psn_ref"),
+          ref_posleden: document.referrer || ""
+        })], { type: "text/plain;charset=UTF-8" }));
+      }
+    } catch (e) { /* брифът към worker-а е допълнителен път; писмото през FormSubmit остава */ }
 
     var payload = {
       _subject: "Нова заявка за песен — " + orderNo,

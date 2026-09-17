@@ -253,9 +253,13 @@ function risuvaiSpisak(d){
       (x.delivered_at ? '<span class="znak ok">доставена</span>' : '<span class="znak chaka">чака доставка</span>') +
       (x.currency_warning ? '<span class="znak lош">валута: ' + e(String(x.currency).toUpperCase()) + "</span>" : "");
 
+    /* poleta е целият пратен обект като JSON — оттам идват landing и получателят */
+    var pl = {}; if (b) { try { pl = JSON.parse(b.poleta || "{}") || {}; } catch (err) { pl = {}; } }
     var razkaz = b
       ? '<div class="razkaz"><div class="meta">' +
-          [b.povod && "Повод: " + b.povod, b.stilove && "Стилове: " + b.stilove, b.ezik && "Език: " + b.ezik]
+          [b.povod && "Повод: " + b.povod, b.stilove && "Стилове: " + b.stilove, b.ezik && "Език: " + b.ezik,
+           pl.recipient && "За: " + pl.recipient + (pl.relation ? " (" + pl.relation + ")" : ""),
+           pl.landing && "От: " + pl.landing + (pl.ref_parvi ? " ← " + pl.ref_parvi.replace(/^https?:\/\//, "").slice(0, 40) : "")]
             .filter(Boolean).map(e).join(" · ") +
         "</div>" + e(b.razkaz || "—") + "</div>"
       : '<div class="bez-razkaz">Разказът не е стигнал до нас. Клиентът е платил — пиши му да го разкаже.</div>';

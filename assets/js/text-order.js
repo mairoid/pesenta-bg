@@ -30,6 +30,9 @@
   var errEl = document.getElementById("text-error");
   var storyEl = document.getElementById("text-story");
 
+  /* Откъде е дошъл човекът — записано от main.js при първата страница. */
+  function atr(k) { try { return sessionStorage.getItem(k) || ""; } catch (e) { return ""; } }
+
   function esc(s) {
     return String(s).replace(/[&<>"]/g, function (c) {
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
@@ -362,7 +365,10 @@
           event_date: eventDate,
           stilove: fields["Стилове"],
           ezik: fields["Език"],
-          razkaz: fields["Разказ"]
+          razkaz: fields["Разказ"],
+          landing: atr("psn_landing"),
+          ref_parvi: atr("psn_ref"),
+          ref_posleden: document.referrer || ""
         })], { type: "text/plain;charset=UTF-8" }));
       }
     } catch (e) { /* без beacon оставаме на стария път */ }

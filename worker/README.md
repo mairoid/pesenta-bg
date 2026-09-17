@@ -292,3 +292,16 @@ npx wrangler d1 execute pesenta-nap --remote --command "ALTER TABLE sales ADD CO
 
 Локална проба: `.dev.vars` с тестов `AUDIT_TOKEN` (файлът е в .gitignore),
 `wrangler d1 execute pesenta-nap --local --file=schema.sql`, `wrangler dev --local`.
+
+## Кои страници продават (от 17.09.2026)
+
+Брифът носи `landing` (първата страница в посещението), `ref_parvi` (първият външен
+източник) и `ref_posleden` (страницата, от която е натиснат „Поръчай“). Идват от
+`sessionStorage`, без бисквитки; пълната форма вече също праща бриф (дотогава — само
+бързата). Въпросът:
+
+```
+npx wrangler d1 execute pesenta-nap --remote --json --command "SELECT json_extract(poleta,'$.landing') AS landing, COUNT(*) AS n FROM briefs GROUP BY landing ORDER BY n DESC"
+```
+
+и по източник: `json_extract(poleta,'$.ref_parvi')`. Поръчки отпреди 17.09 нямат полетата.
