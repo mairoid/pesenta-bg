@@ -244,20 +244,39 @@
             <div class="field">
               <label>Повод <span class="hint">По желание — ако не личи от разказа</span></label>
               <div class="chips" id="text-occasion-chips" data-single>
+                <!-- Същите 21 повода в същия ред като картите в „Има повод? Има песен.“ и като
+                     чиповете в poruchka.html (21.09.2026; преди бяха 12, с „Ергенско / Моминско“ и
+                     „Бебе / Кръщене“ слети). Първите 8 се виждат, останалите са зад „Покажи още
+                     поводи“ — както при стиловете. tools/povod-proba.js пази трите списъка. -->
                 <span class="chip" data-value="Рожден ден">Рожден ден</span>
                 <span class="chip" data-value="Сватба">Сватба</span>
-                <span class="chip" data-value="Ергенско / Моминско">Ергенско / Моминско</span>
+                <span class="chip" data-value="Ергенско">Ергенско</span>
+                <span class="chip" data-value="Моминско">Моминско</span>
                 <span class="chip" data-value="Годишнина">Годишнина</span>
-                <span class="chip" data-value="Бебе / Кръщене">Бебе / Кръщене</span>
+                <span class="chip" data-value="Бебе">Бебе</span>
+                <span class="chip" data-value="Кръщене">Кръщене</span>
                 <span class="chip" data-value="Юбилей">Юбилей</span>
-                <span class="chip" data-value="Фирмено събитие">Фирмено събитие</span>
-                <!-- До 12 чипа тук; останалите поводи са в пълната поръчка. 07.09.2026 -->
-                <span class="chip" data-value="Пенсиониране">Пенсиониране</span>
-                <span class="chip" data-value="Годеж">Годеж</span>
-                <span class="chip" data-value="Абитуриентски бал">Абитуриентски бал</span>
-                <span class="chip" data-value="Имен ден">Имен ден</span>
-                <span class="chip" data-value="Шега / Изненада">Шега / Изненада</span>
               </div>
+              <details class="more-fields" style="margin-top:0.6rem;">
+                <summary>Покажи още поводи <span class="hint">(21 общо)</span></summary>
+                <div class="more-fields-body">
+                  <div class="chips" id="text-occasion-chips-more" data-single>
+                    <span class="chip" data-value="Пенсиониране">Пенсиониране</span>
+                    <span class="chip" data-value="Годеж">Годеж</span>
+                    <span class="chip" data-value="Абитуриентски бал">Абитуриентски бал</span>
+                    <span class="chip" data-value="Имен ден">Имен ден</span>
+                    <span class="chip" data-value="За мама">За мама</span>
+                    <span class="chip" data-value="Пълнолетие">Пълнолетие</span>
+                    <span class="chip" data-value="Фирмено събитие">Фирмено събитие</span>
+                    <span class="chip" data-value="Дипломиране">Дипломиране</span>
+                    <span class="chip" data-value="Нов дом">Нов дом</span>
+                    <span class="chip" data-value="За учител">За учител</span>
+                    <span class="chip" data-value="За кумовете">За кумовете</span>
+                    <span class="chip" data-value="За ловец">За ловец</span>
+                    <span class="chip" data-value="Шега / Изненада">Шега / Изненада</span>
+                  </div>
+                </div>
+              </details>
             </div>
 
             <!-- Датата прави „до 48 часа“ личен факт: „при теб до четвъртък,

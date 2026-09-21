@@ -41,6 +41,15 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   ok("статично: " + Object.keys(POVOD).length + " повода и " + Object.keys(ZA).length + " души в картите; всяко ?povod=/?za= в сайта има чип/опция", lipsi.length === 0, lipsi.slice(0, 5).join(" | "));
   const bezPovod = fs.readdirSync(KOREN).filter(n => /^podarak-(pesen-za|za)-.*\.html$/.test(n)).filter(n => { const s = fs.readFileSync(path.join(KOREN, n), "utf8"); return !/class="btn btn-primary[^"]*" href="poruchka\.html\?(povod|za)=/.test(s); });
   ok("всяка страница за повод или човек праща повод или човек към формата", bezPovod.length === 0, bezPovod.join(", "));
+  /* един списък на три места: картите на началната са източникът */
+  const index = fs.readFileSync(path.join(KOREN, "index.html"), "utf8");
+  const sek = index.slice(index.indexOf('id="povodi"'), index.indexOf("</section>", index.indexOf('id="povodi"')));
+  const karti = (sek.match(/<h3[^>]*>[^<]+/g) || []).map(x => x.replace(/<h3[^>]*>/, "").trim());
+  const chipove = (html, otId, doId) => { const a = html.indexOf('id="' + otId + '"'), b = html.indexOf(doId, a); return (html.slice(a, b).match(/class="chip" data-value="([^"]+)"/g) || []).map(x => x.replace(/.*data-value="/, "").slice(0, -1)); };
+  const barza = chipove(index, "text-occasion-chips", 'id="text-event-date"');
+  const BEZ_KARTA = ["Признание в любов", "За приятел", "Коледа", "Нова година", "Свети Валентин", "Друго"];
+  const palna = chipove(poruchka, "occasion-chips", 'id="occasion-oshte"').filter(v => BEZ_KARTA.indexOf(v) < 0);
+  ok("поводите съвпадат: " + karti.length + " карти = " + barza.length + " чипа в бързата форма = " + palna.length + " в пълната (без 6-те без карта), в същия ред", karti.length > 0 && karti.join("|") === barza.join("|") && karti.join("|") === palna.join("|"), barza.length + "/" + palna.length);
 
   const chrome = spawn(CHROME, ["--headless=new", "--disable-gpu", "--hide-scrollbars", "--remote-debugging-port=" + PORT, "--user-data-dir=" + path.join(__dirname, "cp-povod"), "--window-size=1366,900", "about:blank"], { stdio: "ignore" });
   let targets = null; for (let i = 0; i < 50 && !targets; i++) { await sleep(200); try { targets = await getJSON("http://localhost:" + PORT + "/json/list"); } catch (e) {} }
@@ -114,6 +123,18 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     ok("разказът е под шапката и на екрана", n.poleTop >= n.shapka && n.poleTop < n.vis / 2, "шапка=" + n.shapka + " поле=" + n.poleTop + "–" + n.poleBottom + " екран=" + n.vis);
     ok("поводът, стилът и езикът са ПОД разказа, по този ред", n.povodTop > n.poleBottom - 1 && n.stilTop > n.povodTop && n.ezikTop > n.stilTop, "повод=" + n.povodTop + " стил=" + n.stilTop + " език=" + n.ezikTop);
     ok("началната на 375 px без препълване", n.sw <= n.cw, n.sw + "/" + n.cw);
+    /* поводите са в две групи (8 видими + „Покажи още поводи“) — изборът е един през двете */
+    const dve = await evalJS(`(function(){var d=document.querySelector("#text-occasion-chips-more").closest("details");d.open=true;
+      var vid=[].slice.call(document.querySelectorAll("#text-occasion-chips .chip")).filter(function(c){return c.offsetParent!==null;}).length;
+      document.querySelector('#text-occasion-chips-more .chip[data-value="За мама"]').click();
+      document.querySelector('#text-occasion-chips .chip[data-value="Сватба"]').click();
+      var izb=[].slice.call(document.querySelectorAll("#text-occasion-chips .chip.selected, #text-occasion-chips-more .chip.selected")).map(function(c){return c.getAttribute("data-value");});
+      document.querySelector('#text-occasion-chips-more .chip[data-value="За ловец"]').click();
+      var izb2=[].slice.call(document.querySelectorAll("#text-occasion-chips .chip.selected, #text-occasion-chips-more .chip.selected")).map(function(c){return c.getAttribute("data-value");});
+      return {vid:vid,izb:izb.join(","),izb2:izb2.join(","),sw:document.documentElement.scrollWidth,cw:document.documentElement.clientWidth};})()`);
+    await snimka("nachalna-povodi");
+    ok("бързата форма: 8 повода се виждат, изборът е един през двете групи", dve.vid === 8 && dve.izb === "Сватба" && dve.izb2 === "За ловец", "видими=" + dve.vid + " → " + dve.izb + " → " + dve.izb2);
+    ok("с отворени „още поводи“ пак няма препълване", dve.sw <= dve.cw, dve.sw + "/" + dve.cw);
 
     ok("конзолата чиста", konzola.length === 0, konzola.join(" | "));
   } catch (e) { ok("пробата стигна до края", false, e.message.slice(0, 200)); }

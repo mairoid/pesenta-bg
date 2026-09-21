@@ -142,7 +142,10 @@
       var chip = e.target.closest(".chip");
       if (!chip) return;
       if (single) {
-        group.querySelectorAll(".chip.selected").forEach(function (c) {
+        /* Поводите са в две групи (видимите 8 и „Покажи още поводи“) — изборът е един
+           през двете, иначе може да се маркират два повода (21.09.2026). */
+        var obhvat = /^text-occasion-chips/.test(group.id) ? document.querySelectorAll("#text-occasion-chips .chip.selected, #text-occasion-chips-more .chip.selected") : group.querySelectorAll(".chip.selected");
+        obhvat.forEach(function (c) {
           if (c !== chip) c.classList.remove("selected");
         });
       }
@@ -151,7 +154,7 @@
   });
 
   function selectedOccasion() {
-    var el = document.querySelector("#text-occasion-chips .chip.selected");
+    var el = document.querySelector("#text-occasion-chips .chip.selected, #text-occasion-chips-more .chip.selected");
     return el ? el.getAttribute("data-value") : "";
   }
   function selectedStyles() {
