@@ -239,8 +239,12 @@
       var top = head ? head.getBoundingClientRect().height : 0;
       /* Пипаме само ако полето наистина е скрито или извън екрана —
          иначе оставяме страницата където е, вместо да я дърпаме без нужда. */
-      if (r.top < top + 8 || r.bottom > window.innerHeight) {
-        storyEl.scrollIntoView({ behavior: "smooth", block: "center" });
+      /* Разказът е първото поле (21.09.2026): слагаме го точно под шапката, за да се
+         виждат под него поводът, стилът и езикът. Преди се центрираше, а те бяха над него. */
+      var pole = storyEl.closest(".field") || storyEl;
+      var pr = pole.getBoundingClientRect();
+      if (pr.top < top + 8 || r.bottom > window.innerHeight) {
+        window.scrollTo({ top: Math.max(0, window.scrollY + pr.top - top - 12), behavior: "smooth" });
       }
     }, 650);
   });
