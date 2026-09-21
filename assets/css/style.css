@@ -1912,6 +1912,12 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
     box-shadow: 0 24px 40px rgba(0, 0, 0, 0.5);
   }
   .main-nav.open { display: flex; }
+  /* Мини-навигацията на вътрешните страници (inline position:static, винаги видима)
+     наследяваше колоната на падащото меню: „Цени“ над „Въпроси“, „Начало“ над бутона —
+     шапка 135 px вместо 69 (21.09.2026, от снимки на телефон). В ред; където има бутон
+     „Поръчай песен“, връзката „Начало“ се крие — логото вече води там. */
+  .main-nav[style*="position:static"] { flex-direction: row; align-items: center; gap: var(--sp-4); }
+  .main-nav[style*="position:static"]:has(.btn) a:not(.btn) { display: none; }
   .nav-toggle { display: block; }
 }
 
