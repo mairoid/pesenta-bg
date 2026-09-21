@@ -65,7 +65,21 @@
     "lovec": "За ловец",
     /* Картата "Шега / Изненада" в "Има повод? Има песен." няма собствена
        SEO страница — сочи направо към формата с този повод. */
-    "shega": "Шега / Изненада"
+    "shega": "Шега / Изненада",
+    /* Сезонните страници podarak-za-<slug>.html (21.09.2026) — дотогава бутоните им
+       водеха към формата без повод. */
+    "koleda": "Коледа",
+    "nova-godina": "Нова година",
+    "sveti-valentin": "Свети Валентин"
+  };
+
+  /* Човекът от URL (?za=<slug>) → опция в „Какъв ти е този човек?“. Идва от страниците
+     podarak-za-<slug>.html: там поводът не се знае, но човекът — да (21.09.2026). */
+  var ZA_MAP = {
+    "tatko": "Майка / Баща", "baba": "Баба / Дядо", "dyado": "Баба / Дядо",
+    "saprug": "Половинка / Партньор", "sapruga": "Половинка / Партньор", "gadzhe": "Половинка / Партньор",
+    "sestra": "Брат / Сестра", "brat": "Брат / Сестра", "priyatelka": "Приятел / Приятелка",
+    "shef": "Шеф", "krastnik": "Кръстник / Кръстница", "trenyor": "Треньор"
   };
 
   /* Промо кодове: код → процент отстъпка */
@@ -143,10 +157,20 @@
         });
       }
       chip.classList.toggle("selected");
+      /* свитият списък (дошъл с ?povod=) се разгъва, щом изборът бъде махнат —
+         иначе остава ред само с „Друг повод“ */
+      if (group.classList.contains("svito") && !group.querySelector(".chip.selected")) razganiPovodite();
       if (group.id === "style-chips") updateStyleCount();
       saveDraft();
     });
   });
+
+  /* „Друг повод“: показва всички чипове; избраният остава първи. */
+  function razganiPovodite() {
+    var g = document.getElementById("occasion-chips"), b = document.getElementById("occasion-oshte");
+    if (g) g.classList.remove("svito");
+    if (b) b.hidden = true;
+  }
 
   function updateStyleCount() {
     var n = chipValues("style-chips").length;
@@ -891,9 +915,29 @@
      възстановена чернова с дата и експрес смята с тях. */
   presmetniDostavka(false);
   state.plan = "pesen";
-  if (urlPovod && POVOD_MAP[urlPovod] && chipValues("occasion-chips").length === 0) {
-    var povodChip = document.querySelector('#occasion-chips .chip[data-value="' + POVOD_MAP[urlPovod] + '"]');
-    if (povodChip) povodChip.classList.add("selected");
+  /* Поводът от връзката печели пред черновата (21.09.2026). Преди важеше само при
+     празна чернова: който веднъж беше избрал „Рожден ден“, идваше после от страницата
+     за бебе и пак виждаше „Рожден ден“. Връзката е по-новото намерение. Избраният чип
+     отива първи, останалите се свиват зад „Друг повод“ — на телефон 28 чипа са цял
+     екран преди първото поле. */
+  var povodGroup = document.getElementById("occasion-chips");
+  var oshteBtn = document.getElementById("occasion-oshte");
+  if (urlPovod && POVOD_MAP[urlPovod] && povodGroup) {
+    var povodChip = povodGroup.querySelector('.chip[data-value="' + POVOD_MAP[urlPovod] + '"]');
+    if (povodChip) {
+      povodGroup.querySelectorAll(".chip.selected").forEach(function (c) { c.classList.remove("selected"); });
+      povodChip.classList.add("selected");
+      povodGroup.insertBefore(povodChip, povodGroup.firstChild);
+      if (oshteBtn) { povodGroup.classList.add("svito"); oshteBtn.hidden = false; }
+      saveDraft();
+    }
+  }
+  if (oshteBtn) oshteBtn.addEventListener("click", razganiPovodite);
+  /* Човекът от връзката: poruchka.html?za=baba → „Баба / Дядо“. И той печели пред черновата. */
+  var urlZa = params.get("za");
+  if (urlZa && ZA_MAP[urlZa]) {
+    var relEl = document.getElementById("relation");
+    if (relEl) { relEl.value = ZA_MAP[urlZa]; saveDraft(); }
   }
   /* Експрес от URL: poruchka.html?express=1 — от страницата „В последния
      момент“ (11.09.2026). Отметката се слага и се пуска change, за да се

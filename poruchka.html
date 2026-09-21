@@ -137,8 +137,15 @@
           <span class="chip" data-value="За учител">За учител</span>
           <span class="chip" data-value="За кумовете">За кумовете</span>
           <span class="chip" data-value="За ловец">За ловец</span>
+          <!-- Сезонните (21.09.2026): страниците podarak-za-koleda / nova-godina / sveti-valentin -->
+          <span class="chip" data-value="Коледа">Коледа</span>
+          <span class="chip" data-value="Нова година">Нова година</span>
+          <span class="chip" data-value="Свети Валентин">Свети Валентин</span>
           <span class="chip" data-value="Шега / Изненада">Шега / Изненада</span>
           <span class="chip" data-value="Друго">Друго</span>
+          <!-- Вижда се само при идване с ?povod=: избраният чип е първи, останалите са
+               свити (.svito), този бутон ги показва. Не е .chip — не е стойност. -->
+          <button type="button" class="chips-oshte" id="occasion-oshte" hidden>Друг повод ▾</button>
         </div>
       </div>
 
@@ -159,6 +166,8 @@
             <option>Майка / Баща</option>
             <option>Син / Дъщеря</option>
             <option>Баба / Дядо</option>
+            <option>Кръстник / Кръстница</option>
+            <option>Треньор</option>
             <option>Колега</option>
             <option>Шеф</option>
             <option>Песента е за мен</option>

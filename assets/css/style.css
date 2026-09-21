@@ -1605,6 +1605,22 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   color: var(--ink);
   font-weight: 700;
 }
+/* Поводът идва от връзката (?povod=): избраният чип е първи, останалите се свиват зад
+   „Друг повод“ (21.09.2026). order.js слага и маха .svito. */
+.chips.svito .chip:not(.selected) { display: none; }
+.chips-oshte {
+  padding: var(--sp-2) 1.15rem;
+  border-radius: 999px;
+  border: 1px dashed var(--border);
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-weight: 600;
+  font-size: var(--fs-md);
+  cursor: pointer;
+}
+.chips-oshte[hidden] { display: none; }
+@media (hover: hover) { .chips-oshte:hover { color: var(--text); border-color: rgba(255, 255, 255, 0.3); } }
 
 .count-note { font-size: var(--fs-sm); color: var(--muted); margin-top: var(--sp-2); }
 
