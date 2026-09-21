@@ -112,6 +112,23 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     ok("без параметър: черновата се връща („Коледа“, „Баба / Дядо“), нищо не е свито", s.izbrani.join(",") === "Коледа" && s.relation === "Баба / Дядо" && !s.svito && s.vidimi === s.vsichki, s.izbrani.join(",") + " / " + s.relation);
     await evalJS(`localStorage.removeItem("pesenta_draft")`);
 
+    /* 5а) срокът (21.09.2026): до 24 часа за всички, без платен експрес; при близка дата —
+       имейл и телефон. Стара връзка с ?express=1 просто отваря формата. */
+    await idi(BASE + "/poruchka.html?express=1");
+    const sr = await evalJS(`(function(){var d=document.getElementById("event-date"),r=document.getElementById("dostavka-red");
+      function iso(n){var t=new Date(Date.now()+n*86400000);return t.getFullYear()+"-"+String(t.getMonth()+1).padStart(2,"0")+"-"+String(t.getDate()).padStart(2,"0");}
+      var bez=r.textContent; d.value=iso(5); d.dispatchEvent(new Event("change")); var daleche=r.textContent;
+      d.value=iso(0); d.dispatchEvent(new Event("change")); var dnes=r.innerHTML, blizo=r.classList.contains("blizo");
+      d.value=""; d.dispatchEvent(new Event("change"));
+      return {express:!!document.getElementById("express"),bez:bez,daleche:daleche,dnes:dnes,blizo:blizo,stranica:document.body.textContent};})()`);
+    ok("пълната форма: няма отметка за експрес, няма „експрес“ и „48 часа“ в страницата", !sr.express && !/експрес|48 часа/i.test(sr.stranica));
+    ok("без дата: „Готова до …“; събитие след 5 дни → „4 дни преди събитието“ (24 часа)", /^Готова до /.test(sr.bez) && /4 дни преди събитието/.test(sr.daleche), sr.daleche.slice(0, 90));
+    ok("събитие днес → кехлибарен ред с имейл и телефон, „още същия ден“", sr.blizo && /mailto:sales@pesenta\.bg/.test(sr.dnes) && /tel:\+359899456326/.test(sr.dnes) && /същия ден/.test(sr.dnes));
+    await evalJS(`localStorage.removeItem("pesenta_draft")`);
+    await idi(BASE + "/plati.html?order=PSN-PROBA-0000&plan=pesen&express=1");
+    const pl = await evalJS(`(function(){var b=document.getElementById("pay-summary"),a=document.getElementById("pay-btn");return {t:b?b.textContent:"",h:a?a.getAttribute("href"):"",stranica:document.body.textContent};})()`);
+    ok("плащането: стара връзка с express=1 показва 19,90 € и води към единствения Stripe линк", /19,90/.test(pl.t) && !/29,80|Експрес/i.test(pl.t) && /buy\.stripe\.com\/8x25kEf5e92r9h81Rh9IQ00/.test(pl.h) && !/48 часа/.test(pl.stranica), pl.t.replace(/\s+/g, " ").slice(0, 90));
+
     /* 6) началната: разказът е първи */
     await idi(BASE + "/index.html");
     await evalJS(`document.getElementById("fast-text").click()`); await sleep(1500);
@@ -135,6 +152,11 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     await snimka("nachalna-povodi");
     ok("бързата форма: 8 повода се виждат, изборът е един през двете групи", dve.vid === 8 && dve.izb === "Сватба" && dve.izb2 === "За ловец", "видими=" + dve.vid + " → " + dve.izb + " → " + dve.izb2);
     ok("с отворени „още поводи“ пак няма препълване", dve.sw <= dve.cw, dve.sw + "/" + dve.cw);
+    const bs = await evalJS(`(function(){var d=document.getElementById("text-event-date"),r=document.getElementById("text-dostavka-red");
+      var t=new Date(),iso=t.getFullYear()+"-"+String(t.getMonth()+1).padStart(2,"0")+"-"+String(t.getDate()).padStart(2,"0");
+      d.value=iso; d.dispatchEvent(new Event("change")); var dnes=r.innerHTML; d.value=""; d.dispatchEvent(new Event("change"));
+      return {dnes:dnes,bez:r.textContent,stranica:document.body.textContent};})()`);
+    ok("бързата форма: събитие днес → имейл и телефон; началната без „експрес“ и „48 часа“", /mailto:sales@pesenta\.bg/.test(bs.dnes) && /tel:\+359899456326/.test(bs.dnes) && /^Готова до /.test(bs.bez) && !/експрес|48 часа/i.test(bs.stranica));
 
     ok("конзолата чиста", konzola.length === 0, konzola.join(" | "));
   } catch (e) { ok("пробата стигна до края", false, e.message.slice(0, 200)); }

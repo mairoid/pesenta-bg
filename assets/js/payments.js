@@ -31,8 +31,8 @@
    магазина минава през продукта. client_reference_id носи номера на
    поръчката (PSN-...) като допълнителен помощен маркер.
    МОДЕЛ ОТ 26.07.2026: плащането е ПРЕДВАРИТЕЛНО, няма демо преди него.
-   Линкът към plati.html?order=PSN-XXXXXX-XXXX&plan=pesen (&express=1 при
-   експрес) се изпраща веднага с потвърждението на поръчката, не след
+   Линкът към plati.html?order=PSN-XXXXXX-XXXX&plan=pesen се изпраща веднага с
+   потвърждението на поръчката, не след
    одобрение. Докато enabled е false, клиентът получава фактура с банкови
    данни и работата започва при постъпване на сумата.
    ───────────────────────────────────────────────────────────────────── */
@@ -55,15 +55,14 @@ window.PESENTA_PAYMENTS = {
      се отделят от energieausweis-shop.at в същия акаунт. */
   paymentLinks: {
     /* Песен по поръчка — 19,90 € (plink_1TxA4DJi5XII3dF8l7xXBmuZ) */
-    pesen: "https://buy.stripe.com/8x25kEf5e92r9h81Rh9IQ00",
-    /* Песен + Експресна изработка — 29,80 €, два line item-а
-       (plink_1TxA8FJi5XII3dF8AoDMUL21) */
-    pesen_express: "https://buy.stripe.com/dRmfZi1eobaz50S7bB9IQ01"
+    pesen: "https://buy.stripe.com/8x25kEf5e92r9h81Rh9IQ00"
+    /* Връзката „Песен + Експресна изработка“ (29,80 €, plink_1TxA8FJi5XII3dF8AoDMUL21) е
+       махната оттук на 21.09.2026: срокът е до 24 часа за всички, без доплащане. Самият
+       Payment Link в Stripe се изключва от таблото — сайтът вече не води към него. */
   },
 
   /* Показни данни за страницата за плащане */
   plans: {
     pesen: { label: "Песен по поръчка", price: 19.9 }
-  },
-  expressPrice: 9.9
+  }
 };

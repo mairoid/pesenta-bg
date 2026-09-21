@@ -10,7 +10,7 @@
   <meta name="application-name" content="Песента">
   <meta name="apple-mobile-web-app-title" content="Песента">
   <title>Поръчай песен по поръчка | Pesenta.bg</title>
-  <meta name="description" content="Поръчай персонализирана песен за 5 минути: разкажи историята, избери стилове и език. Плащаш 19,90 € при поръчката, песента е готова до 48 часа.">
+  <meta name="description" content="Поръчай персонализирана песен за 5 минути: разкажи историята, избери стилове и език. Плащаш 19,90 € при поръчката, песента е готова до 24 часа.">
   <link rel="canonical" href="https://pesenta.bg/poruchka.html">
   <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
   <!-- PNG резерви: Safari на iOS не ползва SVG фавикон, а apple-touch-icon
@@ -21,7 +21,7 @@
   <meta property="og:type" content="website">
   <meta property="og:locale" content="bg_BG">
   <meta property="og:title" content="Поръчай песен по поръчка | Pesenta.bg">
-  <meta property="og:description" content="Разкажи историята, избери стилове — получи песен до 48 часа. За 19,90 €.">
+  <meta property="og:description" content="Разкажи историята, избери стилове — получи песен до 24 часа. За 19,90 €.">
   <meta property="og:url" content="https://pesenta.bg/poruchka.html">
   <meta property="og:image" content="https://pesenta.bg/assets/img/og-image.jpg">
 
@@ -218,10 +218,10 @@
           <div class="field">
             <label for="event-date">Кога е събитието?</label>
             <input type="date" id="event-date" name="event_date">
-            <!-- Живият ред: order.js го смята при смяна на датата и на експреса.
+            <!-- Живият ред: order.js го смята при смяна на датата.
                  Без дата — „Готова до <ден, дата>“; с дата — „при теб до …,
-                 N дни преди събитието“; близка дата — кехлибарен ред и фокус
-                 върху експреса (без да го включва сам). -->
+                 N дни преди събитието“; близка дата — кехлибарен ред с имейл и
+                 телефон: при възможност песента става още същия ден. -->
             <p class="dostavka-red" id="dostavka-red" aria-live="polite"></p>
           </div>
         </div>
@@ -334,13 +334,6 @@
       <h2 class="step-title" tabindex="-1">Последни щрихи</h2>
       <p class="step-sub">Стъпка 3 от 3 — песента е €19,90 и се плаща при поръчката. След изпращането отиваш на защитената страница за плащане с карта, а документът за продажбата идва на имейла ти веднага.</p>
 
-      <div class="toggle-row">
-        <label for="express">Експресна изработка до 24 часа
-          <span class="hint">+€9,90</span>
-        </label>
-        <input type="checkbox" id="express" name="express">
-      </div>
-
       <div class="field">
         <label for="promo">Промо код</label>
         <div class="promo-row">
@@ -404,9 +397,8 @@
     </div>
     <h2>Остана плащането</h2>
     <div class="order-no" id="success-no">PSN-000000-0000</div>
-    <p>Разказът ти стигна до нас. Плати с карта, за да започнем — веднага след това получаваш документа за продажбата на имейла си, а песента е готова до <strong id="success-eta">48 часа</strong>.</p>
-    <!-- Адресът се попълва от order.js: там се знае дали е избрана
-         експресна изработка, тоест коя цена трябва да плати човекът. -->
+    <p>Разказът ти стигна до нас. Плати с карта, за да започнем — веднага след това получаваш документа за продажбата на имейла си, а песента е готова до <strong id="success-eta">24 часа</strong>.</p>
+    <!-- Адресът се попълва от order.js: носи номера на поръчката и пакета. -->
     <p style="margin-top:1.2rem;"><a class="btn btn-primary btn-lg" id="success-pay" href="plati.html">Плати с карта</a></p>
     <p class="hint" style="margin-top:0.8rem;">Предпочиташ банков превод? Пиши ни на <a href="mailto:sales@pesenta.bg" style="color:var(--orange);text-decoration:underline;">sales@pesenta.bg</a> и ти изпращаме фактура.</p>
     <p style="margin-top:1rem;"><a class="btn btn-ghost" href="index.html">← Обратно към началото</a></p>

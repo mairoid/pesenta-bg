@@ -50,7 +50,7 @@
   <div class="order-head">
     <span class="kicker">Финалната стъпка</span>
     <h1>Плащане на <span class="grad-text">поръчка</span></h1>
-    <p>Заявката ти е приета. Плащаш сега и започваме веднага — песента пристига до 48 часа, а документът за продажбата идва на имейла ти веднага след плащането.</p>
+    <p>Заявката ти е приета. Плащаш сега и започваме веднага — песента пристига до 24 часа, а документът за продажбата идва на имейла ти веднага след плащането.</p>
   </div>
 
   <div class="order-summary" id="pay-summary" style="max-width:520px;margin:0 auto;">
@@ -196,7 +196,7 @@
   var params = new URLSearchParams(window.location.search);
   var planKey = params.get("plan") || "";
   var orderNo = params.get("order") || "";
-  var express = params.get("express") === "1";
+  /* ?express=1 от стари писма се пренебрегва: от 21.09.2026 срокът е до 24 часа за всички. */
 
   var plan = cfg.plans[planKey];
   var box = document.getElementById("pay-summary");
@@ -213,16 +213,14 @@
     return;
   }
 
-  var total = plan.price + (express ? cfg.expressPrice : 0);
+  var total = plan.price;
   var html = "";
   if (orderNo) html += '<div class="row"><span>Поръчка</span><span>' + esc(orderNo) + "</span></div>";
   html += '<div class="row"><span>Пакет „' + esc(plan.label) + '“</span><span>' + eur(plan.price) + "</span></div>";
-  if (express) html += '<div class="row"><span>Експресна изработка (24 ч)</span><span>' + eur(cfg.expressPrice) + "</span></div>";
   html += '<div class="row total"><span>Общо</span><span>' + eur(total) + "</span></div>";
   box.innerHTML = html;
 
-  var linkKey = express ? planKey + "_express" : planKey;
-  var link = cfg.paymentLinks[linkKey];
+  var link = cfg.paymentLinks[planKey];
 
   if (cfg.enabled && link) {
     var url = link + (link.indexOf("?") === -1 ? "?" : "&") + "client_reference_id=" + encodeURIComponent(orderNo || "direct");

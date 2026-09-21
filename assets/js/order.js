@@ -32,7 +32,9 @@
   var PLANS = {
     pesen: { label: "Песен по поръчка", price: 19.9, desc: "авторски текст, 2 версии, безплатна корекция, MP3 + текст" }
   };
-  var EXPRESS_PRICE = 9.9;
+  /* Срокът е до 24 часа за всички (21.09.2026); платената експресна изработка (+9,90 €)
+     отпадна. За същия ден — имейл или телефон, при възможност. */
+  var ORDER_PHONE = "+359 899 456 326";
 
   /* Повод от URL (?povod=...) → чип във формата */
   var POVOD_MAP = {
@@ -93,7 +95,6 @@
   var state = {
     step: 1,
     plan: "pesen",
-    express: false,
     promoCode: null,
     promoPct: 0
   };
@@ -180,22 +181,15 @@
 
   /* ============ Продукт: един — „Песен по поръчка“ ============ */
 
-  document.getElementById("express").addEventListener("change", function (e) {
-    state.express = e.target.checked;
-    renderSummary();
-    saveDraft();
-    presmetniDostavka(false);
-  });
-
   /* ============ Кога е събитието → кога е готова ============
-     „До 48 часа“ остава общото обещание навсякъде по сайта. Тук, където
-     човек решава, то става личен факт: „при теб до четвъртък, 17 септември
-     — 3 дни преди събитието“. Срокът е плосък — 48 часа от сега (експрес:
-     24), не работни дни. Датите са по българско време, както в rojdendni.js.
+     „До 24 часа“ е общото обещание навсякъде по сайта (до 21.09.2026 беше 48, с платен
+     вариант за 24). Тук, където човек решава, то става личен факт: „при теб до четвъртък,
+     17 септември — 3 дни преди събитието“. Срокът е плосък — 24 часа от сега, не работни
+     дни. Датите са по българско време, както в rojdendni.js.
      text-order.js носи собствено копие на същите функции — файловете нарочно
      не си споделят код (виж главата му). */
-  function dostavkaDo(sega, express) {
-    return new Date(sega.getTime() + (express ? 24 : 48) * 3600 * 1000);
+  function dostavkaDo(sega) {
+    return new Date(sega.getTime() + 24 * 3600 * 1000);
   }
   function denBG(d) {
     try {
@@ -221,18 +215,15 @@
   }
   var dostavkaRed = document.getElementById("dostavka-red");
   var eventDateEl = document.getElementById("event-date");
-  var expressEl = document.getElementById("express");
 
-  /* fokus=true само при смяна на датата от човека: тогава, ако стандартът
-     не стига, а експресът стига, фокусът отива върху отметката — но НЕ я
-     включваме сами, човек плаща за нея. При смяна на самия експрес фокусът
-     не се пипа (той вече е там). */
-  function presmetniDostavka(fokus) {
+  /* Когато 24-те часа не стигат до датата, редът кани на имейл или телефон — при
+     възможност песента става още същия ден. Платена бърза лента вече няма. */
+  function presmetniDostavka() {
     if (!dostavkaRed) return;
     var sega = new Date();
     var sabitie = dataOtPole(eventDateEl ? eventDateEl.value : "");
-    var gotova = dostavkaDo(sega, state.express);
-    var html, blizo = false, kamExpress = false;
+    var gotova = dostavkaDo(sega);
+    var html, blizo = false;
     if (sabitie === null) {
       html = "Готова до <strong>" + denBG(gotova) + "</strong>.";
     } else {
@@ -240,19 +231,15 @@
       if (n >= 0) {
         var koga = n === 0 ? "в деня на събитието" : (n === 1 ? "ден преди събитието" : n + " дни преди събитието");
         html = "Поръчаш ли сега, песента е при теб до <strong>" + denBG(gotova) + "</strong> — " + koga + ".";
-      } else if (!state.express && sabitie - denNomer(dostavkaDo(sega, true)) >= 0) {
-        blizo = true; kamExpress = true;
-        html = "Датата е близо. С експресна изработка е готова до <strong>" + denBG(dostavkaDo(sega, true)) + "</strong>.";
       } else {
         blizo = true;
-        html = "Пиши ни на <a href=\"mailto:" + ORDER_EMAIL + "\">" + ORDER_EMAIL + "</a>, преди да платиш — ще кажем дали стигаме.";
+        html = "Датата е близо. Пиши ни на <a href=\"mailto:" + ORDER_EMAIL + "\">" + ORDER_EMAIL + "</a> или се обади на <a href=\"tel:+359899456326\">" + ORDER_PHONE + "</a>, преди да платиш — при възможност е готова още същия ден.";
       }
     }
     dostavkaRed.innerHTML = html;
     dostavkaRed.classList.toggle("blizo", blizo);
-    if (kamExpress && fokus && expressEl && expressEl.offsetParent) expressEl.focus();
   }
-  if (eventDateEl) eventDateEl.addEventListener("change", function () { presmetniDostavka(true); });
+  if (eventDateEl) eventDateEl.addEventListener("change", function () { presmetniDostavka(); });
 
   /* ============ Промо код ============ */
 
@@ -292,10 +279,9 @@
 
   function calcTotal() {
     var base = PLANS[state.plan].price;
-    var express = state.express ? EXPRESS_PRICE : 0;
-    var sub = base + express;
+    var sub = base;
     var discount = sub * (state.promoPct / 100);
-    return { base: base, express: express, sub: sub, discount: discount, total: sub - discount };
+    return { base: base, sub: sub, discount: discount, total: sub - discount };
   }
 
   function renderSummary() {
@@ -303,9 +289,6 @@
     var t = calcTotal();
     var html = "";
     html += '<div class="row"><span>' + PLANS[state.plan].label + "</span><span>" + eur(t.base) + "</span></div>";
-    if (t.express) {
-      html += '<div class="row"><span>Експресна изработка (24 ч)</span><span>' + eur(t.express) + "</span></div>";
-    }
     if (t.discount > 0) {
       html += '<div class="row discount"><span>Промо код ' + state.promoCode + " (−" + state.promoPct + "%)</span><span>−" + eur(t.discount) + "</span></div>";
     }
@@ -424,7 +407,7 @@
       ["Вокал", d.voice || "—"],
       ["Нецензурни изрази", d.explicit ? "разрешени (18+)" : "не"],
       ["Гласово съобщение", voiceBlob ? "приложено ✓" : "не"],
-      ["Пакет", PLANS[state.plan].label + (state.express ? " + Експрес 24ч" : "")],
+      ["Пакет", PLANS[state.plan].label],
       ["Общо", eur(t.total) + (state.promoCode ? " с код " + state.promoCode : "")]
     ];
     var html = "<h3>Преглед на заявката</h3><dl>";
@@ -599,7 +582,7 @@
       "- Нецензурни изрази: " + (d.explicit ? "РАЗРЕШЕНИ (клиентът е дал изрично съгласие, 18+)" : "НЕ — текстът да е напълно цензурен"),
       "",
       "## Пакет",
-      "- " + PLANS[state.plan].label + " (" + PLANS[state.plan].desc + ")" + (state.express ? " + Експрес 24ч" : ""),
+      "- " + PLANS[state.plan].label + " (" + PLANS[state.plan].desc + ")",
       "- Обща цена: " + eur(t.total) + (state.promoCode ? " (промо код " + state.promoCode + ", −" + state.promoPct + "%)" : ""),
       "",
       "## Бележки от клиента",
@@ -709,7 +692,6 @@
           must_have: d.must_have || "",
           avoid: d.avoid || "",
           plan: state.plan,
-          express: !!state.express,
           landing: atr("psn_landing"),
           ref_parvi: atr("psn_ref"),
           ref_posleden: document.referrer || ""
@@ -734,8 +716,8 @@
       "Нецензурни изрази (18+)": d.explicit ? "ДА — разрешени" : "не",
       "Гласово съобщение": voiceBlob ? "ДА — приложено като прикачен файл" : "не",
       "Съгласие чл. 57 ЗЗП (без право на отказ)": "потвърдено",
-      "Линк за плащане (изпрати веднага)": "https://pesenta.bg/plati.html?order=" + orderNo + "&plan=" + state.plan + (state.express ? "&express=1" : ""),
-      "Пакет": PLANS[state.plan].label + (state.express ? " + Експрес 24ч" : ""),
+      "Линк за плащане (изпрати веднага)": "https://pesenta.bg/plati.html?order=" + orderNo + "&plan=" + state.plan,
+      "Пакет": PLANS[state.plan].label,
       "Промо код": state.promoCode ? state.promoCode + " (−" + state.promoPct + "%)" : "—",
       "Обща цена": eur(t.total),
       "Бележки": d.notes || "—",
@@ -753,7 +735,7 @@
       payload["_captcha"] = "false";
       payload["_next"] = THANKS_URL;
       payload["Гласово съобщение"] = fileName + " (прикачен — историята горе е автоматичната транскрипция)";
-      rememberOrder(orderNo, PLANS[state.plan].label + (state.express ? " + Експрес" : ""), eur(t.total));
+      rememberOrder(orderNo, PLANS[state.plan].label, eur(t.total));
       try { localStorage.removeItem("pesenta_draft"); } catch (e) { /* ок */ }
       /* нативният POST навигира веднага след submit() — събитието трябва да
          тръгне ПРЕДИ него, друг момент за него няма */
@@ -808,7 +790,7 @@
       orders.unshift({
         no: orderNo,
         date: new Date().toISOString().slice(0, 10),
-        plan: PLANS[state.plan].label + (state.express ? " + Експрес" : ""),
+        plan: PLANS[state.plan].label,
         total: eur(t.total),
         status: "Приета"
       });
@@ -817,18 +799,16 @@
     } catch (e) { /* localStorage недостъпен — не е фатално */ }
 
     document.getElementById("success-no").textContent = orderNo;
-    /* Датата вместо „48 часа“: същата сметка като в живия ред под датата на
+    /* Датата вместо „24 часа“: същата сметка като в живия ред под датата на
        събитието — личен факт, не общо обещание. */
-    document.getElementById("success-eta").textContent = denBG(dostavkaDo(new Date(), state.express));
+    document.getElementById("success-eta").textContent = denBG(dostavkaDo(new Date()));
 
-    /* Бутонът за плащане носи поръчката и избрания пакет — plati.html оттам
-       разбира коя сума да покаже и кой Stripe линк да отвори. Без експреса
-       параметърът просто липсва. */
+    /* Бутонът за плащане носи поръчката и пакета — plati.html оттам разбира коя сума
+       да покаже и кой Stripe линк да отвори. */
     var payBtn = document.getElementById("success-pay");
     if (payBtn) {
       payBtn.href = "plati.html?order=" + encodeURIComponent(orderNo) +
-                    "&plan=" + encodeURIComponent(state.plan) +
-                    (state.express ? "&express=1" : "");
+                    "&plan=" + encodeURIComponent(state.plan);
     }
     form.hidden = true;
     document.querySelector(".wizard-progress").hidden = true;
@@ -869,7 +849,7 @@
 
   function saveDraft() {
     try {
-      var draft = { fields: {}, chips: {}, plan: state.plan, express: state.express, explicit: document.getElementById("explicit").checked };
+      var draft = { fields: {}, chips: {}, plan: state.plan, explicit: document.getElementById("explicit").checked };
       DRAFT_FIELDS.forEach(function (id) { draft.fields[id] = val(id); });
       CHIP_GROUPS.forEach(function (id) { draft.chips[id] = chipValues(id); });
       localStorage.setItem("pesenta_draft", JSON.stringify(draft));
@@ -893,10 +873,6 @@
         });
       });
       if (draft.plan && PLANS[draft.plan]) state.plan = draft.plan;
-      if (draft.express) {
-        state.express = true;
-        document.getElementById("express").checked = true;
-      }
       if (draft.explicit) document.getElementById("explicit").checked = true;
       updateStyleCount();
     } catch (e) { /* повредена чернова — игнорирай */ }
@@ -912,8 +888,8 @@
 
   restoreDraft();
   /* Редът под датата — и при празна дата казва „Готова до …“; при
-     възстановена чернова с дата и експрес смята с тях. */
-  presmetniDostavka(false);
+     възстановена чернова с дата смята с нея. */
+  presmetniDostavka();
   state.plan = "pesen";
   /* Поводът от връзката печели пред черновата (21.09.2026). Преди важеше само при
      празна чернова: който веднъж беше избрал „Рожден ден“, идваше после от страницата
@@ -939,13 +915,8 @@
     var relEl = document.getElementById("relation");
     if (relEl) { relEl.value = ZA_MAP[urlZa]; saveDraft(); }
   }
-  /* Експрес от URL: poruchka.html?express=1 — от страницата „В последния
-     момент“ (11.09.2026). Отметката се слага и се пуска change, за да се
-     преизчислят цената и срокът точно както при ръчно щракване. */
-  if (params.get("express") === "1") {
-    var expressOtUrl = document.getElementById("express");
-    if (expressOtUrl && !expressOtUrl.checked) { expressOtUrl.checked = true; expressOtUrl.dispatchEvent(new Event("change")); }
-  }
+  /* ?express=1 (от страницата „В последния момент“, 11–21.09.2026) вече не значи нищо —
+     стари връзки с него просто отварят формата. */
   /* Стил от URL: poruchka.html?stil=Рок
      Идва от чиповете в секция „19 стила" на началната страница — човек
      цъка стил и попада направо във формата, вместо да се лута.

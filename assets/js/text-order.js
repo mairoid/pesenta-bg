@@ -166,11 +166,11 @@
 
   /* ============ Кога е поводът → кога е готова ============
      Собствено копие на функциите от order.js — файловете нарочно не си
-     споделят код (виж главата). Тук няма експрес: при близка дата редът
-     праща към пълната поръчка, където експресът се избира. Срокът е плосък —
-     48 часа от сега, не работни дни; датите по българско време. */
-  function dostavkaDo(sega, express) {
-    return new Date(sega.getTime() + (express ? 24 : 48) * 3600 * 1000);
+     споделят код (виж главата). Срокът е плосък — 24 часа от сега (до 21.09.2026 беше 48,
+     с платен вариант за 24), не работни дни; датите по българско време. При близка дата
+     редът кани на имейл или телефон — при възможност песента става още същия ден. */
+  function dostavkaDo(sega) {
+    return new Date(sega.getTime() + 24 * 3600 * 1000);
   }
   function denBG(d) {
     try {
@@ -198,7 +198,7 @@
     if (!dostavkaRed) return;
     var sega = new Date();
     var sabitie = dataOtPole(eventDateEl ? eventDateEl.value : "");
-    var gotova = dostavkaDo(sega, false);
+    var gotova = dostavkaDo(sega);
     var html, blizo = false;
     if (sabitie === null) {
       html = "Готова до <strong>" + denBG(gotova) + "</strong>.";
@@ -207,12 +207,9 @@
       if (n >= 0) {
         var koga = n === 0 ? "в деня на събитието" : (n === 1 ? "ден преди събитието" : n + " дни преди събитието");
         html = "Поръчаш ли сега, песента е при теб до <strong>" + denBG(gotova) + "</strong> — " + koga + ".";
-      } else if (sabitie - denNomer(dostavkaDo(sega, true)) >= 0) {
-        blizo = true;
-        html = "Датата е близо. <a href=\"poruchka.html\">Избери експресна изработка в пълната поръчка →</a>";
       } else {
         blizo = true;
-        html = "Пиши ни на <a href=\"mailto:sales@pesenta.bg\">sales@pesenta.bg</a>, преди да платиш — ще кажем дали стигаме.";
+        html = "Датата е близо. Пиши ни на <a href=\"mailto:sales@pesenta.bg\">sales@pesenta.bg</a> или се обади на <a href=\"tel:+359899456326\">+359 899 456 326</a>, преди да платиш — при възможност е готова още същия ден.";
       }
     }
     dostavkaRed.innerHTML = html;
