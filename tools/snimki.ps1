@@ -59,7 +59,8 @@ function Izrejzi-I-Mashtabiray {
 # s = слуг, p = папка в pesenta-flags, m = мастер 1.88:1
 foreach ($p in @(@{s="babo-asi";        p="rojden-den-asi"; m="babo-asi-1.88.png"},
                  @{s="cyal-edin-svyat"; p="rojden-den-asi"; m="cyal-svyat-1.88.png"},
-                 @{s="nashiyat-otbor";  p="nashiyat-otbor"; m="nashiyat-otbor-1.88.png"})) {
+                 @{s="nashiyat-otbor";  p="nashiyat-otbor"; m="nashiyat-otbor-1.88.png"},
+                 @{s="chestit-krasi";   p="chestit-krasi";  m="scena-1.88.png"})) {
     if ($Samo -and $p.s -ne $Samo) { continue }
     "  == $($p.s) =="
     $iz = "$MAS\$($p.p)\$($p.m)"

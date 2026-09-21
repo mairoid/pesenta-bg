@@ -5,7 +5,7 @@ var R = "D:/My Documents 2026/Cyber Hora/pesenta.bg/";
 var gr = 0;
 function lo(u) { gr++; console.log("    ✗ " + u); }
 
-["babo-asi", "cyal-edin-svyat", "nashiyat-otbor"].forEach(function (slug) {
+["babo-asi", "cyal-edin-svyat", "nashiyat-otbor", "chestit-krasi"].forEach(function (slug) {
   console.log("  == " + slug + " ==");
   var f = R + "pesni/" + slug + ".html";
   var syr = fs.readFileSync(f, "utf8");
