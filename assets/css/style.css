@@ -1557,6 +1557,20 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 .voice-status.rec { color: #ff8080; }
 .voice-play { display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; margin-top: var(--sp-3); }
 
+/* Снимки за обложката (23.09.2026): същата кутия като гласа; миниатюри 72 px с „×“ —
+   на телефон целта е 44 px, самата миниатюра е до нея. */
+.snimki-box { border: 1px dashed var(--border); border-radius: var(--radius-sm); background: rgba(255, 255, 255, 0.02); padding: var(--sp-4); }
+.snimki-row { display: flex; align-items: center; gap: var(--sp-4); flex-wrap: wrap; }
+.snimki-btn { padding: var(--sp-3) var(--sp-6); font-size: var(--fs-md); }
+/* .btn е display:inline-flex и бие атрибута hidden — при 3 снимки бутонът трябва да изчезне */
+.snimki-btn[hidden] { display: none; }
+.snimki-preview { display: flex; flex-wrap: wrap; gap: var(--sp-3); }
+.snimki-preview:not(:empty) { margin-top: var(--sp-4); }
+.snimki-thumb { position: relative; width: 72px; height: 72px; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border); background: var(--bg-soft); }
+.snimki-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.snimki-x { position: absolute; top: 0; right: 0; width: 28px; height: 28px; border: 0; border-radius: 0 0 0 var(--radius-sm); background: rgba(11, 10, 26, 0.85); color: var(--text); font: 700 18px/1 sans-serif; cursor: pointer; }
+@media (hover: none) and (pointer: coarse) { .snimki-x { width: 36px; height: 36px; } }
+
 @media (prefers-reduced-motion: reduce) {
   .voice-btn.recording svg { animation: none; }
 }

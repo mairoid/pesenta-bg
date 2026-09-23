@@ -194,6 +194,22 @@
         </div>
       </div>
 
+      <!-- Снимки за обложката (23.09.2026, по желание): до 3, смаляват се в браузъра до 1600 px
+           и пътуват като прикачени файлове в писмото — нативен multipart POST, както гласовият
+           запис. Не влизат в черновата (localStorage не побира снимки); в брифа към worker-а
+           отива само броят. Полето е скрито, бутонът го отваря — така изглежда като останалите. -->
+      <div class="field snimki-box" id="snimki-box">
+        <label for="snimki">Снимки за обложката
+          <span class="hint">По желание — до 3 снимки на човека или на компанията. Ще ги ползваме за корицата на песента и за личната ѝ страница.</span>
+        </label>
+        <input type="file" id="snimki" name="snimki" accept="image/*" multiple hidden>
+        <div class="snimki-row">
+          <button type="button" class="btn btn-ghost snimki-btn" id="snimki-add">Добави снимки</button>
+          <span class="voice-status" id="snimki-status">JPG или PNG от телефона — смаляваме ги сами.</span>
+        </div>
+        <div class="snimki-preview" id="snimki-preview" aria-live="polite"></div>
+      </div>
+
       <details class="more-fields">
         <summary>Добави още детайли — правят песента по-лична <span class="hint">(по желание)</span></summary>
         <div class="more-fields-body">
@@ -529,6 +545,9 @@
 
 <!-- Линковете за плащане — гласовата поръчка праща клиента право на касата,
      затова конфигурацията трябва да е заредена ПРЕДИ нея. -->
+<!-- main.js и тук (23.09.2026): подвалът се сгъва през него — без него на широк екран петте
+     групи стояха затворени; носи и запомнянето откъде е дошъл човекът (psn_landing). -->
+<script src="assets/js/main.js" defer></script>
 <script src="assets/js/payments.js" defer></script>
 <script src="assets/js/order.js" defer></script>
 <!-- Плаващ бутон за връзка: Viber на мобилно (+359899456326 — ПЛЕЙСХОЛЪР номер, смени с реалния), имейл при десктоп -->

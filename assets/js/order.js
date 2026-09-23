@@ -102,6 +102,9 @@
 
   /* Записано гласово съобщение (Blob) — прикача се към заявката */
   var voiceBlob = null;
+  /* Снимки за обложката: [{ blob, name, url }] — смалени копия, не оригиналите (23.09.2026). */
+  var snimki = [];
+  var SNIMKI_MAX = 3, SNIMKI_PX = 1600, SNIMKI_MB = 6;
 
   var form = document.getElementById("order-form");
   var errBox = document.getElementById("form-error");
@@ -407,6 +410,7 @@
       ["Вокал", d.voice || "—"],
       ["Нецензурни изрази", d.explicit ? "разрешени (18+)" : "не"],
       ["Гласово съобщение", voiceBlob ? "приложено ✓" : "не"],
+      ["Снимки за обложката", snimki.length ? snimki.length + " ✓" : "не"],
       ["Пакет", PLANS[state.plan].label],
       ["Общо", eur(t.total) + (state.promoCode ? " с код " + state.promoCode : "")]
     ];
@@ -559,6 +563,7 @@
       "## Историята",
       d.story || "—",
       (voiceBlob ? "\n(!) Клиентът е приложил и ГЛАСОВ запис на историята — виж прикачения файл glasovo-" + orderNo + "." : ""),
+      (snimki.length ? "\n(!) Клиентът е приложил " + snimki.length + " снимки за обложката — прикачените файлове snimka-" + orderNo + "-1.jpg… Ползвай ги за корицата и за личната страница." : ""),
       "",
       "## Качества и навици",
       d.qualities || "—",
@@ -612,6 +617,73 @@
   /* Може ли браузърът да сглоби файл за <input type="file">?
      Safari под 14.1 няма DataTransfer конструктор — тогава падаме към AJAX
      без прикачен файл, но с транскрипцията, и даваме линк за сваляне. */
+  /* ============ Снимки за обложката ============
+     Смаляване в браузъра: телефонна снимка е 3–8 MB, а писмото през FormSubmit трябва да
+     остане малко. До 1600 px по дългата страна, JPEG 0.85 → обикновено 200–500 KB. Ако
+     браузърът не може да декодира файла (стар формат), оригиналът минава, ако е до SNIMKI_MB. */
+  function smaliSnimka(file) {
+    return new Promise(function (res) {
+      var img = new Image();
+      var url = URL.createObjectURL(file);
+      img.onload = function () {
+        try {
+          var k = Math.min(1, SNIMKI_PX / Math.max(img.naturalWidth, img.naturalHeight));
+          var c = document.createElement("canvas");
+          c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k);
+          c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+          c.toBlob(function (b) { URL.revokeObjectURL(url); res(b || null); }, "image/jpeg", 0.85);
+        } catch (e) { URL.revokeObjectURL(url); res(null); }
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); res(null); };
+      img.src = url;
+    });
+  }
+  function renderSnimki() {
+    var box = document.getElementById("snimki-preview"), st = document.getElementById("snimki-status");
+    if (!box) return;
+    box.innerHTML = "";
+    var kb = 0;
+    snimki.forEach(function (s, i) {
+      kb += s.blob.size / 1024;
+      var d = document.createElement("div"); d.className = "snimki-thumb";
+      var im = document.createElement("img"); im.src = s.url; im.alt = "Снимка " + (i + 1);
+      var x = document.createElement("button"); x.type = "button"; x.className = "snimki-x"; x.setAttribute("aria-label", "Махни снимка " + (i + 1)); x.textContent = "×";
+      x.addEventListener("click", function () { URL.revokeObjectURL(s.url); snimki.splice(i, 1); renderSnimki(); });
+      d.appendChild(im); d.appendChild(x); box.appendChild(d);
+    });
+    if (st) {
+      st.classList.remove("err");
+      st.textContent = snimki.length ? snimki.length + (snimki.length === 1 ? " снимка" : " снимки") + ", " + Math.round(kb) + " KB — пътуват с поръчката." : "JPG или PNG от телефона — смаляваме ги сами.";
+    }
+    var add = document.getElementById("snimki-add");
+    if (add) add.textContent = snimki.length ? "Добави още" : "Добави снимки";
+    if (add) add.hidden = snimki.length >= SNIMKI_MAX;
+  }
+  (function () {
+    var inp = document.getElementById("snimki"), add = document.getElementById("snimki-add"), st = document.getElementById("snimki-status");
+    if (!inp || !add) return;
+    add.addEventListener("click", function () { inp.click(); });
+    inp.addEventListener("change", function () {
+      var files = Array.prototype.slice.call(inp.files || []);
+      inp.value = "";
+      var mesta = SNIMKI_MAX - snimki.length, predupr = null;
+      if (files.length > mesta) { files = files.slice(0, mesta); predupr = "До " + SNIMKI_MAX + " снимки — взехме първите " + mesta + "."; }
+      if (!files.length) return;
+      add.disabled = true;
+      Promise.all(files.map(function (f) {
+        return smaliSnimka(f).then(function (b) {
+          if (!b && f.size <= SNIMKI_MB * 1048576) b = f;
+          if (!b) { if (st) { st.textContent = "„" + f.name + "“ не се отваря или е над " + SNIMKI_MB + " MB — пробвай друга."; st.classList.add("err"); } return; }
+          snimki.push({ blob: b, name: f.name, url: URL.createObjectURL(b) });
+        });
+      })).then(function () {
+        add.disabled = false; renderSnimki();
+        /* предупреждението за тавана остава пред броя — renderSnimki иначе го затрива */
+        if (predupr && st) { st.textContent = predupr + " " + st.textContent; st.classList.add("err"); }
+      });
+    });
+  })();
+
   function canAttach() {
     try { return !!new DataTransfer(); } catch (e) { return false; }
   }
@@ -619,7 +691,10 @@
   /* Нативен multipart POST — единственият път, по който FormSubmit приема
      прикачени файлове. Страницата се сменя с THANKS_URL, затова всичко,
      което трябва да остане на устройството, се записва ПРЕДИ това. */
-  function postWithAttachment(fields, blob, filename) {
+  /* files: [{ blob, name, pole }] — гласовият запис и снимките. FormSubmit пази по ЕДИН файл
+     на име на поле (проба 23.09.2026: две „attachment“ → стигна само второто), затова всеки
+     файл е в свой <input type="file"> със свое име: „attachment“ за гласа, snimka_1..3. */
+  function postWithAttachment(fields, files) {
     var f = document.createElement("form");
     f.method = "POST";
     f.action = FORM_ENDPOINT_NATIVE;
@@ -638,15 +713,15 @@
       f.appendChild(el);
     });
 
-    if (blob) {
+    (files || []).forEach(function (x) {
       var fi = document.createElement("input");
       fi.type = "file";
-      fi.name = "attachment";
+      fi.name = x.pole;
       var dt = new DataTransfer();
-      dt.items.add(new File([blob], filename, { type: blob.type || "audio/webm" }));
+      dt.items.add(new File([x.blob], x.name, { type: x.blob.type || "application/octet-stream" }));
       fi.files = dt.files;
       f.appendChild(fi);
-    }
+    });
 
     document.body.appendChild(f);
     f.submit();
@@ -692,6 +767,7 @@
           must_have: d.must_have || "",
           avoid: d.avoid || "",
           plan: state.plan,
+          snimki: snimki.length,
           landing: atr("psn_landing"),
           ref_parvi: atr("psn_ref"),
           ref_posleden: document.referrer || ""
@@ -715,6 +791,7 @@
       "Референция": d.reference || "—",
       "Нецензурни изрази (18+)": d.explicit ? "ДА — разрешени" : "не",
       "Гласово съобщение": voiceBlob ? "ДА — приложено като прикачен файл" : "не",
+      "Снимки за обложката": snimki.length ? "ДА — " + snimki.length + " прикачени (snimka-" + orderNo + "-N.jpg)" : "не",
       "Съгласие чл. 57 ЗЗП (без право на отказ)": "потвърдено",
       "Линк за плащане (изпрати веднага)": "https://pesenta.bg/plati.html?order=" + orderNo + "&plan=" + state.plan,
       "Пакет": PLANS[state.plan].label,
@@ -730,23 +807,31 @@
     /* Има гласов запис → нативен multipart POST: AJAX ендпойнтът на FormSubmit
        не пренася прикачени файлове. Страницата се сменя с THANKS_URL, затова
        заявката се записва предварително. */
-    if (voiceBlob && canAttach()) {
-      var fileName = "glasovo-" + orderNo + "." + audioExt(voiceBlob);
+    if ((voiceBlob || snimki.length) && canAttach()) {
+      var files = [];
+      if (voiceBlob) {
+        var fileName = "glasovo-" + orderNo + "." + audioExt(voiceBlob);
+        payload["Гласово съобщение"] = fileName + " (прикачен — историята горе е автоматичната транскрипция)";
+        files.push({ blob: voiceBlob, name: fileName, pole: "attachment" });
+      }
+      snimki.forEach(function (s, i) { files.push({ blob: s.blob, name: "snimka-" + orderNo + "-" + (i + 1) + ".jpg", pole: "snimka_" + (i + 1) }); });
       payload["_captcha"] = "false";
       payload["_next"] = THANKS_URL;
-      payload["Гласово съобщение"] = fileName + " (прикачен — историята горе е автоматичната транскрипция)";
       rememberOrder(orderNo, PLANS[state.plan].label, eur(t.total));
       try { localStorage.removeItem("pesenta_draft"); } catch (e) { /* ок */ }
       /* нативният POST навигира веднага след submit() — събитието трябва да
          тръгне ПРЕДИ него, друг момент за него няма */
-      trackPlausible("Order Submitted", { plan: payload["Пакет"], method: "voice-attachment" });
-      postWithAttachment(payload, voiceBlob, fileName);
+      trackPlausible("Order Submitted", { plan: payload["Пакет"], method: voiceBlob ? "voice-attachment" : "photo-attachment" });
+      postWithAttachment(payload, files);
       return;
     }
 
     if (voiceBlob) {
       /* без DataTransfer записът не може да се прикачи — текстът тръгва сам */
       payload["Гласово съобщение"] = "НЕ е прикачен — браузърът на клиента не го поддържа; поискай го по имейл";
+    }
+    if (snimki.length) {
+      payload["Снимки за обложката"] = snimki.length + " избрани, но НЕ са прикачени — браузърът на клиента не го поддържа; поискай ги по имейл";
     }
     var fetchOpts = {
       method: "POST",
