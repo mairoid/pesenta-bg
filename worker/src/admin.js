@@ -259,6 +259,7 @@ function risuvaiSpisak(d){
       ? '<div class="razkaz"><div class="meta">' +
           [b.povod && "Повод: " + b.povod, b.stilove && "Стилове: " + b.stilove, b.ezik && "Език: " + b.ezik,
            pl.recipient && "За: " + pl.recipient + (pl.relation ? " (" + pl.relation + ")" : ""),
+           pl.snimki && "Снимки: " + pl.snimki + " (в писмото)",
            pl.landing && "От: " + pl.landing + (pl.ref_parvi ? " ← " + pl.ref_parvi.replace(/^https?:\/\//, "").slice(0, 40) : "")]
             .filter(Boolean).map(e).join(" · ") +
         "</div>" + e(b.razkaz || "—") + "</div>"
