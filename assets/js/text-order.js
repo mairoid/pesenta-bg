@@ -14,6 +14,10 @@
 
   var FORM_TARGET = "rusev.miro@gmail.com";
   var FORM_ENDPOINT = "https://formsubmit.co/ajax/" + FORM_TARGET;
+  /* Нативният ендпойнт — само за снимките: AJAX-ът дава 500 при прикачен файл (проба
+     23.09.2026). Заявката е multipart с mode no-cors: отговорът е непрозрачен, но писмото
+     тръгва; FormSubmit пази по един файл на име на поле, затова snimka_1..3. */
+  var FORM_ENDPOINT_NATIVE = "https://formsubmit.co/" + FORM_TARGET;
   /* Втори, независим път за разказа. FormSubmit е трета страна на безплатен
      план; тук записът е наш и стои при поръчката в базата. */
   var BRIEF_ENDPOINT = "https://pesenta-nap.pesenta-nap.workers.dev/brief";
@@ -29,6 +33,85 @@
   var sendBtn = document.getElementById("text-send");
   var errEl = document.getElementById("text-error");
   var storyEl = document.getElementById("text-story");
+  /* Снимки за обложката: [{ blob, name, url }] — смалени копия. Собствено копие на
+     функциите от order.js — файловете нарочно не си споделят код (виж главата). */
+  var snimki = [];
+  var SNIMKI_MAX = 3, SNIMKI_PX = 1600, SNIMKI_MB = 6;
+  function smaliSnimka(file) {
+    return new Promise(function (res) {
+      var img = new Image();
+      var url = URL.createObjectURL(file);
+      img.onload = function () {
+        try {
+          var k = Math.min(1, SNIMKI_PX / Math.max(img.naturalWidth, img.naturalHeight));
+          var c = document.createElement("canvas");
+          c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k);
+          c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+          c.toBlob(function (b) { URL.revokeObjectURL(url); res(b || null); }, "image/jpeg", 0.85);
+        } catch (e) { URL.revokeObjectURL(url); res(null); }
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); res(null); };
+      img.src = url;
+    });
+  }
+  function renderSnimki() {
+    var box = document.getElementById("text-snimki-preview"), st = document.getElementById("text-snimki-status"), add = document.getElementById("text-snimki-add");
+    if (!box) return;
+    box.innerHTML = "";
+    var kb = 0;
+    snimki.forEach(function (s, i) {
+      kb += s.blob.size / 1024;
+      var d = document.createElement("div"); d.className = "snimki-thumb";
+      var im = document.createElement("img"); im.src = s.url; im.alt = "Снимка " + (i + 1);
+      var x = document.createElement("button"); x.type = "button"; x.className = "snimki-x"; x.setAttribute("aria-label", "Махни снимка " + (i + 1)); x.textContent = "×";
+      x.addEventListener("click", function () { URL.revokeObjectURL(s.url); snimki.splice(i, 1); renderSnimki(); });
+      d.appendChild(im); d.appendChild(x); box.appendChild(d);
+    });
+    if (st) {
+      st.classList.remove("err");
+      st.textContent = snimki.length ? snimki.length + (snimki.length === 1 ? " снимка" : " снимки") + ", " + Math.round(kb) + " KB — пътуват с поръчката." : "JPG или PNG от телефона — смаляваме ги сами.";
+    }
+    if (add) { add.textContent = snimki.length ? "Добави още" : "Добави снимки"; add.hidden = snimki.length >= SNIMKI_MAX; }
+  }
+  (function () {
+    var inp = document.getElementById("text-snimki"), add = document.getElementById("text-snimki-add"), st = document.getElementById("text-snimki-status");
+    if (!inp || !add) return;
+    add.addEventListener("click", function () { inp.click(); });
+    inp.addEventListener("change", function () {
+      var files = Array.prototype.slice.call(inp.files || []);
+      inp.value = "";
+      var mesta = SNIMKI_MAX - snimki.length, predupr = null;
+      if (files.length > mesta) { files = files.slice(0, mesta); predupr = "До " + SNIMKI_MAX + " снимки — взехме първите " + mesta + "."; }
+      if (!files.length) return;
+      add.disabled = true;
+      Promise.all(files.map(function (f) {
+        return smaliSnimka(f).then(function (b) {
+          if (!b && f.size <= SNIMKI_MB * 1048576) b = f;
+          if (!b) { predupr = "„" + f.name + "“ не се отваря или е над " + SNIMKI_MB + " MB — пробвай друга."; return; }
+          snimki.push({ blob: b, name: f.name, url: URL.createObjectURL(b) });
+        });
+      })).then(function () {
+        add.disabled = false; renderSnimki();
+        if (predupr && st) { st.textContent = predupr + " " + st.textContent; st.classList.add("err"); }
+      });
+    });
+  })();
+  /* Снимките тръгват в отделна заявка, преди поръчката. Отговорът е непрозрачен (no-cors),
+     затова не чакаме повече от 8 секунди — клиентът не бива да стои пред касата заради нас. */
+  function pratiSnimki(orderNo) {
+    if (!snimki.length) return Promise.resolve();
+    var fd = new FormData();
+    fd.append("_subject", "Снимки за обложката — " + orderNo);
+    fd.append("_captcha", "false");
+    fd.append("_template", "box");
+    fd.append("Към заявка", orderNo);
+    fd.append("Тип", "Снимки за обложката към бърза текстова поръчка");
+    snimki.forEach(function (s, i) { fd.append("snimka_" + (i + 1), s.blob, "snimka-" + orderNo + "-" + (i + 1) + ".jpg"); });
+    return Promise.race([
+      fetch(FORM_ENDPOINT_NATIVE, { method: "POST", mode: "no-cors", body: fd }).catch(function () {}),
+      new Promise(function (res) { setTimeout(res, 8000); })
+    ]);
+  }
 
   /* Откъде е дошъл човекът — записано от main.js при първата страница. */
   function atr(k) { try { return sessionStorage.getItem(k) || ""; } catch (e) { return ""; } }
@@ -297,6 +380,7 @@
       "Стилове": styles.length ? styles.join(", ") : "— не са избрани, виж разказа",
       "Език": language,
       "Разказ": story,
+      "Снимки за обложката": snimki.length ? "ДА — " + snimki.length + ", в ОТДЕЛНО писмо със snimka-" + orderNo + "-N.jpg" : "не",
       /* Ако няма отметка, пишем изрично „не иска" — така при преглед се вижда
          разликата между „не е поискана" и „забравили сме да я запишем". */
       "ФАКТУРА": inv
@@ -322,6 +406,7 @@
         "Стилове: " + (styles.length ? styles.join(", ") : "— не са избрани, виж разказа"),
         "Език: " + language,
         "",
+        (snimki.length ? "(!) Клиентът е приложил " + snimki.length + " снимки за обложката — идват в отделно писмо, файлове snimka-" + orderNo + "-N.jpg. Ползвай ги за корицата и за личната страница.\n" : ""),
         "## Разказ (директно от клиента, без транскрипция)",
         story,
         "",
@@ -370,6 +455,7 @@
           stilove: fields["Стилове"],
           ezik: fields["Език"],
           razkaz: fields["Разказ"],
+          snimki: snimki.length,
           landing: atr("psn_landing"),
           ref_parvi: atr("psn_ref"),
           ref_posleden: document.referrer || ""
@@ -377,12 +463,12 @@
       }
     } catch (e) { /* без beacon оставаме на стария път */ }
 
-    fetch(FORM_ENDPOINT, { method: "POST", headers: { "Accept": "application/json" }, body: fd })
-      .then(function (res) {
-        if (!res.ok) throw new Error("HTTP " + res.status);
-        return res.json();
-      })
-      .then(toPayment)
-      .catch(toPayment);
+    pratiSnimki(orderNo).then(function () {
+      return fetch(FORM_ENDPOINT, { method: "POST", headers: { "Accept": "application/json" }, body: fd })
+        .then(function (res) {
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          return res.json();
+        });
+    }).then(toPayment).catch(toPayment);
   });
 })();

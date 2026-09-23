@@ -241,6 +241,21 @@
               <textarea id="text-story" placeholder="напр. За колегата ми Данчо — има 40-ти рожден ден следващата събота, обича риболова…"></textarea>
             </div>
 
+            <!-- Снимки за обложката (23.09.2026, по желание): до 3, смалени в браузъра до 1600 px.
+                 Тръгват в ОТДЕЛНА заявка към нативния ендпойнт на FormSubmit (AJAX-ът дава 500 при
+                 файл) преди поръчката — писмото с поръчката остава по стария път. text-order.js. -->
+            <div class="field snimki-box" id="text-snimki-box">
+              <label for="text-snimki">Снимки за обложката
+                <span class="hint">По желание — до 3 снимки на човека или на компанията. Ще ги ползваме за корицата на песента и за личната ѝ страница.</span>
+              </label>
+              <input type="file" id="text-snimki" name="text-snimki" accept="image/*" multiple hidden>
+              <div class="snimki-row">
+                <button type="button" class="btn btn-ghost snimki-btn" id="text-snimki-add">Добави снимки</button>
+                <span class="voice-status" id="text-snimki-status">JPG или PNG от телефона — смаляваме ги сами.</span>
+              </div>
+              <div class="snimki-preview" id="text-snimki-preview" aria-live="polite"></div>
+            </div>
+
             <div class="field">
               <label>Повод <span class="hint">По желание — ако не личи от разказа</span></label>
               <div class="chips" id="text-occasion-chips" data-single>

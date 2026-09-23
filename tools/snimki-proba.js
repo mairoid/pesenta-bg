@@ -11,7 +11,11 @@
       „Снимки за обложката“ казва „ДА — 3 прикачени“, брифът съдържа бележката, а beacon-ът
       към worker-а носи snimki: 3; на 375 px без препълване;
    6) без снимки: старият път (AJAX, без прикачени) и „Снимки за обложката: не“;
-   7) конзолата чиста. Код 1 при FAIL. Нищо не се праща наистина: form.submit, fetch и
+   7) бързата форма на началната: 2 снимки → миниатюри; при изпращане снимките тръгват ПЪРВИ,
+      в отделна multipart заявка (no-cors) към нативния ендпойнт (AJAX-ът дава 500 при файл),
+      поръчката — по стария AJAX път с „ДА — 2, в ОТДЕЛНО писмо“, beacon snimki: 2; без снимки —
+      само AJAX. Записите живеят в localStorage, Stripe е блокиран;
+   8) конзолата чиста. Код 1 при FAIL. Нищо не се праща наистина: form.submit, fetch и
       sendBeacon са подменени в страницата. */
 const { spawn } = require("child_process");
 const http = require("http"), path = require("path");
@@ -96,6 +100,37 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     const fe = await evalJS(`window.__fetch`), fo2 = await evalJS(`window.__forma`), br2 = await evalJS(`window.__brief`);
     let tyalo = null; try { tyalo = JSON.parse(fe.body); } catch (e) {}
     ok("без снимки: AJAX към FormSubmit, без нативна форма, „Снимки за обложката: не“, beacon snimki: 0", !!fe && /formsubmit\.co\/ajax\//.test(fe.url) && !fo2 && !!tyalo && tyalo["Снимки за обложката"] === "не" && !!br2 && br2.snimki === 0, fe ? fe.url.slice(0, 40) + " / " + (tyalo && tyalo["Снимки за обложката"]) : "няма fetch");
+    /* 7) бързата форма на началната: снимките тръгват в отделна заявка към нативния ендпойнт
+       ПРЕДИ поръчката. Страницата после навигира към Stripe, затова записите живеят в
+       localStorage, а адресът на Stripe е блокиран — четем ги, като се върнем. */
+    await send("Network.setBlockedURLs", { urls: ["*buy.stripe.com*"] });
+    const STUB2 = `(function(){localStorage.removeItem("__proba");var z=[];function pishi(){localStorage.setItem("__proba",JSON.stringify(z));}
+      window.fetch=function(u,o){var e=[];if(o&&o.body instanceof FormData){o.body.forEach(function(v,k){e.push([k,(v instanceof Blob)?("FILE:"+(v.name||"")+":"+v.size):String(v).slice(0,k==="CLAUDE BRIEF"?4000:60)]);});}
+        z.push({vid:"fetch",url:String(u),mode:o&&o.mode||"",e:e});pishi();return Promise.resolve({ok:true,json:function(){return Promise.resolve({success:"true"});}});};
+      navigator.sendBeacon=function(u,b){b.text().then(function(t){z.push({vid:"beacon",url:String(u),tyalo:JSON.parse(t)});pishi();});return true;};})()`;
+    const barza = async (sSnimki) => {
+      await idi(BASE + "/index.html");
+      await evalJS(STUB2);
+      await evalJS(`document.getElementById("fast-text").click()`); await sleep(1200);
+      if (sSnimki) { const doc = await send("DOM.getDocument", { depth: 1 }); const n = await send("DOM.querySelector", { nodeId: doc.root.nodeId, selector: "#text-snimki" }); await send("DOM.setFileInputFiles", { nodeId: n.nodeId, files: [F("cover-tutso-400.jpg"), F("cover-habibi-400.jpg")] }); await sleep(1500); }
+      const t = await evalJS(`(function(){return {n:document.querySelectorAll("#text-snimki-preview .snimki-thumb").length,st:document.getElementById("text-snimki-status").textContent,sw:document.documentElement.scrollWidth,cw:document.documentElement.clientWidth};})()`);
+      await evalJS(`document.getElementById("text-story").value="Проба: за Данчо, 40 години, обича риболова.";document.getElementById("text-consent").checked=true;document.getElementById("text-send").click();`);
+      await sleep(2500);
+      await idi(BASE + "/index.html");
+      const z = JSON.parse(await evalJS(`localStorage.getItem("__proba")||"[]"`));
+      return { t, z };
+    };
+    const b1 = await barza(true);
+    ok("началната: 2 снимки → 2 миниатюри, редът брои, 375 px без препълване", b1.t.n === 2 && /^2 снимки, \d+ KB/.test(b1.t.st) && b1.t.sw <= b1.t.cw, b1.t.n + " / " + b1.t.st);
+    const nat = b1.z.find(x => x.vid === "fetch" && !/\/ajax\//.test(x.url)), aj = b1.z.find(x => x.vid === "fetch" && /\/ajax\//.test(x.url)), bc = b1.z.find(x => x.vid === "beacon");
+    const psn2 = aj && (aj.e.find(p => p[0] === "Номер на заявка") || [])[1];
+    const fajlove = nat ? nat.e.filter(p => /^snimka_\d$/.test(p[0])) : [];
+    ok("снимките тръгват първи, в отделна multipart заявка (no-cors) към нативния ендпойнт: snimka_1, snimka_2 + номерът", !!nat && b1.z.indexOf(nat) < b1.z.indexOf(aj) && nat.mode === "no-cors" && fajlove.length === 2 && fajlove.every((p, i) => p[1] === "FILE:snimka-" + psn2 + "-" + (i + 1) + ".jpg:" + p[1].split(":")[2] && +p[1].split(":")[2] > 1000) && (nat.e.find(p => p[0] === "Към заявка") || [])[1] === psn2, nat ? nat.e.map(p => p[0] + "=" + p[1]).join(", ").slice(0, 160) : "няма нативна заявка");
+    ok("поръчката тръгва по стария AJAX път: „Снимки за обложката: ДА — 2, в ОТДЕЛНО писмо“, брифът с бележка; beacon snimki: 2", !!aj && /^ДА — 2, в ОТДЕЛНО писмо/.test((aj.e.find(p => p[0] === "Снимки за обложката") || [])[1] || "") && /2 снимки за обложката/.test((aj.e.find(p => p[0] === "CLAUDE_BRIEF" || p[0] === "CLAUDE BRIEF") || [])[1] || ""), aj ? (aj.e.find(p => p[0] === "Снимки за обложката") || [])[1] : "няма ajax");
+    ok("beacon-ът от бързата форма носи snimki: 2", !!bc && bc.tyalo.snimki === 2 && bc.tyalo.order_no === psn2, bc ? JSON.stringify({ snimki: bc.tyalo.snimki }) : "няма beacon");
+    const b0 = await barza(false);
+    const nat0 = b0.z.find(x => x.vid === "fetch" && !/\/ajax\//.test(x.url)), aj0 = b0.z.find(x => x.vid === "fetch" && /\/ajax\//.test(x.url)), bc0 = b0.z.find(x => x.vid === "beacon");
+    ok("началната без снимки: само AJAX, без нативна заявка, „Снимки за обложката: не“, beacon snimki: 0", !nat0 && !!aj0 && (aj0.e.find(p => p[0] === "Снимки за обложката") || [])[1] === "не" && !!bc0 && bc0.tyalo.snimki === 0);
     ok("конзолата чиста", konzola.length === 0, konzola.join(" | "));
   } catch (e) { ok("пробата стигна до края", false, e.message.slice(0, 200)); }
   try { await send("Browser.close"); } catch (e) {} try { chrome.kill(); } catch (e) {}
