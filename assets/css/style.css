@@ -1862,6 +1862,7 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
    връзките са оранжеви като при източниците. */
 .article .article-note { margin-top: var(--sp-4); font-size: var(--fs-sm); color: var(--muted); line-height: 1.6; }
 .article .article-note a { color: var(--orange); }
+.article .article-figure-note { margin: var(--sp-2) 0 0; font-size: var(--fs-sm); color: var(--muted); }
 .news-policy { max-width: 760px; margin-top: var(--sp-16); padding-top: var(--sp-8); border-top: 1px solid var(--border); }
 .news-policy h2 { font-size: var(--fs-2xl); margin-bottom: var(--sp-4); }
 .news-policy p { color: var(--muted); font-size: var(--fs-md); line-height: 1.7; margin: 0 0 var(--sp-3); }
