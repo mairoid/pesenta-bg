@@ -1858,6 +1858,15 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 .article .news-date { display: block; margin-bottom: var(--sp-4); }
 .article .article-sources { border-top: 1px solid var(--border); margin-top: var(--sp-10); padding-top: var(--sp-4); font-size: var(--fs-md); }
 .article .article-sources a { color: var(--orange); }
+/* Бележката под източниците и разделът „Как пишем новините“ (29.09.2026) — тихи, четими,
+   връзките са оранжеви като при източниците. */
+.article .article-note { margin-top: var(--sp-4); font-size: var(--fs-sm); color: var(--muted); line-height: 1.6; }
+.article .article-note a { color: var(--orange); }
+.news-policy { max-width: 760px; margin-top: var(--sp-16); padding-top: var(--sp-8); border-top: 1px solid var(--border); }
+.news-policy h2 { font-size: var(--fs-2xl); margin-bottom: var(--sp-4); }
+.news-policy p { color: var(--muted); font-size: var(--fs-md); line-height: 1.7; margin: 0 0 var(--sp-3); }
+.news-policy p strong { color: var(--text); }
+.news-policy a { color: var(--orange); }
 .article .article-cta {
   margin-top: var(--sp-10);
   padding: var(--sp-6) var(--sp-6);
