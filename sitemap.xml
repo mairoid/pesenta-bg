@@ -279,11 +279,17 @@
   </url>
   <url>
     <loc>https://pesenta.bg/novini/</loc>
-    <lastmod>2026-10-03</lastmod>
+    <lastmod>2026-10-04</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <!-- NOVINI:SITEMAP — новите статии се добавят непосредствено под този ред -->
+  <url>
+    <loc>https://pesenta.bg/novini/matchbox-twenty-yourself-someone-30-godini.html</loc>
+    <lastmod>2026-10-04</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
   <url>
     <loc>https://pesenta.bg/novini/stylistics-vol-2-no-1-50-godini.html</loc>
     <lastmod>2026-10-03</lastmod>
