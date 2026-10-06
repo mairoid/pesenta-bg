@@ -593,7 +593,23 @@ async function sendBeleshkaEmail(env, sale) {
    secret put NOTIFY_EMAILS` — не в wrangler.toml, защото repo-то е
    публично и лични адреси там събират спам. Без него писмото отива на
    подателя, тоест sales@pesenta.bg. */
-async function notifyVatreshno(env, n) {
+/* Датата на повода и броя снимки ги има само в poleta (целия пратен обект). Снимките пътуват
+   единствено през FormSubmit, в отделно писмо — на 06.10.2026 (PSN-261006-1422) то не дойде,
+   а без този ред никой не разбра, че е имало снимка. Затова писмото за плащане ги казва. */
+export function briefDopalnitelno(poleta) {
+  var p = {};
+  try { p = JSON.parse(poleta || "{}") || {}; } catch (e) { p = {}; }
+  var d = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(p.event_date || ""));
+  var s = parseInt(p.snimki, 10);
+  return {
+    data: d ? d[3] + "." + d[2] + "." + d[1] : "",
+    snimki: isFinite(s) && s > 0 ? s : 0,
+    snimkiIzvestni: p.snimki !== undefined && p.snimki !== null && p.snimki !== ""
+  };
+}
+
+/* Изнесена за проверката в tools/ (известие с подменени DB и fetch), не за друго. */
+export async function notifyVatreshno(env, n) {
   try {
     if (!env.BREVO_API_KEY || !env.MAIL_SENDER) return;
 
@@ -608,9 +624,10 @@ async function notifyVatreshno(env, n) {
     var brief = null;
     try {
       brief = await env.DB.prepare(
-        "SELECT vid, povod, stilove, ezik, razkaz FROM briefs WHERE order_no = ?"
+        "SELECT vid, povod, stilove, ezik, razkaz, poleta FROM briefs WHERE order_no = ?"
       ).bind(n.order_no).first();
     } catch (e) { /* дори липсваща таблица не бива да спира известието */ }
+    var dop = briefDopalnitelno(brief && brief.poleta);
 
     var suma = typeof n.amount_c === "number"
       ? (n.amount_c / 100).toFixed(2) + " " + String(n.currency || "").toUpperCase()
@@ -651,14 +668,24 @@ async function notifyVatreshno(env, n) {
         "не е стигнала до нас — песента не може да се напише. Пиши на клиента да я разкаже.</p>";
     }
 
+    if (dop.snimki) {
+      trevogi += "<p style=\"background:#EAF2FB;border-left:4px solid #2E6DA4;padding:10px 14px\">" +
+        "<strong>Клиентът е приложил " + dop.snimki + (dop.snimki === 1 ? " снимка" : " снимки") +
+        ".</strong> Те идват САМО в отделно писмо от FormSubmit „Снимки за обложката — " +
+        xmlEscape(String(n.order_no)) + "“. Ако то липсва, поискай ги от клиента.</p>";
+    }
+
     var razkazBlok = "";
     if (brief) {
       razkazBlok =
         "<h3 style=\"font:600 15px sans-serif;margin:22px 0 8px\">Разказът на клиента</h3>" +
         "<table style=\"font:14px sans-serif;border-collapse:collapse\">" +
+        (brief.vid     ? red("Вид", brief.vid)         : "") +
         (brief.povod   ? red("Повод", brief.povod)     : "") +
+        (dop.data      ? red("Дата на повода", dop.data) : "") +
         (brief.stilove ? red("Стилове", brief.stilove) : "") +
         (brief.ezik    ? red("Език", brief.ezik)       : "") +
+        (dop.snimkiIzvestni ? red("Снимки", dop.snimki ? dop.snimki + " (в отделно писмо)" : "няма") : "") +
         "</table>" +
         "<p style=\"font:14px/1.6 sans-serif;background:#F6F5FA;border-left:3px solid #D2577F;" +
         "padding:12px 16px;margin-top:12px;white-space:pre-wrap\">" +
