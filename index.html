@@ -487,6 +487,16 @@
           <!-- Песен за публични личности. Води към собствената си страница,
                защото е правена, за да се споделя — картата пуска, линкът
                в заглавието отваря страницата с истинските Open Graph тагове. -->
+          <div class="track-row player reveal" data-category="za-podarak" data-src="assets/audio/chestit-krasi.mp3" role="button" tabindex="0" aria-label="Пусни „Честит рожден ден, Краси“">
+            <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+            <img class="track-thumb" src="assets/img/cover-krasi.jpg" srcset="assets/img/cover-krasi-400.jpg 400w, assets/img/cover-krasi.jpg 600w" sizes="(max-width: 760px) 46vw, (max-width: 980px) 30vw, 260px" alt="" loading="lazy" width="600" height="600">
+            <div class="track-info">
+              <h3>Честит рожден ден, Краси</h3>
+              <span>За рожден ден · весел рап с женски припев</span>
+            </div>
+            <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
+            <span class="time">2:56</span>
+          </div>
           <div class="track-row player reveal" data-category="parti-shegi" data-src="assets/audio/gligane-izlez.mp3" role="button" tabindex="0" aria-label="Пусни „Глигане, излез“">
             <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
             <img class="track-thumb" src="assets/img/cover-gligane.jpg" srcset="assets/img/cover-gligane-400.jpg 400w, assets/img/cover-gligane.jpg 600w" sizes="(max-width: 760px) 46vw, (max-width: 980px) 30vw, 260px" alt="" loading="lazy" width="600" height="600">
@@ -949,11 +959,11 @@
            секция 07, тоест човек вижда 19,90 € преди каквото и да е
            доказателство. Тук стои един, дословно същият като долу — не е
            нов текст, а същият пренесен там, където се взима решението. -->
-      <!-- Числото е реално: 45 написани песни, потвърдено от Мирослав.
-           Твърдението е за НАПИСАНИ песни, не за клиенти — базата има една
-           продажба (тестовата). Формулировката го казва точно, за да не
-           повтаряме историята с рейтинга 4,9/40, който махнахме. -->
-      <p class="proof-count reveal"><strong>45 песни</strong> написани досега — за приятели, сватби и ергенски партита.</p>
+      <!-- Числото е реално: над 50 написани песни, потвърдено от Мирослав
+           на 08.10.2026 (преди беше 45). Твърдението е за НАПИСАНИ песни, не
+           за клиенти. Формулировката го казва точно, за да не повтаряме
+           историята с рейтинга 4,9/40, който махнахме. -->
+      <p class="proof-count reveal"><strong>50+ песни</strong> написани досега — за приятели, сватби и ергенски партита.</p>
       <figure class="price-quote reveal">
         <blockquote>Миро, много ти благодаря, батко! Твоите песни правят купона! ❤️</blockquote>
         <figcaption>Владимир Н.</figcaption>
@@ -1041,6 +1051,21 @@
            Виж quotes-* в style.css и main.js. -->
       <div class="lenta-rail quotes-rail reveal" id="quotes-rail">
         <div class="quotes-track" id="quotes-track">
+          <figure class="quote-card">
+            <div class="quote-mark">“</div>
+            <blockquote>Искам да Ви благодаря от цялото си сърце, песента е съвършена, нямам думи. Огромно благодаря!</blockquote>
+            <figcaption class="who">Гергана С.</figcaption>
+          </figure>
+          <figure class="quote-card">
+            <div class="quote-mark">“</div>
+            <blockquote>Супер е, браво!</blockquote>
+            <figcaption class="who">Ивайло Д.</figcaption>
+          </figure>
+          <figure class="quote-card">
+            <div class="quote-mark">“</div>
+            <blockquote>Страхотно е, много ти благодаря!</blockquote>
+            <figcaption class="who">Красимира Г.</figcaption>
+          </figure>
           <figure class="quote-card">
             <div class="quote-mark">“</div>
             <blockquote>Следваща стъпка… Продуцент 😁😁 че напоследък много слаби песни. Аз тая за Влади си я слушам в колата 🤣🤣</blockquote>
@@ -1179,11 +1204,10 @@
         <h2>Подари нещо, което не се забравя</h2>
         <p>Цветята увяхват, ваучерите изтичат. Песента остава — и се пуска на всяко семейно събиране.</p>
         <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
-          <a class="btn btn-primary btn-lg" href="#voice-card">
-            <span class="mic mic-pulse"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg></span>
-            Поръчай с глас
-          </a>
-          <a class="btn btn-ghost btn-lg" href="poruchka.html">Или с формата</a>
+          <!-- Гласовата поръчка я няма от 14.09.2026 — бутонът води към бързата
+               форма горе (#voice-card е старото име на същото място). -->
+          <a class="btn btn-primary btn-lg" href="#voice-card">Поръчай песен</a>
+          <a class="btn btn-ghost btn-lg" href="poruchka.html">Или с пълната форма</a>
         </div>
       </div>
     </div>
