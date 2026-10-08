@@ -16,6 +16,7 @@
 ## Основни страници
 - [Начална страница](https://pesenta.bg/): Какво е песен по поръчка, демо песни за истински хора, отзиви, цена и често задавани въпроси.
 - [Поръчка](https://pesenta.bg/poruchka.html): Пълната форма — история, повод, стилове, език, плащане 19,90 €.
+- [За нас](https://pesenta.bg/za-nas.html): Кой стои зад Песента, как се прави една песен стъпка по стъпка, фирмата и контактите.
 - [Подарък в последния момент](https://pesenta.bg/podarak-v-poslednia-moment.html): Песен до 24 часа по имейл, без куриер, плюс картичка за днес.
 - [Кой има имен ден днес](https://pesenta.bg/imen-den-dnes.html): Календар на именните дни по дата и по месеци, подвижните по Великден.
 - [Кой има рожден ден днес](https://pesenta.bg/rodeni-dnes.html): Известните рожденици по дата, обновявани всяка сутрин.
@@ -48,6 +49,13 @@
 - [Песен за съпруг](https://pesenta.bg/podarak-za-saprug.html), [за съпруга](https://pesenta.bg/podarak-za-sapruga.html), [за гадже](https://pesenta.bg/podarak-za-gadzhe.html).
 - [Песен за сестра](https://pesenta.bg/podarak-za-sestra.html), [за брат](https://pesenta.bg/podarak-za-brat.html), [за приятелка](https://pesenta.bg/podarak-za-priyatelka.html).
 - [Песен за шеф или колега](https://pesenta.bg/podarak-za-shef.html), [за треньор](https://pesenta.bg/podarak-za-trenyor.html), [за кръстник](https://pesenta.bg/podarak-za-krastnik.html).
+
+## Ръководства
+- [Песен по поръчка: какво е, колко струва и как се поръчва](https://pesenta.bg/novini/pesen-po-porachka-kakvo-e-kolko-struva.html): Отговорите на най-честите въпроси — цена, срок, какво получаваш, връщане.
+- [Как да подариш песен: 7 начина да пуснеш изненадата](https://pesenta.bg/novini/kak-da-podarish-pesen-iznenada.html): Сутрин, на тортата, в колата, на голям екран, с картичка с QR код, на сватба, по видеоразговор.
+- [Какво да разкажеш, за да стане песента лична — 12 идеи](https://pesenta.bg/novini/kakvo-da-razkazhesh-lichna-pesen.html): Какви детайли превръщат историята в песен.
+- [Песен за сватба: 7 момента, в които тя краде шоуто](https://pesenta.bg/novini/pesen-za-svatba-7-momenta.html): Кога да се пусне песента на сватбата.
+- [Какво да подаря на мъжа си за рождения му ден](https://pesenta.bg/novini/kakvo-da-podarya-na-mazha-si-za-rojdeniya-den.html): Седем идеи с цена и срок.
 
 ## Optional
 - [Музикални новини](https://pesenta.bg/novini/): Ежедневни музикални новини, написани със свои думи по публични източници.

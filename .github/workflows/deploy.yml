@@ -47,3 +47,18 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  # IndexNow (08.10.2026): след качването казва на Bing кои страници от sitemap.xml са нови или
+  # сменени в този push. Отделна задача с пълната история, защото deploy-ът по-горе трие файлове
+  # от своя checkout. Провал тук не засяга сайта — той вече е качен. Вж. tools/indexnow.mjs.
+  indexnow:
+    needs: deploy
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Notify IndexNow
+        run: node tools/indexnow.mjs "${{ github.event.before }}" "${{ github.sha }}"

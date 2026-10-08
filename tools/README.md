@@ -178,3 +178,11 @@ Chrome при „metadata“ тегли по ~1,5 MB на песен от GitHub
 HTML-а и е сверено с файловете (`scratchpad/demo-vremена.js` в THIRD BRAIN). Кориците
 на демо редовете имат 400-px вариант за телефон (на 375 при 2× картата е ~333 px —
 320 не стигаше и браузърът вземаше 600).
+
+## IndexNow (08.10.2026)
+
+**`indexnow.mjs`** — след всяко качване казва на Bing (и на останалите в IndexNow) кои страници
+от `sitemap.xml` са нови или сменени. Вика го задачата `indexnow` в `.github/workflows/deploy.yml`
+с двата комита на push-а; ръчно: `node tools/indexnow.mjs <преди> <след> --proba` само печата.
+Ключът е публичен по замисъл: `dadbf1a58c108bbafe3c6a2ea6a9ec75.txt` в корена. Частните страници
+(`pesni/`, `plati`, `blagodarim`…) не са в картата и не тръгват.
