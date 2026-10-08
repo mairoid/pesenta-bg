@@ -1,0 +1,55 @@
+# Песента (Pesenta.bg)
+
+> Pesenta.bg прави персонализирани песни по поръчка на български и още 13 езика: авторски текст и музика по историята на клиента, за 19,90 €, готови до 24 часа. Работи в България.
+
+Песента е онлайн услуга за песни-подаръци. Клиентът разказва за човека и повода (кратка форма на сайта, около 5 минути), избира стил и език и плаща 19,90 € с карта. До 24 часа получава песента по имейл като MP3 с текста и линк към лична страница с илюстрация, текста и бутон за сваляне. Една корекция е безплатна, ако нещо не е точно. Фактура се издава при поискване.
+
+Основни факти:
+- Цена: 19,90 € за една песен, плащане с карта през Stripe при поръчката; електронен документ за продажбата идва веднага на имейла.
+- Срок: до 24 часа от поръчката; за същия ден — по имейл sales@pesenta.bg или телефон +359 899 456 326, при възможност.
+- Езици: български, английски, немски, френски, италиански, испански, гръцки, сръбски, македонски, румънски, турски, руски, украински, арабски, или смес от тях.
+- Стилове (19, могат да се комбинират): поп, балада, рок, рап и хип-хоп, поп-фолк и чалга, кючек, народна музика, диско и ретро, EDM и денс, R&B и соул, джаз и суинг, кънтри, латино и регетон, ориенталски, акустична китара, метъл, детска песен, естрада и шансон, кино и епично.
+- Поводи: рожден ден, имен ден, сватба, годишнина, юбилей, ергенско и моминско парти, бебе и кръщене, абитуриентски бал, дипломиране, пенсиониране, фирмено събитие, Коледа, Свети Валентин и др.
+- Песента е цифрово съдържание по индивидуална поръчка: за нея не важи 14-дневното право на отказ (чл. 57 ЗЗП); клиентът го потвърждава при поръчката.
+- Търговец: „БАУФИЗИК“ ЕООД, ЕИК 207427793, гр. Велико Търново, ул. „Цанко Церковски“ № 39, офис 214. Имейл sales@pesenta.bg, телефон +359 899 456 326.
+
+## Основни страници
+- [Начална страница](https://pesenta.bg/): Какво е песен по поръчка, демо песни за истински хора, отзиви, цена и често задавани въпроси.
+- [Поръчка](https://pesenta.bg/poruchka.html): Пълната форма — история, повод, стилове, език, плащане 19,90 €.
+- [Подарък в последния момент](https://pesenta.bg/podarak-v-poslednia-moment.html): Песен до 24 часа по имейл, без куриер, плюс картичка за днес.
+- [Кой има имен ден днес](https://pesenta.bg/imen-den-dnes.html): Календар на именните дни по дата и по месеци, подвижните по Великден.
+- [Кой има рожден ден днес](https://pesenta.bg/rodeni-dnes.html): Известните рожденици по дата, обновявани всяка сутрин.
+
+## Песен по повод
+- [Песен за рожден ден](https://pesenta.bg/podarak-pesen-za-rojden-den.html): На мъж, жена или дете, с името в припева.
+- [Песен за имен ден](https://pesenta.bg/podarak-pesen-za-imen-den.html): Името в припева, историята на човека в куплетите.
+- [Песен за сватба](https://pesenta.bg/podarak-pesen-za-svatba.html): По историята на двамата, за пускане на самата сватба.
+- [Песен за годишнина](https://pesenta.bg/podarak-pesen-za-godishnina.html): За връзка или брак, по вашата история.
+- [Песен за юбилей](https://pesenta.bg/podarak-pesen-za-jubilej.html): За кръгла годишнина — 50, 60, 70 години.
+- [Песен за ергенско парти](https://pesenta.bg/podarak-pesen-za-ergensko.html): С вътрешните шеги на компанията.
+- [Песен за моминско парти](https://pesenta.bg/podarak-pesen-za-mominsko.html): За булката, от приятелките.
+- [Песен за годеж](https://pesenta.bg/podarak-pesen-za-godej.html): От приятели или родители.
+- [Песен за кумовете](https://pesenta.bg/podarak-pesen-za-kumove.html): От младоженците, за приятелството.
+- [Песен за бебе](https://pesenta.bg/podarak-pesen-za-bebeski.html): За раждане, погача, 40-ия ден или първия рожден ден.
+- [Песен за кръщене](https://pesenta.bg/podarak-pesen-za-krashtene.html): С кръщелното име, от кръстника или от баба и дядо.
+- [Песен за 18-и рожден ден](https://pesenta.bg/podarak-pesen-za-palnoletie.html): За син или дъщеря, за целия път дотук.
+- [Песен за абитуриентски бал](https://pesenta.bg/podarak-pesen-za-abiturientski-bal.html): От родителите или от класа.
+- [Песен за дипломиране](https://pesenta.bg/podarak-pesen-za-diplomirane.html): За годините учене.
+- [Песен за нов дом](https://pesenta.bg/podarak-pesen-za-nov-dom.html): За хората, които се нанасят.
+- [Песен за пенсиониране](https://pesenta.bg/podarak-pesen-za-pensionirane.html): За трудовия път.
+- [Песен за фирмено събитие](https://pesenta.bg/podarak-pesen-za-firmeno.html): От екипа, с фактура.
+- [Песен за учител](https://pesenta.bg/podarak-pesen-za-uchitel.html): От целия клас, за края на учебната година.
+- [Песен за ловец](https://pesenta.bg/podarak-pesen-za-lovec.html): За ловната дружина, с всеки по име.
+- [Песен за Коледа](https://pesenta.bg/podarak-za-koleda.html), [за Нова година](https://pesenta.bg/podarak-za-nova-godina.html), [за Свети Валентин](https://pesenta.bg/podarak-za-sveti-valentin.html).
+- Именни дни: [Ивановден](https://pesenta.bg/podarak-za-ivanovden.html), [Цветница](https://pesenta.bg/podarak-za-tsvetnitsa.html), [Гергьовден](https://pesenta.bg/podarak-za-gergyovden.html), [Димитровден](https://pesenta.bg/podarak-za-dimitrovden.html), [Никулден](https://pesenta.bg/podarak-za-nikulden.html).
+
+## Песен за човек
+- [Песен за мама](https://pesenta.bg/podarak-pesen-za-mama.html), [за татко](https://pesenta.bg/podarak-za-tatko.html), [за баба](https://pesenta.bg/podarak-za-baba.html), [за дядо](https://pesenta.bg/podarak-za-dyado.html).
+- [Песен за съпруг](https://pesenta.bg/podarak-za-saprug.html), [за съпруга](https://pesenta.bg/podarak-za-sapruga.html), [за гадже](https://pesenta.bg/podarak-za-gadzhe.html).
+- [Песен за сестра](https://pesenta.bg/podarak-za-sestra.html), [за брат](https://pesenta.bg/podarak-za-brat.html), [за приятелка](https://pesenta.bg/podarak-za-priyatelka.html).
+- [Песен за шеф или колега](https://pesenta.bg/podarak-za-shef.html), [за треньор](https://pesenta.bg/podarak-za-trenyor.html), [за кръстник](https://pesenta.bg/podarak-za-krastnik.html).
+
+## Optional
+- [Музикални новини](https://pesenta.bg/novini/): Ежедневни музикални новини, написани със свои думи по публични източници.
+- [Общи условия](https://pesenta.bg/usloviya.html): Поръчка, плащане, право на отказ, авторски права.
+- [Политика за поверителност](https://pesenta.bg/poveritelnost.html): Обработка на личните данни по GDPR.
