@@ -19,7 +19,7 @@ window.PESENTA_LEGAL = {
 
   contacts: {
     site: "sales@pesenta.bg",
-    company: "bauphysik@russev.net"
+    company: "sales@pesenta.bg"
   },
 
   /* Получатели/обработващи лични данни — дръж списъка актуален */
