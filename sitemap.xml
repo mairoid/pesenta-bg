@@ -285,11 +285,17 @@
   </url>
   <url>
     <loc>https://pesenta.bg/novini/</loc>
-    <lastmod>2026-10-08</lastmod>
+    <lastmod>2026-10-09</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <!-- NOVINI:SITEMAP — новите статии се добавят непосредствено под този ред -->
+  <url>
+    <loc>https://pesenta.bg/novini/jamie-t-shesti-albam-ghosts.html</loc>
+    <lastmod>2026-10-09</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
   <url>
     <loc>https://pesenta.bg/novini/pesen-po-porachka-kakvo-e-kolko-struva.html</loc>
     <lastmod>2026-10-08</lastmod>
