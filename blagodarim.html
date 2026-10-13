@@ -2,6 +2,12 @@
 <html lang="bg">
 <head>
   <meta charset="UTF-8">
+  <!-- Stripe връща всички на тази страница (адресът е в Payment Link-а). Поръчка от
+       английския сайт (en/) оставя pesenta_lang=en — пращаме я на английската
+       страница, с session_id, още преди да се е нарисувала българската. -->
+  <script>
+  try { if (localStorage.getItem("pesenta_lang") === "en") location.replace("en/thank-you.html" + location.search); } catch (e) {}
+  </script>
   <!-- resizes-content: при отворена клавиатура layout-ът се свива, вместо да се
        скролва — фиксираните елементи сядат НАД клавиатурата, не под нея.
        Безопасно е: в style.css няма нито една vh-базирана височина. -->

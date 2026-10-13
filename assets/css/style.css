@@ -1942,6 +1942,9 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
      „Поръчай песен“, връзката „Начало“ се крие — логото вече води там. */
   .main-nav[style*="position:static"] { flex-direction: row; align-items: center; gap: var(--sp-4); }
   .main-nav[style*="position:static"]:has(.btn) a:not(.btn) { display: none; }
+  /* …освен превключвателя на езика (13.10.2026): човек на грешния език трябва да
+     има изход и на телефон. Същата специфичност като реда горе — печели по ред. */
+  .main-nav[style*="position:static"]:has(.btn) a.lang-switch { display: inline-flex; }
   .nav-toggle { display: block; }
 }
 
@@ -2860,3 +2863,16 @@ body.podarak {
   .podarak-red { flex-wrap: wrap; }
   .podarak-svali { margin-left: 68px; }
 }
+
+/* ---------- Превключвател на езика (13.10.2026, английската версия в en/) ----------
+   Малък и тих, до бутона за поръчка: не е действие на страницата, а изход
+   за човек, който е попаднал на грешния език. Затова е рамка, не плътен цвят. */
+.main-nav a.lang-switch {
+  font-size: var(--fs-sm, 0.85rem);
+  letter-spacing: 0.06em;
+  padding: 0.25rem 0.55rem;
+  border: 1px solid rgba(244, 242, 255, 0.28);
+  border-radius: 999px;
+  color: var(--muted);
+}
+.main-nav a.lang-switch:hover { color: var(--text); border-color: rgba(244, 242, 255, 0.6); }

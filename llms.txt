@@ -1,6 +1,6 @@
 # Песента (Pesenta.bg)
 
-> Pesenta.bg прави персонализирани песни по поръчка на български и още 13 езика: авторски текст и музика по историята на клиента, за 19,90 €, готови до 24 часа. Работи в България.
+> Pesenta.bg прави персонализирани песни по поръчка на български и още 13 езика: авторски текст и музика по историята на клиента, за 19,90 €, готови до 24 часа. Работи в България; за клиенти от чужбина има английска версия на https://pesenta.bg/en/.
 
 Песента е онлайн услуга за песни-подаръци. Клиентът разказва за човека и повода (кратка форма на сайта, около 5 минути), избира стил и език и плаща 19,90 € с карта. До 24 часа получава песента по имейл като MP3 с текста и линк към лична страница с илюстрация, текста и бутон за сваляне. Една корекция е безплатна, ако нещо не е точно. Фактура се издава при поискване.
 
@@ -62,3 +62,61 @@
 - [Музикални новини](https://pesenta.bg/novini/): Ежедневни музикални новини, написани със свои думи по публични източници.
 - [Общи условия](https://pesenta.bg/usloviya.html): Поръчка, плащане, право на отказ, авторски права.
 - [Политика за поверителност](https://pesenta.bg/poveritelnost.html): Обработка на личните данни по GDPR.
+
+<!-- EN:LLMS -->
+## English version
+
+> Pesenta (pesenta.bg/en/) writes personalised custom songs as gifts, for customers worldwide: original lyrics and music from the customer's story, €19.90, delivered by email within 24 hours, in English or 13 other languages.
+
+- Price: €19.90 per song, paid by card via Stripe when ordering; Stripe may show the price in the customer's local currency.
+- Delivery: MP3 and lyrics by email within 24 hours, plus a personal song page; one free revision.
+- Languages: English, Bulgarian, German, French, Italian, Spanish, Greek, Serbian, Macedonian, Romanian, Turkish, Russian, Ukrainian, Arabic, or a mix.
+- Made to order, so the 14-day right of withdrawal does not apply (Art. 16(m) of Directive 2011/83/EU); full refund if not delivered.
+- Seller: BAUFIZIK EOOD, company no. 207427793, Veliko Tarnovo, Bulgaria. Email sales@pesenta.bg.
+
+### Main pages
+- [Home and order form](https://pesenta.bg/en/): How it works, song samples, price, FAQ and the order form.
+- [About us](https://pesenta.bg/en/about.html): Who makes the songs and how.
+- [Terms](https://pesenta.bg/en/terms.html), [Privacy](https://pesenta.bg/en/privacy.html).
+
+### Songs by occasion
+- [Birthday song](https://pesenta.bg/en/birthday-song.html): A personalised birthday song from Pesenta — original lyrics and music written from your story, €19.90, ready within 24 hours. You get the MP3 and the lyrics by email, plus a personal song page; one revision is free.
+- [Wedding song](https://pesenta.bg/en/wedding-song.html): A personalised wedding song from Pesenta — original lyrics about the couple's story, music in the style you choose, €19.90 and ready within 24 hours. A popular gift from friends, siblings and the best man.
+- [Bachelor party song](https://pesenta.bg/en/bachelor-party-song.html): A personalised stag or bachelor party song from Pesenta — the groom's stories and your crew's inside jokes turned into an anthem, €19.90, ready within 24 hours. This is where Pesenta started.
+- [Bachelorette party song](https://pesenta.bg/en/bachelorette-party-song.html): A personalised hen or bachelorette party song from Pesenta — the bride's stories and the group's inside jokes in one anthem, €19.90, ready within 24 hours.
+- [Anniversary song](https://pesenta.bg/en/anniversary-song.html): A personalised anniversary song from Pesenta — original lyrics about your relationship, music in the style you love, €19.90, ready within 24 hours. Works for a first anniversary and for a fiftieth.
+- [New baby song](https://pesenta.bg/en/baby-song.html): A personalised song for a newborn or a baby shower from Pesenta — the baby's name and the family's story in a lullaby or a cheerful welcome song, €19.90, ready within 24 hours.
+- [Christening song](https://pesenta.bg/en/christening-song.html): A personalised christening or baptism song from Pesenta — the child's name, the family's wishes and the godparents' promise in one song, €19.90, ready within 24 hours.
+- [Milestone birthday song](https://pesenta.bg/en/milestone-birthday-song.html): A personalised song for a 30th, 40th, 50th, 60th or 70th birthday from Pesenta — a whole life story in a few minutes of music, €19.90, ready within 24 hours.
+- [Retirement song](https://pesenta.bg/en/retirement-song.html): A personalised retirement song from Pesenta — a career, its people and its legends in one song, €19.90, ready within 24 hours. A great gift from the whole team.
+- [Engagement song](https://pesenta.bg/en/engagement-song.html): A personalised proposal or engagement song from Pesenta — your story together, ending with the question (or the yes), €19.90, ready within 24 hours.
+- [Prom & school graduation song](https://pesenta.bg/en/prom-song.html): A personalised song for prom or high school graduation from Pesenta — for one graduate or the whole class, €19.90, ready within 24 hours.
+- [18th birthday song](https://pesenta.bg/en/18th-birthday-song.html): A personalised 18th birthday song from Pesenta — eighteen years in one song, from parents, siblings or friends, €19.90, ready within 24 hours.
+- [Company event song](https://pesenta.bg/en/corporate-event-song.html): A personalised song for a company party, anniversary or team-building from Pesenta — your team's story and jokes as an anthem, €19.90, ready within 24 hours, with an invoice for the company.
+- [Graduation song](https://pesenta.bg/en/graduation-song.html): A personalised university graduation song from Pesenta — the years of study and what comes next, €19.90, ready within 24 hours.
+- [Housewarming song](https://pesenta.bg/en/housewarming-song.html): A personalised housewarming song from Pesenta — the story of the move and the people who'll fill the house, €19.90, ready within 24 hours.
+- [Song for a teacher](https://pesenta.bg/en/teacher-song.html): A personalised thank-you song for a teacher from Pesenta — the class, the sayings and the lessons in one song, €19.90, ready within 24 hours.
+- [Last-minute gift](https://pesenta.bg/en/last-minute-gift.html): A personalised song from Pesenta is the last-minute gift that feels planned — written from your story, €19.90, delivered by email within 24 hours, no shipping.
+
+### Songs by person
+- [Song for mom](https://pesenta.bg/en/song-for-mom.html): A personalised song for your mother from Pesenta — her story and your thank-you in one song, €19.90, ready within 24 hours. For her birthday, Mother's Day or any day.
+- [Song for dad](https://pesenta.bg/en/song-for-dad.html): A personalised song for your father from Pesenta — his stories, sayings and the things you never told him, €19.90, ready within 24 hours.
+- [Song for grandma](https://pesenta.bg/en/song-for-grandma.html): A personalised song for your grandmother from Pesenta — her life and the family around her in one song, €19.90, ready within 24 hours.
+- [Song for grandpa](https://pesenta.bg/en/song-for-grandpa.html): A personalised song for your grandfather from Pesenta — the stories he tells at every family lunch, finally set to music, €19.90, ready within 24 hours.
+- [Song for sister](https://pesenta.bg/en/song-for-sister.html): A personalised song for your sister from Pesenta — your shared story with all its fights and secrets, €19.90, ready within 24 hours.
+- [Song for brother](https://pesenta.bg/en/song-for-brother.html): A personalised song for your brother from Pesenta — the adventures, the fights and the bond, €19.90, ready within 24 hours. Two of our best-loved songs, “For You, Brother”, started this way.
+- [Song for husband](https://pesenta.bg/en/song-for-husband.html): A personalised song for your husband from Pesenta — your love story in his favourite style, €19.90, ready within 24 hours.
+- [Song for wife](https://pesenta.bg/en/song-for-wife.html): A personalised song for your wife from Pesenta — your story together set to music, €19.90, ready within 24 hours.
+- [Song for boyfriend](https://pesenta.bg/en/song-for-boyfriend.html): A personalised song for your boyfriend from Pesenta — your story so far, €19.90, ready within 24 hours.
+- [Song for girlfriend](https://pesenta.bg/en/song-for-girlfriend.html): A personalised song for your girlfriend from Pesenta — your story in a song that's only hers, €19.90, ready within 24 hours.
+- [Song for boss or coworker](https://pesenta.bg/en/song-for-boss-or-coworker.html): A personalised song for a boss or colleague from Pesenta — the office stories in one song, €19.90, ready within 24 hours, with an invoice if the company pays.
+- [Song for a coach](https://pesenta.bg/en/song-for-coach.html): A personalised song for a coach from Pesenta — the season, the team and the famous speeches in one song, €19.90, ready within 24 hours.
+- [Song for a godparent](https://pesenta.bg/en/song-for-godparent.html): A personalised song for a godfather or godmother from Pesenta — a thank-you from the godchild or the family, €19.90, ready within 24 hours.
+
+### Holidays
+- [Christmas song gift](https://pesenta.bg/en/christmas-song-gift.html): A personalised Christmas song from Pesenta — your family's or friends' year in a festive song, €19.90, ready within 24 hours. Order early in December.
+- [New Year song](https://pesenta.bg/en/new-year-song.html): A personalised New Year's song from Pesenta — your year in review and a toast to the next, €19.90, ready within 24 hours.
+- [Valentine's Day song](https://pesenta.bg/en/valentines-day-song.html): A personalised Valentine's Day love song from Pesenta — your story, your words, €19.90, ready within 24 hours.
+- [Mother's Day song](https://pesenta.bg/en/mothers-day-song.html): A personalised Mother's Day song from Pesenta — her story and your thank-you set to music, €19.90, ready within 24 hours.
+- [Father's Day song](https://pesenta.bg/en/fathers-day-song.html): A personalised Father's Day song from Pesenta — his stories and your thank-you set to music, €19.90, ready within 24 hours.
+<!-- /EN:LLMS -->

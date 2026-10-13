@@ -12,6 +12,12 @@
   var textBtn = document.getElementById("fast-text");
   if (!textBtn) return;
 
+  /* Английската версия (en/, 13.10.2026) ползва СЪЩИЯ файл: двата езика се
+     различават само по надписите, а пътят на поръчката трябва да е един —
+     поправка тук да важи и за двете. Брифът към нас остава на български. */
+  var EN = document.documentElement.lang === "en";
+  function t(bg, en) { return EN ? en : bg; }
+
   var FORM_TARGET = "rusev.miro@gmail.com";
   var FORM_ENDPOINT = "https://formsubmit.co/ajax/" + FORM_TARGET;
   /* Нативният ендпойнт — само за снимките: AJAX-ът дава 500 при прикачен файл (проба
@@ -63,15 +69,17 @@
       kb += s.blob.size / 1024;
       var d = document.createElement("div"); d.className = "snimki-thumb";
       var im = document.createElement("img"); im.src = s.url; im.alt = "Снимка " + (i + 1);
-      var x = document.createElement("button"); x.type = "button"; x.className = "snimki-x"; x.setAttribute("aria-label", "Махни снимка " + (i + 1)); x.textContent = "×";
+      var x = document.createElement("button"); x.type = "button"; x.className = "snimki-x"; x.setAttribute("aria-label", t("Махни снимка ", "Remove photo ") + (i + 1)); x.textContent = "×";
       x.addEventListener("click", function () { URL.revokeObjectURL(s.url); snimki.splice(i, 1); renderSnimki(); });
       d.appendChild(im); d.appendChild(x); box.appendChild(d);
     });
     if (st) {
       st.classList.remove("err");
-      st.textContent = snimki.length ? snimki.length + (snimki.length === 1 ? " снимка" : " снимки") + ", " + Math.round(kb) + " KB — пътуват с поръчката." : "JPG или PNG от телефона — смаляваме ги сами.";
+      st.textContent = snimki.length
+        ? snimki.length + (snimki.length === 1 ? t(" снимка", " photo") : t(" снимки", " photos")) + ", " + Math.round(kb) + t(" KB — пътуват с поръчката.", " KB — they travel with your order.")
+        : t("JPG или PNG от телефона — смаляваме ги сами.", "JPG or PNG from your phone — we resize them for you.");
     }
-    if (add) { add.textContent = snimki.length ? "Добави още" : "Добави снимки"; add.hidden = snimki.length >= SNIMKI_MAX; }
+    if (add) { add.textContent = snimki.length ? t("Добави още", "Add more") : t("Добави снимки", "Add photos"); add.hidden = snimki.length >= SNIMKI_MAX; }
   }
   (function () {
     var inp = document.getElementById("text-snimki"), add = document.getElementById("text-snimki-add"), st = document.getElementById("text-snimki-status");
@@ -81,13 +89,13 @@
       var files = Array.prototype.slice.call(inp.files || []);
       inp.value = "";
       var mesta = SNIMKI_MAX - snimki.length, predupr = null;
-      if (files.length > mesta) { files = files.slice(0, mesta); predupr = "До " + SNIMKI_MAX + " снимки — взехме първите " + mesta + "."; }
+      if (files.length > mesta) { files = files.slice(0, mesta); predupr = t("До " + SNIMKI_MAX + " снимки — взехме първите " + mesta + ".", "Up to " + SNIMKI_MAX + " photos — we took the first " + mesta + "."); }
       if (!files.length) return;
       add.disabled = true;
       Promise.all(files.map(function (f) {
         return smaliSnimka(f).then(function (b) {
           if (!b && f.size <= SNIMKI_MB * 1048576) b = f;
-          if (!b) { predupr = "„" + f.name + "“ не се отваря или е над " + SNIMKI_MB + " MB — пробвай друга."; return; }
+          if (!b) { predupr = t("„" + f.name + "“ не се отваря или е над " + SNIMKI_MB + " MB — пробвай друга.", "“" + f.name + "” won't open or is over " + SNIMKI_MB + " MB — try another one."); return; }
           snimki.push({ blob: b, name: f.name, url: URL.createObjectURL(b) });
         });
       })).then(function () {
@@ -183,12 +191,20 @@
      банков път, вместо да опре в нищо. */
   function paymentUrl(orderNo, email) {
     var cfg = window.PESENTA_PAYMENTS;
-    var link = cfg && cfg.enabled && cfg.paymentLinks && cfg.paymentLinks.pesen;
+    /* Английският сайт има своя връзка (продукт „Custom song“ вместо „Песен по
+       поръчка“); докато я няма в payments.js — общата. */
+    var link = cfg && cfg.enabled && cfg.paymentLinks &&
+               ((EN && cfg.paymentLinks.pesenEn) || cfg.paymentLinks.pesen);
     if (!link) return "plati.html?order=" + encodeURIComponent(orderNo) + "&plan=pesen";
     /* prefilled_email: имейлът от формата идва попълнен в касата (13.10.2026). */
+    /* locale (13.10.2026): от българския сайт касата е винаги на български —
+       иначе българин с английски браузър вижда „Subtotal“. От английския е
+       „auto“: Stripe я показва на езика на клиента, а ако не го поддържа — на
+       английски (решение на Мирослав: езикът на държавата, иначе английски). */
     return link + (link.indexOf("?") === -1 ? "?" : "&") +
            "client_reference_id=" + encodeURIComponent(orderNo) +
-           (email ? "&prefilled_email=" + encodeURIComponent(email) : "");
+           (email ? "&prefilled_email=" + encodeURIComponent(email) : "") +
+           "&locale=" + (EN ? "auto" : "bg");
   }
 
   /* Hero-снимката
@@ -258,10 +274,11 @@
     return new Date(sega.getTime() + 24 * 3600 * 1000);
   }
   function denBG(d) {
+    var loc = t("bg-BG", "en-GB");
     try {
-      return d.toLocaleDateString("bg-BG", { weekday: "long", day: "numeric", month: "long", timeZone: "Europe/Sofia" });
+      return d.toLocaleDateString(loc, { weekday: "long", day: "numeric", month: "long", timeZone: "Europe/Sofia" });
     } catch (e) {
-      return d.toLocaleDateString("bg-BG", { weekday: "long", day: "numeric", month: "long" });
+      return d.toLocaleDateString(loc, { weekday: "long", day: "numeric", month: "long" });
     }
   }
   function denNomer(d) {
@@ -277,6 +294,20 @@
     var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v || "");
     return m ? Math.round(Date.UTC(+m[1], +m[2] - 1, +m[3]) / 86400000) : null;
   }
+  /* Английският сайт: езикът на песента идва предложен по езика на браузъра
+     (германец вижда „German“), иначе English. Само предложение — сменя се. */
+  (function () {
+    var sel = document.getElementById("text-language");
+    if (!EN || !sel) return;
+    var KARTA = { en: "English", bg: "Bulgarian", de: "German", fr: "French", it: "Italian", es: "Spanish",
+      el: "Greek", sr: "Serbian", mk: "Macedonian", ro: "Romanian", tr: "Turkish", ru: "Russian", uk: "Ukrainian", ar: "Arabic" };
+    var ezitsi = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ""];
+    for (var i = 0; i < ezitsi.length; i++) {
+      var ime = KARTA[String(ezitsi[i]).slice(0, 2).toLowerCase()];
+      if (ime) { sel.value = ime; return; }
+    }
+  })();
+
   var eventDateEl = document.getElementById("text-event-date");
   var dostavkaRed = document.getElementById("text-dostavka-red");
   function presmetniDostavka() {
@@ -286,15 +317,19 @@
     var gotova = dostavkaDo(sega);
     var html, blizo = false;
     if (sabitie === null) {
-      html = "Готова до <strong>" + denBG(gotova) + "</strong>.";
+      html = t("Готова до ", "Ready by ") + "<strong>" + denBG(gotova) + "</strong>.";
     } else {
       var n = sabitie - denNomer(gotova);
       if (n >= 0) {
-        var koga = n === 0 ? "в деня на събитието" : (n === 1 ? "ден преди събитието" : n + " дни преди събитието");
-        html = "Поръчаш ли сега, песента е при теб до <strong>" + denBG(gotova) + "</strong> — " + koga + ".";
+        var koga = EN
+          ? (n === 0 ? "on the day itself" : (n === 1 ? "a day before the event" : n + " days before the event"))
+          : (n === 0 ? "в деня на събитието" : (n === 1 ? "ден преди събитието" : n + " дни преди събитието"));
+        html = t("Поръчаш ли сега, песента е при теб до ", "Order now and the song is yours by ") + "<strong>" + denBG(gotova) + "</strong> — " + koga + ".";
       } else {
         blizo = true;
-        html = "Датата е близо. Пиши ни на <a href=\"mailto:sales@pesenta.bg\">sales@pesenta.bg</a> или се обади на <a href=\"tel:+359899456326\">+359 899 456 326</a>, преди да платиш — при възможност е готова още същия ден.";
+        html = t("Датата е близо. Пиши ни на ", "That's soon. Email us at ") + "<a href=\"mailto:sales@pesenta.bg\">sales@pesenta.bg</a>" +
+          t(" или се обади на <a href=\"tel:+359899456326\">+359 899 456 326</a>, преди да платиш — при възможност е готова още същия ден.",
+            " before you pay — when we can, it's ready the same day.");
       }
     }
     dostavkaRed.innerHTML = html;
@@ -345,23 +380,40 @@
     });
   }
 
+  /* Страниците за повод водят тук с ?povod=<стойността на чипа>#order: поводът
+     идва избран и формата е отворена, вместо човек да го търси наново. Засега
+     само от en/ — poruchka.html си има собствен ?povod= за българските. */
+  (function () {
+    var p = new URLSearchParams(location.search).get("povod");
+    var chips = p ? document.querySelectorAll("#text-fields .chip") : [];
+    for (var i = 0; i < chips.length; i++) {
+      if (chips[i].getAttribute("data-value") === p) {
+        chips[i].classList.add("selected");
+        var more = chips[i].closest("details");
+        if (more) more.open = true;
+        break;
+      }
+    }
+    if (location.hash === "#order") textBtn.click();
+  })();
+
   sendBtn.addEventListener("click", function () {
     clearFail();
     var story = storyEl.value.trim();
-    if (!story) { fail("Разкажи накратко за кого е песента и повода."); return; }
+    if (!story) { fail(t("Разкажи накратко за кого е песента и повода.", "Tell us briefly who the song is for and the occasion.")); return; }
     var emailEl = document.getElementById("text-email");
     var email = emailEl ? emailEl.value.trim() : "";
     if (emailEl) {
       var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
       emailEl.classList.toggle("invalid", !emailOk);
-      if (!emailOk) { fail("Напиши имейл, на който да ти изпратим песента."); emailEl.focus(); return; }
+      if (!emailOk) { fail(t("Напиши имейл, на който да ти изпратим песента.", "Enter the email where we should send your song.")); emailEl.focus(); return; }
     }
     if (!document.getElementById("text-consent").checked) {
-      fail("Моля, потвърди съгласието с Общите условия."); return;
+      fail(t("Моля, потвърди съгласието с Общите условия.", "Please confirm that you agree to the Terms.")); return;
     }
     var inv = invoiceData();
     if (inv && (!inv.name || !inv.addr)) {
-      fail("За фактура са нужни име (или фирма) и адрес."); return;
+      fail(t("За фактура са нужни име (или фирма) и адрес.", "For an invoice we need a name (or company) and an address.")); return;
     }
     /* Името НЕ се иска тук — Stripe го събира на своята страница. Имейлът
        се иска от 13.10.2026, за да може на неплатила поръчка да се пише.
@@ -378,7 +430,8 @@
       "_subject": "БЪРЗА заявка (ОЧАКВА ПЛАЩАНЕ) — " + orderNo,
       "_template": "box",
       "Номер на заявка": orderNo,
-      "Тип": "Бърза текстова поръчка",
+      "Тип": "Бърза текстова поръчка" + (EN ? " — от АНГЛИЙСКИЯ сайт (en/)" : ""),
+      "Език на сайта": EN ? "английски — пиши на клиента на английски" : "български",
       /* Брифът тръгва ПРЕДИ плащането, защото след него клиентът е на
          страницата на Stripe и разказът щеше да се загуби. Затова темата
          казва „очаква плащане" — свързването става по номера на поръчката,
@@ -407,7 +460,7 @@
         "",
         "СЪСТОЯНИЕ: очаква плащане. Свери в Stripe по " + orderNo,
         "преди да започнеш работа.",
-        "",
+        (EN ? "\nКЛИЕНТЪТ Е ОТ АНГЛИЙСКИЯ САЙТ — писмото и страницата на песента на английски.\n" : ""),
         inv
           ? ("ФАКТУРА: поискана" + (inv.eik ? " — ФИРМА " + inv.eik + " (задължителна по ЗДДС)" : " — физическо лице") +
              "\n" + inv.name + ", " + inv.addr)
@@ -431,7 +484,10 @@
     rememberOrder(orderNo);
 
     sendBtn.disabled = true;
-    sendBtn.textContent = "Отваряме плащането…";
+    sendBtn.textContent = t("Отваряме плащането…", "Opening checkout…");
+    /* blagodarim.html е една за двата езика (там връща Stripe) — по този запис
+       праща английския клиент на en/thank-you.html. */
+    try { localStorage.setItem("pesenta_lang", EN ? "en" : "bg"); } catch (e) {}
 
     var fd = new FormData();
     Object.keys(fields).forEach(function (k) { fd.append(k, fields[k]); });
@@ -462,7 +518,7 @@
       if (navigator.sendBeacon) {
         navigator.sendBeacon(BRIEF_ENDPOINT, new Blob([JSON.stringify({
           order_no: orderNo,
-          vid: "бърза текстова",
+          vid: EN ? "бърза текстова (EN)" : "бърза текстова",
           povod: fields["Повод"],
           event_date: eventDate,
           stilove: fields["Стилове"],

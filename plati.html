@@ -224,7 +224,10 @@
   var link = cfg.paymentLinks[planKey];
 
   if (cfg.enabled && link) {
-    var url = link + (link.indexOf("?") === -1 ? "?" : "&") + "client_reference_id=" + encodeURIComponent(orderNo || "direct");
+    var url = link + (link.indexOf("?") === -1 ? "?" : "&") + "client_reference_id=" + encodeURIComponent(orderNo || "direct") + "&locale=bg";
+    /* blagodarim.html препраща към en/thank-you.html, ако последната поръчка е от
+       английския сайт — тук пишем, че тази е от българския. */
+    try { localStorage.setItem("pesenta_lang", "bg"); } catch (e) {}
     document.getElementById("pay-btn").href = url;
     document.getElementById("pay-active").hidden = false;
   } else {

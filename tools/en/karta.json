@@ -1,0 +1,158 @@
+[
+  {
+    "en": "index.html",
+    "bg": "index.html"
+  },
+  {
+    "en": "about.html",
+    "bg": "za-nas.html"
+  },
+  {
+    "en": "terms.html",
+    "bg": "usloviya.html"
+  },
+  {
+    "en": "privacy.html",
+    "bg": "poveritelnost.html"
+  },
+  {
+    "en": "birthday-song.html",
+    "bg": "podarak-pesen-za-rojden-den.html"
+  },
+  {
+    "en": "wedding-song.html",
+    "bg": "podarak-pesen-za-svatba.html"
+  },
+  {
+    "en": "bachelor-party-song.html",
+    "bg": "podarak-pesen-za-ergensko.html"
+  },
+  {
+    "en": "bachelorette-party-song.html",
+    "bg": "podarak-pesen-za-mominsko.html"
+  },
+  {
+    "en": "anniversary-song.html",
+    "bg": "podarak-pesen-za-godishnina.html"
+  },
+  {
+    "en": "baby-song.html",
+    "bg": "podarak-pesen-za-bebeski.html"
+  },
+  {
+    "en": "christening-song.html",
+    "bg": "podarak-pesen-za-krashtene.html"
+  },
+  {
+    "en": "milestone-birthday-song.html",
+    "bg": "podarak-pesen-za-jubilej.html"
+  },
+  {
+    "en": "retirement-song.html",
+    "bg": "podarak-pesen-za-pensionirane.html"
+  },
+  {
+    "en": "engagement-song.html",
+    "bg": "podarak-pesen-za-godej.html"
+  },
+  {
+    "en": "prom-song.html",
+    "bg": "podarak-pesen-za-abiturientski-bal.html"
+  },
+  {
+    "en": "18th-birthday-song.html",
+    "bg": "podarak-pesen-za-palnoletie.html"
+  },
+  {
+    "en": "corporate-event-song.html",
+    "bg": "podarak-pesen-za-firmeno.html"
+  },
+  {
+    "en": "graduation-song.html",
+    "bg": "podarak-pesen-za-diplomirane.html"
+  },
+  {
+    "en": "housewarming-song.html",
+    "bg": "podarak-pesen-za-nov-dom.html"
+  },
+  {
+    "en": "teacher-song.html",
+    "bg": "podarak-pesen-za-uchitel.html"
+  },
+  {
+    "en": "song-for-mom.html",
+    "bg": "podarak-pesen-za-mama.html"
+  },
+  {
+    "en": "song-for-dad.html",
+    "bg": "podarak-za-tatko.html"
+  },
+  {
+    "en": "song-for-grandma.html",
+    "bg": "podarak-za-baba.html"
+  },
+  {
+    "en": "song-for-grandpa.html",
+    "bg": "podarak-za-dyado.html"
+  },
+  {
+    "en": "song-for-sister.html",
+    "bg": "podarak-za-sestra.html"
+  },
+  {
+    "en": "song-for-brother.html",
+    "bg": "podarak-za-brat.html"
+  },
+  {
+    "en": "song-for-husband.html",
+    "bg": "podarak-za-saprug.html"
+  },
+  {
+    "en": "song-for-wife.html",
+    "bg": "podarak-za-sapruga.html"
+  },
+  {
+    "en": "song-for-boyfriend.html",
+    "bg": "podarak-za-gadzhe.html"
+  },
+  {
+    "en": "song-for-girlfriend.html",
+    "bg": "podarak-za-priyatelka.html"
+  },
+  {
+    "en": "song-for-boss-or-coworker.html",
+    "bg": "podarak-za-shef.html"
+  },
+  {
+    "en": "song-for-coach.html",
+    "bg": "podarak-za-trenyor.html"
+  },
+  {
+    "en": "song-for-godparent.html",
+    "bg": "podarak-za-krastnik.html"
+  },
+  {
+    "en": "christmas-song-gift.html",
+    "bg": "podarak-za-koleda.html"
+  },
+  {
+    "en": "new-year-song.html",
+    "bg": "podarak-za-nova-godina.html"
+  },
+  {
+    "en": "valentines-day-song.html",
+    "bg": "podarak-za-sveti-valentin.html"
+  },
+  {
+    "en": "mothers-day-song.html",
+    "bg": null
+  },
+  {
+    "en": "fathers-day-song.html",
+    "bg": null
+  },
+  {
+    "en": "last-minute-gift.html",
+    "bg": "podarak-v-poslednia-moment.html"
+  }
+]

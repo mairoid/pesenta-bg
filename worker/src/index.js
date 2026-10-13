@@ -196,10 +196,19 @@ async function recordSale(env, event) {
 
   /* Връчването е след записа, не преди: документът трябва да съществува,
      преди да го обявим на клиента. */
+  /* Езикът на писмото (13.10.2026): английски само за чужд клиент — поръчал е
+     от en/ или картата му е издадена извън България. Брифът може да липсва
+     (тогава решава само държавата); грешка тук не бива да спира бележката. */
+  let vidBrif = "";
+  try {
+    const b = await env.DB.prepare("SELECT vid FROM briefs WHERE order_no = ?").bind(orderNo).first();
+    vidBrif = (b && b.vid) || "";
+  } catch (e) { /* без брифа — по държавата */ }
   const sale = {
     doc_n: docN, order_no: orderNo,
     customer_email: (s.customer_details && s.customer_details.email) || null,
-    customer_name: (s.customer_details && s.customer_details.name) || null
+    customer_name: (s.customer_details && s.customer_details.name) || null,
+    ezik: ezikNaKlienta(vidBrif, s.customer_details && s.customer_details.address && s.customer_details.address.country)
   };
   const sent = await sendBeleshkaEmail(env, sale);
   await env.DB.prepare(
@@ -539,6 +548,14 @@ async function handlePesen(request, env, orderNo) {
    съществува на адрес. Ако върнем 500, Stripe ще ретрайва и рискуваме
    втори документ за същото плащане — по-лошото от двете. Грешката се
    записва в email_error, за да се види при проверка. */
+/* „en“ за чужд клиент, „bg“ за всички останали. Изнесена за проверката в tools/. */
+export function ezikNaKlienta(vidBrif, darzhava) {
+  if (/\(EN\)/.test(String(vidBrif || ""))) return "en";
+  const d = String(darzhava || "").toUpperCase();
+  if (d && d !== "BG") return "en";
+  return "bg";
+}
+
 async function sendBeleshkaEmail(env, sale) {
   if (!env.BREVO_API_KEY) return { ok: false, error: "BREVO_API_KEY не е зададен" };
   if (!sale.customer_email) return { ok: false, error: "клиентът няма имейл в Stripe" };
@@ -547,7 +564,22 @@ async function sendBeleshkaEmail(env, sale) {
   if (!url) return { ok: false, error: "липсва AUDIT_TOKEN или PUBLIC_BASE — линкът не може да се подпише" };
   const kart = await kartichkaUrl(env, sale.order_no);
 
-  const body = {
+  /* Чужд клиент: писмото на английски, без картичката (тя е на български).
+     Самият документ остава български — той е по Наредба Н-18. */
+  const body = sale.ezik === "en" ? {
+    sender: { name: "Pesenta", email: env.MAIL_SENDER },
+    to: [{ email: sale.customer_email, name: sale.customer_name || undefined }],
+    subject: "Sales receipt " + padDoc(sale.doc_n) + " — Pesenta",
+    htmlContent:
+      "<p>Hi" + (sale.customer_name ? " " + xmlEscape(sale.customer_name) : "") + ",</p>" +
+      "<p>We've received your payment. Here is the sales receipt " +
+      "<strong>" + padDoc(sale.doc_n) + "</strong> for order " +
+      "<strong>" + xmlEscape(sale.order_no) + "</strong>:</p>" +
+      '<p><a href="' + url + '">Open the receipt</a></p>' +
+      "<p>The receipt is a Bulgarian fiscal document, so it is in Bulgarian.</p>" +
+      "<p>Your song will arrive at this email within 24 hours, together with the lyrics.</p>" +
+      "<p>Pesenta · pesenta.bg</p>"
+  } : {
     sender: { name: env.MAIL_SENDER_NAME || "Песента", email: env.MAIL_SENDER },
     to: [{ email: sale.customer_email, name: sale.customer_name || undefined }],
     subject: "Документ за продажба " + padDoc(sale.doc_n) + " — Песента",

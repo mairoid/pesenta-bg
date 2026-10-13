@@ -297,7 +297,7 @@
        Пет секунди на натискане, трийсет с Shift. */
     bar.setAttribute("role", "slider");
     bar.setAttribute("tabindex", "0");
-    bar.setAttribute("aria-label", "Превърти песента");
+    bar.setAttribute("aria-label", document.documentElement.lang === "en" ? "Seek the song" : "Превърти песента");
     bar.addEventListener("keydown", function (e) {
       if (!audio.duration) return;
       var stapka = e.shiftKey ? 30 : 5;
@@ -468,7 +468,9 @@
       });
       if (oshteBtn) {
         var s = tekushtFiltar === "all" && !razgunato() && skriti > 0;
-        if (s) oshteBtn.textContent = "Още " + skriti + (skriti === 1 ? " песен" : " песни");
+        if (s) oshteBtn.textContent = document.documentElement.lang === "en"
+          ? skriti + (skriti === 1 ? " more song" : " more songs")
+          : "Още " + skriti + (skriti === 1 ? " песен" : " песни");
         oshteBtn.hidden = !s;
       }
     };
@@ -498,7 +500,7 @@
      цени, CTA-тата), плюс footer линкът към poruchka.html. */
   document.querySelectorAll("a, button").forEach(function (el) {
     var label = (el.textContent || "").replace(/\s+/g, " ").trim();
-    if (!/Поръчай/.test(label)) return;
+    if (!/Поръчай|Order/.test(label)) return;
     el.addEventListener("click", function () {
       trackPlausible("Order CTA Click", { label: label.slice(0, 60) });
     });
@@ -534,6 +536,8 @@
 
   if (!INTRO.enabled) return;
   if (!document.querySelector(".hero")) return; // само на началната страница
+  /* Поздравът са български песни — на английската начална страница не тръгва. */
+  if (document.documentElement.lang === "en") return;
   try { if (localStorage.getItem("pesenta_intro_off") === "1") return; } catch (e) {}
 
   var track = INTRO_PLAYLIST[Math.floor(Math.random() * INTRO_PLAYLIST.length)];

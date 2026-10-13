@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="190" height="44" viewBox="0 0 190 44" role="img" aria-label="Pesenta">
+  <defs>
+    <linearGradient id="lg" gradientUnits="userSpaceOnUse" x1="30" y1="0" x2="600" y2="0">
+      <stop offset="0" stop-color="#FF4D8D"/>
+      <stop offset="1" stop-color="#FFA14D"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(2 5) scale(0.085)">
+    <g fill="none" stroke="url(#lg)" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke-width="28" d="M30 232 H78
+        C88 232 92 198 104 198
+        S130 276 148 276
+        S174 118 198 118
+        S228 332 254 332
+        S284 176 308 176
+        S336 262 360 262
+        S388 226 408 232
+        C416 234 422 240 426 246"/>
+      <path stroke-width="30" d="M536 236 V88"/>
+      <path stroke-width="28" d="M536 88 C570 96 592 118 594 152"/>
+    </g>
+    <ellipse cx="500" cy="246" rx="40" ry="35" transform="rotate(-18 500 246)" fill="url(#lg)"/>
+  </g>
+  <text x="60" y="30" font-family="'Unbounded','Segoe UI',sans-serif" font-size="19" font-weight="700" fill="#F4F2FF">Pesenta</text>
+</svg>
