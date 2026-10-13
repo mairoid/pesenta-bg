@@ -87,8 +87,117 @@ export default {
     }
 
     return new Response("Not found", { status: 404 });
+  },
+
+  /* Веднъж на час (wrangler.toml → [triggers]): напомняне до неплатилите.
+     waitUntil — за да не прекъсне пращането, ако часовникът реши, че е свършил. */
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(napomniNeplateni(env).catch(() => {}));
   }
 };
+
+/* ============ Напомняне до неплатила поръчка (13.10.2026) ============
+   4 от 7 души, попълнили историята, не платиха и в Stripe нямаше нито един
+   отказ — затварят касата. Едно писмо 20–48 часа след брифа, с готова връзка
+   за плащане. ВЕДНЪЖ на поръчка: всяко решение (пратено или защо не) се пише
+   в napomnyania, за да не се гледа втори път. Пропуска: без имейл, наш адрес,
+   платил с друга поръчка след брифа, мина ли датата на повода. */
+const VATRESHNI = /@(russev\.net|pesenta\.bg|energieausweis-shop\.at)$/i;
+
+export async function napomniNeplateni(env, sega) {
+  sega = sega || new Date();
+  if (!env.BREVO_API_KEY || !env.MAIL_SENDER || !env.PAYMENT_LINK) return { pregledani: 0, prateni: 0, prichina: "липсва настройка" };
+  const ot = new Date(sega.getTime() - 48 * 3600e3).toISOString();
+  const do_ = new Date(sega.getTime() - 20 * 3600e3).toISOString();
+  const redove = (await env.DB.prepare(
+    `SELECT b.order_no, b.created_at, b.vid, b.povod, b.poleta FROM briefs b
+     WHERE b.created_at BETWEEN ? AND ?
+       AND NOT EXISTS (SELECT 1 FROM sales s WHERE s.order_no = b.order_no)
+       AND NOT EXISTS (SELECT 1 FROM napomnyania n WHERE n.order_no = b.order_no)`
+  ).bind(ot, do_).all()).results || [];
+
+  let prateni = 0;
+  for (const r of redove) {
+    let p = {};
+    try { p = JSON.parse(r.poleta || "{}") || {}; } catch (e) { p = {}; }
+    const email = String(p.email || "").trim().toLowerCase();
+    let prichina = "";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) prichina = "без имейл";
+    else if (VATRESHNI.test(email)) prichina = "вътрешен адрес";
+    else if (await env.DB.prepare("SELECT 1 FROM sales WHERE lower(customer_email) = ? AND created_at >= ?")
+      .bind(email, r.created_at).first()) prichina = "платил с друга поръчка";
+    else if (/^\d{4}-\d{2}-\d{2}$/.test(String(p.event_date || "")) && p.event_date < sofiaParts(sega).date) prichina = "поводът мина";
+
+    const rez = prichina ? { ok: false, error: prichina } : await pratiNapomnyane(env, r, p, email, sega);
+    await env.DB.prepare("INSERT OR IGNORE INTO napomnyania (order_no, created_at, email, ok, error) VALUES (?,?,?,?,?)")
+      .bind(r.order_no, sega.toISOString(), email || null, rez.ok ? 1 : 0, rez.ok ? null : String(rez.error).slice(0, 300)).run();
+    if (rez.ok) prateni++;
+  }
+  return { pregledani: redove.length, prateni };
+}
+
+export function napomnyanePismo(env, r, p, email, sega) {
+  const en = /\(EN\)/.test(String(r.vid || ""));
+  const link = (en && env.PAYMENT_LINK_EN) || env.PAYMENT_LINK;
+  const url = link + (link.indexOf("?") === -1 ? "?" : "&") +
+    "client_reference_id=" + encodeURIComponent(r.order_no) +
+    "&prefilled_email=" + encodeURIComponent(email) + "&locale=" + (en ? "auto" : "bg");
+  const povod = String(r.povod || "");
+  const imaPovod = povod && povod.charAt(0) !== "—";
+  /* Датата на повода — само ако още не е минала; тогава казва, че има време. */
+  const d = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(p.event_date || ""));
+  const predi = d && p.event_date > sofiaParts(sega).date;
+  const btn = (t) => '<p><a href="' + url + '" style="display:inline-block;padding:12px 22px;border-radius:999px;' +
+    'background:#ff4d8d;color:#ffffff;text-decoration:none;font-weight:bold;">' + t + "</a></p>";
+  if (en) {
+    return {
+      subject: "Your song is still waiting — " + r.order_no,
+      html: "<p>Hi,</p>" +
+        "<p>You told us a story for a song" + (imaPovod ? " (" + xmlEscape(povod) + ")" : "") + ". Order <strong>" + xmlEscape(r.order_no) +
+        "</strong> hasn't been paid yet, so we haven't started.</p>" +
+        "<p>If you'd still like it, you can pay here — €19.90, and the song is ready within 24 hours after payment:</p>" +
+        btn("Pay and start my song") +
+        (predi ? "<p>The occasion is on " + d[3] + "." + d[2] + "." + d[1] + " — pay today and it arrives in time.</p>" : "") +
+        "<p>If something stopped you — the price, paying by card, a question — just reply to this email.</p>" +
+        "<p>Pesenta · pesenta.bg</p>",
+      url
+    };
+  }
+  return {
+    subject: "Песента ти още чака — " + r.order_no,
+    html: "<p>Здравей,</p>" +
+      "<p>Разказа ни история за песен" + (imaPovod ? " (повод: " + xmlEscape(povod) + ")" : "") + ". Поръчката <strong>" + xmlEscape(r.order_no) +
+      "</strong> още не е платена, затова не сме започнали.</p>" +
+      "<p>Ако все още я искаш, плащането е тук — 19,90 €, а песента е готова до 24 часа след него:</p>" +
+      btn("Плащам и започвате") +
+      (predi ? "<p>Поводът е на " + d[3] + "." + d[2] + "." + d[1] + " — платиш ли днес, песента е при теб навреме.</p>" : "") +
+      "<p>Ако нещо те е спряло — цената, плащането с карта, въпрос — просто отговори на това писмо.</p>" +
+      "<p>Песента · pesenta.bg</p>",
+    url
+  };
+}
+
+async function pratiNapomnyane(env, r, p, email, sega) {
+  const m = napomnyanePismo(env, r, p, email, sega);
+  const en = /\(EN\)/.test(String(r.vid || ""));
+  try {
+    const res = await fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
+      headers: { "api-key": env.BREVO_API_KEY, "content-type": "application/json", "accept": "application/json" },
+      body: JSON.stringify({
+        sender: { name: en ? "Pesenta" : (env.MAIL_SENDER_NAME || "Песента"), email: env.MAIL_SENDER },
+        replyTo: { email: env.MAIL_SENDER },
+        to: [{ email: email }],
+        subject: m.subject,
+        htmlContent: m.html
+      })
+    });
+    if (!res.ok) return { ok: false, error: "Brevo HTTP " + res.status };
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: String(e && e.message || e) };
+  }
+}
 
 /* ============ Stripe webhook ============ */
 
@@ -109,7 +218,11 @@ async function handleWebhook(request, env) {
   try { event = JSON.parse(raw); } catch (e) { return json({ error: "невалиден JSON" }, 400); }
 
   try {
-    if (event.type === "checkout.session.completed") {
+    /* async_payment_succeeded (13.10.2026): SEPA дебит минава след дни — при
+       completed сесията е „unpaid“ и recordSale я пропуска; без това събитие
+       платената продажба оставаше без бележка и извън файла за НАП. recordSale
+       е идемпотентен по сесията, двойно записване няма. */
+    if (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded") {
       await recordSale(env, event);
     } else if (event.type === "charge.refunded") {
       await recordRefund(env, event);

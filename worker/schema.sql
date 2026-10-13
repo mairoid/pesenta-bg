@@ -120,3 +120,13 @@ CREATE INDEX IF NOT EXISTS idx_briefs_created ON briefs(created_at);
 --   ALTER TABLE sales ADD COLUMN delivered_at TEXT;   -- ISO, NULL = още не
 --   ALTER TABLE sales ADD COLUMN note         TEXT;   -- свободна бележка
 --   ALTER TABLE sales ADD COLUMN page_url     TEXT;   -- страницата на песента; накъде води QR-ът на картичката (11.09.2026)
+
+-- Напомняне до неплатила поръчка (13.10.2026). По един ред на поръчка — и при
+-- пратено писмо, и когато е пропуснато (error казва защо), за да не се гледа пак.
+CREATE TABLE IF NOT EXISTS napomnyania (
+  order_no    TEXT PRIMARY KEY,
+  created_at  TEXT NOT NULL,
+  email       TEXT,
+  ok          INTEGER NOT NULL DEFAULT 0,
+  error       TEXT
+);

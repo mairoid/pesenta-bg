@@ -2,6 +2,11 @@ name = "pesenta-nap"
 main = "src/index.js"
 compatibility_date = "2026-08-01"
 
+# Веднъж на час — напомнянето до неплатилите (napomniNeplateni). Стои ПРЕДИ
+# [[d1_databases]]: всичко след таблица в TOML ѝ принадлежи.
+[triggers]
+crons = ["17 * * * *"]
+
 # Базата е в регион EEUR (Източна Европа) — записите по чл. 52о остават в ЕС.
 [[d1_databases]]
 binding = "DB"
@@ -57,6 +62,9 @@ PUBLIC_BASE = "https://pesenta-nap.pesenta-nap.workers.dev"
 # иначе писмата отиват в спам или се отхвърлят.
 MAIL_SENDER = "sales@pesenta.bg"
 MAIL_SENDER_NAME = "Песента"
+# Връзката за плащане в напомнянето — същата като в assets/js/payments.js.
+# PAYMENT_LINK_EN се добавя, щом английската Payment Link бъде създадена.
+PAYMENT_LINK = "https://buy.stripe.com/8x25kEf5e92r9h81Rh9IQ00"
 
 # ТАЙНИ — НЕ се пишат тук. Задават се с командите в README.md:
 #   STRIPE_WEBHOOK_SECRET  подписът, с който Stripe удостоверява webhook-а

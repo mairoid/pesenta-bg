@@ -2876,3 +2876,10 @@ body.podarak {
   color: var(--muted);
 }
 .main-nav a.lang-switch:hover { color: var(--text); border-color: rgba(244, 242, 255, 0.6); }
+
+/* Редът под знака на страницата-подарък (13.10.2026): единственият път от песента
+   обратно към сайта. Наследява тихата прозрачност на .podarak-znak — не е бутон. */
+.podarak-znak a { color: inherit; text-decoration: none; }
+.podarak-znak > a { display: inline-block; } /* иначе img (display:block) отива вляво */
+.podarak-znak-red { margin-top: var(--sp-2, 0.5rem); font-size: var(--fs-sm, 0.875rem); letter-spacing: 0.02em; }
+.podarak-znak-red a:hover { text-decoration: underline; }
