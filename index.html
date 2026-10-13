@@ -359,9 +359,14 @@
             </div>
 
 
-            <!-- Име и имейл ги няма нарочно: Stripe ги събира на страницата
-                 за плащане. Да ги искаме и тук значеше клиентът да ги пише
-                 два пъти за една поръчка. -->
+            <!-- Имейлът се иска тук от 13.10.2026: две поръчки поред стигнаха до
+                 касата и не платиха, а без адрес нямаше как да им пишем. За да не
+                 се пише два пъти, той отива в Stripe като prefilled_email. Името
+                 остава само в Stripe. -->
+            <div class="field">
+              <label for="text-email">Имейл, на който да получиш песента *</label>
+              <input type="email" id="text-email" name="email" autocomplete="email" inputmode="email" placeholder="ime@primer.bg" required>
+            </div>
 
             <label class="consent">
               <input type="checkbox" id="text-consent">
@@ -398,7 +403,7 @@
 
             <div class="form-error" id="text-error" role="alert"></div>
             <button type="button" class="btn btn-primary btn-lg" id="text-send" style="width:100%;margin-top:0.8rem;">Продължи към плащане · 19,90 €</button>
-            <p class="hint" style="margin-top:0.6rem;">Плащането е през Stripe. Там въвеждаш име и имейл — песента идва на него.<br>Трябва ти за днес? Пиши ни на <a href="mailto:sales@pesenta.bg" style="color:var(--orange);text-decoration:underline;">sales@pesenta.bg</a> или се обади на <a href="tel:+359899456326" style="color:var(--orange);text-decoration:underline;">+359 899 456 326</a> — при възможност става.</p>
+            <p class="hint" style="margin-top:0.6rem;">Плащането е през Stripe — имейлът ти е попълнен там, остава името и картата.<br>Трябва ти за днес? Пиши ни на <a href="mailto:sales@pesenta.bg" style="color:var(--orange);text-decoration:underline;">sales@pesenta.bg</a> или се обади на <a href="tel:+359899456326" style="color:var(--orange);text-decoration:underline;">+359 899 456 326</a> — при възможност става.</p>
           </div>
         </div>
         <!-- Цената излезе оттук — вече е в заглавието. Два пъти на един
@@ -1344,7 +1349,7 @@
 <!-- voice-order.js вече го няма (14.09.2026): гласовата поръчка отпадна; остана „Разкажи с гласово“ в poruchka.html.
      Скриптът и без това излиза на 15-ия ред без #fast-rec, но няма смисъл да
      се тегли. -->
-<script src="assets/js/text-order.js" defer></script>
+<script src="assets/js/text-order.js?v=cfa8c12b" defer></script>
 <!-- Плаващ бутон за връзка: Viber на мобилно (+359899456326 — ПЛЕЙСХОЛЪР номер, смени с реалния), имейл при десктоп -->
 <a class="float-contact float-contact--mobile" href="viber://chat?number=+359899456326" aria-label="Пиши ни във Viber">
   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>

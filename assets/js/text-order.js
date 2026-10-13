@@ -181,12 +181,14 @@
      Ако payments.js по някаква причина не се е заредил или плащанията са
      изключени, падаме към plati.html — там клиентът вижда обяснение и
      банков път, вместо да опре в нищо. */
-  function paymentUrl(orderNo) {
+  function paymentUrl(orderNo, email) {
     var cfg = window.PESENTA_PAYMENTS;
     var link = cfg && cfg.enabled && cfg.paymentLinks && cfg.paymentLinks.pesen;
     if (!link) return "plati.html?order=" + encodeURIComponent(orderNo) + "&plan=pesen";
+    /* prefilled_email: имейлът от формата идва попълнен в касата (13.10.2026). */
     return link + (link.indexOf("?") === -1 ? "?" : "&") +
-           "client_reference_id=" + encodeURIComponent(orderNo);
+           "client_reference_id=" + encodeURIComponent(orderNo) +
+           (email ? "&prefilled_email=" + encodeURIComponent(email) : "");
   }
 
   /* Hero-снимката
@@ -347,6 +349,13 @@
     clearFail();
     var story = storyEl.value.trim();
     if (!story) { fail("Разкажи накратко за кого е песента и повода."); return; }
+    var emailEl = document.getElementById("text-email");
+    var email = emailEl ? emailEl.value.trim() : "";
+    if (emailEl) {
+      var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+      emailEl.classList.toggle("invalid", !emailOk);
+      if (!emailOk) { fail("Напиши имейл, на който да ти изпратим песента."); emailEl.focus(); return; }
+    }
     if (!document.getElementById("text-consent").checked) {
       fail("Моля, потвърди съгласието с Общите условия."); return;
     }
@@ -354,8 +363,9 @@
     if (inv && (!inv.name || !inv.addr)) {
       fail("За фактура са нужни име (или фирма) и адрес."); return;
     }
-    /* Име и имейл НЕ се искат тук — Stripe ги събира на своята страница.
-       Съгласието по чл. 57 обаче остава преди плащането: клиентът се отказва
+    /* Името НЕ се иска тук — Stripe го събира на своята страница. Имейлът
+       се иска от 13.10.2026, за да може на неплатила поръчка да се пише.
+       Съгласието по чл. 57 остава преди плащането: клиентът се отказва
        от правото на връщане, това не може да се потвърждава след факта. */
 
     var orderNo = genOrderNo();
@@ -374,7 +384,9 @@
          казва „очаква плащане" — свързването става по номера на поръчката,
          който пътува със самото плащане като client_reference_id. */
       "Състояние": "ОЧАКВА ПЛАЩАНЕ — клиентът е пренасочен към Stripe",
-      "Клиент": "— идва от Stripe след плащането",
+      "Клиент": "— името идва от Stripe след плащането",
+      "Имейл": email || "—",
+      "_replyto": email,
       "Повод": occasion || "— не е избран, виж разказа",
       "Дата на повода": eventDate || "— не е посочена",
       "Стилове": styles.length ? styles.join(", ") : "— не са избрани, виж разказа",
@@ -405,6 +417,7 @@
         "Дата на повода: " + (eventDate || "— не е посочена"),
         "Стилове: " + (styles.length ? styles.join(", ") : "— не са избрани, виж разказа"),
         "Език: " + language,
+        "Имейл: " + (email || "—"),
         "",
         (snimki.length ? "(!) Клиентът е приложил " + snimki.length + " снимки за обложката — идват в отделно писмо, файлове snimka-" + orderNo + "-N.jpg. Ползвай ги за корицата и за личната страница.\n" : ""),
         "## Разказ (директно от клиента, без транскрипция)",
@@ -429,7 +442,7 @@
        после. Да го спрем пред касата заради наш проблем е по-лошото. */
     function toPayment() {
       if (window.plausible) window.plausible("Order Submitted", { props: { method: "text-quick" } });
-      window.location.href = paymentUrl(orderNo);
+      window.location.href = paymentUrl(orderNo, email);
     }
 
     /* Разказът отива И в нашата база, преди клиентът да тръгне към касата.
@@ -455,6 +468,7 @@
           stilove: fields["Стилове"],
           ezik: fields["Език"],
           razkaz: fields["Разказ"],
+          email: email,
           snimki: snimki.length,
           landing: atr("psn_landing"),
           ref_parvi: atr("psn_ref"),
