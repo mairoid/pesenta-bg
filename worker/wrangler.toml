@@ -65,6 +65,7 @@ MAIL_SENDER_NAME = "Песента"
 # Връзката за плащане в напомнянето — същата като в assets/js/payments.js.
 # PAYMENT_LINK_EN се добавя, щом английската Payment Link бъде създадена.
 PAYMENT_LINK = "https://buy.stripe.com/8x25kEf5e92r9h81Rh9IQ00"
+PAYMENT_LINK_EN = "https://buy.stripe.com/3cI8wQcX6guT64W9jJ9IQ02"
 
 # ТАЙНИ — НЕ се пишат тук. Задават се с командите в README.md:
 #   STRIPE_WEBHOOK_SECRET  подписът, с който Stripe удостоверява webhook-а

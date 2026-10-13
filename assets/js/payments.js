@@ -55,7 +55,10 @@ window.PESENTA_PAYMENTS = {
      се отделят от energieausweis-shop.at в същия акаунт. */
   paymentLinks: {
     /* Песен по поръчка — 19,90 € (plink_1TxA4DJi5XII3dF8l7xXBmuZ) */
-    pesen: "https://buy.stripe.com/8x25kEf5e92r9h81Rh9IQ00"
+    pesen: "https://buy.stripe.com/8x25kEf5e92r9h81Rh9IQ00",
+    /* Английският сайт (en/) — продукт „Custom song“, 19,90 € (plink_1UQ9p0Ji5XII3dF8cnAiPsUb,
+       създадена 13.10.2026). След плащане Stripe връща направо на en/thank-you.html. */
+    pesenEn: "https://buy.stripe.com/3cI8wQcX6guT64W9jJ9IQ02"
     /* Връзката „Песен + Експресна изработка“ (29,80 €, plink_1TxA8FJi5XII3dF8AoDMUL21) е
        махната оттук на 21.09.2026: срокът е до 24 часа за всички, без доплащане. Самият
        Payment Link в Stripe се изключва от таблото — сайтът вече не води към него. */
