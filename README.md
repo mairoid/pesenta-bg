@@ -115,7 +115,9 @@ Analytics), който не поставя бисквитки и не пази �
 Имената са в `SABITIYA` в `worker/src/index.js` (друго име се отказва); пращат ги
 `window.psnSabitie` / `trackPlausible` в `main.js` и `text-order.js`. Проба: `node tools/sabitie-proba.mjs`.
 
-Броеве по ден (от папка `worker/`):
+Отчет (броеве, фуния, по дни): `node tools/sabitiya.mjs [дни]` — по подразбиране 7 дни.
+
+Броеве по ден на ръка (от папка `worker/`):
 
     npx wrangler d1 execute pesenta-nap --remote --command "SELECT substr(ts,1,10) AS den, ime, count(*) AS n FROM sabitiya GROUP BY den, ime ORDER BY den DESC, n DESC"
 

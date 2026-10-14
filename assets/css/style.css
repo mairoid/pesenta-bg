@@ -2977,3 +2977,15 @@ body.podarak {
 .legal th, .legal td { text-align: left; padding: 0.6rem 0.8rem; border: 1px solid var(--border); vertical-align: top; overflow-wrap: anywhere; color: var(--muted); }
 .legal th { color: var(--text); background: var(--surface); }
 @media (max-width: 560px) { .legal th, .legal td { padding: 0.5rem 0.55rem; font-size: 0.85rem; } }
+
+/* Карти вместо таблица на телефон (14.10.2026, main.js → .karti, data-label).
+   Специфичността е по-висока от вградените стилове в poveritelnost.html. */
+@media (max-width: 560px) {
+  .legal table.karti, .legal table.karti thead, .legal table.karti tbody,
+  .legal table.karti tr, .legal table.karti td { display: block; width: auto; }
+  .legal table.karti thead, .legal table.karti tr.tablica-glava { display: none; }
+  .legal table.karti tr { border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); margin: 0 0 var(--sp-3); padding: var(--sp-2) var(--sp-4); }
+  .legal table.karti td { border: 0; padding: var(--sp-1) 0; font-size: 0.9rem; overflow-wrap: break-word; }
+  .legal table.karti td::before { content: attr(data-label); display: block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); opacity: 0.85; }
+  .legal table.karti td:first-child { color: var(--text); font-weight: 700; }
+}

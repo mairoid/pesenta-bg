@@ -325,6 +325,20 @@
     li.textContent = L.retention[k];
     rt.appendChild(li);
   });
+
+  /* Таблиците на телефон стават карти (style.css, .karti; 14.10.2026): всяка клетка
+     носи името на колоната си. Тази страница не зарежда main.js — затова тук, след
+     като редовете по-горе са попълнени. */
+  document.querySelectorAll(".legal table").forEach(function (t) {
+    if (!t.rows.length) return;
+    var glava = t.rows[0];
+    var imena = [].map.call(glava.cells, function (c) { return c.textContent.trim(); });
+    glava.classList.add("tablica-glava");
+    [].slice.call(t.rows, 1).forEach(function (r) {
+      [].forEach.call(r.cells, function (c, i) { if (imena[i]) c.setAttribute("data-label", imena[i]); });
+    });
+    t.classList.add("karti");
+  });
 })();
 </script>
 <!-- Плаващ бутон за връзка: Viber на мобилно (+359899456326 — ПЛЕЙСХОЛЪР номер, смени с реалния), имейл при десктоп -->

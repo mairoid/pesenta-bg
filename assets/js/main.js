@@ -48,6 +48,28 @@
     });
   }
 
+  /* ---------- Таблиците в правните страници на телефон (14.10.2026) ----------
+     Под 560 px всеки ред става карта (style.css, .karti), а всяка клетка носи
+     името на колоната си — колоната „Политика“ иначе оставаше 37 px и думата се
+     чупеше буква по буква. Две от таблиците ги пълни legal-config.js, затова
+     етикетите се слагат след load, когато са готови. Без скрипт — старото пренасяне. */
+  function etiketiTablici() {
+    document.querySelectorAll(".legal table").forEach(function (t) {
+      if (!t.rows.length) return;
+      var glava = t.rows[0];
+      var imena = [].map.call(glava.cells, function (c) { return c.textContent.trim(); });
+      glava.classList.add("tablica-glava");
+      [].slice.call(t.rows, 1).forEach(function (r) {
+        [].forEach.call(r.cells, function (c, i) { if (imena[i]) c.setAttribute("data-label", imena[i]); });
+      });
+      t.classList.add("karti");
+    });
+  }
+  if (document.querySelector(".legal table")) {
+    if (document.readyState === "complete") etiketiTablici();
+    else window.addEventListener("load", etiketiTablici);
+  }
+
   /* ---------- Текуща година във футъра ---------- */
   var yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
@@ -68,7 +90,11 @@
   var heroEl = document.querySelector(".hero");
   var plavashti = document.querySelectorAll(".float-contact");
   if (plavashti.length) {
-    var vHeroja = false, chete = false, posledenY = window.scrollY;
+    /* Без герой (страниците за повод, статиите) бутонът тръгва скрит: при отваряне
+       човек започва да чете и бутонът стоеше върху текста (трета оценка, 14.10.2026).
+       Показва се при превъртане нагоре или в края. Къса страница без превъртане — веднага. */
+    var kasa = document.documentElement.scrollHeight - window.innerHeight < 120;
+    var vHeroja = false, chete = !heroEl && !kasa, posledenY = window.scrollY;
     var skriiPlika = function () { plavashti.forEach(function (b) { b.classList.toggle("float-contact--skrit", vHeroja || chete); }); };
     if (heroEl) {
       var hr = heroEl.getBoundingClientRect();

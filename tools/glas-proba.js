@@ -134,10 +134,15 @@ const STUB = `(function(){localStorage.removeItem("__proba");var z=[];function p
       await idi(BASE + u);
       const sw = await evalJS(`document.documentElement.scrollWidth - document.documentElement.clientWidth`);
       ok(u + ": без хоризонтален скрол на 375 px", sw <= 0, "+" + sw + " px");
+      /* карти вместо таблица (14.10.2026): заглавният ред е скрит, клетките имат етикет, няма тесни колони */
+      const k = await evalJS(`(function(){var t=[].slice.call(document.querySelectorAll(".legal table"));var bez=0,tesni=0;t.forEach(function(x){[].slice.call(x.rows,1).forEach(function(r){[].forEach.call(r.cells,function(c){if(!c.getAttribute("data-label"))bez++;if(c.getBoundingClientRect().width<200)tesni++;});});});return {tablici:t.length,karti:t.filter(function(x){return x.classList.contains("karti");}).length,bez:bez,tesni:tesni};})()`);
+      ok(u + ": таблиците са карти с етикети, без тесни колони", k.tablici > 0 && k.karti === k.tablici && k.bez === 0 && k.tesni === 0, JSON.stringify(k));
     }
     await send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
     await idi(BASE + "/podarak-pesen-za-rojden-den.html");
     const fab = async () => evalJS(`(function(){var b=[].filter.call(document.querySelectorAll(".float-contact"),function(x){return getComputedStyle(x).display!=="none";})[0];return b?getComputedStyle(b).opacity:"няма";})()`);
+    await sleep(400);
+    ok("плаващият бутон: при отваряне на страница за повод е скрит (не стои върху текста)", (await fab()) === "0");
     await evalJS(`window.scrollTo(0,300)`); await sleep(250); await evalJS(`window.scrollTo(0,900)`); await sleep(600);
     const fDolu = await fab();
     await evalJS(`window.scrollTo(0,600)`); await sleep(600);
