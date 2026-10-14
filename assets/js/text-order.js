@@ -1,8 +1,8 @@
 /* Песента — бърза текстова поръчка: полетата излизат на СЪЩИЯ екран,
    без прехвърляне към poruchka.html. От 05.09.2026 това е ЕДИНСТВЕНИЯТ
    път за поръчка от началната страница. Гласовата бърза поръчка
-   (voice-order.js) отпадна на 14.09.2026; гласът остана само като „Разкажи
-   с гласово“ в полето за историята на poruchka.html (order.js).
+   (voice-order.js) отпадна на 14.09.2026; от 14.10.2026 гласът е и тук — като
+   „Или го разкажи с глас“ под полето за разказа (виж „Гласов разказ“ долу).
 
    Собствени копия на помощните функции: пътят, по който влизат
    поръчките, не бива да зависи от това дали друг файл се е заредил. */
@@ -104,20 +104,142 @@
       });
     });
   })();
-  /* Снимките тръгват в отделна заявка, преди поръчката. Отговорът е непрозрачен (no-cors),
+  /* ============ Гласов разказ (14.10.2026) ============ */
+  /* Едно и също натискане прави две неща: записва гласа (MediaRecorder) и изписва
+     думите в полето за разказа (Web Speech API), за да ги види клиентът и да ги
+     поправи. Без разпознаване (напр. Firefox) остава само записът — пак стига до нас.
+     Мястото на гласа е тук, в полето, а не отделна „гласова поръчка“: тя плашеше
+     (отпадна на 14.09.2026). Логиката е по „Разкажи с гласово“ от order.js. */
+  var glasBlob = null;
+  var GLAS_MAX_S = 180; /* 3 минути — стига за история, а файлът остава малък */
+  function glasExt(b) {
+    var ty = b && b.type ? b.type : "";
+    if (ty.indexOf("ogg") > -1) return "ogg";
+    if (ty.indexOf("mp4") > -1 || ty.indexOf("m4a") > -1) return "m4a";
+    return "webm";
+  }
+  (function () {
+    var box = document.getElementById("text-glas");
+    if (!box || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) return;
+    var btn = document.getElementById("text-glas-btn"), label = document.getElementById("text-glas-label");
+    var st = document.getElementById("text-glas-status"), play = document.getElementById("text-glas-play");
+    var audio = document.getElementById("text-glas-audio"), del = document.getElementById("text-glas-del");
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    var rec = null, mr = null, stream = null, chunks = [], zapisva = false, osnova = "", gotovo = "", timer = null, sekundi = 0;
+    box.hidden = false;
+
+    function status(msg, cls) { st.textContent = msg; st.className = "voice-status" + (cls ? " " + cls : ""); }
+    function mmss(s) { return Math.floor(s / 60) + ":" + ("0" + (s % 60)).slice(-2); }
+
+    function spri() {
+      zapisva = false;
+      clearInterval(timer);
+      btn.classList.remove("recording");
+      label.textContent = glasBlob ? t("Запиши наново", "Record again") : t("Или го разкажи с глас", "Or tell it by voice");
+      if (rec) { try { rec.stop(); } catch (e) {} }
+      if (mr && mr.state !== "inactive") { try { mr.stop(); } catch (e) {} }
+      if (stream) { stream.getTracks().forEach(function (x) { x.stop(); }); stream = null; }
+    }
+
+    function zapochni() {
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(function (s) {
+        stream = s; chunks = [];
+        try { mr = new MediaRecorder(stream); } catch (e) { mr = null; }
+        if (mr) {
+          mr.ondataavailable = function (ev) { if (ev.data && ev.data.size) chunks.push(ev.data); };
+          mr.onstop = function () {
+            if (!chunks.length) return;
+            glasBlob = new Blob(chunks, { type: chunks[0].type || "audio/webm" });
+            if (audio.src) URL.revokeObjectURL(audio.src);
+            audio.src = URL.createObjectURL(glasBlob);
+            play.hidden = false;
+            label.textContent = t("Запиши наново", "Record again");
+            status(t("Записът е готов и идва при нас с поръчката. Прегледай текста горе — можеш да го поправиш.",
+                     "Your recording is ready and comes to us with the order. Check the text above — you can edit it."));
+          };
+          mr.start();
+        }
+        /* Записът наново замества стария, но текстът, който вече е в полето, остава —
+           новите думи се добавят след него. */
+        osnova = storyEl.value ? storyEl.value.replace(/\s+$/, "") + " " : "";
+        gotovo = "";
+        if (SR) {
+          rec = new SR();
+          rec.lang = EN ? (navigator.language && /^en/i.test(navigator.language) ? navigator.language : "en-US") : "bg-BG";
+          rec.continuous = true;
+          rec.interimResults = true;
+          rec.onresult = function (ev) {
+            var tek = "";
+            for (var i = ev.resultIndex; i < ev.results.length; i++) {
+              if (ev.results[i].isFinal) gotovo += ev.results[i][0].transcript + " ";
+              else tek += ev.results[i][0].transcript;
+            }
+            storyEl.value = (osnova + gotovo + tek).replace(/[ \t]+/g, " ");
+            storyEl.classList.remove("invalid");
+          };
+          rec.onerror = function (ev) {
+            if (ev.error === "not-allowed" || ev.error === "service-not-allowed" || ev.error === "audio-capture") {
+              status(t("Думите не се изписват в този браузър, но гласът се записва и идва при нас.",
+                       "Your words can't be typed out in this browser, but your voice is recorded and reaches us."), "rec");
+            }
+          };
+          /* Chrome спира разпознаването след пауза — пускаме го пак, докато записът тече */
+          rec.onend = function () { if (zapisva) { try { rec.start(); } catch (e) {} } };
+          try { rec.start(); } catch (e) {}
+        }
+        zapisva = true; sekundi = 0;
+        btn.classList.add("recording");
+        label.textContent = t("Спри записа", "Stop recording");
+        var podskazka = SR ? t("Слушам… Думите ти се появяват горе.", "Listening… your words appear above.")
+                           : t("Записвам гласа ти.", "Recording your voice.");
+        status(podskazka + " 0:00", "rec");
+        timer = setInterval(function () {
+          sekundi++;
+          if (sekundi >= GLAS_MAX_S) { spri(); return; }
+          if (st.classList.contains("rec") && st.textContent.indexOf(podskazka) === 0) status(podskazka + " " + mmss(sekundi), "rec");
+        }, 1000);
+      }).catch(function () {
+        status(t("Няма достъп до микрофона. Разреши го от браузъра — или просто напиши историята.",
+                 "No access to the microphone. Allow it in your browser — or just type the story."), "err");
+      });
+    }
+
+    btn.addEventListener("click", function () { if (zapisva) spri(); else zapochni(); });
+    del.addEventListener("click", function () {
+      glasBlob = null;
+      if (audio.src) { URL.revokeObjectURL(audio.src); audio.removeAttribute("src"); }
+      play.hidden = true;
+      label.textContent = t("Или го разкажи с глас", "Or tell it by voice");
+      status(t("Записът е изтрит. Текстът в полето остава.", "Recording deleted. The text in the box stays."));
+    });
+    /* преди касата: ако човек натисне „Продължи“ по време на запис, записът се прибира първо */
+    window.__glasSpri = function () {
+      if (!zapisva) return Promise.resolve();
+      return new Promise(function (res) {
+        if (mr && mr.state !== "inactive") { var stara = mr.onstop; mr.onstop = function () { if (stara) stara(); res(); }; }
+        else setTimeout(res, 0);
+        spri();
+        setTimeout(res, 1500);
+      });
+    };
+  })();
+
+  /* Снимките и гласът тръгват в отделна заявка, преди поръчката. Отговорът е непрозрачен (no-cors),
      затова не чакаме повече от 8 секунди — клиентът не бива да стои пред касата заради нас. */
   function pratiSnimki(orderNo) {
-    if (!snimki.length) return Promise.resolve();
+    if (!snimki.length && !glasBlob) return Promise.resolve();
     var fd = new FormData();
-    fd.append("_subject", "Снимки за обложката — " + orderNo);
+    fd.append("_subject", (glasBlob ? (snimki.length ? "Гласов разказ и снимки — " : "Гласов разказ — ") : "Снимки за обложката — ") + orderNo);
     fd.append("_captcha", "false");
     fd.append("_template", "box");
     fd.append("Към заявка", orderNo);
-    fd.append("Тип", "Снимки за обложката към бърза текстова поръчка");
+    fd.append("Тип", (glasBlob ? "Гласов разказ" + (snimki.length ? " и снимки за обложката" : "") : "Снимки за обложката") + " към бърза текстова поръчка");
+    if (glasBlob) fd.append("glasovo", glasBlob, "glasovo-" + orderNo + "." + glasExt(glasBlob));
     snimki.forEach(function (s, i) { fd.append("snimka_" + (i + 1), s.blob, "snimka-" + orderNo + "-" + (i + 1) + ".jpg"); });
     return Promise.race([
       fetch(FORM_ENDPOINT_NATIVE, { method: "POST", mode: "no-cors", body: fd }).catch(function () {}),
-      new Promise(function (res) { setTimeout(res, 8000); })
+      /* гласът е до няколко MB — на мобилни данни качването иска повече време */
+      new Promise(function (res) { setTimeout(res, glasBlob ? 25000 : 8000); })
     ]);
   }
 
@@ -342,6 +464,10 @@
        той си знае как да прибере микрофона и таймера чисто */
     if (recBtn && recBtn.classList.contains("recording")) recBtn.click();
     if (voiceFieldsWrap) voiceFieldsWrap.hidden = true;
+    /* „Чуй 15 секунди“ е покана, а човекът вече е решил — прибираме я, за да не
+       стои между бутона и полетата (и я спираме, ако свири). */
+    var proba = document.querySelector(".hero-proba");
+    if (proba) { if (proba.getAttribute("aria-pressed") === "true") proba.click(); proba.hidden = true; }
     fieldsWrap.hidden = false;
     collapseHeroIntro();
     pinHeroPhoto();
@@ -383,22 +509,52 @@
   /* Страниците за повод водят тук с ?povod=<стойността на чипа>#order: поводът
      идва избран и формата е отворена, вместо човек да го търси наново. Засега
      само от en/ — poruchka.html си има собствен ?povod= за българските. */
+  /* От 14.10.2026 и ?stil=<стил>: бутоните на стиловете и „Поръчай“ по целия сайт
+     водят тук, а не към poruchka.html (пълната форма нямаше нито една поръчка). */
   (function () {
-    var p = new URLSearchParams(location.search).get("povod");
-    var chips = p ? document.querySelectorAll("#text-fields .chip") : [];
-    for (var i = 0; i < chips.length; i++) {
-      if (chips[i].getAttribute("data-value") === p) {
-        chips[i].classList.add("selected");
-        var more = chips[i].closest("details");
-        if (more) more.open = true;
-        break;
+    var q = new URLSearchParams(location.search);
+    function izberi(grupi, v) {
+      if (!v) return;
+      var chips = document.querySelectorAll(grupi);
+      /* поводът е един — новият сменя стария; стиловете се трупат */
+      if (grupi.indexOf("occasion") > -1) for (var j = 0; j < chips.length; j++) chips[j].classList.remove("selected");
+      for (var i = 0; i < chips.length; i++) {
+        if (chips[i].getAttribute("data-value") === v) {
+          chips[i].classList.add("selected");
+          var more = chips[i].closest("details");
+          if (more) more.open = true;
+          break;
+        }
       }
     }
+    izberi("#text-occasion-chips .chip, #text-occasion-chips-more .chip", q.get("povod"));
+    izberi("#text-style-chips .chip, #text-style-chips-more .chip", q.get("stil"));
     if (location.hash === "#order") textBtn.click();
+    /* Връзка към #order на същата страница не презарежда — само сменя котвата.
+       Хващаме я тук, за да отвори формата, вместо да скролне до затворен бутон. */
+    document.addEventListener("click", function (e) {
+      var a = e.target.closest ? e.target.closest("a[href]") : null;
+      if (!a || a.hash !== "#order" || a.origin !== location.origin) return;
+      if (a.pathname.replace(/index\.html$/, "") !== location.pathname.replace(/index\.html$/, "")) return;
+      e.preventDefault();
+      /* стил или повод от самата страница (облакът със стиловете) — без презареждане */
+      var aq = new URLSearchParams(a.search);
+      izberi("#text-occasion-chips .chip, #text-occasion-chips-more .chip", aq.get("povod"));
+      izberi("#text-style-chips .chip, #text-style-chips-more .chip", aq.get("stil"));
+      if (location.hash !== "#order") history.replaceState(null, "", location.pathname + location.search + "#order");
+      textBtn.click();
+    });
   })();
 
   sendBtn.addEventListener("click", function () {
     clearFail();
+    /* Запис, който още тече, се приключва първо — иначе последните думи и самият
+       файл не стигат до нас. После същото натискане продължава отначало. */
+    var glasBtn = document.getElementById("text-glas-btn");
+    if (window.__glasSpri && glasBtn && glasBtn.classList.contains("recording")) {
+      window.__glasSpri().then(function () { sendBtn.click(); });
+      return;
+    }
     var story = storyEl.value.trim();
     if (!story) { fail(t("Разкажи накратко за кого е песента и повода.", "Tell us briefly who the song is for and the occasion.")); return; }
     var emailEl = document.getElementById("text-email");
@@ -446,6 +602,7 @@
       "Език": language,
       "Разказ": story,
       "Снимки за обложката": snimki.length ? "ДА — " + snimki.length + ", в ОТДЕЛНО писмо със snimka-" + orderNo + "-N.jpg" : "не",
+      "Гласов разказ": glasBlob ? "ДА — glasovo-" + orderNo + "." + glasExt(glasBlob) + " в ОТДЕЛНО писмо; разказът горе е автоматичният препис, свери го със записа" : "не",
       /* Ако няма отметка, пишем изрично „не иска" — така при преглед се вижда
          разликата между „не е поискана" и „забравили сме да я запишем". */
       "ФАКТУРА": inv
@@ -473,7 +630,8 @@
         "Имейл: " + (email || "—"),
         "",
         (snimki.length ? "(!) Клиентът е приложил " + snimki.length + " снимки за обложката — идват в отделно писмо, файлове snimka-" + orderNo + "-N.jpg. Ползвай ги за корицата и за личната страница.\n" : ""),
-        "## Разказ (директно от клиента, без транскрипция)",
+        (glasBlob ? "(!) Клиентът е разказал С ГЛАС — файлът glasovo-" + orderNo + "." + glasExt(glasBlob) + " идва в отделно писмо. Разказът долу е автоматичен препис (може да е дописан ръчно) — имената и детайлите свери със записа.\n" : ""),
+        glasBlob ? "## Разказ (автоматичен препис от гласа — свери със записа)" : "## Разказ (директно от клиента, без транскрипция)",
         story,
         "",
         "## Задача",
@@ -523,7 +681,9 @@
           event_date: eventDate,
           stilove: fields["Стилове"],
           ezik: fields["Език"],
-          razkaz: fields["Разказ"],
+          /* Worker-ът не знае за глас — бележката е в самия разказ, за да стигне до
+             писмото за плащане без нова версия на Worker-а. */
+          razkaz: (glasBlob ? "[ИМА ГЛАСОВ ЗАПИС — glasovo-" + orderNo + "." + glasExt(glasBlob) + ", в отделно писмо; текстът е автоматичен препис]\n" : "") + fields["Разказ"],
           email: email,
           snimki: snimki.length,
           landing: atr("psn_landing"),

@@ -39,8 +39,23 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     });
   });
   ok("статично: " + Object.keys(POVOD).length + " повода и " + Object.keys(ZA).length + " души в картите; всяко ?povod=/?za= в сайта има чип/опция", lipsi.length === 0, lipsi.slice(0, 5).join(" | "));
-  const bezPovod = fs.readdirSync(KOREN).filter(n => /^podarak-(pesen-za|za)-.*\.html$/.test(n)).filter(n => { const s = fs.readFileSync(path.join(KOREN, n), "utf8"); return !/class="btn btn-primary[^"]*" href="poruchka\.html\?(povod|za)=/.test(s); });
-  ok("всяка страница за повод или човек праща повод или човек към формата", bezPovod.length === 0, bezPovod.join(", "));
+  /* От 13–14.10.2026 бутоните водят към БЪРЗАТА форма на началната (./?povod=<чип>#order), не
+     към poruchka.html. Страниците за повод трябва да носят повод, който бързата форма има като чип.
+     Страниците за човек (podarak-za-*) — бързата форма няма поле „за кого“, затова е достатъчно
+     основният бутон да отваря формата (#order); ако носят повод, и той трябва да е истински чип. */
+  const idx0 = fs.readFileSync(path.join(KOREN, "index.html"), "utf8");
+  const barziChipove = (idx0.slice(idx0.indexOf('id="text-occasion-chips"'), idx0.indexOf('id="text-event-date"')).match(/data-value="([^"]+)"/g) || []).map(x => x.slice(12, -1));
+  const loshi = [];
+  fs.readdirSync(KOREN).filter(n => /^podarak-(pesen-za|za)-.*\.html$/.test(n)).forEach(n => {
+    const s = fs.readFileSync(path.join(KOREN, n), "utf8");
+    const hrefs = (s.match(/class="btn btn-primary[^"]*" href="([^"]+)"/g) || []).map(x => x.replace(/.*href="/, "").slice(0, -1).replace(/&amp;/g, "&"));
+    const kamFormata = hrefs.filter(h => /^\.\/(\?[^#]*)?#order$/.test(h));
+    const povodi = kamFormata.map(h => new URLSearchParams(h.split("#")[0].slice(2)).get("povod")).filter(Boolean);
+    if (!kamFormata.length) loshi.push(n + " → няма бутон към #order");
+    else if (/^podarak-pesen-za-/.test(n) && !povodi.length) loshi.push(n + " → без повод");
+    povodi.forEach(v => { if (barziChipove.indexOf(v) < 0) loshi.push(n + " → povod=" + v + " няма чип"); });
+  });
+  ok("всяка страница за повод праща повод (истински чип в бързата форма), а тази за човек — поне към #order", loshi.length === 0 && barziChipove.length > 0, loshi.slice(0, 6).join(" | "));
   /* един списък на три места: картите на началната са източникът */
   const index = fs.readFileSync(path.join(KOREN, "index.html"), "utf8");
   const sek = index.slice(index.indexOf('id="povodi"'), index.indexOf("</section>", index.indexOf('id="povodi"')));

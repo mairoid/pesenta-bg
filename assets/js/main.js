@@ -116,6 +116,9 @@
      в style.css). Двете вървят заедно: ако се пипа едното, и другото. */
   var revealEls = document.querySelectorAll(".reveal");
   var STAGGER_MS = 80, STAGGER_MAX = 480;
+  /* Редът в <head> скрива .reveal само докато това е false след 4 s — тук казваме,
+     че появяването е поето (style.css, .js .reveal). */
+  window.__reveal = true;
 
   function staggerDelay(el) {
     var parent = el.parentElement;
@@ -405,6 +408,68 @@
     audio.addEventListener("ended", spri);
   });
 
+  /* ---------- „Чуй 15 секунди“ в героя (14.10.2026) ----------
+     На телефон първият екран нямаше нито снимка, нито звук — само обещание.
+     Връзката .hero-proba (към #demo, ако скриптът не тръгне) пуска 15 секунди
+     от припева (data-start; „Краси“ на български, „Rocco“ на en/) и спира със затихване; втори клик спира веднага.
+     Същата механика като пробите на стиловете отгоре и също влиза в players[]. */
+  var proba = document.querySelector(".hero-proba[data-proba-src]");
+  if (proba) {
+    var pAudio = new Audio();
+    pAudio.preload = "none";
+    var pSrc = proba.getAttribute("data-proba-src");
+    var pStart = parseFloat(proba.getAttribute("data-start")) || 0;
+    var pSek = parseFloat(proba.getAttribute("data-len")) || 15;
+    var pIkona = proba.querySelector(".hero-proba-ikona");
+    var pTimer = null, pFade = null, pZaqvka = 0;
+    function pChisto() { clearTimeout(pTimer); clearInterval(pFade); pTimer = pFade = null; }
+    function pSpri() {
+      pZaqvka++;
+      pChisto();
+      pAudio.pause();
+      pAudio.volume = 1;
+      proba.classList.remove("playing");
+      proba.setAttribute("aria-pressed", "false");
+      if (pIkona) pIkona.innerHTML = ICON_PLAY;
+    }
+    function pZatihni() {
+      var i = 0, n = 12;
+      clearInterval(pFade);
+      pFade = setInterval(function () {
+        i++;
+        pAudio.volume = Math.max(0, 1 - i / n);
+        if (i >= n) pSpri();
+      }, 900 / n);
+    }
+    function pPusni() {
+      var moq = ++pZaqvka;
+      if (window.__pesentaIntroStop) window.__pesentaIntroStop();
+      players.forEach(function (p) { if (p.audio !== pAudio) p.pause(); });
+      proba.classList.add("playing");
+      proba.setAttribute("aria-pressed", "true");
+      if (pIkona) pIkona.innerHTML = ICON_PAUSE;
+      if (!pAudio.src) { pAudio.preload = "auto"; pAudio.src = pSrc; }
+      try { pAudio.currentTime = pStart; } catch (e) {}
+      pAudio.volume = 1;
+      pChisto();
+      var pr = pAudio.play();
+      if (pr && pr.catch) pr.catch(function () { if (moq === pZaqvka) pSpri(); });
+      trackPlausible("Hero Sample Play", { track: pSrc.split("/").pop() });
+    }
+    players.push({ audio: pAudio, pause: pSpri });
+    proba.setAttribute("role", "button");
+    proba.setAttribute("aria-pressed", "false");
+    if (pIkona) pIkona.innerHTML = ICON_PLAY;
+    proba.addEventListener("click", function (e) {
+      e.preventDefault();
+      if (proba.getAttribute("aria-pressed") === "true") pSpri(); else pPusni();
+    });
+    pAudio.addEventListener("playing", function () {
+      if (proba.getAttribute("aria-pressed") === "true" && !pTimer && !pFade) pTimer = setTimeout(pZatihni, pSek * 1000);
+    });
+    pAudio.addEventListener("ended", pSpri);
+  }
+
   /* ---------- Историята на основателя ----------
      На телефон е сгъната в <details> (първите два абзаца остават отвън);
      на десктоп стои отворена — summary-то там го крие CSS ([open]).
@@ -626,7 +691,7 @@
       document.removeEventListener("keydown", kick);
       armed = false; /* позволи повторно въоръжаване, ако play() пак бъде отказан */
       /* ако първото докосване е върху плейър — човекът сам си пуска музика */
-      if (e && e.target && e.target.closest && e.target.closest(".player")) return;
+      if (e && e.target && e.target.closest && e.target.closest(".player, .hero-proba, .style-play")) return;
       begin();
     };
     document.addEventListener("pointerdown", kick);

@@ -42,6 +42,7 @@ function glava(p) {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <script>document.documentElement.classList.add("js");setTimeout(function(){if(!window.__reveal)document.documentElement.classList.remove("js")},4000)</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
   <meta name="theme-color" content="#0b0a1a">
   <meta name="application-name" content="Pesenta">
@@ -103,7 +104,7 @@ function hedar(p) {
       <a href="#ceni">Pricing</a>
       <a href="#vaprosi">FAQ</a>
       ${bgLink}
-      <a class="btn btn-primary" href="#voice-card">Order a song</a>
+      <a class="btn btn-primary" href="#order">Order a song</a>
     </nav>
   </div>
 </header>

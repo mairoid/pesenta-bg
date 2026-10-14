@@ -49,7 +49,7 @@ export function nachalo() {
     ["How do I pay?", "You pay the full " + CENA + " when you order, by card through Stripe's secure checkout (Apple Pay, Google Pay and other local methods may also appear). Stripe can show the price in your local currency. Right after payment you get an electronic sales receipt by email."],
     ["What languages can the song be in?", "English, Bulgarian, German, French, Italian, Spanish, Greek, Serbian, Macedonian, Romanian, Turkish, Russian, Ukrainian, Arabic — or a mix of two. If you need another language, write it in your story and ask."],
     ["Can I choose more than one music style?", "Yes. Tick as many styles as you like in the form and tell us in your story which one should lead."],
-    ["What if I don't like it?", "We make two versions and send you the better one. If a name, a detail or the sound isn't right, tell us within 7 days and we'll revise it for free. That's why the form asks for details — the more you give us, the closer we get first time."],
+    ["What if I don't like it?", "If a name, a detail or the sound isn't right, tell us within 7 days and we'll revise it for free. That's why the form asks for details — the more you give us, the closer we get first time."],
     ["Can I get a refund after delivery?", "The song is digital content made to your personal order, so the 14-day right of withdrawal doesn't apply once work has started with your explicit consent (Art. 16(m) of EU Directive 2011/83/EU, Art. 57 of the Bulgarian Consumer Protection Act). You confirm this with a checkbox when ordering. Instead you get a free revision — and if we don't deliver, you get your money back in full. Details in the <a href=\"terms.html\" style=\"color:var(--orange);\">Terms</a>."],
     ["Can it be a surprise?", "Yes — completely confidential. We only talk to you, and the song isn't published anywhere."],
     ["What can I do with the song?", "It's yours for personal use without limits: give it, share it on social media, play it at events. For commercial use (ads, monetised content) write to us first."],
@@ -86,13 +86,18 @@ export function nachalo() {
         <div id="hero-intro">
           <span class="kicker">From friends, for friends</span>
           <h1>Your story, turned into a <span class="grad-text">song</span> for ${CENA}</h1>
-          <p class="lead">Tell us about the person and the occasion. We write the lyrics — word by word, from your story — and make the music in the style you choose. Ready within 24 hours.</p>
+          <p class="lead">Tell us about the person and the occasion. We write the lyrics — word by word, from your story — and make the music in the style you choose. <strong class="garancia">Yours within 24 hours — or your money back.</strong></p>
         </div>
         <div id="voice-card">
-          <div class="hero-ctas">
+          <div class="hero-ctas" id="order">
             <button type="button" class="btn btn-primary btn-lg" id="fast-text">Order a song</button>
-            <a class="btn btn-ghost btn-lg" href="#demo">Hear samples</a>
+            <a class="btn btn-ghost btn-lg hero-demo-link" href="#demo">Hear samples</a>
           </div>
+          <a class="hero-proba" href="#demo" data-proba-src="../assets/audio/rocco-di-catania.mp3" data-start="70" data-len="15">
+            <img src="../assets/img/cover-rocco-112.jpg" width="56" height="56" alt="">
+            <span class="hero-proba-tekst"><strong>Hear 15 seconds</strong> of a song for Rocco</span>
+            <span class="hero-proba-ikona" aria-hidden="true"></span>
+          </a>
           <p class="hero-late"><a href="last-minute-gift.html">Need it fast? →</a></p>
           <noscript>
             <p class="voice-status">Ordering needs JavaScript. Email us your story at <a href="mailto:${EMAIL}" style="color:var(--orange);text-decoration:underline;">${EMAIL}</a>.</p>
@@ -104,6 +109,19 @@ export function nachalo() {
                 <span class="hint">Who the song is for, the occasion, your story and the details. The more you share, the more personal the song.</span>
               </label>
               <textarea id="text-story" placeholder="e.g. For my colleague Dan — he turns 40 next Saturday, loves fishing and still talks about the time he…"></textarea>
+              <div class="glas-razkaz" id="text-glas" hidden>
+                <div class="voice-row">
+                  <button type="button" class="btn btn-ghost voice-btn" id="text-glas-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg>
+                    <span id="text-glas-label">Or tell it by voice</span>
+                  </button>
+                  <span class="voice-status" id="text-glas-status" aria-live="polite">Just talk — your words appear in the box above, and you can fix them.</span>
+                </div>
+                <div class="voice-play" id="text-glas-play" hidden>
+                  <audio controls id="text-glas-audio"></audio>
+                  <button type="button" class="btn btn-ghost glas-del" id="text-glas-del">Delete recording</button>
+                </div>
+              </div>
             </div>
 
             <div class="field snimki-box" id="text-snimki-box">
@@ -197,7 +215,7 @@ export function nachalo() {
 
             <div class="form-error" id="text-error" role="alert"></div>
             <button type="button" class="btn btn-primary btn-lg" id="text-send" style="width:100%;margin-top:0.8rem;">Continue to payment · ${CENA}</button>
-            <p class="hint" style="margin-top:0.6rem;">Secure payment by Stripe — your email is filled in there, you just add your name and card.<br>Need it today? Email <a href="mailto:${EMAIL}" style="color:var(--orange);text-decoration:underline;">${EMAIL}</a> before you pay — when we can, we make it the same day.</p>
+            <p class="hint" style="margin-top:0.6rem;"><strong class="garancia">Your song within 24 hours — or your money back.</strong><br>Secure payment by Stripe — your email is filled in there, you just add your name and card.<br>Need it today? Email <a href="mailto:${EMAIL}" style="color:var(--orange);text-decoration:underline;">${EMAIL}</a> before you pay — when we can, we make it the same day.</p>
           </div>
         </div>
         <p class="hero-sub">Original lyrics · Ready within 24 hours · No subscription</p>
@@ -257,26 +275,11 @@ ${karti}
         <h2>How it works</h2>
         <p>From your story to a finished song — three steps, zero hassle.</p>
       </div>
-      <div class="steps-grid">
-        <div class="step-card reveal">
-          <img class="step-icon" src="../assets/img/stapka-1.png" alt="" width="72" height="72" loading="lazy" decoding="async">
-          <span class="step-num" aria-hidden="true">1</span>
-          <h3>Tell us and pay</h3>
-          <p>A short form — the person, the occasion, the inside jokes. You pay ${CENA} by card and get your sales receipt by email straight away.</p>
-        </div>
-        <div class="step-card reveal">
-          <img class="step-icon" src="../assets/img/stapka-2.png" alt="" width="72" height="72" loading="lazy" decoding="async">
-          <span class="step-num" aria-hidden="true">2</span>
-          <h3>We write and produce</h3>
-          <p>The lyrics are original, written by a person from your story. The music and vocals follow them, in the styles you picked. We make two versions and choose the better one.</p>
-        </div>
-        <div class="step-card reveal">
-          <img class="step-icon" src="../assets/img/stapka-3.png" alt="" width="72" height="72" loading="lazy" decoding="async">
-          <span class="step-num" aria-hidden="true">3</span>
-          <h3>You get the song</h3>
-          <p>Within 24 hours the MP3 and the lyrics land in your inbox. If something isn't right, we fix it for free.</p>
-        </div>
-      </div>
+      <ol class="steps-short reveal">
+        <li><span class="step-num" aria-hidden="true">1</span><p><strong>Tell us</strong> who it's for and why — in words or by voice — and pay ${CENA}.</p></li>
+        <li><span class="step-num" aria-hidden="true">2</span><p><strong>We make it.</strong> A person writes the lyrics from your story; the music comes in the style you pick.</p></li>
+        <li><span class="step-num" aria-hidden="true">3</span><p><strong>You get it</strong> by email within 24 hours — or your money back. Not quite right? Free revision.</p></li>
+      </ol>
     </div>
   </section>
 
@@ -290,9 +293,7 @@ ${karti}
         <h2>19 styles, 14 languages — mix freely</h2>
         <p>A ballad for mum, rap for your best friend, Balkan brass for the stag party? It can be in Turkish, Greek, Italian or English too — or a mix.</p>
       </div>
-      <div class="styles-cloud reveal">
-        <span class="style-chip">Pop</span>
-        <span class="style-chip">Ballad</span>
+      <div class="styles-cloud styles-row reveal">
         <span class="style-group">
           <button type="button" class="style-play" aria-label="Hear a sample: Rock" aria-pressed="false"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
           <span class="style-chip" data-demo="../assets/audio/angel-s-torbata.mp3" data-start="0">Rock</span>
@@ -301,6 +302,16 @@ ${karti}
           <button type="button" class="style-play" aria-label="Hear a sample: Rap / Hip-hop" aria-pressed="false"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
           <span class="style-chip" data-demo="../assets/audio/za-teb-brate-vladi.mp3" data-start="0">Rap / Hip-hop</span>
         </span>
+        <span class="style-group">
+          <button type="button" class="style-play" aria-label="Hear a sample: Oriental" aria-pressed="false"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+          <span class="style-chip" data-demo="../assets/audio/rosen-abi.mp3" data-start="0">Oriental</span>
+        </span>
+        <span class="style-group">
+          <button type="button" class="style-play" aria-label="Hear a sample: Crooner / Chanson" aria-pressed="false"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+          <span class="style-chip" data-demo="../assets/audio/rocco-di-catania.mp3" data-start="0">Crooner / Chanson</span>
+        </span>
+        <span class="style-chip">Pop</span>
+        <span class="style-chip">Ballad</span>
         <span class="style-chip">Balkan pop-folk</span>
         <span class="style-chip">Kyuchek</span>
         <span class="style-chip">Bulgarian folk</span>
@@ -310,17 +321,9 @@ ${karti}
         <span class="style-chip">Jazz / Swing</span>
         <span class="style-chip">Country</span>
         <span class="style-chip">Latin / Reggaeton</span>
-        <span class="style-group">
-          <button type="button" class="style-play" aria-label="Hear a sample: Oriental" aria-pressed="false"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
-          <span class="style-chip" data-demo="../assets/audio/rosen-abi.mp3" data-start="0">Oriental</span>
-        </span>
         <span class="style-chip">Acoustic guitar</span>
         <span class="style-chip">Metal</span>
         <span class="style-chip">Children's song</span>
-        <span class="style-group">
-          <button type="button" class="style-play" aria-label="Hear a sample: Crooner / Chanson" aria-pressed="false"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
-          <span class="style-chip" data-demo="../assets/audio/rocco-di-catania.mp3" data-start="0">Crooner / Chanson</span>
-        </span>
         <span class="style-chip">Cinematic / Epic</span>
       </div>
     </div>
@@ -345,16 +348,34 @@ ${karti}
           <ul>
             <li>Original lyrics from your story</li>
             <li>A full song in the style you choose</li>
-            <li>2 versions — we send the better one</li>
+            <li>A personal song page with cover art</li>
             <li>Free revision</li>
             <li>MP3 + lyrics by email within 24 hours</li>
           </ul>
-          <a class="btn btn-primary" href="#voice-card">Order now</a>
-          <p class="price-guarantee">Not quite right? We fix it for free.</p>
+          <a class="btn btn-primary" href="#order">Order now</a>
+          <p class="price-guarantee">Not with you within 24 hours? Money back.<br>Not quite right? We fix it for free.</p>
         </div>
       </div>
       <div class="pricing-note reveal">
-        <strong>You pay when you order; the song arrives within 24 hours.</strong> If something isn't right, we revise it for free. Need it the same day? Email ${EMAIL} — when we can, we do it. Have a promo code? Enter it at checkout.
+        <strong>You pay when you order; the song arrives within 24 hours — or your money back.</strong> If something isn't right, we revise it for free. Need it the same day? Email ${EMAIL} — when we can, we do it. Have a promo code? Enter it at checkout.
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="vaprosi">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="section-eyebrow">
+          <span class="sec-no" aria-hidden="true">06</span>
+          <span class="kicker">Ask away</span>
+        </span>
+        <h2>Frequently asked questions</h2>
+      </div>
+      <div class="faq-list reveal">
+${faq.map(([q, a]) => `        <details class="faq-item">
+          <summary>${esc(q)}</summary>
+          <div class="faq-body">${a}</div>
+        </details>`).join("\n")}
       </div>
     </div>
   </section>
@@ -363,7 +384,7 @@ ${karti}
     <div class="container">
       <div class="section-head reveal">
         <span class="section-eyebrow">
-          <span class="sec-no" aria-hidden="true">06</span>
+          <span class="sec-no" aria-hidden="true">07</span>
           <span class="kicker">Behind the scenes</span>
         </span>
         <h2>How the songs are born</h2>
@@ -412,31 +433,13 @@ ${karti}
     </div>
   </section>
 
-  <section class="section" id="vaprosi">
-    <div class="container">
-      <div class="section-head reveal">
-        <span class="section-eyebrow">
-          <span class="sec-no" aria-hidden="true">07</span>
-          <span class="kicker">Ask away</span>
-        </span>
-        <h2>Frequently asked questions</h2>
-      </div>
-      <div class="faq-list reveal">
-${faq.map(([q, a]) => `        <details class="faq-item">
-          <summary>${esc(q)}</summary>
-          <div class="faq-body">${a}</div>
-        </details>`).join("\n")}
-      </div>
-    </div>
-  </section>
-
   <section class="section">
     <div class="container">
       <div class="cta-band cta-band-photo reveal">
         <h2>Give something they won't forget</h2>
         <p>Flowers wilt, vouchers expire. A song stays — and gets played at every family get-together.</p>
         <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
-          <a class="btn btn-primary btn-lg" href="#voice-card">Order a song</a>
+          <a class="btn btn-primary btn-lg" href="#order">Order a song</a>
           <a class="btn btn-ghost btn-lg" href="#demo">Hear samples</a>
         </div>
       </div>

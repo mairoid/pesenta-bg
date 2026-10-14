@@ -8,7 +8,7 @@
 
 window.PESENTA_LEGAL = {
   privacy: { version: "1.1", updated: "18.08.2026" },
-  terms: { updated: "05.07.2026" },
+  terms: { updated: "14.10.2026" },
 
   company: {
     name: "„БАУФИЗИК“ ЕООД",

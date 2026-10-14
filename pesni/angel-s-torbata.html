@@ -2,6 +2,7 @@
 <html lang="bg">
 <head>
   <meta charset="UTF-8">
+  <script>document.documentElement.classList.add("js");setTimeout(function(){if(!window.__reveal)document.documentElement.classList.remove("js")},4000)</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
   <meta name="theme-color" content="#0b0a1a">
   <meta name="application-name" content="Песента">
@@ -65,7 +66,7 @@
     </a>
     <nav class="main-nav open" aria-label="Основна навигация" style="display:flex;position:static;padding:0;background:none;border:none;box-shadow:none;">
       <a href="../index.html#demo">Още песни</a>
-      <a class="btn btn-primary" href="../poruchka.html">Поръчай песен</a>
+      <a class="btn btn-primary" href="../#order">Поръчай песен</a>
     </nav>
   </div>
 </header>
@@ -100,6 +101,10 @@
         <span class="time">3:38</span>
       </div>
     </div>
+
+    <!-- Вход към поръчката (14.10.2026): публична демо песен, посещавана отвън.
+         Бутонът е веднага под плейъра — долният CTA идва чак след целия текст. -->
+    <p class="pesen-vhod"><a class="btn btn-primary" href="../?utm_source=pesen#order">Искаш такава за твоя човек?</a><span class="pesen-vhod-red">19,90 € · при теб до 24 часа</span></p>
 
     <p>В Хасково има GSM сервиз, в който всеки път се случва едно и също. Ангел влиза с торба, пълна с употребявани телефони. Пламен ги вади един по един на белия плот, включва ги, оглежда дисплеите, обръща капаците — и започва пазарлъкът.</p>
 
@@ -174,7 +179,7 @@
 
     <div class="article-cta">
       <p><strong>Имаш човек, който заслужава своя песен?</strong></p>
-      <a class="btn btn-primary" href="../poruchka.html">Разкажи ни за него — 19,90 €</a>
+      <a class="btn btn-primary" href="../#order">Разкажи ни за него — 19,90 €</a>
     </div>
   </article>
 </main>
@@ -211,7 +216,7 @@
             <a href="../za-nas.html">За нас</a>
             <a href="../rodeni-dnes.html">Родени на този ден</a>
             <a href="../podarak-v-poslednia-moment.html">В последния момент</a>
-            <a href="../poruchka.html">Поръчай песен</a>
+            <a href="../#order">Поръчай песен</a>
           </div>
         </details>
       </div>

@@ -143,7 +143,7 @@
        човек, който е спрял на нечий рожден ден, е на една мисъл от това да
        се сети за свой. Копията в лентата се правят с tabindex -1 в lenta(),
        за да не се минава два пъти през едни и същи връзки с клавиатура. */
-    return '<a class="rojden-card" href="poruchka.html?povod=rojden-den"' +
+    return '<a class="rojden-card" href="./?povod=%D0%A0%D0%BE%D0%B6%D0%B4%D0%B5%D0%BD%20%D0%B4%D0%B5%D0%BD#order"' +
              ' aria-label="Поръчай песен за рожден ден">' +
              '<span class="rojden-top" title="' + esc(etiket) + '">' + znak +
                '<span class="rojden-vazrast' + (pochinal ? " pochinal" : "") + '">' +

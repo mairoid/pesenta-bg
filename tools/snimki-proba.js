@@ -114,7 +114,8 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
       await evalJS(`document.getElementById("fast-text").click()`); await sleep(1200);
       if (sSnimki) { const doc = await send("DOM.getDocument", { depth: 1 }); const n = await send("DOM.querySelector", { nodeId: doc.root.nodeId, selector: "#text-snimki" }); await send("DOM.setFileInputFiles", { nodeId: n.nodeId, files: [F("cover-tutso-400.jpg"), F("cover-habibi-400.jpg")] }); await sleep(1500); }
       const t = await evalJS(`(function(){return {n:document.querySelectorAll("#text-snimki-preview .snimki-thumb").length,st:document.getElementById("text-snimki-status").textContent,sw:document.documentElement.scrollWidth,cw:document.documentElement.clientWidth};})()`);
-      await evalJS(`document.getElementById("text-story").value="Проба: за Данчо, 40 години, обича риболова.";document.getElementById("text-consent").checked=true;document.getElementById("text-send").click();`);
+      /* имейлът е задължителен от 13.10.2026 — без него формата спира преди изпращане */
+      await evalJS(`document.getElementById("text-story").value="Проба: за Данчо, 40 години, обича риболова.";document.getElementById("text-email").value="proba@example.com";document.getElementById("text-consent").checked=true;document.getElementById("text-send").click();`);
       await sleep(2500);
       await idi(BASE + "/index.html");
       const z = JSON.parse(await evalJS(`localStorage.getItem("__proba")||"[]"`));

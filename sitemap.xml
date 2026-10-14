@@ -483,235 +483,235 @@
   <!-- EN:SITEMAP — английската версия (en/), пише я tools/en/build.mjs; не пипай на ръка -->
   <url>
     <loc>https://pesenta.bg/en/</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/about.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/terms.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/privacy.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/birthday-song.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/wedding-song.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/bachelor-party-song.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/bachelorette-party-song.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/anniversary-song.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/baby-song.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/christening-song.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/milestone-birthday-song.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/retirement-song.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/engagement-song.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/prom-song.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/18th-birthday-song.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/corporate-event-song.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/graduation-song.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/housewarming-song.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/teacher-song.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/song-for-mom.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/song-for-dad.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/song-for-grandma.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/song-for-grandpa.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/song-for-sister.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/song-for-brother.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/song-for-husband.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/song-for-wife.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/song-for-boyfriend.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/song-for-girlfriend.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/song-for-boss-or-coworker.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/song-for-coach.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/song-for-godparent.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/christmas-song-gift.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/new-year-song.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/valentines-day-song.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/mothers-day-song.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/fathers-day-song.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://pesenta.bg/en/last-minute-gift.html</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>

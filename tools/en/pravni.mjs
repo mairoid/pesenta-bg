@@ -70,9 +70,9 @@ export function PRAVNI() {
       file: "terms.html", bg: "usloviya.html", mainClass: "container legal",
       title: "Terms and Conditions | Pesenta",
       desc: "Terms and conditions for ordering a custom song from Pesenta.bg: what we deliver, price and payment, the right of withdrawal, revisions and rights to the song.",
-      body: legal("Terms and Conditions", `    <!-- Превод на usloviya.html (в сила от 05.07.2026). Сменят ли се българските
+      body: legal("Terms and Conditions", `    <!-- Превод на usloviya.html (в сила от 14.10.2026). Сменят ли се българските
          условия, сменя се и тук. -->
-    <p class="updated">Effective from 5 July 2026. This is the English version of our Bulgarian terms; both have the same content.</p>
+    <p class="updated">Effective from 14 October 2026 (the previous version, from 5 July 2026, applies to orders placed before that date). This is the English version of our Bulgarian terms; both have the same content.</p>
 
     <h2>1. Who runs Pesenta.bg</h2>
     <p>The website pesenta.bg is operated by ${esc(FIRMA)}, company no. ${EIK}, registered office: ${esc(ADRES)}, represented by its manager ${esc(UPRAVITEL)} (“we”, “the Provider”).</p>
@@ -84,7 +84,7 @@ export function PRAVNI() {
     <h2>3. Ordering and delivery</h2>
     <ul>
       <li>Orders are placed through the form on the website and paid in advance. The contract is concluded at the moment of payment.</li>
-      <li>From the information you provide we create the song — original lyrics and music in the styles you choose. We make two versions and send you the better one.</li>
+      <li>From the information you provide we create the song — original lyrics and music in the styles you choose.</li>
       <li>With the song you get one free revision within 7 days of delivery if something doesn't match the information you gave us.</li>
       <li>We deliver the final files (MP3 and lyrics) to the email address you provided.</li>
       <li>Delivery time: within 24 hours, counted from receipt of payment and of the complete order information. Same-day delivery is possible on request at ${EMAIL} — when we can, at no extra cost; it is not a promised deadline.</li>
@@ -160,6 +160,7 @@ export function PRAVNI() {
     <p>We do not knowingly collect data about children; orders are accepted only from persons over 18. We do not profile and do not make automated decisions.</p>
     <p><strong>Where you came from.</strong> We remember the first page you opened and where you arrived from — only for the duration of your visit and only in your browser, without cookies — and send it with your order so we know which pages are useful.</p>
     <p><strong>Photos for the cover.</strong> If you upload photos with your order, they reach us as attachments to the order email, resized by your browser. We use them only for the song's cover and personal page and keep them as long as the order itself.</p>
+    <p><strong>Telling the story by voice.</strong> If you use "Or tell it by voice", the recording of your voice reaches us as an attachment and is used for the same purpose as your written story (making the song). Turning speech into text is done by your browser — in some browsers (e.g. Google Chrome) through the speech service of its maker, under that maker's privacy policy. It is entirely optional; you can type the story instead.</p>
 
     <h2>3. Who has access to the data (processors)</h2>
     <p>We use a small number of providers without which the service can't work. Data is shared with them only as far as necessary:</p>
