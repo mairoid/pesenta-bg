@@ -35,7 +35,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   const waitFor = method => new Promise(res => waiters.push({ method, res }));
   const evalJS = async expr => { const r = await send("Runtime.evaluate", { expression: expr, returnByValue: true }); if (r.exceptionDetails) throw new Error("eval: " + JSON.stringify(r.exceptionDetails).slice(0, 200)); return r.result.value; };
   await send("Page.enable"); await send("Runtime.enable"); await send("Log.enable");
-  await send("Network.enable"); await send("Network.setCacheDisabled", { cacheDisabled: true });
+  await send("Network.enable"); await send("Network.setBlockedURLs", { urls: ["*/sabitie*"] }); /* не пълни истинските броеве */ await send("Network.setCacheDisabled", { cacheDisabled: true });
   const otvori = async (p, referrer) => { const l = waitFor("Page.loadEventFired"); await send("Page.navigate", Object.assign({ url: BASE + p }, referrer ? { referrer } : {})); await l; await sleep(300); };
   const stor = () => evalJS(`(function(){try{return {landing:sessionStorage.getItem("psn_landing"),ref:sessionStorage.getItem("psn_ref"),docref:document.referrer}}catch(e){return {err:String(e)}}})()`);
 

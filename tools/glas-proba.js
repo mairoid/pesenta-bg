@@ -51,7 +51,9 @@ const STUB = `(function(){localStorage.removeItem("__proba");var z=[];function p
   try {
     await send("Page.enable"); await send("Runtime.enable"); await send("DOM.enable");
     await send("Network.enable"); await send("Network.setCacheDisabled", { cacheDisabled: true });
-    await send("Network.setBlockedURLs", { urls: ["*buy.stripe.com*", "*plausible.io*"] });
+    /* /sabitie е блокиран: пробата срещу живия сайт иначе пълни истинските броеве
+       (14.10.2026 — 12 реда от една проба). Стъпките със STUB го хващат преди мрежата. */
+    await send("Network.setBlockedURLs", { urls: ["*buy.stripe.com*", "*plausible.io*", "*/sabitie*"] });
     await send("Page.addScriptToEvaluateOnNewDocument", { source: FAKE_SR });
     const telefon = () => send("Emulation.setDeviceMetricsOverride", { width: 375, height: 812, deviceScaleFactor: 2, mobile: true });
     await telefon();

@@ -52,7 +52,7 @@ async function main() {
   }
   function waitFor(method) { return new Promise(function (res) { waiters.push({ method: method, res: res }); }); }
   async function evalJS(expr) { return (await send("Runtime.evaluate", { expression: expr, returnByValue: true, awaitPromise: true })).result.value; }
-  await send("Page.enable"); await send("Runtime.enable");
+  await send("Page.enable"); await send("Runtime.enable"); await send("Network.enable"); await send("Network.setBlockedURLs", { urls: ["*/sabitie*"] }); /* не пълни истинските броеве */
   async function go(url) { var l = waitFor("Page.loadEventFired"); await send("Page.navigate", { url: url }); await l; await sleep(400); }
   async function mouse(type, x, y, extra) {
     await send("Input.dispatchMouseEvent", Object.assign({ type: type, x: Math.round(x), y: Math.round(y), button: "left", clickCount: 1 }, extra || {}));

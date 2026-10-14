@@ -48,7 +48,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   await send("Page.enable"); await send("Runtime.enable"); await send("Log.enable");
   /* Профилът на Chrome е траен (cp-podval) и кешира style.css от предишното
      пускане — на 14.09 показа стария подвал, докато сървърът вече даваше новия. */
-  await send("Network.enable"); await send("Network.setCacheDisabled", { cacheDisabled: true });
+  await send("Network.enable"); await send("Network.setBlockedURLs", { urls: ["*/sabitie*"] }); /* не пълни истинските броеве */ await send("Network.setCacheDisabled", { cacheDisabled: true });
   const telefon = async () => { mobilen = true; await send("Emulation.setDeviceMetricsOverride", { width: 375, height: 812, deviceScaleFactor: 1, mobile: true }); await send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 }); };
   const desktop = async (w) => { mobilen = false; await send("Emulation.setDeviceMetricsOverride", { width: w || 1366, height: 900, deviceScaleFactor: 1, mobile: false }); await send("Emulation.setTouchEmulationEnabled", { enabled: false }); };
   /* снимка на самия подвал (clip по елемента), за да се види как е подреден */

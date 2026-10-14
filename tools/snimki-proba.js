@@ -103,7 +103,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     /* 7) бързата форма на началната: снимките тръгват в отделна заявка към нативния ендпойнт
        ПРЕДИ поръчката. Страницата после навигира към Stripe, затова записите живеят в
        localStorage, а адресът на Stripe е блокиран — четем ги, като се върнем. */
-    await send("Network.setBlockedURLs", { urls: ["*buy.stripe.com*"] });
+    await send("Network.setBlockedURLs", { urls: ["*buy.stripe.com*", "*/sabitie*"] }); /* не пълни истинските броеве */
     const STUB2 = `(function(){localStorage.removeItem("__proba");var z=[];function pishi(){localStorage.setItem("__proba",JSON.stringify(z));}
       window.fetch=function(u,o){var e=[];if(o&&o.body instanceof FormData){o.body.forEach(function(v,k){e.push([k,(v instanceof Blob)?("FILE:"+(v.name||"")+":"+v.size):String(v).slice(0,k==="CLAUDE BRIEF"?4000:60)]);});}
         z.push({vid:"fetch",url:String(u),mode:o&&o.mode||"",e:e});pishi();return Promise.resolve({ok:true,json:function(){return Promise.resolve({success:"true"});}});};
