@@ -435,6 +435,7 @@ ${faq.map(([q, a]) => `        <details class="faq-item">
         </div>
       </div>
       <p class="hint reveal" style="text-align:center;margin-top:0.8rem;">Reviews from Bulgarian customers, translated from Bulgarian.</p>
+      <p class="otzivi-vanshni reveal"><a href="https://www.trustpilot.com/review/pesenta.bg" target="_blank" rel="noopener">See our reviews on Trustpilot →</a></p>
     </div>
   </section>
 

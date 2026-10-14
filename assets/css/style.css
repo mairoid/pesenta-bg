@@ -2989,3 +2989,7 @@ body.podarak {
   .legal table.karti td::before { content: attr(data-label); display: block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); opacity: 0.85; }
   .legal table.karti td:first-child { color: var(--text); font-weight: 700; }
 }
+
+/* Връзка към външните отзиви (Trustpilot, 14.10.2026) — под лентата с отзиви, без число. */
+.otzivi-vanshni { margin: var(--sp-4) 0 0; text-align: center; font-size: var(--fs-sm); }
+.otzivi-vanshni a { color: var(--orange); text-decoration: underline; text-underline-offset: 3px; display: inline-block; padding: var(--sp-3) var(--sp-2); /* ≥ 44 px за пръст */ }
