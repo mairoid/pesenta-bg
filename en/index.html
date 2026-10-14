@@ -235,18 +235,9 @@
               </div>
             </div>
 
-            <div class="field snimki-box" id="text-snimki-box">
-              <label for="text-snimki">Photos for the cover
-                <span class="hint">Optional — up to 3 photos of the person or the group. We use them for the song's cover and its personal page.</span>
-              </label>
-              <input type="file" id="text-snimki" name="text-snimki" accept="image/*" multiple hidden>
-              <div class="snimki-row">
-                <button type="button" class="btn btn-ghost snimki-btn" id="text-snimki-add">Add photos</button>
-                <span class="voice-status" id="text-snimki-status">JPG or PNG from your phone — we resize them for you.</span>
-              </div>
-              <div class="snimki-preview" id="text-snimki-preview" aria-live="polite"></div>
-            </div>
-
+            <details class="detaili" id="text-detaili">
+              <summary>Add details <span class="hint">optional — occasion, date, style, photos</span></summary>
+              <div class="detaili-body">
             <div class="field">
               <label>Occasion <span class="hint">Optional — if it isn't clear from the story</span></label>
               <div class="chips" id="text-occasion-chips" data-single>
@@ -319,6 +310,20 @@
                 </div>
               </details>
             </div>
+
+            <div class="field snimki-box" id="text-snimki-box">
+              <label for="text-snimki">Photos for the cover
+                <span class="hint">Optional — up to 3 photos of the person or the group. We use them for the song's cover and its personal page.</span>
+              </label>
+              <input type="file" id="text-snimki" name="text-snimki" accept="image/*" multiple hidden>
+              <div class="snimki-row">
+                <button type="button" class="btn btn-ghost snimki-btn" id="text-snimki-add">Add photos</button>
+                <span class="voice-status" id="text-snimki-status">JPG or PNG from your phone — we resize them for you.</span>
+              </div>
+              <div class="snimki-preview" id="text-snimki-preview" aria-live="polite"></div>
+            </div>
+              </div>
+            </details>
 
             <div class="field">
               <label for="text-language">Language of the song</label>
@@ -859,10 +864,10 @@
 </footer>
 
 <script src="../assets/js/lenta.js?v=977ded0e" defer></script>
-<script src="../assets/js/main.js?v=d86c19f5" defer></script>
+<script src="../assets/js/main.js?v=e403e209" defer></script>
 <script src="../assets/js/noti-bg.js?v=9062e357" defer></script>
 <script src="../assets/js/payments.js?v=61019798" defer></script>
-<script src="../assets/js/text-order.js?v=33f8650d" defer></script>
+<script src="../assets/js/text-order.js?v=2a06de91" defer></script>
 <a class="float-contact float-contact--mobile" href="mailto:sales@pesenta.bg" aria-label="Email us">
   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
 </a>

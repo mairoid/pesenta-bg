@@ -74,13 +74,18 @@ const STUB = `(function(){localStorage.removeItem("__proba");var z=[];function p
     await evalJS(`document.getElementById("text-email").value="proba@example.com";document.getElementById("text-consent").checked=true;document.getElementById("text-send").click();`);
     await sleep(2500);
     let z = await dnevnik();
-    const nat = z.find(x => x.vid === "fetch" && !/\/ajax\//.test(x.url)), aj = z.find(x => x.vid === "fetch" && /\/ajax\//.test(x.url)), bc = z.find(x => x.vid === "beacon");
+    const nat = z.find(x => x.vid === "fetch" && !/\/ajax\//.test(x.url)), aj = z.find(x => x.vid === "fetch" && /\/ajax\//.test(x.url)), bc = z.find(x => x.vid === "beacon" && /\/brief$/.test(x.url));
     const psn = aj && (aj.e.find(p => p[0] === "Номер на заявка") || [])[1];
     const gl = nat && nat.e.find(p => p[0] === "glasovo");
     ok("гласът тръгва първи, no-cors, в поле glasovo като glasovo-<PSN>.webm (> 1 KB)", !!nat && !!aj && z.indexOf(nat) < z.indexOf(aj) && nat.mode === "no-cors" && !!gl && gl[1].indexOf("FILE:glasovo-" + psn + ".") === 0 && +gl[1].split(":")[2] > 1000, gl ? gl[1] : "няма нативна заявка");
     const brief = aj ? (aj.e.find(p => p[0] === "CLAUDE BRIEF") || [])[1] || "" : "";
     ok("поръчката: „Гласов разказ: ДА“, брифът казва „разказал С ГЛАС“", !!aj && /^ДА — glasovo-/.test((aj.e.find(p => p[0] === "Гласов разказ") || [])[1] || "") && /разказал С ГЛАС/.test(brief) && /Разказ \(автоматичен препис/.test(brief), aj ? (aj.e.find(p => p[0] === "Гласов разказ") || [])[1] : "няма ajax");
     ok("beacon-ът към worker-а носи бележката в разказа", !!bc && /^\[ИМА ГЛАСОВ ЗАПИС — glasovo-/.test(bc.tyalo.razkaz) && /За Данчо, обича риболова/.test(bc.tyalo.razkaz), bc ? bc.tyalo.razkaz.slice(0, 60) : "няма beacon");
+
+    /* 4б) анонимните събития (14.10.2026): отворена форма, запис, поръчка — към /sabitie */
+    const sab = z.filter(x => x.vid === "beacon" && /\/sabitie$/.test(x.url)).map(x => x.tyalo.e + (x.tyalo.d ? ":" + x.tyalo.d : ""));
+    ok("събития към /sabitie: Order Form Open, Voice Start, Voice Recorded, Order Submitted (+ глас)",
+      ["Order Form Open", "Voice Start", "Voice Recorded"].every(e => sab.some(s => s.indexOf(e) === 0)) && sab.some(s => /^Order Submitted:бърза \+ глас/.test(s)), sab.join(" | "));
 
     /* 5) „Продължи“ по време на запис */
     await evalJS(STUB);
@@ -112,10 +117,31 @@ const STUB = `(function(){localStorage.removeItem("__proba");var z=[];function p
     await idi(BASE + "/?stil=" + encodeURIComponent("Рок") + "#order"); await sleep(800);
     const st = await evalJS(`(function(){var c=[].filter.call(document.querySelectorAll("#text-style-chips .chip.selected, #text-style-chips-more .chip.selected"),function(){return 1;});return {o:!document.getElementById("text-fields").hidden,s:c.map(function(x){return x.getAttribute("data-value");}).join(",")};})()`);
     ok("./?stil=Рок#order: формата е отворена, „Рок“ е избран", st.o && st.s === "Рок", JSON.stringify(st));
+    ok("./?stil=…: „Добави детайли“ се отваря само, за да се види изборът", await evalJS(`document.getElementById("text-detaili").open === true`));
+    const doPl = await evalJS(`(function(){document.getElementById("text-detaili").open=false;var a=document.getElementById("text-story").getBoundingClientRect().top,b=document.getElementById("text-send").getBoundingClientRect().top;return Math.round(b-a);})()`);
+    ok("от разказа до бутона за плащане при свити детайли — под 1,4 екрана (беше 2 120 px)", doPl < 812 * 1.4, doPl + " px");
     await idi(BASE + "/index.html");
     await evalJS(`document.querySelector('#stilove a.style-chip[href*="stil="]').click()`); await sleep(1200);
     const st2 = await evalJS(`(function(){return {o:!document.getElementById("text-fields").hidden,n:document.querySelectorAll("#text-style-chips .chip.selected, #text-style-chips-more .chip.selected").length,u:location.href};})()`);
     ok("стил от облака на същата страница → без презареждане, формата отворена, стилът избран", st2.o && st2.n === 1, JSON.stringify(st2));
+
+    /* 7б) бележката под постановъчните снимки; поверителността без хоризонтален скрол;
+       плаващият бутон се крие при четене надолу и се връща при нагоре (тъчскрийн) */
+    ok("под снимките с реакции пише, че са илюстративни", await evalJS(`(function(){var p=document.querySelector(".reakcii-belezhka");return !!p&&/Илюстративни/.test(p.textContent);})()`));
+    for (const u of ["/poveritelnost.html", "/en/privacy.html"]) {
+      await idi(BASE + u);
+      const sw = await evalJS(`document.documentElement.scrollWidth - document.documentElement.clientWidth`);
+      ok(u + ": без хоризонтален скрол на 375 px", sw <= 0, "+" + sw + " px");
+    }
+    await send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
+    await idi(BASE + "/podarak-pesen-za-rojden-den.html");
+    const fab = async () => evalJS(`(function(){var b=[].filter.call(document.querySelectorAll(".float-contact"),function(x){return getComputedStyle(x).display!=="none";})[0];return b?getComputedStyle(b).opacity:"няма";})()`);
+    await evalJS(`window.scrollTo(0,300)`); await sleep(250); await evalJS(`window.scrollTo(0,900)`); await sleep(600);
+    const fDolu = await fab();
+    await evalJS(`window.scrollTo(0,600)`); await sleep(600);
+    const fGore = await fab();
+    ok("плаващият бутон: скрит при превъртане надолу, видим при нагоре", fDolu === "0" && fGore === "1", "надолу=" + fDolu + " нагоре=" + fGore);
+    await send("Emulation.setTouchEmulationEnabled", { enabled: false });
 
     await send("Emulation.setDeviceMetricsOverride", { width: 1366, height: 768, deviceScaleFactor: 1, mobile: false });
     await idi(BASE + "/index.html");

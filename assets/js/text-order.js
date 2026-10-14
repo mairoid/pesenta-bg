@@ -150,6 +150,7 @@
           mr.onstop = function () {
             if (!chunks.length) return;
             glasBlob = new Blob(chunks, { type: chunks[0].type || "audio/webm" });
+            if (window.psnSabitie) window.psnSabitie("Voice Recorded", sekundi + " s" + (SR ? "" : ", без текст"));
             if (audio.src) URL.revokeObjectURL(audio.src);
             audio.src = URL.createObjectURL(glasBlob);
             play.hidden = false;
@@ -188,6 +189,7 @@
           try { rec.start(); } catch (e) {}
         }
         zapisva = true; sekundi = 0;
+        if (window.psnSabitie) window.psnSabitie("Voice Start", SR ? "с текст" : "само запис");
         btn.classList.add("recording");
         label.textContent = t("Спри записа", "Stop recording");
         var podskazka = SR ? t("Слушам… Думите ти се появяват горе.", "Listening… your words appear above.")
@@ -468,6 +470,8 @@
        стои между бутона и полетата (и я спираме, ако свири). */
     var proba = document.querySelector(".hero-proba");
     if (proba) { if (proba.getAttribute("aria-pressed") === "true") proba.click(); proba.hidden = true; }
+    /* броим само първото отваряне на страница — повторен клик не е нов човек */
+    if (fieldsWrap.hidden && window.psnSabitie) window.psnSabitie("Order Form Open", (new URLSearchParams(location.search).get("povod") ? "с повод" : "") || (location.hash === "#order" ? "от връзка" : "бутон"));
     fieldsWrap.hidden = false;
     collapseHeroIntro();
     pinHeroPhoto();
@@ -521,8 +525,8 @@
       for (var i = 0; i < chips.length; i++) {
         if (chips[i].getAttribute("data-value") === v) {
           chips[i].classList.add("selected");
-          var more = chips[i].closest("details");
-          if (more) more.open = true;
+          /* всички обвиващи групи — „Покажи още…“ и „Добави детайли“ (14.10.2026) */
+          for (var d = chips[i].closest("details"); d; d = d.parentElement && d.parentElement.closest("details")) d.open = true;
           break;
         }
       }
@@ -656,6 +660,7 @@
        после. Да го спрем пред касата заради наш проблем е по-лошото. */
     function toPayment() {
       if (window.plausible) window.plausible("Order Submitted", { props: { method: "text-quick" } });
+      if (window.psnSabitie) window.psnSabitie("Order Submitted", "бърза" + (glasBlob ? " + глас" : "") + (snimki.length ? " + снимки" : "") + (EN ? " · en" : ""));
       window.location.href = paymentUrl(orderNo, email);
     }
 

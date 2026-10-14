@@ -7,7 +7,7 @@
    ───────────────────────────────────────────────────────── */
 
 window.PESENTA_LEGAL = {
-  privacy: { version: "1.1", updated: "18.08.2026" },
+  privacy: { version: "1.2", updated: "14.10.2026" },
   terms: { updated: "14.10.2026" },
 
   company: {
@@ -47,7 +47,7 @@ window.PESENTA_LEGAL = {
     },
       {
         name: "Cloudflare (Web Analytics)",
-        purpose: "броене на посещенията на страниците; без бисквитки и без съхранение в браузъра",
+        purpose: "броене на посещенията на страниците и анонимно броене на действия (без бисквитки, без IP); без съхранение в браузъра",
         data: "IP адрес (обработва се мигновено и не се съхранява), адрес на страницата, referrer, тип браузър и устройство",
         policy: "https://www.cloudflare.com/privacypolicy/"
       },

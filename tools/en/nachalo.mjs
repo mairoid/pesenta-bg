@@ -124,18 +124,9 @@ export function nachalo() {
               </div>
             </div>
 
-            <div class="field snimki-box" id="text-snimki-box">
-              <label for="text-snimki">Photos for the cover
-                <span class="hint">Optional — up to 3 photos of the person or the group. We use them for the song's cover and its personal page.</span>
-              </label>
-              <input type="file" id="text-snimki" name="text-snimki" accept="image/*" multiple hidden>
-              <div class="snimki-row">
-                <button type="button" class="btn btn-ghost snimki-btn" id="text-snimki-add">Add photos</button>
-                <span class="voice-status" id="text-snimki-status">JPG or PNG from your phone — we resize them for you.</span>
-              </div>
-              <div class="snimki-preview" id="text-snimki-preview" aria-live="polite"></div>
-            </div>
-
+            <details class="detaili" id="text-detaili">
+              <summary>Add details <span class="hint">optional — occasion, date, style, photos</span></summary>
+              <div class="detaili-body">
             <div class="field">
               <label>Occasion <span class="hint">Optional — if it isn't clear from the story</span></label>
               <div class="chips" id="text-occasion-chips" data-single>
@@ -171,6 +162,20 @@ export function nachalo() {
                 </div>
               </details>
             </div>
+
+            <div class="field snimki-box" id="text-snimki-box">
+              <label for="text-snimki">Photos for the cover
+                <span class="hint">Optional — up to 3 photos of the person or the group. We use them for the song's cover and its personal page.</span>
+              </label>
+              <input type="file" id="text-snimki" name="text-snimki" accept="image/*" multiple hidden>
+              <div class="snimki-row">
+                <button type="button" class="btn btn-ghost snimki-btn" id="text-snimki-add">Add photos</button>
+                <span class="voice-status" id="text-snimki-status">JPG or PNG from your phone — we resize them for you.</span>
+              </div>
+              <div class="snimki-preview" id="text-snimki-preview" aria-live="polite"></div>
+            </div>
+              </div>
+            </details>
 
             <div class="field">
               <label for="text-language">Language of the song</label>

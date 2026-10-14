@@ -130,3 +130,14 @@ CREATE TABLE IF NOT EXISTS napomnyania (
   ok          INTEGER NOT NULL DEFAULT 0,
   error       TEXT
 );
+
+-- Анонимни събития от сайта (14.10.2026): натискания, пускания, отворена форма.
+-- Без IP, без браузър, без номер на посетител — само име, страница и кратко пояснение.
+CREATE TABLE IF NOT EXISTS sabitiya (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  ts TEXT NOT NULL,
+  ime TEXT NOT NULL,
+  stranica TEXT,
+  detail TEXT
+);
+CREATE INDEX IF NOT EXISTS sabitiya_ts ON sabitiya (ts);

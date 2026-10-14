@@ -108,6 +108,17 @@ Analytics), който не поставя бисквитки и не пази �
 - Активиране на Stripe: платежните бисквитки живеят на страницата на Stripe
   (Payment Link), не на сайта — вече е описано в политиката.
 
+## Какво се натиска (събития, от 14.10.2026)
+
+Сайтът праща анонимни събития към Worker-а (`/sabitie` → D1 таблица `sabitiya`): само
+име, път без параметри и кратко пояснение — без бисквитки, IP и номер на посетител.
+Имената са в `SABITIYA` в `worker/src/index.js` (друго име се отказва); пращат ги
+`window.psnSabitie` / `trackPlausible` в `main.js` и `text-order.js`. Проба: `node tools/sabitie-proba.mjs`.
+
+Броеве по ден (от папка `worker/`):
+
+    npx wrangler d1 execute pesenta-nap --remote --command "SELECT substr(ts,1,10) AS den, ime, count(*) AS n FROM sabitiya GROUP BY den, ime ORDER BY den DESC, n DESC"
+
 ## Музикален поздрав (начална страница)
 
 Тих припев от „За теб, брате Влади“ тръгва ~3,5 сек след отваряне. Настройки в

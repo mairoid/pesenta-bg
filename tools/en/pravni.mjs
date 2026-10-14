@@ -140,7 +140,7 @@ export function PRAVNI() {
       body: legal("Privacy Policy", `    <!-- Превод на poveritelnost.html (версия 1.1, 18.08.2026). Българската страница
          се пълни от assets/js/legal-config.js; тази НЕ — при промяна там (нов
          обработващ, срок) смени и тук на ръка. -->
-    <p class="updated">Version 1.1 · last updated: 18 August 2026 (English version: 13 October 2026)</p>
+    <p class="updated">Version 1.2 · last updated: 14 October 2026</p>
     <div class="box"><p><strong>In short:</strong> we collect only what we need to make your song and issue your receipt or invoice. No advertising cookies, no tracking, no selling of data. Fonts and content load from our own server; the only external thing on the page is a visit counter that uses no cookies. We don't pass your data to third parties for marketing.</p></div>
 
     <h2>1. Data controller</h2>
@@ -170,7 +170,7 @@ export function PRAVNI() {
         <tr><td>Suno (Suno, Inc., USA)</td><td>generating the music and vocals from the song's lyrics</td><td>the lyrics and style instructions; NO email, phone or payment data is sent</td><td><a href="https://suno.com/privacy-policy" target="_blank" rel="noopener">policy</a></td></tr>
         <tr><td>FormSubmit (formsubmit.co)</td><td>receiving orders from the order form and delivering them to our email</td><td>all data entered in the form</td><td><a href="https://formsubmit.co/privacy" target="_blank" rel="noopener">policy</a></td></tr>
         <tr><td>Google (Gmail)</td><td>the mailbox where we receive and keep correspondence</td><td>order data and follow-up communication</td><td><a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policy</a></td></tr>
-        <tr><td>Cloudflare (Web Analytics; Workers)</td><td>counting page visits without cookies; storing your order story and issuing the sales receipt</td><td>IP address (processed instantly, not stored), page address, referrer, browser and device type; the order story and order number</td><td><a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">policy</a></td></tr>
+        <tr><td>Cloudflare (Web Analytics; Workers)</td><td>counting page visits and anonymous actions without cookies; storing your order story and issuing the sales receipt</td><td>IP address (processed instantly, not stored), page address, referrer, browser and device type; the order story and order number</td><td><a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">policy</a></td></tr>
         <tr><td>GitHub Pages (hosting)</td><td>technical operation of the website; standard server logs</td><td>IP address and technical data when loading the site</td><td><a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">policy</a></td></tr>
         <tr><td>Stripe Payments Europe</td><td>processing card payments</td><td>payment data — entered directly with Stripe, not with us</td><td><a href="https://stripe.com/privacy" target="_blank" rel="noopener">policy</a></td></tr>
       </tbody>
@@ -184,7 +184,7 @@ export function PRAVNI() {
     </ul>
 
     <h2>5. Cookies and local storage</h2>
-    <p>The website uses no cookies — not for tracking, analytics or advertising — so there's no cookie banner either. To count visits we use Cloudflare Web Analytics, which sets no cookies, stores nothing in your browser and doesn't track individual visitors. The only things we keep are functional entries in your device's localStorage (they are not sent to us):</p>
+    <p>The website uses no cookies — not for tracking, analytics or advertising — so there's no cookie banner either. To count visits we use Cloudflare Web Analytics, which sets no cookies, stores nothing in your browser and doesn't track individual visitors. We also count a few actions anonymously — playing a sample, opening the order form, recording by voice, sending an order: only the action's name, the page (without the address parameters) and the time, with no cookies, no IP address and no visitor ID. They are kept in our own database at Cloudflare and used only to learn what on the site helps. The only things we keep are functional entries in your device's localStorage (they are not sent to us):</p>
     <table>
       <thead><tr><th>Key</th><th>Purpose</th><th>How long</th></tr></thead>
       <tbody>

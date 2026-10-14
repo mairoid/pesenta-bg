@@ -1403,7 +1403,9 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
    върху „Поръчай песен“ с 37 px (мерено 06.09.2026). Класа го слага main.js
    с IntersectionObserver върху .hero; позицията не се пипа. Само мобилният:
    десктопският плик не застъпва нищо. */
-.float-contact--mobile.float-contact--skrit { opacity: 0; pointer-events: none; }
+/* От 14.10.2026 и двата (и пликът с мишка): на таблет и тесен лаптоп пликът също
+   лягаше върху текста. Крие се и докато страницата се превърта надолу — main.js. */
+.float-contact.float-contact--skrit { opacity: 0; pointer-events: none; }
 @media (hover: hover) {
   .float-contact:hover { transform: scale(1.08); box-shadow: 0 14px 36px rgba(255, 77, 141, 0.5); }
 }
@@ -2951,3 +2953,27 @@ body.podarak {
    песента — човекът първо чува, после му предлагаме. */
 .pesen-vhod { text-align: center; margin: var(--sp-6) 0 var(--sp-10); }
 .pesen-vhod-red { display: block; margin-top: var(--sp-2); font-size: var(--fs-sm); color: var(--muted); }
+
+/* Бележката под постановъчните снимки (14.10.2026) — тиха, но четима. */
+.reakcii-belezhka { margin: var(--sp-3) 0 0; text-align: center; font-size: var(--fs-sm); color: var(--muted); }
+
+/* „Добави детайли“ в бързата форма (14.10.2026): същият вид като „Покажи още…“,
+   но с плътна рамка — това е група полета, не още чипове. Стрелката показва, че се отваря. */
+.detaili { border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); margin-bottom: var(--sp-6); }
+.detaili > summary { list-style: none; cursor: pointer; padding: var(--sp-4); font-weight: 700; font-size: var(--fs-base); color: var(--text); display: flex; align-items: center; gap: var(--sp-2); flex-wrap: wrap; min-height: 44px; }
+.detaili > summary::-webkit-details-marker { display: none; }
+.detaili > summary::before { content: "+"; display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--grad); color: var(--ink); font-weight: 800; flex: none; }
+.detaili[open] > summary::before { content: "−"; }
+.detaili > summary .hint { font-weight: 400; color: var(--muted); font-size: var(--fs-sm); }
+.detaili[open] > summary { border-bottom: 1px solid var(--border); }
+.detaili-body { padding: var(--sp-4) var(--sp-4) var(--sp-2); }
+.detaili-body .snimki-box { margin-bottom: var(--sp-4); }
+
+/* Таблиците в правните страници (14.10.2026, повторната оценка): на телефон излизаха
+   до 566 px при екран 375 — дълги имена (pesenta_lang, адреси на политики) не се
+   пренасяха. overflow-wrap: anywhere ги чупи; клетките стават по-тесни под 560 px.
+   en/privacy.html нямаше стил за таблиците изобщо — оттук го получава. */
+.legal table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+.legal th, .legal td { text-align: left; padding: 0.6rem 0.8rem; border: 1px solid var(--border); vertical-align: top; overflow-wrap: anywhere; color: var(--muted); }
+.legal th { color: var(--text); background: var(--surface); }
+@media (max-width: 560px) { .legal th, .legal td { padding: 0.5rem 0.55rem; font-size: 0.85rem; } }

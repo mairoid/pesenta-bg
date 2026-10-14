@@ -66,6 +66,14 @@ export default {
       if (request.method === "POST") return cors(await handleBrief(request, env), env);
     }
 
+    /* Анонимни събития от сайта (14.10.2026): кое е натиснато, на коя страница.
+       Plausible е махнат на 18.08 и кликовете не се броят никъде. Тук няма IP,
+       браузър, бисквитки или номер на посетител — само име от списъка. */
+    if (url.pathname === "/sabitie") {
+      if (request.method === "OPTIONS") return cors(new Response(null, { status: 204 }), env);
+      if (request.method === "POST") return cors(await handleSabitie(request, env), env);
+    }
+
     /* Админ панелът. Страницата се дава без проверка — тя е празна и не
        съдържа данни. Проверката е върху /admin/data и /admin/status. */
     if (url.pathname === "/admin" && request.method === "GET") {
@@ -495,6 +503,33 @@ async function handleBrief(request, env) {
     kus(telo.razkaz, 8000), JSON.stringify(telo).slice(0, 20000)
   ).run();
 
+  return json({ ok: true });
+}
+
+/* Имената са тези, които сайтът праща (main.js, text-order.js). Друго име не се
+   записва — чужд, който праща боклук, не може да напълни базата с измислени. */
+export const SABITIYA = [
+  "Order CTA Click", "Order Form Open", "Order Submitted", "Demo Play", "Style Play",
+  "Hero Sample Play", "Voice Start", "Voice Recorded", "Song Page CTA"
+];
+
+export async function handleSabitie(request, env) {
+  let telo;
+  try {
+    const raw = await request.text();
+    if (raw.length > 1000) return json({ error: "твърде голямо" }, 413);
+    telo = JSON.parse(raw);
+  } catch (e) {
+    return json({ error: "невалиден JSON" }, 400);
+  }
+  const ime = String((telo && telo.e) || "");
+  if (SABITIYA.indexOf(ime) < 0) return json({ error: "непознато събитие" }, 400);
+  /* Само пътят, без ?параметри и #котва — в тях може да има имейл или име. */
+  const stranica = String(telo.p || "").split(/[?#]/)[0].replace(/[^\w\-./]/g, "").slice(0, 120);
+  const detail = telo.d == null ? null : String(telo.d).replace(/[@\r\n]/g, " ").slice(0, 80);
+  await env.DB.prepare(
+    "INSERT INTO sabitiya (ts, ime, stranica, detail) VALUES (?,?,?,?)"
+  ).bind(new Date().toISOString(), ime, stranica || null, detail).run();
   return json({ ok: true });
 }
 

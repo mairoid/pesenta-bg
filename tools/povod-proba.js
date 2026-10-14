@@ -147,6 +147,9 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     /* 6) началната: разказът е първи */
     await idi(BASE + "/index.html");
     await evalJS(`document.getElementById("fast-text").click()`); await sleep(1500);
+    /* от 14.10.2026 поводът, датата, стилът и снимките са в „Добави детайли“ — свито по подразбиране */
+    ok("„Добави детайли“ е свито, когато няма ?povod= и ?stil=", await evalJS(`document.getElementById("text-detaili").open === false`));
+    await evalJS(`document.getElementById("text-detaili").open = true`); await sleep(300);
     const n = await evalJS(`(function(){var tf=document.getElementById("text-fields"),p=tf.querySelector(".field"),st=document.getElementById("text-story"),h=document.querySelector(".site-header").getBoundingClientRect(),
       pr=st.closest(".field").getBoundingClientRect(),oc=document.getElementById("text-occasion-chips").getBoundingClientRect(),sty=document.getElementById("text-style-chips").getBoundingClientRect(),lang=document.getElementById("text-language").getBoundingClientRect();
       return {parvoRazkaz:!!p.querySelector("#text-story"),fokus:document.activeElement&&document.activeElement.id,shapka:Math.round(h.bottom),poleTop:Math.round(pr.top),poleBottom:Math.round(pr.bottom),povodTop:Math.round(oc.top),stilTop:Math.round(sty.top),ezikTop:Math.round(lang.top),vis:window.innerHeight,sw:document.documentElement.scrollWidth,cw:document.documentElement.clientWidth};})()`);

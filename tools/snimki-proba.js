@@ -123,14 +123,14 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     };
     const b1 = await barza(true);
     ok("началната: 2 снимки → 2 миниатюри, редът брои, 375 px без препълване", b1.t.n === 2 && /^2 снимки, \d+ KB/.test(b1.t.st) && b1.t.sw <= b1.t.cw, b1.t.n + " / " + b1.t.st);
-    const nat = b1.z.find(x => x.vid === "fetch" && !/\/ajax\//.test(x.url)), aj = b1.z.find(x => x.vid === "fetch" && /\/ajax\//.test(x.url)), bc = b1.z.find(x => x.vid === "beacon");
+    const nat = b1.z.find(x => x.vid === "fetch" && !/\/ajax\//.test(x.url)), aj = b1.z.find(x => x.vid === "fetch" && /\/ajax\//.test(x.url)), bc = b1.z.find(x => x.vid === "beacon" && /\/brief$/.test(x.url));
     const psn2 = aj && (aj.e.find(p => p[0] === "Номер на заявка") || [])[1];
     const fajlove = nat ? nat.e.filter(p => /^snimka_\d$/.test(p[0])) : [];
     ok("снимките тръгват първи, в отделна multipart заявка (no-cors) към нативния ендпойнт: snimka_1, snimka_2 + номерът", !!nat && b1.z.indexOf(nat) < b1.z.indexOf(aj) && nat.mode === "no-cors" && fajlove.length === 2 && fajlove.every((p, i) => p[1] === "FILE:snimka-" + psn2 + "-" + (i + 1) + ".jpg:" + p[1].split(":")[2] && +p[1].split(":")[2] > 1000) && (nat.e.find(p => p[0] === "Към заявка") || [])[1] === psn2, nat ? nat.e.map(p => p[0] + "=" + p[1]).join(", ").slice(0, 160) : "няма нативна заявка");
     ok("поръчката тръгва по стария AJAX път: „Снимки за обложката: ДА — 2, в ОТДЕЛНО писмо“, брифът с бележка; beacon snimki: 2", !!aj && /^ДА — 2, в ОТДЕЛНО писмо/.test((aj.e.find(p => p[0] === "Снимки за обложката") || [])[1] || "") && /2 снимки за обложката/.test((aj.e.find(p => p[0] === "CLAUDE_BRIEF" || p[0] === "CLAUDE BRIEF") || [])[1] || ""), aj ? (aj.e.find(p => p[0] === "Снимки за обложката") || [])[1] : "няма ajax");
     ok("beacon-ът от бързата форма носи snimki: 2", !!bc && bc.tyalo.snimki === 2 && bc.tyalo.order_no === psn2, bc ? JSON.stringify({ snimki: bc.tyalo.snimki }) : "няма beacon");
     const b0 = await barza(false);
-    const nat0 = b0.z.find(x => x.vid === "fetch" && !/\/ajax\//.test(x.url)), aj0 = b0.z.find(x => x.vid === "fetch" && /\/ajax\//.test(x.url)), bc0 = b0.z.find(x => x.vid === "beacon");
+    const nat0 = b0.z.find(x => x.vid === "fetch" && !/\/ajax\//.test(x.url)), aj0 = b0.z.find(x => x.vid === "fetch" && /\/ajax\//.test(x.url)), bc0 = b0.z.find(x => x.vid === "beacon" && /\/brief$/.test(x.url));
     ok("началната без снимки: само AJAX, без нативна заявка, „Снимки за обложката: не“, beacon snimki: 0", !nat0 && !!aj0 && (aj0.e.find(p => p[0] === "Снимки за обложката") || [])[1] === "не" && !!bc0 && bc0.tyalo.snimki === 0);
     ok("конзолата чиста", konzola.length === 0, konzola.join(" | "));
   } catch (e) { ok("пробата стигна до края", false, e.message.slice(0, 200)); }

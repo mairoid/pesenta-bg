@@ -13,12 +13,26 @@
     if (ref && !sessionStorage.getItem("psn_ref") && ref.indexOf(location.origin + "/") !== 0) sessionStorage.setItem("psn_ref", ref.slice(0, 300));
   } catch (e) { /* без запомняне */ }
 
-  /* ---------- Plausible: помощник за custom events ----------
-     Само добавя събития успоредно на съществуващото поведение — никога не
-     блокира и не променя нищо, ако скриптът не се е заредил (adblock,
-     бавна мрежа). */
+  /* ---------- Събития: какво се натиска (14.10.2026) ----------
+     Plausible е махнат на 18.08 (README) и до днес тези събития не стигаха
+     никъде. Сега отиват в нашия Worker (/sabitie): само името, пътят без
+     ?/# и кратко пояснение — без бисквитки, без номер на посетител, без IP
+     (Worker-ът не го пази). sendBeacon, защото често следва смяна на
+     страницата. Името трябва да е в SABITIYA в worker/src/index.js, иначе
+     Worker-ът го отказва. Провал тук никога не спира действието. */
+  var SABITIE_URL = "https://pesenta-nap.pesenta-nap.workers.dev/sabitie";
+  window.psnSabitie = function (ime, detail) {
+    try {
+      if (!navigator.sendBeacon) return;
+      navigator.sendBeacon(SABITIE_URL, new Blob([JSON.stringify({
+        e: ime, p: location.pathname, d: detail == null || detail === "" ? undefined : String(detail).slice(0, 80)
+      })], { type: "text/plain;charset=UTF-8" }));
+    } catch (e) { /* без броене */ }
+  };
   function trackPlausible(name, props) {
     if (window.plausible) window.plausible(name, props ? { props: props } : undefined);
+    var p = props || {};
+    window.psnSabitie(name, p.track || p.style || p.label || p.method || "");
   }
 
   /* ---------- Мобилна навигация ---------- */
@@ -47,15 +61,31 @@
      синхронно по getBoundingClientRect, за да не мигне бутонът преди
      наблюдателят да се обади. Кой вариант се крие решава CSS-ът — тук се
      маркират и двата. */
+  /* 14.10.2026 (повторната оценка): на страниците за повод бутонът стоеше върху
+     текста, докато човек чете. Сега се крие и докато страницата се превърта
+     НАДОЛУ (чете се), и се връща при превъртане нагоре — тогава човек търси нещо.
+     Важи на всяка страница, не само там, където има герой. */
   var heroEl = document.querySelector(".hero");
   var plavashti = document.querySelectorAll(".float-contact");
-  if (heroEl && plavashti.length) {
-    var skriiPlika = function (da) { plavashti.forEach(function (b) { b.classList.toggle("float-contact--skrit", da); }); };
-    var hr = heroEl.getBoundingClientRect();
-    skriiPlika(hr.bottom > 0 && hr.top < window.innerHeight);
-    if ("IntersectionObserver" in window) {
-      new IntersectionObserver(function (entries) { skriiPlika(entries[0].isIntersecting); }).observe(heroEl);
+  if (plavashti.length) {
+    var vHeroja = false, chete = false, posledenY = window.scrollY;
+    var skriiPlika = function () { plavashti.forEach(function (b) { b.classList.toggle("float-contact--skrit", vHeroja || chete); }); };
+    if (heroEl) {
+      var hr = heroEl.getBoundingClientRect();
+      vHeroja = hr.bottom > 0 && hr.top < window.innerHeight;
+      if ("IntersectionObserver" in window) {
+        new IntersectionObserver(function (entries) { vHeroja = entries[0].isIntersecting; skriiPlika(); }).observe(heroEl);
+      }
     }
+    window.addEventListener("scroll", function () {
+      var y = window.scrollY;
+      if (Math.abs(y - posledenY) < 12) return; /* трептене на пръста не е посока */
+      var dolu = document.documentElement.scrollHeight - window.innerHeight - y < 120;
+      chete = y > posledenY && y > 240 && !dolu; /* в края на страницата — пак се вижда */
+      posledenY = y;
+      skriiPlika();
+    }, { passive: true });
+    skriiPlika();
   }
 
   /* ---------- Hero видео ----------
@@ -569,6 +599,11 @@
     el.addEventListener("click", function () {
       trackPlausible("Order CTA Click", { label: label.slice(0, 60) });
     });
+  });
+  /* „Искаш такава за твоя човек?“ под плейъра на песента — входът от втората
+     най-посещавана страница. Текстът не съдържа „Поръчай“, затова отделно. */
+  document.querySelectorAll(".pesen-vhod a").forEach(function (el) {
+    el.addEventListener("click", function () { trackPlausible("Song Page CTA", { label: location.pathname.split("/").pop() }); });
   });
 
 })();
