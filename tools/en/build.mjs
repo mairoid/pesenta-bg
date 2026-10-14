@@ -192,10 +192,11 @@ const PLAVASHT = `<a class="float-contact float-contact--mobile" href="mailto:${
 </a>`;
 
 /* ?v= с първите 8 знака от SHA на файла — като в pesni/: сменен скрипт под
-   същото име иначе стои стар в кеша на браузъра. */
+   същото име иначе стои стар в кеша на браузъра. Хешира се с LF редове — както е
+   в git и на сайта; иначе CRLF след pull на Windows сменя отпечатъка без промяна. */
 function v(ime) {
   const f = path.join(KOREN, "assets/js", ime);
-  return crypto.createHash("sha256").update(fs.readFileSync(f)).digest("hex").slice(0, 8);
+  return crypto.createHash("sha256").update(fs.readFileSync(f, "utf8").replace(/\r\n/g, "\n")).digest("hex").slice(0, 8);
 }
 
 function stranica(p) {
@@ -328,7 +329,12 @@ fs.writeFileSync(path.join(TUK, "karta.json"), JSON.stringify(karta, null, 2) + 
    изцяло при всяко пускане. lastmod е датата на файла в git, ако го има там,
    иначе днешната — за да не „остарява“ цялата група при всяко пускане. */
 const smPath = path.join(KOREN, "sitemap.xml");
+/* Редовете се изравняват до LF за търсенето на маркерите и се връщат каквито са били:
+   след git pull на Windows файлът идва с CRLF и маркерът „…-->\n“ не се намираше —
+   блокът се дублираше (14.10.2026). */
 let sm = fs.readFileSync(smPath, "utf8");
+const smCRLF = sm.includes("\r\n");
+sm = sm.replace(/\r\n/g, "\n");
 const dnes = new Date().toISOString().slice(0, 10);
 const staro = new Map([...sm.matchAll(/<loc>(https:\/\/pesenta\.bg\/en\/[^<]*)<\/loc>\s*<lastmod>([^<]+)<\/lastmod>/g)].map((m) => [m[1], m[2]]));
 const prioritet = (f) => f === "index.html" ? "0.9" : (f === "terms.html" || f === "privacy.html") ? "0.3" : f === "about.html" ? "0.5" : "0.7";
@@ -346,7 +352,7 @@ const redove = karta.map((x) => {
 const blok = `  <!-- EN:SITEMAP — английската версия (en/), пише я tools/en/build.mjs; не пипай на ръка -->\n${redove.join("\n")}\n  <!-- /EN:SITEMAP -->\n`;
 sm = sm.replace(/  <!-- EN:SITEMAP[\s\S]*?<!-- \/EN:SITEMAP -->\n/, "");
 sm = sm.replace("</urlset>", blok + "</urlset>");
-fs.writeFileSync(smPath, sm);
+fs.writeFileSync(smPath, smCRLF ? sm.replace(/\n/g, "\r\n") : sm);
 
 /* llms.txt: английски раздел накрая — за AI търсачките, които питат на
    английски. Също между маркери, подменя се цял. */

@@ -357,7 +357,7 @@ ${karti}
         </div>
       </div>
       <div class="pricing-note reveal">
-        <strong>You pay when you order; the song arrives within 24 hours — or your money back.</strong> If something isn't right, we revise it for free. Need it the same day? Email ${EMAIL} — when we can, we do it. Have a promo code? Enter it at checkout.
+        <strong>You pay when you order; the song arrives within 24 hours — or your money back.</strong> If something isn't right, we revise it for free. Need it the same day? Email ${EMAIL} — when we can, we do it.
       </div>
     </div>
   </section>
