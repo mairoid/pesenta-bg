@@ -141,3 +141,51 @@ CREATE TABLE IF NOT EXISTS sabitiya (
   detail TEXT
 );
 CREATE INDEX IF NOT EXISTS sabitiya_ts ON sabitiya (ts);
+
+-- Ваучер за песен (15.10.2026). Купувачът попълва формата → ред „chaka“ (POST /vaucher/nov);
+-- платеният webhook го прави „aktiven“ с кода, В СЪЩИЯ batch с реда в sales; осребряването
+-- го прави „izpolzvan“ атомарно. Осребрената поръчка НЕ влиза в sales (не е нова продажба,
+-- не отива в одиторския файл) — доставката ѝ се отбелязва тук (delivered_at, page_url).
+CREATE TABLE IF NOT EXISTS vaucheri (
+  ref              TEXT PRIMARY KEY,          -- VCH-ГГММДД-NNNN (client_reference_id в Stripe)
+  kod              TEXT,                      -- KRASI-SERENADA-7KQ9X, показваният вид
+  kod_norm         TEXT UNIQUE,               -- главни, само A-Z0-9; по него се търси
+  status           TEXT NOT NULL DEFAULT 'chaka',   -- chaka | aktiven | izpolzvan | otmenen
+  ot_kogo          TEXT,
+  za_kogo          TEXT,
+  poslanie         TEXT,
+  email            TEXT,                      -- от формата; писмото отива на имейла от Stripe
+  faktura          TEXT,                      -- JSON {ime, adres, eik?} или NULL
+  bez_danni        INTEGER NOT NULL DEFAULT 0, -- 1 = платен без ред от формата (кодът е PODARAK-…)
+  created_at       TEXT NOT NULL,
+  platen_at        TEXT,
+  stripe_session   TEXT,                      -- cs_… — връзката с sales.stripe_event_key ('cs:' + това)
+  pismo_at         TEXT,                      -- кога писмото (бележка + ваучер) е тръгнало
+  pismo_opiti      INTEGER NOT NULL DEFAULT 0,
+  pismo_greshka    TEXT,
+  izpolzvan_at     TEXT,
+  izpolzvan_order  TEXT,                      -- PSN-… на осребрената поръчка
+  otmenen_at       TEXT,
+  delivered_at     TEXT,                      -- доставена ли е песента по осребрения ваучер
+  page_url         TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_vaucheri_status ON vaucheri(status, created_at);
+CREATE INDEX IF NOT EXISTS idx_vaucheri_session ON vaucheri(stripe_session);
+CREATE INDEX IF NOT EXISTS idx_vaucheri_order ON vaucheri(izpolzvan_order);
+
+-- Ограничение на проверките/осребряванията: по IP-хеш (SHA-256 на IP + сол), по часове.
+-- IP-то не се пази. Cron-ът трие редовете след ден.
+CREATE TABLE IF NOT EXISTS vaucher_opiti (
+  ip_hash  TEXT NOT NULL,
+  chas     TEXT NOT NULL,                     -- ГГГГ-ММ-ДДTЧЧ (UTC)
+  broi     INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (ip_hash, chas)
+);
+
+-- Миграция на живата база (НЕ е пускана; пуска се с „да“ от Мирослав, ПРЕДИ deploy).
+-- --command, не --file (с --file D1 дава Auth 10000). Всичко е IF NOT EXISTS — безопасно е
+-- и при повторно пускане. Командите са по една на ред:
+--   npx wrangler d1 execute pesenta-nap --remote --command "CREATE TABLE IF NOT EXISTS vaucheri (ref TEXT PRIMARY KEY, kod TEXT, kod_norm TEXT UNIQUE, status TEXT NOT NULL DEFAULT 'chaka', ot_kogo TEXT, za_kogo TEXT, poslanie TEXT, email TEXT, faktura TEXT, bez_danni INTEGER NOT NULL DEFAULT 0, created_at TEXT NOT NULL, platen_at TEXT, stripe_session TEXT, pismo_at TEXT, pismo_opiti INTEGER NOT NULL DEFAULT 0, pismo_greshka TEXT, izpolzvan_at TEXT, izpolzvan_order TEXT, otmenen_at TEXT, delivered_at TEXT, page_url TEXT)"
+--   npx wrangler d1 execute pesenta-nap --remote --command "CREATE INDEX IF NOT EXISTS idx_vaucheri_status ON vaucheri(status, created_at); CREATE INDEX IF NOT EXISTS idx_vaucheri_session ON vaucheri(stripe_session); CREATE INDEX IF NOT EXISTS idx_vaucheri_order ON vaucheri(izpolzvan_order)"
+--   npx wrangler d1 execute pesenta-nap --remote --command "CREATE TABLE IF NOT EXISTS vaucher_opiti (ip_hash TEXT NOT NULL, chas TEXT NOT NULL, broi INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (ip_hash, chas))"
+-- Връщане: DROP TABLE vaucher_opiti; DROP TABLE vaucheri; (само ако няма платени ваучери!)

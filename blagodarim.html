@@ -111,7 +111,15 @@
   "use strict";
   var WORKER = "https://pesenta-nap.pesenta-nap.workers.dev";
 
-  var sid = new URLSearchParams(location.search).get("session_id");
+  var q = new URLSearchParams(location.search);
+  /* Осребрен ваучер (?vaucher=1, 15.10.2026): песента е платена от подарилия — без плащане и документ. */
+  if (q.get("vaucher") === "1") {
+    var vt = document.getElementById("thanks-text");
+    if (vt) vt.textContent = "Подаръкът е платен — нищо не плащаш. Песента пристига на имейла ти до 24 часа, в MP3 и с текста.";
+    document.querySelector(".success-box h2").textContent = "Разказът ти е при нас! 🎶";
+    return;
+  }
+  var sid = q.get("session_id");
   if (!sid) return;   /* дошъл е от съветника, не от касата — текстът остава неутрален */
 
   /* Плащането е факт: Stripe връща тук само след успешна каса. */

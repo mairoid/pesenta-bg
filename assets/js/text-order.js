@@ -27,6 +27,11 @@
   /* Втори, независим път за разказа. FormSubmit е трета страна на безплатен
      план; тук записът е наш и стои при поръчката в базата. */
   var BRIEF_ENDPOINT = "https://pesenta-nap.pesenta-nap.workers.dev/brief";
+  /* Ваучер за песен (15.10.2026): същият Worker — адресът идва от BRIEF_ENDPOINT,
+     за да не се зашива втори път. */
+  var WORKER = BRIEF_ENDPOINT.replace(/\/brief$/, "");
+  /* Проверен код от ваучер: { kod, za_kogo, ot_kogo } или null (обикновената поръчка). */
+  var vaucher = null;
 
   var fieldsWrap = document.getElementById("text-fields");
   /* На index.html двете долу са null ПО ЗАМИСЪЛ — гласовият блок и бутонът
@@ -39,6 +44,7 @@
   var sendBtn = document.getElementById("text-send");
   var errEl = document.getElementById("text-error");
   var storyEl = document.getElementById("text-story");
+  var SEND_TEXT = sendBtn.textContent; /* „Продължи към плащане · 19,90 €“ — връща се при махнат код */
   /* Снимки за обложката: [{ blob, name, url }] — смалени копия. Собствено копие на
      функциите от order.js — файловете нарочно не си споделят код (виж главата). */
   var snimki = [];
@@ -263,13 +269,13 @@
     return "PSN-" + y + m + day + "-" + rand;
   }
 
-  function rememberOrder(orderNo) {
+  function rememberOrder(orderNo, plan) {
     try {
       var orders = JSON.parse(localStorage.getItem("pesenta_orders") || "[]");
       orders.unshift({
         no: orderNo,
         date: new Date().toISOString().slice(0, 10),
-        plan: "Бърза текстова поръчка",
+        plan: plan || "Бърза текстова поръчка",
         total: "—",
         status: "Приета"
       });
@@ -452,14 +458,133 @@
       } else {
         blizo = true;
         html = t("Датата е близо. Пиши ни на ", "That's soon. Email us at ") + "<a href=\"mailto:sales@pesenta.bg\">sales@pesenta.bg</a>" +
-          t(" или се обади на <a href=\"tel:+359899456326\">+359 899 456 326</a>, преди да платиш — при възможност е готова още същия ден.",
-            " before you pay — when we can, it's ready the same day.");
+          t(" или се обади на <a href=\"tel:+359899456326\">+359 899 456 326</a>" + (vaucher ? "" : ", преди да платиш") + " — при възможност е готова още същия ден.",
+            (vaucher ? " — when we can" : " before you pay — when we can") + ", it's ready the same day.");
       }
     }
     dostavkaRed.innerHTML = html;
     dostavkaRed.classList.toggle("blizo", blizo);
   }
   if (eventDateEl) eventDateEl.addEventListener("change", presmetniDostavka);
+
+  /* ============ Код от ваучер за песен (15.10.2026) ============
+     Получателят на ваучер не плаща: проверява кода тук (GET /vaucher/proverka), а
+     при изпращане Worker-ът ПЪРВО отбелязва кода като използван (POST
+     /vaucher/izpolzvai, атомарно, и записва брифа) и чак тогава тръгва известието
+     — без Stripe. Без валиден код пътят е точно старият. На en/ блокът го няма в
+     страницата (kodBox е null) и нищо от това не се включва. Имената от Worker-а
+     влизат само през textContent. */
+  var kodBox = document.getElementById("text-kod-box");
+  var kodPole = document.getElementById("text-kod-pole");
+  var kodToggle = document.getElementById("text-kod-toggle");
+  var kodInp = document.getElementById("text-kod");
+  var kodBtn = document.getElementById("text-kod-proveri");
+  var kodMsg = document.getElementById("text-kod-msg");
+  var kodMahni = document.getElementById("text-kod-mahni");
+  var KOD_PRICHINI = {
+    nyama: "Няма такъв код. Провери буквите — или отвори връзката от ваучера, там кодът е попълнен.",
+    izpolzvan: "Този код вече е използван — всеки ваучер важи за една песен. Ако е грешка, пиши ни на sales@pesenta.bg.",
+    otmenen: "Този ваучер е отменен. Ако е грешка, пиши ни на sales@pesenta.bg.",
+    mnogo_opiti: "Много опити за кратко време. Изчакай малко и опитай пак."
+  };
+  function kodPrichina(p) {
+    return KOD_PRICHINI[p] || "Не успяхме да проверим кода. Опитай пак след малко или ни пиши на sales@pesenta.bg.";
+  }
+  function kodSaobshtenie(msg, cls) {
+    if (!kodMsg) return;
+    kodMsg.textContent = msg || "";
+    kodMsg.className = "promo-msg" + (cls ? " " + cls : "");
+  }
+  function podarakTekst(v) {
+    var za = v && v.za_kogo ? " за " + v.za_kogo : "", ot = v && v.ot_kogo ? " от " + v.ot_kogo : "";
+    return "Подарък" + za + ot + " — песента е платена";
+  }
+  /* Горе, в полето за разказа: подаръкът или — при ?kod= от връзката — защо кодът не става. */
+  function vaucherBanner(tekst, greshka) {
+    var ban = document.getElementById("text-vaucher-banner");
+    if (!ban) return;
+    ban.hidden = !tekst;
+    ban.classList.toggle("err", !!greshka);
+    var bt = document.getElementById("text-vaucher-banner-tekst"), bh = document.getElementById("text-vaucher-banner-hint");
+    if (bt) bt.textContent = tekst || "";
+    if (bh) bh.hidden = !!greshka;
+  }
+  function otvoriKod() {
+    if (!kodPole) return;
+    kodPole.hidden = false;
+    if (kodToggle) { kodToggle.setAttribute("aria-expanded", "true"); kodToggle.hidden = true; }
+  }
+  /* Включва/изключва „подаръчния“ вид на формата: без фактура и без плащане. */
+  function vaucherRezhim(v) {
+    vaucher = v || null;
+    var vkl = !!vaucher;
+    var invRow = document.getElementById("text-invoice-row");
+    if (invRow) invRow.hidden = vkl;
+    if (vkl && invChk) invChk.checked = false;
+    if (invBox) invBox.hidden = vkl || !(invChk && invChk.checked);
+    var payHint = document.getElementById("text-pay-hint"), vHint = document.getElementById("text-vaucher-hint");
+    if (payHint) payHint.hidden = vkl;
+    if (vHint) vHint.hidden = !vkl;
+    /* Съгласието: получателят не плаща — текстът за плащането се сменя с този за ваучера. */
+    var sPl = document.getElementById("text-consent-plashtane"), sVa = document.getElementById("text-consent-vaucher");
+    if (sPl && sVa) { sPl.hidden = vkl; sVa.hidden = !vkl; }
+    vaucherBanner(vkl ? podarakTekst(vaucher) : "");
+    if (kodInp) kodInp.readOnly = vkl;
+    if (kodBtn) kodBtn.hidden = vkl;
+    if (kodMahni) kodMahni.hidden = !vkl;
+    if (!sendBtn.disabled) sendBtn.textContent = vkl ? "Изпрати разказа" : SEND_TEXT;
+    presmetniDostavka();
+  }
+  function proveriKod(kod, otVrazka) {
+    kod = String(kod || "").replace(/\s+/g, "").toUpperCase();
+    if (kodInp) kodInp.value = kod;
+    var losh = !kod ? "Напиши кода от ваучера." :
+      (kod.length > 40 || !/^[A-Z0-9-]+$/.test(kod)) ? "Кодът е от латински букви, цифри и тирета — както е на ваучера." : "";
+    if (losh) { kodSaobshtenie(losh, "err"); if (otVrazka) vaucherBanner(losh, true); return Promise.resolve(false); }
+    kodSaobshtenie("Проверяваме кода…");
+    if (kodBtn) kodBtn.disabled = true;
+    return fetch(WORKER + "/vaucher/proverka?kod=" + encodeURIComponent(kod))
+      .then(function (r) {
+        return r.json().catch(function () { return {}; }).then(function (d) {
+          d = d || {};
+          if (r.status === 429) d = { ok: false, prichina: "mnogo_opiti" };
+          return d;
+        });
+      })
+      .then(function (d) {
+        if (kodBtn) kodBtn.disabled = false;
+        if (d.ok === true) {
+          vaucherRezhim({ kod: kod, za_kogo: String(d.za_kogo || "").slice(0, 60), ot_kogo: String(d.ot_kogo || "").slice(0, 60) });
+          kodSaobshtenie(podarakTekst(vaucher), "ok");
+          clearFail();
+          return true;
+        }
+        vaucherRezhim(null);
+        kodSaobshtenie(kodPrichina(d.prichina), "err");
+        if (otVrazka) vaucherBanner(kodPrichina(d.prichina), true);
+        return false;
+      })
+      .catch(function () {
+        if (kodBtn) kodBtn.disabled = false;
+        vaucherRezhim(null);
+        kodSaobshtenie(kodPrichina(""), "err");
+        if (otVrazka) vaucherBanner(kodPrichina(""), true);
+        return false;
+      });
+  }
+  if (kodBox && kodInp) {
+    if (kodToggle) kodToggle.addEventListener("click", function () { otvoriKod(); kodInp.focus(); });
+    if (kodBtn) kodBtn.addEventListener("click", function () { proveriKod(kodInp.value); });
+    kodInp.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") { e.preventDefault(); if (!vaucher) proveriKod(kodInp.value); }
+    });
+    if (kodMahni) kodMahni.addEventListener("click", function () {
+      vaucherRezhim(null);
+      kodInp.value = "";
+      kodSaobshtenie("");
+      kodInp.focus();
+    });
+  }
 
   textBtn.addEventListener("click", function () {
     /* ако гласовият запис тече, спираме го през собствения му бутон —
@@ -533,6 +658,17 @@
     }
     izberi("#text-occasion-chips .chip, #text-occasion-chips-more .chip", q.get("povod"));
     izberi("#text-style-chips .chip, #text-style-chips-more .chip", q.get("stil"));
+    /* ?kod= от връзката във ваучера (15.10.2026): формата се отваря с попълнен и
+       проверен код. Кодът носи име, затова излиза от адреса веднага (replaceState) —
+       не остава в историята, в споделен адрес или в Referer-а нататък. */
+    var kodUrl = q.get("kod");
+    if (kodUrl && kodBox && kodInp) {
+      q.delete("kod");
+      var ostatak = q.toString();
+      history.replaceState(null, "", location.pathname + (ostatak ? "?" + ostatak : "") + "#order");
+      otvoriKod();
+      proveriKod(kodUrl, true);
+    }
     if (location.hash === "#order") textBtn.click();
     /* Връзка към #order на същата страница не презарежда — само сменя котвата.
        Хващаме я тук, за да отвори формата, вместо да скролне до затворен бутон. */
@@ -581,23 +717,27 @@
        от правото на връщане, това не може да се потвърждава след факта. */
 
     var orderNo = genOrderNo();
+    /* Снимка на кода в момента на изпращане — „Махни кода“ по средата не бива да
+       смени пътя на вече тръгнала поръчка. */
+    var vch = vaucher;
+    var vchOpis = vch ? vch.kod + " — подарък" + (vch.za_kogo ? " за " + vch.za_kogo : "") + (vch.ot_kogo ? " от " + vch.ot_kogo : "") : "";
     var occasion = selectedOccasion();
     var styles = selectedStyles();
     var language = document.getElementById("text-language").value;
     var eventDate = eventDateEl ? (eventDateEl.value || "") : "";
 
     var fields = {
-      "_subject": "БЪРЗА заявка (ОЧАКВА ПЛАЩАНЕ) — " + orderNo,
+      "_subject": vch ? "БЪРЗА заявка (ПЛАТЕНО С ВАУЧЕР " + vch.kod + ") — " + orderNo : "БЪРЗА заявка (ОЧАКВА ПЛАЩАНЕ) — " + orderNo,
       "_template": "box",
       "Номер на заявка": orderNo,
-      "Тип": "Бърза текстова поръчка" + (EN ? " — от АНГЛИЙСКИЯ сайт (en/)" : ""),
+      "Тип": "Бърза текстова поръчка" + (EN ? " — от АНГЛИЙСКИЯ сайт (en/)" : "") + (vch ? " — ПЛАТЕНА С ВАУЧЕР" : ""),
       "Език на сайта": EN ? "английски — пиши на клиента на английски" : "български",
       /* Брифът тръгва ПРЕДИ плащането, защото след него клиентът е на
          страницата на Stripe и разказът щеше да се загуби. Затова темата
          казва „очаква плащане" — свързването става по номера на поръчката,
          който пътува със самото плащане като client_reference_id. */
-      "Състояние": "ОЧАКВА ПЛАЩАНЕ — клиентът е пренасочен към Stripe",
-      "Клиент": "— името идва от Stripe след плащането",
+      "Състояние": vch ? "ПЛАТЕНО С ВАУЧЕР " + vchOpis + ". Без Stripe — Worker-ът отбеляза кода като използван." : "ОЧАКВА ПЛАЩАНЕ — клиентът е пренасочен към Stripe",
+      "Клиент": vch ? "— получател на ваучер; името е в разказа" : "— името идва от Stripe след плащането",
       "Имейл": email || "—",
       "_replyto": email,
       "Повод": occasion || "— не е избран, виж разказа",
@@ -609,18 +749,18 @@
       "Гласов разказ": glasBlob ? "ДА — glasovo-" + orderNo + "." + glasExt(glasBlob) + " в ОТДЕЛНО писмо; разказът горе е автоматичният препис, свери го със записа" : "не",
       /* Ако няма отметка, пишем изрично „не иска" — така при преглед се вижда
          разликата между „не е поискана" и „забравили сме да я запишем". */
-      "ФАКТУРА": inv
+      "ФАКТУРА": vch ? "не — платено с ваучер (продажбата е при купувача на ваучера)" : inv
         ? (inv.eik ? "ДА — ФИРМА (задължителна)" : "ДА — физическо лице (по желание)")
         : "не е поискана — влиза в отчета по чл. 119",
       "Фактура: име / фирма": inv ? inv.name : "—",
       "Фактура: адрес": inv ? inv.addr : "—",
       "Фактура: ЕИК / ДДС номер": inv && inv.eik ? inv.eik : "—",
-      "Съгласие чл. 57 ЗЗП (без право на отказ)": "потвърдено преди плащането",
+      "Съгласие чл. 57 ЗЗП (без право на отказ)": vch ? "потвърдено от получателя на ваучера преди изпращането" : "потвърдено преди плащането",
       "CLAUDE BRIEF": [
         "# Бърза текстова поръчка — " + orderNo,
         "",
-        "СЪСТОЯНИЕ: очаква плащане. Свери в Stripe по " + orderNo,
-        "преди да започнеш работа.",
+        vch ? "СЪСТОЯНИЕ: ПЛАТЕНО С ВАУЧЕР " + vchOpis + "." : "СЪСТОЯНИЕ: очаква плащане. Свери в Stripe по " + orderNo,
+        vch ? "В Stripe плащане няма и не се чака — започвай работа." : "преди да започнеш работа.",
         (EN ? "\nКЛИЕНТЪТ Е ОТ АНГЛИЙСКИЯ САЙТ — писмото и страницата на песента на английски.\n" : ""),
         inv
           ? ("ФАКТУРА: поискана" + (inv.eik ? " — ФИРМА " + inv.eik + " (задължителна по ЗДДС)" : " — физическо лице") +
@@ -642,17 +782,80 @@
         "Извлечи: получател, повод (ако не е избран горе), история, детайли, стилове (ако не са избрани горе), настроение."
       ].join("\n")
     };
+    if (vch) fields["Ваучер"] = vchOpis;
 
-    rememberOrder(orderNo);
+    /* С ваучер поръчката се помни чак когато Worker-ът приеме кода (долу). */
+    if (!vch) rememberOrder(orderNo);
 
     sendBtn.disabled = true;
-    sendBtn.textContent = t("Отваряме плащането…", "Opening checkout…");
+    sendBtn.textContent = vch ? "Изпращаме разказа…" : t("Отваряме плащането…", "Opening checkout…");
     /* blagodarim.html е една за двата езика (там връща Stripe) — по този запис
        праща английския клиент на en/thank-you.html. */
     try { localStorage.setItem("pesenta_lang", EN ? "en" : "bg"); } catch (e) {}
 
     var fd = new FormData();
     Object.keys(fields).forEach(function (k) { fd.append(k, fields[k]); });
+
+    /* Брифът за нашата база — едно и също тяло за /brief (beacon долу) и за
+       /vaucher/izpolzvai (там Worker-ът го записва в същата транзакция с кода). */
+    function briefTyalo() {
+      return {
+        order_no: orderNo,
+        vid: (EN ? "бърза текстова (EN)" : "бърза текстова") + (vch ? " (ваучер)" : ""),
+        povod: fields["Повод"],
+        event_date: eventDate,
+        stilove: fields["Стилове"],
+        ezik: fields["Език"],
+        /* Worker-ът не знае за глас — бележката е в самия разказ, за да стигне до
+           писмото за плащане без нова версия на Worker-а. */
+        razkaz: (vch ? "[ПЛАТЕНО С ВАУЧЕР " + vchOpis + "]\n" : "") +
+                (glasBlob ? "[ИМА ГЛАСОВ ЗАПИС — glasovo-" + orderNo + "." + glasExt(glasBlob) + ", в отделно писмо; текстът е автоматичен препис]\n" : "") + fields["Разказ"],
+        email: email,
+        snimki: snimki.length,
+        landing: atr("psn_landing"),
+        ref_parvi: atr("psn_ref"),
+        ref_posleden: document.referrer || ""
+      };
+    }
+
+    /* С ваучер: ПЪРВО кодът (чакаме отговора), после снимките/гласа и
+       известието, и благодарим.html?vaucher=1 — без Stripe. Отказ (409/429/мрежа)
+       → съобщение и нищо не тръгва. Брифът към /brief НЕ се праща отделно:
+       Worker-ът го е записал при осребряването. */
+    if (vch) {
+      var vrati = function (msg) {
+        sendBtn.disabled = false;
+        sendBtn.textContent = "Изпрати разказа";
+        fail(msg);
+      };
+      fetch(WORKER + "/vaucher/izpolzvai", {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=UTF-8" },
+        body: JSON.stringify({ kod: vch.kod, order_no: orderNo, brief: briefTyalo() })
+      }).then(function (r) {
+        return r.json().catch(function () { return {}; }).then(function (d) { return { st: r.status, d: d || {} }; });
+      }).then(function (o) {
+        if (o.st === 200 && o.d.ok === true) {
+          rememberOrder(orderNo, "Песен с ваучер за подарък");
+          if (window.psnSabitie) window.psnSabitie("Voucher Redeem", "бърза" + (glasBlob ? " + глас" : "") + (snimki.length ? " + снимки" : ""));
+          var kamBlagodarim = function () { window.location.href = "blagodarim.html?vaucher=1"; };
+          pratiSnimki(orderNo).then(function () {
+            return fetch(FORM_ENDPOINT, { method: "POST", headers: { "Accept": "application/json" }, body: fd });
+          }).then(kamBlagodarim).catch(kamBlagodarim);
+          return;
+        }
+        var pr = o.st === 429 ? "mnogo_opiti" : o.d.prichina;
+        vrati(kodPrichina(pr) + " Разказът ти не е изпратен.");
+        /* кодът вече не става — формата се връща към обикновената поръчка */
+        if (pr === "izpolzvan" || pr === "otmenen" || pr === "nyama") {
+          vaucherRezhim(null);
+          kodSaobshtenie(kodPrichina(pr), "err");
+        }
+      }).catch(function () {
+        vrati("Не успяхме да се свържем, за да приложим кода. Разказът ти не е изпратен — опитай пак след малко.");
+      });
+      return;
+    }
 
     /* Плащането е следващата стъпка при ВСЯКО положение. Ако брифът не
        успее да замине, пак пращаме клиента към Stripe — номерът на
@@ -679,22 +882,7 @@
        за плащане идва с [БЕЗ РАЗКАЗ] в темата. */
     try {
       if (navigator.sendBeacon) {
-        navigator.sendBeacon(BRIEF_ENDPOINT, new Blob([JSON.stringify({
-          order_no: orderNo,
-          vid: EN ? "бърза текстова (EN)" : "бърза текстова",
-          povod: fields["Повод"],
-          event_date: eventDate,
-          stilove: fields["Стилове"],
-          ezik: fields["Език"],
-          /* Worker-ът не знае за глас — бележката е в самия разказ, за да стигне до
-             писмото за плащане без нова версия на Worker-а. */
-          razkaz: (glasBlob ? "[ИМА ГЛАСОВ ЗАПИС — glasovo-" + orderNo + "." + glasExt(glasBlob) + ", в отделно писмо; текстът е автоматичен препис]\n" : "") + fields["Разказ"],
-          email: email,
-          snimki: snimki.length,
-          landing: atr("psn_landing"),
-          ref_parvi: atr("psn_ref"),
-          ref_posleden: document.referrer || ""
-        })], { type: "text/plain;charset=UTF-8" }));
+        navigator.sendBeacon(BRIEF_ENDPOINT, new Blob([JSON.stringify(briefTyalo())], { type: "text/plain;charset=UTF-8" }));
       }
     } catch (e) { /* без beacon оставаме на стария път */ }
 

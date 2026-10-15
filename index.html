@@ -269,6 +269,13 @@
                  поводът, стилът и езикът оставаха НАД екрана и трябваше да се скролва нагоре.
                  Сега идват под него, по посоката на четене. -->
             <div class="field">
+              <!-- Ваучер за песен (15.10.2026): с проверен код тук стои „Подарък за … от …“.
+                   Вътре в полето за разказа е нарочно — отварянето на формата скролира до
+                   него и получателят вижда подаръка, преди да пише. text-order.js. -->
+              <div class="vaucher-banner" id="text-vaucher-banner" role="status" hidden>
+                <strong id="text-vaucher-banner-tekst"></strong>
+                <span class="hint" id="text-vaucher-banner-hint">Разкажи историята си отдолу — за кого е песента, какво се случва, кое е важно за теб. Нищо не плащаш.</span>
+              </div>
               <label for="text-story">Разкажи ни накратко
                 <span class="hint">За кого е песента, поводът, историята и детайлите. Колкото повече, толкова по-точна песента.</span>
               </label>
@@ -421,6 +428,22 @@
                  касата и не платиха, а без адрес нямаше как да им пишем. За да не
                  се пише два пъти, той отива в Stripe като prefilled_email. Името
                  остава само в Stripe. -->
+            <!-- Код от ваучер за песен (15.10.2026). Свит е — повечето хора нямат код.
+                 ?kod= в адреса го отваря, попълва и проверява сам (text-order.js). С валиден
+                 код фактурата и плащането се крият: песента е платена от купувача. -->
+            <div class="field vaucher-kod" id="text-kod-box">
+              <button type="button" class="link-btn" id="text-kod-toggle" aria-expanded="false" aria-controls="text-kod-pole">Имаш код за подарък?</button>
+              <div id="text-kod-pole" hidden>
+                <label for="text-kod">Кодът от ваучера</label>
+                <div class="promo-row">
+                  <input type="text" id="text-kod" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="40" placeholder="напр. IME-SERENADA-AB2CD">
+                  <button type="button" class="btn btn-ghost" id="text-kod-proveri">Провери</button>
+                </div>
+                <p class="promo-msg" id="text-kod-msg" aria-live="polite"></p>
+                <button type="button" class="link-btn" id="text-kod-mahni" hidden>Махни кода</button>
+              </div>
+            </div>
+
             <div class="field">
               <label for="text-email">Имейл, на който да получиш песента *</label>
               <input type="email" id="text-email" name="email" autocomplete="email" inputmode="email" placeholder="ime@primer.bg" required>
@@ -428,7 +451,7 @@
 
             <label class="consent">
               <input type="checkbox" id="text-consent">
-              <span>Запознах се с <a href="usloviya.html" target="_blank" style="color:var(--orange);text-decoration:underline;">Общите условия</a> и <a href="poveritelnost.html" target="_blank" style="color:var(--orange);text-decoration:underline;">Политиката за поверителност</a> и се съгласявам данните ми да бъдат използвани за изработката на песента. Изрично се съгласявам изпълнението да започне веднага след плащането и потвърждавам, че <strong>губя 14-дневното право на отказ</strong> (чл. 57 ЗЗП) — песента се изработва лично за мен по мои указания и плащам предварително, за да започне работата.</span>
+              <span>Запознах се с <a href="usloviya.html" target="_blank" style="color:var(--orange);text-decoration:underline;">Общите условия</a> и <a href="poveritelnost.html" target="_blank" style="color:var(--orange);text-decoration:underline;">Политиката за поверителност</a> и се съгласявам данните ми да бъдат използвани за изработката на песента. <span id="text-consent-plashtane">Изрично се съгласявам изпълнението да започне веднага след плащането и потвърждавам, че <strong>губя 14-дневното право на отказ</strong> (чл. 57 ЗЗП) — песента се изработва лично за мен по мои указания и плащам предварително, за да започне работата.</span><span id="text-consent-vaucher" hidden>Песента е платена с ваучер за подарък. Изрично се съгласявам изработката да започне веднага след изпращането на разказа и знам, че от този момент ваучерът е използван и <strong>не може да се върне</strong> (чл. 57 ЗЗП) — песента се изработва лично по моите указания.</span></span>
             </label>
 
             <!-- Фактура по желание. При продажба на физическо лице фактура НЕ се
@@ -438,7 +461,7 @@
                  наведнъж. Данните се искат ТУК, преди плащането: върне ли се
                  човек след продажбата, тя вече е влязла в отчета по чл. 119 и
                  корекцията е разкарване. -->
-            <label class="consent" style="margin-top:0.4rem;">
+            <label class="consent" id="text-invoice-row" style="margin-top:0.4rem;">
               <input type="checkbox" id="text-invoice">
               <span>Искам фактура <span class="hint" style="display:inline;">(задължително за фирма; за физическо лице е по желание)</span></span>
             </label>
@@ -461,7 +484,8 @@
 
             <div class="form-error" id="text-error" role="alert"></div>
             <button type="button" class="btn btn-primary btn-lg" id="text-send" style="width:100%;margin-top:0.8rem;">Продължи към плащане · 19,90 €</button>
-            <p class="hint" style="margin-top:0.6rem;"><strong class="garancia">Песента е при теб до 24 часа — или ти връщаме парите.</strong><br>Плащането е през Stripe — имейлът ти е попълнен там, остава името и картата.<br>Трябва ти за днес? Пиши ни на <a href="mailto:sales@pesenta.bg" style="color:var(--orange);text-decoration:underline;">sales@pesenta.bg</a> или се обади на <a href="tel:+359899456326" style="color:var(--orange);text-decoration:underline;">+359 899 456 326</a> — при възможност става.</p>
+            <p class="hint" id="text-vaucher-hint" style="margin-top:0.6rem;" hidden><strong class="garancia">Песента е при теб до 24 часа.</strong><br>Подаръкът е платен — нищо не плащаш. Песента идва на имейла, който напишеш горе.</p>
+            <p class="hint" id="text-pay-hint" style="margin-top:0.6rem;"><strong class="garancia">Песента е при теб до 24 часа — или ти връщаме парите.</strong><br>Плащането е през Stripe — имейлът ти е попълнен там, остава името и картата.<br>Трябва ти за днес? Пиши ни на <a href="mailto:sales@pesenta.bg" style="color:var(--orange);text-decoration:underline;">sales@pesenta.bg</a> или се обади на <a href="tel:+359899456326" style="color:var(--orange);text-decoration:underline;">+359 899 456 326</a> — при възможност става.</p>
           </div>
         </div>
         <!-- Цената излезе оттук — вече е в заглавието. Два пъти на един
@@ -1293,7 +1317,7 @@
       </div>
       <div class="footer-col">
         <details class="footer-fold">
-          <summary>Навигация <span class="n">(8)</span><span class="arrow" aria-hidden="true">▾</span></summary>
+          <summary>Навигация <span class="n">(9)</span><span class="arrow" aria-hidden="true">▾</span></summary>
           <div class="footer-links">
             <a href="#kak-raboti">Как работи</a>
             <a href="#demo">Демо песни</a>
@@ -1302,6 +1326,7 @@
             <a href="za-nas.html">За нас</a>
             <a href="rodeni-dnes.html">Родени на този ден</a>
             <a href="podarak-v-poslednia-moment.html">В последния момент</a>
+            <a href="vaucher.html">Ваучер за песен</a>
             <a href="#order">Поръчай песен</a>
           </div>
         </details>
@@ -1398,7 +1423,7 @@
 <!-- voice-order.js вече го няма (14.09.2026): гласовата поръчка отпадна; остана „Разкажи с гласово“ в poruchka.html.
      Скриптът и без това излиза на 15-ия ред без #fast-rec, но няма смисъл да
      се тегли. -->
-<script src="assets/js/text-order.js?v=2a06de91" defer></script>
+<script src="assets/js/text-order.js?v=5576851a" defer></script>
 <!-- Плаващ бутон за връзка: Viber на мобилно (+359899456326 — ПЛЕЙСХОЛЪР номер, смени с реалния), имейл при десктоп -->
 <a class="float-contact float-contact--mobile" href="viber://chat?number=+359899456326" aria-label="Пиши ни във Viber">
   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>

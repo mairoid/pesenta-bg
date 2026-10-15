@@ -12,6 +12,8 @@
      GET  /admin               — админ панел (иска AUDIT_TOKEN в заглавка)
      GET  /kartichka/<поръчка>?t=… — картичката „песента пътува“ за печат/телефон (подписан линк)
      GET  /p/<поръчка>?t=…      — чакалнята на песента; 302 към страницата ѝ, щом page_url е зададен
+     POST /vaucher/nov, GET /vaucher/proverka, POST /vaucher/izpolzvai,
+     GET  /vaucher/pdf/<ref>?t=… — ваучер за песен (vaucher.js; 15.10.2026)
 
    Тайните се задават с `wrangler secret put`, никога в кода — виж README.md.
    ───────────────────────────────────────────────────────────────────── */
@@ -22,9 +24,13 @@
 import qrcode from "./qrcode.cjs";
 import { ADMIN_HTML } from "./admin.js";
 import { renderKartichka, renderPesenChaka } from "./kartichka.js";
+import {
+  REF_RE as VCH_RE, generirajKod, normKod, vLimita, chetiTelo, vjson, esc,
+  handleVaucherNov, handleVaucherProverka, noviRef, vaucherBlokHtml
+} from "./vaucher.js";
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
     if (url.pathname === "/health") {
@@ -32,8 +38,18 @@ export default {
     }
 
     if (url.pathname === "/stripe-webhook" && request.method === "POST") {
-      return handleWebhook(request, env);
+      return handleWebhook(request, env, ctx);
     }
+
+    /* Ваучер за песен (15.10.2026). Телата са text/plain JSON — без preflight, като /brief. */
+    if (url.pathname === "/vaucher/nov" || url.pathname === "/vaucher/proverka" || url.pathname === "/vaucher/izpolzvai") {
+      if (request.method === "OPTIONS") return cors(new Response(null, { status: 204 }), env);
+      if (url.pathname === "/vaucher/nov" && request.method === "POST") return cors(await handleVaucherNov(request, env), env);
+      if (url.pathname === "/vaucher/proverka" && request.method === "GET") return cors(await handleVaucherProverka(request, env), env);
+      if (url.pathname === "/vaucher/izpolzvai" && request.method === "POST") return cors(await handleVaucherIzpolzvai(request, env, ctx), env);
+    }
+    const vPdf = url.pathname.match(/^\/vaucher\/pdf\/(VCH-\d{6}-\d{4})$/);
+    if (vPdf && request.method === "GET") return handleVaucherPdf(request, env, vPdf[1]);
 
     const auditMatch = url.pathname.match(/^\/audit\/(\d{4})-(\d{2})$/);
     if (auditMatch && request.method === "GET") {
@@ -101,6 +117,7 @@ export default {
      waitUntil — за да не прекъсне пращането, ако часовникът реши, че е свършил. */
   async scheduled(event, env, ctx) {
     ctx.waitUntil(napomniNeplateni(env).catch(() => {}));
+    ctx.waitUntil(vaucherCron(env).catch(() => {}));
   }
 };
 
@@ -117,12 +134,21 @@ export async function napomniNeplateni(env, sega) {
   if (!env.BREVO_API_KEY || !env.MAIL_SENDER || !env.PAYMENT_LINK) return { pregledani: 0, prateni: 0, prichina: "липсва настройка" };
   const ot = new Date(sega.getTime() - 48 * 3600e3).toISOString();
   const do_ = new Date(sega.getTime() - 20 * 3600e3).toISOString();
-  const redove = (await env.DB.prepare(
-    `SELECT b.order_no, b.created_at, b.vid, b.povod, b.poleta FROM briefs b
+  /* Поръчка, осребрена с ваучер (15.10.2026), е платена — но не е в sales. Без таблицата
+     vaucheri (базата преди миграцията) — старата заявка: тогава осребрени няма. */
+  const sql = `SELECT b.order_no, b.created_at, b.vid, b.povod, b.poleta FROM briefs b
      WHERE b.created_at BETWEEN ? AND ?
        AND NOT EXISTS (SELECT 1 FROM sales s WHERE s.order_no = b.order_no)
-       AND NOT EXISTS (SELECT 1 FROM napomnyania n WHERE n.order_no = b.order_no)`
-  ).bind(ot, do_).all()).results || [];
+       AND NOT EXISTS (SELECT 1 FROM napomnyania n WHERE n.order_no = b.order_no)`;
+  let redove;
+  try {
+    redove = (await env.DB.prepare(sql + `
+       AND NOT EXISTS (SELECT 1 FROM vaucheri v WHERE v.izpolzvan_order = b.order_no)`
+    ).bind(ot, do_).all()).results || [];
+  } catch (e) {
+    if (!/no such table/i.test(String(e && e.message || e))) throw e;
+    redove = (await env.DB.prepare(sql).bind(ot, do_).all()).results || [];
+  }
 
   let prateni = 0;
   for (const r of redove) {
@@ -209,7 +235,7 @@ async function pratiNapomnyane(env, r, p, email, sega) {
 
 /* ============ Stripe webhook ============ */
 
-async function handleWebhook(request, env) {
+async function handleWebhook(request, env, ctx) {
   const raw = await request.text();
   const sig = request.headers.get("Stripe-Signature");
 
@@ -231,7 +257,7 @@ async function handleWebhook(request, env) {
        платената продажба оставаше без бележка и извън файла за НАП. recordSale
        е идемпотентен по сесията, двойно записване няма. */
     if (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded") {
-      await recordSale(env, event);
+      await recordSale(env, event, ctx);
     } else if (event.type === "charge.refunded") {
       await recordRefund(env, event);
     }
@@ -245,7 +271,7 @@ async function handleWebhook(request, env) {
   }
 }
 
-async function recordSale(env, event) {
+async function recordSale(env, event, ctx) {
   const s = event.data.object;
 
   /* Плащането трябва да е реално минало. Checkout сесия може да завърши
@@ -253,10 +279,23 @@ async function recordSale(env, event) {
      регистрира по чл. 52о. */
   if (s.payment_status !== "paid") return;
 
+  /* Ваучер за песен (15.10.2026): по номера VCH-… или по отделната Payment Link.
+     VAUCHER_PLINK е празен, докато връзката не е създадена — тогава само по номера. */
+  const crid = String(s.client_reference_id || "");
+  const jeVaucher = /^VCH-/.test(crid) || (!!env.VAUCHER_PLINK && s.payment_link === env.VAUCHER_PLINK);
+
   const key = "cs:" + s.id;
   const exists = await env.DB.prepare("SELECT 1 FROM sales WHERE stripe_event_key = ?")
     .bind(key).first();
-  if (exists) return;                       /* повторен webhook — вече е записан */
+  if (exists) {                             /* повторен webhook — вече е записан */
+    /* Продажбата е записана, но ваучерът — не (записана преди миграцията или
+       преди VAUCHER_PLINK). Довършва се; при вече активен — нищо. */
+    if (jeVaucher) {
+      const v = await aktivirajVaucher(env, s, VCH_RE.test(crid) ? crid : await svobodenRef(env), null);
+      if (v && v.nov) await zadachaVaucherPismo(env, ctx, v);
+    }
+    return;
+  }
 
   /* Валутата НЕ се приема на доверие.
      ------------------------------------------------------------------
@@ -279,19 +318,22 @@ async function recordSale(env, event) {
 
   const now = sofiaParts(new Date());
   const today = now.date;
-  const orderNo = s.client_reference_id || ("STRIPE-" + s.id.slice(-12));
+  /* Ваучер без номер от формата (връзката е отворена направо) — номерът се прави тук. */
+  const vRef = jeVaucher ? (VCH_RE.test(crid) ? crid : await svobodenRef(env)) : null;
+  const orderNo = s.client_reference_id || vRef || ("STRIPE-" + s.id.slice(-12));
 
   /* От 21.09.2026 сайтът не предлага експрес и не води към втория Payment Link; разпознаването
      остава заради стари писма с тази връзка, докато тя не бъде изключена в Stripe.
      Експресната поръчка е вторият Payment Link (29,80 € вместо 19,90 €).
      Различаваме я по сумата, защото line items не идват в webhook-а без
      отделна заявка към Stripe API — а тя би изисквала таен ключ тук. */
-  const isExpress = s.amount_subtotal >= 2500;
-  const artName = env.ART_NAME + (isExpress ? " + експресна изработка (24 ч)" : "");
+  const isExpress = !jeVaucher && s.amount_subtotal >= 2500;
+  const artName = jeVaucher ? (env.VAUCHER_ART_NAME || "Ваучер за песен по поръчка")
+    : env.ART_NAME + (isExpress ? " + експресна изработка (24 ч)" : "");
 
   const docN = await nextDocNumber(env);
 
-  await env.DB.prepare(
+  const insSale = env.DB.prepare(
     `INSERT INTO sales (doc_n, doc_date, doc_time, order_no, order_date,
        customer_email, customer_name, art_name, art_quant, art_price_st,
        vat_rate, vat_st, discount_st, total_st,
@@ -313,7 +355,17 @@ async function recordSale(env, event) {
       ", не в EUR. Сумите в одиторския файл са изчислени като евро и НЕ са верни " +
       "за тази поръчка. Изключи Adaptive Pricing в Stripe и провери ръчно.",
     new Date().toISOString()
-  ).run();
+  );
+
+  /* Ваучерът се активира в СЪЩИЯ batch с продажбата: или и двете, или нищо.
+     Писмото (бележка + ваучер) е едно и тръгва след записа, във waitUntil;
+     известието до нас — след писмото, за да знае дали е стигнало. */
+  if (jeVaucher) {
+    const v = await aktivirajVaucher(env, s, vRef, insSale);
+    await zadachaVaucherPismo(env, ctx, v);
+    return;
+  }
+  await insSale.run();
 
   /* Връчването е след записа, не преди: документът трябва да съществува,
      преди да го обявим на клиента. */
@@ -384,6 +436,12 @@ async function recordRefund(env, event) {
   await env.DB.prepare(
     "UPDATE refunds SET email_sent_at = ?, email_error = ? WHERE stripe_event_key = ?"
   ).bind(sent.ok ? new Date().toISOString() : null, sent.ok ? null : sent.error, key).run();
+
+  /* Ваучер (15.10.2026): изцяло върнат и неизползван → otmenen. Грешка тук не
+     вдига 500 — връщането е записано, а повторен webhook би излязъл рано. */
+  if (sale) {
+    try { await vaucherPriVrashtane(env, ch); } catch (e) { /* остава видимо в админа */ }
+  }
 }
 
 /* Писмо при върнати пари.
@@ -483,34 +541,37 @@ async function handleBrief(request, env) {
   const orderNo = String((telo && telo.order_no) || "");
   if (!/^PSN-[0-9]{6}-[0-9]{4}$/.test(orderNo)) return json({ error: "невалиден номер" }, 400);
 
-  const kus = function (v, n) {
-    if (v === undefined || v === null) return null;
-    return String(v).slice(0, n || 400);
-  };
-
   /* ON CONFLICT, защото клиентът може да прати два пъти — при повторен
      опит или при два отворени раздела. По-новото печели. */
   await env.DB.prepare(
     `INSERT INTO briefs (order_no, created_at, vid, povod, stilove, ezik, razkaz, poleta)
      VALUES (?,?,?,?,?,?,?,?)
-     ON CONFLICT(order_no) DO UPDATE SET
-       created_at = excluded.created_at, vid = excluded.vid, povod = excluded.povod,
-       stilove = excluded.stilove, ezik = excluded.ezik, razkaz = excluded.razkaz,
-       poleta = excluded.poleta`
-  ).bind(
-    orderNo, new Date().toISOString(),
-    kus(telo.vid), kus(telo.povod), kus(telo.stilove), kus(telo.ezik),
-    kus(telo.razkaz, 8000), JSON.stringify(telo).slice(0, 20000)
-  ).run();
+     ON CONFLICT(order_no) DO UPDATE SET ` + BRIEF_UPSERT
+  ).bind(orderNo, new Date().toISOString(), ...briefPoleta(telo)).run();
 
   return json({ ok: true });
+}
+
+/* Общото между /brief и осребряването на ваучер: кои колони и колко дълги. */
+const BRIEF_UPSERT = `created_at = excluded.created_at, vid = excluded.vid, povod = excluded.povod,
+       stilove = excluded.stilove, ezik = excluded.ezik, razkaz = excluded.razkaz,
+       poleta = excluded.poleta`;
+function briefPoleta(telo) {
+  const kus = function (v, n) {
+    if (v === undefined || v === null) return null;
+    return String(v).slice(0, n || 400);
+  };
+  return [kus(telo.vid), kus(telo.povod), kus(telo.stilove), kus(telo.ezik),
+          kus(telo.razkaz, 8000), JSON.stringify(telo).slice(0, 20000)];
 }
 
 /* Имената са тези, които сайтът праща (main.js, text-order.js). Друго име не се
    записва — чужд, който праща боклук, не може да напълни базата с измислени. */
 export const SABITIYA = [
   "Order CTA Click", "Order Form Open", "Order Submitted", "Demo Play", "Style Play",
-  "Hero Sample Play", "Voice Start", "Voice Recorded", "Song Page CTA"
+  "Hero Sample Play", "Voice Start", "Voice Recorded", "Song Page CTA",
+  /* ваучерът (15.10.2026): vaucher.js на сайта и осребряването в text-order.js */
+  "Voucher Checkout", "Voucher Redeem"
 ];
 
 export async function handleSabitie(request, env) {
@@ -558,7 +619,18 @@ async function handleAdminData(request, env) {
   briefs.forEach(function (b) { po[b.order_no] = b; });
   sales.forEach(function (s) { s.brief = po[s.order_no] || null; });
 
-  return json({ sales: sales, refunds: refunds, generated: new Date().toISOString() });
+  /* Ваучерите (15.10.2026): продадените са и в sales; осребрената поръчка е САМО
+     тук (не е продажба) — с брифа ѝ, за да се напише и отбележи доставката.
+     Чакащите (неплатени) не се показват. Без таблицата — празно. */
+  let vaucheri = [];
+  try {
+    vaucheri = (await env.DB.prepare(
+      "SELECT * FROM vaucheri WHERE status != 'chaka' ORDER BY platen_at DESC"
+    ).all()).results || [];
+  } catch (e) { vaucheri = []; }
+  vaucheri.forEach(function (v) { v.brief = v.izpolzvan_order ? (po[v.izpolzvan_order] || null) : null; });
+
+  return json({ sales: sales, refunds: refunds, vaucheri: vaucheri, generated: new Date().toISOString() });
 }
 
 /* Единственото, което панелът ПИШЕ: отметка за доставена песен и бележка.
@@ -567,6 +639,22 @@ async function handleAdminData(request, env) {
 async function handleAdminStatus(request, env) {
   let telo;
   try { telo = await request.json(); } catch (e) { return json({ error: "невалиден JSON" }, 400); }
+
+  /* Осребрен ваучер: доставката и страницата се пишат във vaucheri, не в sales. */
+  if (telo && telo.ref !== undefined) {
+    const ref = String(telo.ref || "");
+    if (!VCH_RE.test(ref)) return json({ error: "невалиден номер" }, 400);
+    if (telo.delivered !== undefined) {
+      await env.DB.prepare("UPDATE vaucheri SET delivered_at = ? WHERE ref = ? AND status = 'izpolzvan'")
+        .bind(telo.delivered ? new Date().toISOString() : null, ref).run();
+    }
+    if (telo.page_url !== undefined) {
+      const u = String(telo.page_url).trim();
+      if (u && !/^https:\/\/pesenta\.bg\/[A-Za-z0-9\-._\/]+$/.test(u)) return json({ error: "невалиден адрес" }, 400);
+      await env.DB.prepare("UPDATE vaucheri SET page_url = ? WHERE ref = ?").bind(u || null, ref).run();
+    }
+    return json({ ok: true });
+  }
 
   const orderNo = String((telo && telo.order_no) || "");
   if (!/^PSN-[0-9]{6}-[0-9]{4}$/.test(orderNo)) return json({ error: "невалиден номер" }, 400);
@@ -842,7 +930,28 @@ export async function notifyVatreshno(env, n) {
         " — прати я на ръка.</p>";
     }
 
-    if (!brief) {
+    /* Ваучер (15.10.2026): разказ няма и не трябва — той идва при осребряването. */
+    var v = n.vaucher || null;
+    if (v) {
+      redove += red("Код", v.kod) + red("За", v.za_kogo || "—") + red("От", v.ot_kogo || "—") +
+        red("Писмо с ваучера", n.beleshka && n.beleshka.ok ? (n.beleshka.bezPdf ? "пратено БЕЗ PDF" : "пратено с PDF") : "НЕ");
+      if (v.bez_danni) {
+        trevogi += "<p style=\"background:#FEF5E7;border-left:4px solid #B9770E;padding:10px 14px\">" +
+          "<strong>Данните от формата за ваучера не стигнаха.</strong> Кодът е без име (" + xmlEscape(String(v.kod)) +
+          "), на ваучера няма „За“, „От“ и послание. Пиши на купувача, ако иска да ги добави.</p>";
+      }
+      if (n.beleshka && n.beleshka.bezPdf) {
+        trevogi += "<p style=\"background:#FEF5E7;border-left:4px solid #B9770E;padding:10px 14px\">" +
+          "<strong>PDF-ът не се прикачи.</strong> " + xmlEscape(String(n.beleshka.bezPdf)) +
+          " — писмото тръгна без него; прати PDF-а на ръка.</p>";
+      }
+      if (v.poslanie) {
+        trevogi += "<p style=\"font:14px/1.6 sans-serif;background:#F6F5FA;border-left:3px solid #D2577F;" +
+          "padding:12px 16px;white-space:pre-wrap\">" + xmlEscape(String(v.poslanie)) + "</p>";
+      }
+    }
+
+    if (!brief && !v) {
       trevogi += "<p style=\"background:#FDECEA;border-left:4px solid #C0392B;padding:10px 14px\">" +
         "<strong>За тази поръчка НЯМА разказ.</strong> Плащането е минало, но историята " +
         "не е стигнала до нас — песента не може да се напише. Пиши на клиента да я разкаже.</p>";
@@ -856,7 +965,7 @@ export async function notifyVatreshno(env, n) {
     }
 
     var razkazBlok = "";
-    if (brief) {
+    if (brief && !v) {
       razkazBlok =
         "<h3 style=\"font:600 15px sans-serif;margin:22px 0 8px\">Разказът на клиента</h3>" +
         "<table style=\"font:14px sans-serif;border-collapse:collapse\">" +
@@ -877,10 +986,10 @@ export async function notifyVatreshno(env, n) {
       to: poluchateli,
       subject: (n.currency_ok ? "" : "[ВАЛУТА] ") +
                ((n.beleshka && n.beleshka.ok) ? "" : "[БЕЛЕЖКА] ") +
-               (brief ? "" : "[БЕЗ РАЗКАЗ] ") +
-               "Плащане " + suma + " · " + n.order_no,
+               (brief || v ? "" : "[БЕЗ РАЗКАЗ] ") +
+               (v ? "Продаден ваучер " : "Плащане ") + suma + " · " + n.order_no,
       htmlContent:
-        "<h2 style=\"font:600 18px sans-serif;margin:0 0 12px\">Постъпи плащане</h2>" +
+        "<h2 style=\"font:600 18px sans-serif;margin:0 0 12px\">" + (v ? "Продаден ваучер" : "Постъпи плащане") + "</h2>" +
         trevogi +
         "<table style=\"font:14px sans-serif;border-collapse:collapse\">" + redove + "</table>" +
         "<p style=\"font:13px sans-serif;color:#666;margin-top:16px\">Payment Intent: " +
@@ -900,6 +1009,353 @@ export async function notifyVatreshno(env, n) {
   } catch (e) {
     /* Нарочно глухо: продажбата вече е записана и това е по-важно. */
   }
+}
+
+/* ============ Ваучер за песен (15.10.2026) ============
+   Кодът, проверките и блокът на писмото са във vaucher.js. Тук е това, което
+   ползва бележката, подписите и известията: активирането при плащане (в batch-а
+   с продажбата), писмото, осребряването, PDF маршрутът, cron-ът и връщането. */
+
+/* D1 връща { meta: { changes } }; node:sqlite в пробата — { changes }. */
+const promeni = (r) => (r && r.meta ? r.meta.changes : (r && r.changes)) || 0;
+
+/* Нов VCH- номер, който още не е зает (иначе бихме „взели“ чужда чакаща форма). */
+async function svobodenRef(env) {
+  for (let i = 0; i < 20; i++) {
+    const ref = noviRef();
+    if (!(await env.DB.prepare("SELECT 1 FROM vaucheri WHERE ref = ?").bind(ref).first())) return ref;
+  }
+  throw new Error("няма свободен VCH- номер");
+}
+
+/* Кодът се прави от имената в реда „chaka“; без ред (beacon-ът се е изгубил) —
+   ред с празни имена и код PODARAK-…, за да не остане купувачът без код.
+   Вече платен ref, платен втори път (друга сесия) — нов ref със същите имена:
+   два плащания, два кода. При UNIQUE на kod_norm — нов код и нов опит; batch-ът
+   е атомарен, тоест и продажбата се връща и влиза пак със същия doc_n. */
+async function aktivirajVaucher(env, s, ref, insSale) {
+  const sega = new Date().toISOString();
+  if (!insSale) {
+    const veche = await env.DB.prepare("SELECT * FROM vaucheri WHERE stripe_session = ?").bind(s.id).first();
+    if (veche) return Object.assign(veche, { nov: false });
+  }
+  const red = await env.DB.prepare("SELECT * FROM vaucheri WHERE ref = ?").bind(ref).first();
+  let kopie = false;
+  if (red && red.status !== "chaka") { ref = await svobodenRef(env); kopie = true; }
+  const email = (s.customer_details && s.customer_details.email) || null;
+  const d = red || { ot_kogo: "", za_kogo: "", poslanie: "", email: email, faktura: null, created_at: sega };
+
+  for (let i = 0; i < 8; i++) {
+    const kod = generirajKod(d.za_kogo, d.ot_kogo);
+    const st = env.DB.prepare(
+      `INSERT INTO vaucheri (ref, kod, kod_norm, status, ot_kogo, za_kogo, poslanie, email, faktura,
+         bez_danni, created_at, platen_at, stripe_session)
+       VALUES (?,?,?,'aktiven',?,?,?,?,?,?,?,?,?)
+       ON CONFLICT(ref) DO UPDATE SET kod = excluded.kod, kod_norm = excluded.kod_norm,
+         status = 'aktiven', platen_at = excluded.platen_at, stripe_session = excluded.stripe_session
+       WHERE vaucheri.status = 'chaka'`
+    ).bind(ref, kod, normKod(kod), d.ot_kogo || "", d.za_kogo || "", d.poslanie || "",
+           d.email || email, d.faktura || null, red ? 0 : 1, d.created_at || sega, sega, s.id);
+    try {
+      await env.DB.batch(insSale ? [insSale, st] : [st]);
+    } catch (e) {
+      const m = String(e && e.message || e);
+      if (/UNIQUE/i.test(m) && /kod_norm/i.test(m)) continue;
+      throw e;
+    }
+    const v = await env.DB.prepare("SELECT * FROM vaucheri WHERE ref = ?").bind(ref).first();
+    return Object.assign(v || { ref: ref, kod: kod }, { nov: true, kopie: kopie });
+  }
+  throw new Error("не намерих свободен код за ваучера след 8 опита");
+}
+
+/* Писмото и известието до нас — след записа, във waitUntil (без ctx — чака се). */
+function zadachaVaucherPismo(env, ctx, v) {
+  const p = (async () => {
+    const sent = await pratiVaucherPismo(env, v.ref);
+    if (sent.skip) return;
+    const sale = sent.sale || {};
+    await notifyVatreshno(env, {
+      doc_n: sale.doc_n, order_no: sale.order_no || v.ref,
+      customer_name: sale.customer_name, customer_email: sale.customer_email,
+      amount_c: sale.total_eur_c, currency: sale.currency, currency_ok: !sale.currency_warning,
+      express: false, payment_intent: sale.trans_n,
+      beleshka: sent, vaucher: sent.v || v
+    });
+  })().catch(() => {});
+  if (ctx && typeof ctx.waitUntil === "function") { ctx.waitUntil(p); return undefined; }
+  return p;
+}
+
+async function vaucherPdfUrl(env, ref) {
+  if (!env.AUDIT_TOKEN || !env.PUBLIC_BASE) return null;
+  return env.PUBLIC_BASE + "/vaucher/pdf/" + encodeURIComponent(ref) +
+         "?t=" + (await signedToken("vaucher", ref, env.AUDIT_TOKEN));
+}
+
+/* Едно писмо за ваучера (15.10.2026): ваучерът + е-бележката. Опитите се броят
+   (pismo_opiti) и се „заключват“ с UPDATE … WHERE pismo_opiti = старото — два
+   едновременни опита (webhook и cron) не пращат две писма. */
+export async function pratiVaucherPismo(env, ref) {
+  const v = await env.DB.prepare("SELECT * FROM vaucheri WHERE ref = ?").bind(ref).first();
+  if (!v) return { ok: false, error: "няма такъв ваучер", skip: true };
+  if (v.pismo_at) return { ok: true, skip: true };
+  const sale = v.stripe_session
+    ? await env.DB.prepare("SELECT * FROM sales WHERE stripe_event_key = ?").bind("cs:" + v.stripe_session).first()
+    : null;
+  const zakl = await env.DB.prepare(
+    "UPDATE vaucheri SET pismo_opiti = pismo_opiti + 1 WHERE ref = ? AND pismo_at IS NULL AND pismo_opiti = ?"
+  ).bind(ref, v.pismo_opiti || 0).run();
+  if (promeni(zakl) !== 1) return { ok: false, error: "друг опит вече праща", skip: true };
+
+  const rez = await sendVaucherEmail(env, sale, v);
+  const sega = new Date().toISOString();
+  await env.DB.prepare("UPDATE vaucheri SET pismo_at = ?, pismo_greshka = ? WHERE ref = ?").bind(
+    rez.ok ? sega : null,
+    rez.ok ? (rez.bezPdf ? ("без PDF: " + rez.bezPdf).slice(0, 300) : null) : String(rez.error).slice(0, 300), ref
+  ).run();
+  /* Писмото Е бележката — без това админът би казал „бележката НЕ е изпратена“. */
+  if (sale) {
+    await env.DB.prepare("UPDATE sales SET email_sent_at = ?, email_error = ? WHERE stripe_event_key = ?")
+      .bind(rez.ok ? sega : null, rez.ok ? null : rez.error, sale.stripe_event_key).run();
+  }
+  return Object.assign(rez, { sale: sale, v: v });
+}
+
+async function brevo(env, body) {
+  try {
+    const res = await fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
+      headers: { "api-key": env.BREVO_API_KEY, "content-type": "application/json", "accept": "application/json" },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) {
+      let t = ""; try { t = (await res.text()).slice(0, 200); } catch (e) { t = ""; }
+      return { ok: false, error: "Brevo HTTP " + res.status + (t ? " " + t : "") };
+    }
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: String(e && e.message || e) };
+  }
+}
+
+/* PDF-ът е по адрес (Brevo го тегли от нас). Не тръгне ли писмото с него —
+   второ без него: бележката е задължителна, PDF-ът — не; известието казва. */
+async function sendVaucherEmail(env, sale, v) {
+  if (!env.BREVO_API_KEY) return { ok: false, error: "BREVO_API_KEY не е зададен" };
+  if (!sale) return { ok: false, error: "няма продажба за този ваучер" };
+  const to = sale.customer_email || v.email;
+  if (!to) return { ok: false, error: "клиентът няма имейл" };
+  const belUrl = await beleshkaUrl(env, sale.order_no);
+  if (!belUrl) return { ok: false, error: "липсва AUDIT_TOKEN или PUBLIC_BASE — линкът не може да се подпише" };
+  const pdfUrl = await vaucherPdfUrl(env, v.ref);
+  const osnova = {
+    sender: { name: env.MAIL_SENDER_NAME || "Песента", email: env.MAIL_SENDER },
+    replyTo: { email: env.MAIL_SENDER },
+    to: [{ email: to, name: sale.customer_name || undefined }],
+    subject: (v.za_kogo ? "Ваучерът за песен за " + v.za_kogo + " е готов" : "Ваучерът за песен е готов") +
+             " · документ " + padDoc(sale.doc_n)
+  };
+  const s = await brevo(env, Object.assign({}, osnova, {
+    htmlContent: vaucherPismoHtml(sale, v, belUrl, true),
+    attachment: [{ url: pdfUrl, name: "vaucher-" + v.kod + ".pdf" }]
+  }));
+  if (s.ok) return { ok: true };
+  const bez = await brevo(env, Object.assign({}, osnova, { htmlContent: vaucherPismoHtml(sale, v, belUrl, false) }));
+  if (bez.ok) return { ok: true, bezPdf: s.error };
+  return { ok: false, error: bez.error };
+}
+
+/* По образеца на писмото при доставка: тъмно, таблици, лого-картинка. Без
+   „Песента пристига до 24 часа“ и без картичката — песента още не е поръчана. */
+export function vaucherPismoHtml(sale, v, belUrl, sPdf) {
+  const F = "font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;";
+  const td = (vatre, pad) => '<tr><td bgcolor="#12101F" style="background-color:#12101F;padding:' + pad + ';">' + vatre + "</td></tr>";
+  const p = (t, st) => '<p style="margin:0 0 14px 0;' + F + 'font-size:15px;line-height:1.62;color:#D9D5EE;' + (st || "") + '">' + t + "</p>";
+  return '<!DOCTYPE html><html lang="bg"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">' +
+    '<meta name="color-scheme" content="dark light"><title>Ваучер за песен</title></head>' +
+    '<body style="margin:0;padding:0;background-color:#0B0A1A;" bgcolor="#0B0A1A">' +
+    '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="#0B0A1A" style="background-color:#0B0A1A;">' +
+    '<tr><td align="center" bgcolor="#0B0A1A" style="background-color:#0B0A1A;padding:28px 12px;">' +
+    '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" bgcolor="#12101F" style="width:600px;max-width:600px;background-color:#12101F;">' +
+      '<tr><td bgcolor="#0B0A1A" style="background-color:#0B0A1A;padding:26px 32px 22px 32px;">' +
+        '<a href="https://pesenta.bg" style="text-decoration:none;"><img src="https://pesenta.bg/assets/img/logo-mail-v1.png" width="230" height="44" alt="pesenta.bg" ' +
+        'style="display:block;width:230px;height:44px;border:0;' + F + 'font-size:22px;font-weight:bold;color:#F4F2FF;"></a>' +
+      "</td></tr>" +
+      '<tr><td bgcolor="#D2577F" height="3" style="background-color:#D2577F;height:3px;font-size:0;line-height:0;">&nbsp;</td></tr>' +
+      td('<p style="margin:0 0 14px 0;' + F + 'font-size:20px;line-height:1.3;font-weight:bold;color:#F4F2FF;">Здравей' +
+           (sale.customer_name ? ", " + esc(sale.customer_name) : "") + ",</p>" +
+         p("Плащането е получено и ваучерът е готов. " + (sPdf
+           ? "Прикачен е и като PDF — за печат или за препращане."
+           : "Ако искаш да го препратиш, просто препрати това писмо.")), "32px 32px 10px 32px") +
+      vaucherBlokHtml(v) +
+      td('<p style="margin:0 0 8px 0;' + F + 'font-size:14px;font-weight:bold;color:#F4F2FF;">Документ за продажбата</p>' +
+         p("Документ <strong>" + esc(padDoc(sale.doc_n)) + "</strong> по поръчка <strong>" + esc(sale.order_no) + "</strong>: " +
+           '<a href="' + esc(belUrl) + '" style="color:#FFA14D;">Отвори документа</a>', "font-size:14px;"),
+         "22px 32px 8px 32px") +
+      td(p("Песента · pesenta.bg", "font-size:13px;color:#A9A4C9;"), "10px 32px 26px 32px") +
+    "</table></td></tr></table></body></html>";
+}
+
+/* POST /vaucher/izpolzvai — осребряване. UPDATE … WHERE status = 'aktiven' е
+   единственото място, което решава: от два едновременни опита само един има
+   changes = 1. Брифът е в СЪЩИЯ batch, но се пише само ако тази поръчка е
+   осребрила кода (EXISTS след UPDATE-а) — неуспешен опит не оставя „неплатен“
+   бриф, на който напомнянето после да пише „плати“. */
+async function handleVaucherIzpolzvai(request, env, ctx) {
+  if (!(await vLimita(request, env))) return vjson({ ok: false, prichina: "mnogo_opiti" }, 429);
+  const { telo, greshka } = await chetiTelo(request, 20000);
+  if (greshka) return greshka;
+  const orderNo = String((telo && telo.order_no) || "");
+  if (!/^PSN-[0-9]{6}-[0-9]{4}$/.test(orderNo)) return vjson({ ok: false, prichina: "order_no" }, 400);
+  if (!telo.brief || typeof telo.brief !== "object" || Array.isArray(telo.brief)) return vjson({ ok: false, prichina: "brief" }, 400);
+  const kn = normKod(telo.kod);
+  if (kn.length < 8) return vjson({ ok: false, prichina: "nyama" }, 409);
+
+  const sega = new Date().toISOString();
+  const brief = Object.assign({}, telo.brief, { order_no: orderNo, vaucher: String(telo.kod).toUpperCase().slice(0, 40) });
+  const rez = await env.DB.batch([
+    env.DB.prepare(
+      "UPDATE vaucheri SET status = 'izpolzvan', izpolzvan_at = ?, izpolzvan_order = ? WHERE kod_norm = ? AND status = 'aktiven'"
+    ).bind(sega, orderNo, kn),
+    env.DB.prepare(
+      `INSERT INTO briefs (order_no, created_at, vid, povod, stilove, ezik, razkaz, poleta)
+       SELECT ?,?,?,?,?,?,?,? WHERE EXISTS
+         (SELECT 1 FROM vaucheri WHERE kod_norm = ? AND status = 'izpolzvan' AND izpolzvan_order = ?)
+       ON CONFLICT(order_no) DO UPDATE SET ` + BRIEF_UPSERT
+    ).bind(orderNo, sega, ...briefPoleta(brief), kn, orderNo)
+  ]);
+
+  const v = await env.DB.prepare("SELECT * FROM vaucheri WHERE kod_norm = ?").bind(kn).first();
+  if (promeni(rez[0]) === 1 && v) {
+    const p = notifyOsrebren(env, v, orderNo).catch(() => {});
+    if (ctx && typeof ctx.waitUntil === "function") ctx.waitUntil(p); else await p;
+    return vjson({ ok: true });
+  }
+  /* Същата поръчка, пратена втори път (двоен клик, мрежа) — вече е успяла. */
+  if (v && v.status === "izpolzvan" && v.izpolzvan_order === orderNo) return vjson({ ok: true, povtorno: true });
+  const prichina = !v || v.status === "chaka" ? "nyama" : (v.status === "izpolzvan" ? "izpolzvan" : "otmenen");
+  return vjson({ ok: false, prichina: prichina }, 409);
+}
+
+async function pratiVatreshno(env, subject, html) {
+  if (!env.BREVO_API_KEY || !env.MAIL_SENDER) return { ok: false, error: "липсва настройка" };
+  const poluchateli = String(env.NOTIFY_EMAILS || env.MAIL_SENDER).split(",")
+    .map(function (a) { return a.trim(); }).filter(Boolean).map(function (a) { return { email: a }; });
+  if (!poluchateli.length) return { ok: false, error: "няма получатели" };
+  return brevo(env, { sender: { name: env.MAIL_SENDER_NAME || "Песента", email: env.MAIL_SENDER },
+                      to: poluchateli, subject: subject, htmlContent: html });
+}
+
+/* Осребрен ваучер: няма Stripe, няма бележка — това писмо е единственият знак. */
+async function notifyOsrebren(env, v, orderNo) {
+  let b = null;
+  try {
+    b = await env.DB.prepare("SELECT vid, povod, stilove, ezik, razkaz, poleta FROM briefs WHERE order_no = ?").bind(orderNo).first();
+  } catch (e) { b = null; }
+  const dop = briefDopalnitelno(b && b.poleta);
+  let pl = {};
+  try { pl = JSON.parse((b && b.poleta) || "{}") || {}; } catch (e) { pl = {}; }
+  const red = (k, s) => s ? "<tr><td style=\"padding:4px 14px 4px 0;color:#666\">" + k +
+    "</td><td style=\"padding:4px 0\"><strong>" + xmlEscape(String(s)) + "</strong></td></tr>" : "";
+  const html =
+    "<h2 style=\"font:600 18px sans-serif;margin:0 0 12px\">Осребрен ваучер</h2>" +
+    "<p style=\"background:#EAF2FB;border-left:4px solid #2E6DA4;padding:10px 14px\">Поръчката е платена с ваучер — " +
+    "няма плащане в Stripe и няма нова бележка. Не е в продажбите; доставката се отбелязва в админа, раздел „Ваучери“.</p>" +
+    "<table style=\"font:14px sans-serif;border-collapse:collapse\">" +
+      red("Код", v.kod) + red("Поръчка", orderNo) + red("Ваучер", v.ref) +
+      red("Ваучерът е за", v.za_kogo) + red("От", v.ot_kogo) + red("Имейл (поръчката)", pl.email) +
+      red("Вид", b && b.vid) + red("Повод", b && b.povod) + red("Дата на повода", dop.data) +
+      red("Стилове", b && b.stilove) + red("Език", b && b.ezik) +
+      (dop.snimkiIzvestni ? red("Снимки", dop.snimki ? dop.snimki + " (в отделно писмо)" : "няма") : "") +
+    "</table>" +
+    (b ? "<p style=\"font:14px/1.6 sans-serif;background:#F6F5FA;border-left:3px solid #D2577F;padding:12px 16px;" +
+         "margin-top:12px;white-space:pre-wrap\">" + xmlEscape(String(b.razkaz || "—")) + "</p>"
+       : "<p style=\"background:#FDECEA;border-left:4px solid #C0392B;padding:10px 14px\"><strong>Брифът не е записан.</strong></p>");
+  return pratiVatreshno(env, (b ? "" : "[БЕЗ РАЗКАЗ] ") + "Осребрен ваучер " + v.kod + " → " + orderNo, html);
+}
+
+/* GET /vaucher/pdf/<ref>?t= — само за платен ваучер (aktiven/izpolzvan). PDF модулът
+   се зарежда лениво: pdf-lib и шрифтовете не тежат на никоя друга заявка. */
+async function handleVaucherPdf(request, env, ref) {
+  if (!env.AUDIT_TOKEN) return new Response("AUDIT_TOKEN не е зададен", { status: 500 });
+  const given = new URL(request.url).searchParams.get("t") || "";
+  if (!timingSafeEqual(given, await signedToken("vaucher", ref, env.AUDIT_TOKEN))) return new Response("Забранено", { status: 403 });
+  const v = await env.DB.prepare("SELECT * FROM vaucheri WHERE ref = ?").bind(ref).first();
+  if (!v || (v.status !== "aktiven" && v.status !== "izpolzvan") || !v.kod) return new Response("Няма такъв ваучер", { status: 404 });
+  let mod;
+  try { mod = await import("./vaucher-pdf.js"); } catch (e) { return new Response("PDF модулът липсва", { status: 503 }); }
+  /* Фонът — кадър от СЦЕНА (aurora-ribbons, 15.10.2026), стои на сайта. JPEG-ът се
+     вгражда без декодиране, затова не тежи на CPU. Не дойде ли — тъмният фон по подразбиране. */
+  let fon;
+  try {
+    const r = await fetch("https://pesenta.bg/assets/img/vaucher-fon.jpg", { cf: { cacheTtl: 86400, cacheEverything: true } });
+    if (r.ok) fon = new Uint8Array(await r.arrayBuffer());
+  } catch (e) { /* без фон */ }
+  const bytes = await mod.vaucherPdf({
+    kod: v.kod, za_kogo: v.za_kogo || "", ot_kogo: v.ot_kogo || "", poslanie: v.poslanie || "",
+    link: "https://pesenta.bg/?kod=" + encodeURIComponent(v.kod) + "#order", fon, voal: 0.45
+  });
+  return new Response(bytes, {
+    headers: {
+      "Content-Type": "application/pdf",
+      "Content-Disposition": 'inline; filename="vaucher-' + v.kod + '.pdf"',
+      "Cache-Control": "private, no-store",
+      "X-Robots-Tag": "noindex, nofollow"
+    }
+  });
+}
+
+/* Cron (веднъж на час): допращане на писмото за платен ваучер без pismo_at,
+   по-стар от 10 минути (първият опит е от webhook-а; общо до 4 опита — 1 + 3
+   от cron-а); чистене на неплатените „chaka“ след 30 дни и на броячите след ден. */
+export async function vaucherCron(env, sega) {
+  sega = sega || new Date();
+  const predi10 = new Date(sega.getTime() - 10 * 60e3).toISOString();
+  const redove = (await env.DB.prepare(
+    `SELECT ref, pismo_opiti FROM vaucheri WHERE platen_at IS NOT NULL AND platen_at < ?
+       AND pismo_at IS NULL AND pismo_opiti < 4 AND status IN ('aktiven', 'izpolzvan')`
+  ).bind(predi10).all()).results || [];
+  let prateni = 0;
+  for (const r of redove) {
+    const rez = await pratiVaucherPismo(env, r.ref);
+    if (rez.ok && !rez.skip) prateni++;
+    else if (!rez.skip && (r.pismo_opiti || 0) + 1 >= 4) {
+      await pratiVatreshno(env, "[ВАУЧЕР] Писмото не тръгна след 4 опита · " + r.ref,
+        "<p>Писмото с ваучера и бележката за <strong>" + xmlEscape(r.ref) + "</strong> не тръгна: " +
+        xmlEscape(String(rez.error || "")) + ". Прати го на ръка (кодът е в админа).</p>");
+    }
+  }
+  const predi30 = new Date(sega.getTime() - 30 * 86400e3).toISOString();
+  const iztriti = promeni(await env.DB.prepare("DELETE FROM vaucheri WHERE status = 'chaka' AND created_at < ?").bind(predi30).run());
+  await env.DB.prepare("DELETE FROM vaucher_opiti WHERE chas < ?")
+    .bind(new Date(sega.getTime() - 86400e3).toISOString().slice(0, 13)).run();
+  return { pregledani: redove.length, prateni: prateni, iztriti: iztriti };
+}
+
+/* Връщане на пари за ваучер: изцяло върнат и неизползван → otmenen. Осребрен —
+   статусът остава (песента е поръчана), само известието казва. Частично
+   върнат — остава какъвто е (виж отчета). */
+async function vaucherPriVrashtane(env, ch) {
+  const s = await env.DB.prepare("SELECT stripe_event_key, total_eur_c, order_no FROM sales WHERE trans_n = ?")
+    .bind(ch.payment_intent).first();
+  if (!s || !/^cs:/.test(String(s.stripe_event_key || ""))) return null;
+  const v = await env.DB.prepare("SELECT * FROM vaucheri WHERE stripe_session = ?").bind(s.stripe_event_key.slice(3)).first();
+  if (!v) return null;
+  const cqlo = s.total_eur_c == null || (ch.amount_refunded || 0) >= s.total_eur_c;
+  let kakvo;
+  if (v.status === "izpolzvan") kakvo = "вече е ОСРЕБРЕН (" + v.izpolzvan_order + ") — статусът НЕ е сменен";
+  else if (v.status === "otmenen") kakvo = "вече беше отменен";
+  else if (!cqlo) kakvo = "частично връщане — ваучерът остава активен";
+  else {
+    await env.DB.prepare("UPDATE vaucheri SET status = 'otmenen', otmenen_at = ? WHERE ref = ? AND status IN ('aktiven', 'chaka')")
+      .bind(new Date().toISOString(), v.ref).run();
+    kakvo = "отменен — кодът вече не важи";
+  }
+  await pratiVatreshno(env, "Върнати пари за ваучер " + (v.kod || v.ref) + " — " + kakvo.split(" — ")[0],
+    "<p>Върнати пари за ваучер <strong>" + xmlEscape(String(v.kod || "")) + "</strong> (" + xmlEscape(v.ref) +
+    ", поръчка " + xmlEscape(String(s.order_no)) + "): " + xmlEscape(kakvo) + ".</p>");
+  return kakvo;
 }
 
 /* ============ Одиторски файл (Приложение №38) ============ */

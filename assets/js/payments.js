@@ -58,7 +58,14 @@ window.PESENTA_PAYMENTS = {
     pesen: "https://buy.stripe.com/8x25kEf5e92r9h81Rh9IQ00",
     /* Английският сайт (en/) — продукт „Custom song“, 19,90 € (plink_1UQ9p0Ji5XII3dF8cnAiPsUb,
        създадена 13.10.2026). След плащане Stripe връща направо на en/thank-you.html. */
-    pesenEn: "https://buy.stripe.com/3cI8wQcX6guT64W9jJ9IQ02"
+    pesenEn: "https://buy.stripe.com/3cI8wQcX6guT64W9jJ9IQ02",
+    /* Ваучер за песен — 19,90 € (vaucher.html, assets/js/vaucher.js). ПРАЗНА, докато
+       Мирослав не създаде Payment Link „Ваучер за песен“ в Stripe: продукт с metadata
+       shop=pesenta.bg, БЕЗ промо кодове (ваучерът е подарък на пълна цена), връщане
+       след плащане на https://pesenta.bg/vaucher-blagodarim.html. Докато е празна,
+       бутонът на vaucher.html казва „Плащането за ваучери се включва съвсем скоро“ и
+       не води никъде. Същата връзка (plink_…) отива и в VAUCHER_PLINK на Worker-а. */
+    vaucher: ""
     /* Връзката „Песен + Експресна изработка“ (29,80 €, plink_1TxA8FJi5XII3dF8AoDMUL21) е
        махната оттук на 21.09.2026: срокът е до 24 часа за всички, без доплащане. Самият
        Payment Link в Stripe се изключва от таблото — сайтът вече не води към него. */

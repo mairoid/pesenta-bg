@@ -144,6 +144,9 @@ export const ADMIN_HTML = `<!DOCTYPE html>
 
     <h2 class="razdel"><span>Поръчки</span><span id="broi"></span></h2>
     <div id="spisak"></div>
+
+    <h2 class="razdel" style="margin-top:30px"><span>Ваучери</span><span id="broi-v"></span></h2>
+    <div id="vaucheri"></div>
   </div>
 </div>
 
@@ -205,6 +208,7 @@ function pokazhi(d){
   risuvaiPlochki(d);
   risuvaiVnimanie(d);
   risuvaiSpisak(d);
+  risuvaiVaucheri(d);
 }
 
 function evro(c){ return ((c || 0) / 100).toFixed(2) + " €"; }
@@ -234,6 +238,13 @@ function risuvaiVnimanie(d){
     if (x.currency_warning) r.push([true, x.order_no, "плащане в чужда валута — одиторският файл е грешен"]);
     if (x.brief && !x.delivered_at) r.push([false, x.order_no, "чака доставка"]);
   });
+  /* Ваучерите (15.10.2026): осребрената поръчка не е в продажбите — само тук. */
+  (d.vaucheri || []).forEach(function(v){
+    if (v.platen_at && !v.pismo_at) r.push([true, v.ref, "писмото с ваучера НЕ е пратено" + (v.pismo_greshka ? " (" + v.pismo_greshka + ")" : "")]);
+    else if (v.pismo_greshka) r.push([false, v.ref, v.pismo_greshka]);
+    if (v.bez_danni) r.push([false, v.ref, "ваучер без данни от формата (код " + (v.kod || "") + ")"]);
+    if (v.status === "izpolzvan" && !v.delivered_at) r.push([false, v.izpolzvan_order, "осребрен ваучер " + v.kod + " — чака доставка"]);
+  });
   var el = document.getElementById("vnimanie");
   if (!r.length) { el.innerHTML = ""; return; }
   el.innerHTML = "<h2>Изисква внимание</h2>" + r.map(function(x){
@@ -260,7 +271,7 @@ function risuvaiSpisak(d){
           [b.povod && "Повод: " + b.povod, b.stilove && "Стилове: " + b.stilove, b.ezik && "Език: " + b.ezik,
            pl.recipient && "За: " + pl.recipient + (pl.relation ? " (" + pl.relation + ")" : ""),
            pl.snimki && "Снимки: " + pl.snimki + " (в писмото)",
-           pl.landing && "От: " + pl.landing + (pl.ref_parvi ? " ← " + pl.ref_parvi.replace(/^https?:\/\//, "").slice(0, 40) : "")]
+           pl.landing && "От: " + pl.landing + (pl.ref_parvi ? " ← " + pl.ref_parvi.replace(/^https?:\\/\\//, "").slice(0, 40) : "")]
             .filter(Boolean).map(e).join(" · ") +
         "</div>" + e(b.razkaz || "—") + "</div>"
       : '<div class="bez-razkaz">Разказът не е стигнал до нас. Клиентът е платил — пиши му да го разкаже.</div>';
@@ -288,6 +299,47 @@ function risuvaiSpisak(d){
     "</div>";
   }).join("");
 }
+
+var V_STATUS = { aktiven: ["активен", "ok"], izpolzvan: ["осребрен", "ok"], otmenen: ["отменен", "lош"] };
+
+function risuvaiVaucheri(d){
+  var vs = d.vaucheri || [];
+  document.getElementById("broi-v").textContent = vs.length + " бр.";
+  document.getElementById("vaucheri").innerHTML = vs.length ? vs.map(function(v){
+    var st = V_STATUS[v.status] || [v.status, ""];
+    var b = v.brief;
+    var znaci = '<span class="znak ' + st[1] + '">' + e(st[0]) + "</span>" +
+      (v.pismo_at ? '<span class="znak ok">писмо</span>' : '<span class="znak lош">без писмо</span>') +
+      (v.status === "izpolzvan" ? (v.delivered_at ? '<span class="znak ok">доставена</span>' : '<span class="znak chaka">чака доставка</span>') : "");
+    var osreb = v.status === "izpolzvan"
+      ? (b ? '<div class="razkaz"><div class="meta">' +
+            [ "Поръчка: " + v.izpolzvan_order, b.povod && "Повод: " + b.povod, b.stilove && "Стилове: " + b.stilove, b.ezik && "Език: " + b.ezik ]
+              .filter(Boolean).map(e).join(" · ") + "</div>" + e(b.razkaz || "—") + "</div>"
+           : '<div class="bez-razkaz">Осребрен от ' + e(v.izpolzvan_order) + ", но брифът липсва.</div>") +
+        '<div class="deistvia">' +
+          '<button onclick="otmetniV(\\'' + e(v.ref) + "', " + (v.delivered_at ? "false" : "true") + ')">' +
+            (v.delivered_at ? "Върни в „чака“" : "Отбележи като доставена") + "</button>" +
+        "</div>" +
+        '<div class="beleshka-red vidima">' +
+          '<input id="vpu-' + e(v.ref) + '" value="' + e(v.page_url || "") + '" placeholder="https://pesenta.bg/… — страницата на песента">' +
+          '<button class="glaven" onclick="zapishiVUrl(\\'' + e(v.ref) + '\\')">Запиши</button>' +
+        "</div>"
+      : "";
+    return '<div class="poruchka">' +
+      '<div class="glava"><div>' +
+        '<div class="nomer">' + e(v.kod || "—") + "</div>" +
+        '<div class="kogа">' + e(v.ref) + " · платен " + e(String(v.platen_at || "").slice(0, 16).replace("T", " ")) + "</div>" +
+      "</div></div>" +
+      '<p class="klient">За <strong>' + e(v.za_kogo || "—") + "</strong> · от <strong>" + e(v.ot_kogo || "—") + "</strong> · " +
+        '<a href="mailto:' + e(v.email) + '">' + e(v.email || "—") + "</a></p>" +
+      (v.poslanie ? '<p class="zapisana">' + e(v.poslanie) + "</p>" : "") +
+      '<div class="znaci">' + znaci + "</div>" + osreb +
+    "</div>";
+  }).join("") : '<p class="zapisana">Още няма продадени ваучери.</p>';
+}
+
+function otmetniV(ref, kak){ prati({ ref: ref, delivered: kak }); }
+function zapishiVUrl(ref){ prati({ ref: ref, page_url: document.getElementById("vpu-" + ref).value }); }
 
 /* Месеците идват от самите продажби, не от календара: месец без продажби няма
    как да даде валиден файл по схемата на НАП и не се подава. */
