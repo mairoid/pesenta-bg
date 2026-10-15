@@ -69,9 +69,9 @@ PAYMENT_LINK_EN = "https://buy.stripe.com/3cI8wQcX6guT64W9jJ9IQ02"
 # Ваучер за песен (15.10.2026). Името на артикула в бележката и в одиторския файл.
 VAUCHER_ART_NAME = "Ваучер за песен по поръчка"
 # Идентификаторът на Stripe Payment Link „Ваучер за песен“ — plink_… (така идва в
-# webhook-а като payment_link), НЕ адресът buy.stripe.com/…. Празно, докато Мирослав не
-# създаде връзката; дотогава ваучер се разпознава само по client_reference_id VCH-….
-VAUCHER_PLINK = ""
+# webhook-а като payment_link), НЕ адресът buy.stripe.com/…. Създадена 15.10.2026
+# (buy.stripe.com/8x2dRa4qA4Mbalc1Rh9IQ03). Ваучер се разпознава и по client_reference_id VCH-….
+VAUCHER_PLINK = "plink_1UQnFSJi5XII3dF8cu5AETgp"
 
 # ТАЙНИ — НЕ се пишат тук. Задават се с командите в README.md:
 #   STRIPE_WEBHOOK_SECRET  подписът, с който Stripe удостоверява webhook-а

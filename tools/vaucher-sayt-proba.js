@@ -142,7 +142,8 @@ const STUB = `(function(){
       g = await greshka("v-inv-eik", /ЕИК/); ok(S + "ЕИК с неверни знаци → съобщение (Worker-ът би го отказал)", g.ok, g.t);
       await vav("v-inv-eik", "");
 
-      /* 3) празна връзка */
+      /* 3) празна връзка — изпразва се тук, защото от 15.10.2026 в payments.js стои истинската */
+      await evalJS(`window.PESENTA_PAYMENTS.paymentLinks.vaucher=""`);
       let z = await dnevnik();
       ok(S + "докато валидацията спира, нищо не тръгва (няма beacon към /vaucher/nov, няма пренасочване)", !z.some(x => /\/vaucher\/nov/.test(x.url)) && navs.length === 0, z.length + " записа, " + navs.join(","));
       await evalJS(`document.getElementById("v-send").click()`); await sleep(800);
