@@ -33,7 +33,7 @@
   <meta property="og:title" content="Ваучер за песен по поръчка – подарък за 19,90 €">
   <meta property="og:description" content="Подари песен, без да знаеш подробностите: ваучер с твоето послание като куплет, а получателят сам разказва историята си. Без срок.">
   <meta property="og:url" content="https://pesenta.bg/vaucher.html">
-  <meta property="og:image" content="https://pesenta.bg/assets/img/og-image.jpg">
+  <meta property="og:image" content="https://pesenta.bg/assets/img/og-vaucher.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:type" content="image/jpeg">
@@ -42,7 +42,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Ваучер за песен по поръчка – подарък за 19,90 €">
   <meta name="twitter:description" content="Подари песен, без да знаеш подробностите: ваучер с твоето послание като куплет, а получателят сам разказва историята си. Без срок.">
-  <meta name="twitter:image" content="https://pesenta.bg/assets/img/og-image.jpg">
+  <meta name="twitter:image" content="https://pesenta.bg/assets/img/og-vaucher.jpg">
 
   <!-- Шрифтове -->
   <!-- Критичните (кирилски) шрифтове тръгват веднага, вместо да чакат CSS-а -->
@@ -116,6 +116,16 @@
     <h1>Ваучер за <span class="grad-text">песен</span></h1>
     <p class="vaucher-lead">Не знаеш историята, повода или любимия стил? Не е нужно. Ти пишеш кратко послание — то стои на ваучера като куплет върху ноти. Човекът, на когото го подаряваш, сам ни разказва историята си и до 24 часа получава своята песен.</p>
     <p class="vaucher-lead-cta"><a class="btn btn-primary btn-lg" href="#forma">Купи ваучер — 19,90 €</a></p>
+
+    <!-- Образецът е направен със същия код и фон като истинския PDF (worker/src/vaucher-pdf.js),
+         за да вижда купувачът точно това, което ще получи. Имената и кодът са примерни. -->
+    <figure class="vaucher-obrazets">
+      <img src="assets/img/vaucher-obrazets-720.jpg"
+           srcset="assets/img/vaucher-obrazets-720.jpg 720w, assets/img/vaucher-obrazets-1440.jpg 1440w"
+           sizes="(max-width: 820px) 92vw, 720px" width="1440" height="1015"
+           alt="Образец на ваучера: „За Мира, от Краси“, посланието като куплет върху нотен стан, кодът на подаръка и QR код">
+      <figcaption>Така изглежда ваучерът, който получаваш: твоето послание като куплет върху ноти, личен код и QR. Имената тук са примерни.</figcaption>
+    </figure>
 
     <h2 id="kak-raboti">Как работи</h2>
     <ol class="steps-short vaucher-stapki">

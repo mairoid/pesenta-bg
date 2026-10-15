@@ -3092,3 +3092,82 @@ body.podarak {
   .vaucher-pregled { padding: var(--sp-4); }
   .vaucher-lead-cta .btn { width: 100%; justify-content: center; }
 }
+
+/* ============================================================
+   „НОВО“ — ваучерът горе (15.10.2026)
+   Където менюто се вижда: връзка „Ваучер“ с етикет НОВО, до EN и бутона.
+   Където е скрито — тънка лента НАД залепената шапка (изнася се при
+   превъртане, не заема екрана постоянно):
+   - под 960px на всички страници (вътрешните показват само EN и бутона;
+     замерено: на 320–414px за трета връзка няма място);
+   - на началната и до 1180px: деветте ѝ връзки искат ≈1160px — между 961
+     и 1180 логото се смачкваше (29px на 1024, изчезваше на 961), затова
+     там тя минава на ☰ като на таблет. Само тя е без inline style на менюто.
+   ============================================================ */
+.novo-znak {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--grad);
+  color: var(--ink);
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1.4;
+  vertical-align: 2px;
+}
+.main-nav a.nav-vaucher { color: var(--text); }
+.main-nav a.nav-vaucher .novo-znak { margin-left: 6px; }
+.novo-lenta {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 36px;  /* 40 буташе „Поръчай песен“ 1px под сгъвката на 360×640 */
+  padding: 4px 16px;
+  background: linear-gradient(90deg, rgba(255, 77, 141, 0.22), rgba(255, 161, 77, 0.22)), #0b0a1a;
+  border-bottom: 1px solid rgba(255, 161, 77, 0.28);
+  color: var(--text);
+  font-weight: 700;
+  font-size: 14px;
+  text-align: center;
+  text-decoration: none;
+}
+.novo-lenta .strelka { color: var(--orange); }
+@media (max-width: 960px) {
+  .novo-lenta { display: flex; }
+  /* в малкото меню на вътрешните страници е лентата отгоре — без повторение */
+  .main-nav[style*="position:static"] a.nav-vaucher { display: none; }
+  .main-nav a.nav-vaucher .novo-znak { margin-left: 8px; }
+}
+@media (min-width: 961px) and (max-width: 1180px) {
+  .novo-lenta.na-glavnata { display: flex; }
+  .main-nav:not([style]) {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 60;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: var(--sp-4) 4vw var(--sp-6);
+    background: #0b0a1a;
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 24px 40px rgba(0, 0, 0, 0.5);
+  }
+  .main-nav:not([style]).open { display: flex; }
+  .nav-toggle { display: block; }
+}
+
+/* Образецът на ваучера на vaucher.html (15.10.2026) — истинският PDF, примерни имена */
+.vaucher-obrazets { margin: var(--sp-8) 0 var(--sp-2); }
+.vaucher-obrazets img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 161, 77, 0.25);
+  box-shadow: 0 24px 60px -20px rgba(255, 77, 141, 0.35), 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+.vaucher-obrazets figcaption { margin-top: var(--sp-3); color: var(--muted); font-size: var(--fs-sm); line-height: 1.55; text-align: center; }
