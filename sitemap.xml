@@ -291,11 +291,17 @@
   </url>
   <url>
     <loc>https://pesenta.bg/novini/</loc>
-    <lastmod>2026-10-15</lastmod>
+    <lastmod>2026-10-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <!-- NOVINI:SITEMAP — новите статии се добавят непосредствено под този ред -->
+  <url>
+    <loc>https://pesenta.bg/novini/u2-svetovno-turne-2027.html</loc>
+    <lastmod>2026-10-16</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
   <url>
     <loc>https://pesenta.bg/novini/blondie-high-noon-album.html</loc>
     <lastmod>2026-10-15</lastmod>
