@@ -4,7 +4,7 @@
 #   .\cta-mera.ps1 -Pesni nashiyat-otbor   — само една песен; без параметър — всички
 param([string[]]$Pesni = @("babo-asi","cyal-edin-svyat","nashiyat-otbor"))
 Add-Type -AssemblyName System.Drawing
-$SP  = "C:\Users\bauph\AppData\Local\Temp\claude\D--My-Documents-2026-Cyber-Hora-THIRD-BRAIN\45999605-2ab3-441d-a52f-ae2947501298\scratchpad"
+if ($env:SP) { $SP = $env:SP } else { $SP  = "C:\Users\bauph\AppData\Local\Temp\claude\D--My-Documents-2026-Cyber-Hora-THIRD-BRAIN\45999605-2ab3-441d-a52f-ae2947501298\scratchpad" }
 $OUT = "D:\My Documents 2026\Cyber Hora\pesenta.bg\assets\img"
 
 $enc = [System.Drawing.Imaging.ImageCodecInfo]::GetImageEncoders() | Where-Object { $_.MimeType -eq "image/jpeg" }

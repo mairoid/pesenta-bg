@@ -64,7 +64,9 @@ foreach ($p in @(@{s="babo-asi";        p="rojden-den-asi"; m="babo-asi-1.88.png
                  @{s="nazdrave-salute-sherefe"; p="rosen-39"; m="v2-1.88.png"},
                  @{s="za-sekundi";      p="za-sekundi";     m="za-sekundi-1.88.png"},
                  @{s="kade-sa-kapachkite";   p="kapachkite"; m="realist-v1-1.88.jpg"},
-                 @{s="kade-sa-kapachkite-2"; p="kapachkite"; m="realist-v2-1.88.jpg"})) {
+                 @{s="kade-sa-kapachkite-2"; p="kapachkite"; m="realist-v2-1.88.jpg"},
+                 @{s="s-teb-vseki-den-e-yuli"; p="valio"; m="s-teb-1.88.jpg"},
+                 @{s="bez-kray";               p="valio"; m="bez-kray-1.88.jpg"})) {
     if ($Samo -and $p.s -ne $Samo) { continue }
     "  == $($p.s) =="
     $iz = "$MAS\$($p.p)\$($p.m)"

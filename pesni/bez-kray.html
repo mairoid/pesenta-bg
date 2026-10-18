@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <script>document.documentElement.classList.add("js");setTimeout(function(){if(!window.__reveal)document.documentElement.classList.remove("js")},4000)</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
+  <meta name="theme-color" content="#0b0a1a">
+  <meta name="application-name" content="Песента">
+  <meta name="apple-mobile-web-app-title" content="Песента">
+  <title>За Вальо — Без край | Песента</title>
+  <meta name="description" content="Песен за Вальо. Послушай я, прочети текста и я свали.">
+
+  <!-- ЧАСТНА страница. PSN-261018-5637 — втората песен от Силвия за Вальо, 18.10.2026:
+       за любовта, не за лятото. Първата е pesni/s-teb-vseki-den-e-yuli.html. Виждат я те.
+       Затова noindex, nofollow, няма я в sitemap.xml и НИЩО на сайта не сочи към нея.
+       Илюстрацията е наша, без лица: снимките на Силвия не пристигнаха. Ако ги прати,
+       кадърът се прави наново по тях и ?v= на картинките се сменя. -->
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="canonical" href="https://pesenta.bg/pesni/bez-kray.html">
+  <link rel="icon" type="image/svg+xml" href="../assets/img/favicon.svg?v=f65c17d0">
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32.png?v=c1650dc4">
+  <link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png?v=5952b3b0">
+
+  <meta property="og:type" content="music.song">
+  <meta property="og:locale" content="bg_BG">
+  <meta property="og:title" content="Без край — песен за Вальо">
+  <meta property="og:description" content="Обичам те, обичам те — ти и аз, без край. Песен, написана по една история.">
+  <meta property="og:url" content="https://pesenta.bg/pesni/bez-kray.html">
+  <meta property="og:image" content="https://pesenta.bg/assets/img/og-bez-kray.jpg?v=4c202109">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="preload" href="../assets/fonts/unbounded-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/lora-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/lora-cyrillic-italic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../assets/css/fonts.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "MusicRecording",
+    "name": "Без край",
+    "byArtist": { "@type": "Organization", "name": "Pesenta.bg" },
+    "inLanguage": "bg",
+    "duration": "PT3M11S",
+    "genre": "българска поп любовна песен с балкански звук",
+    "image": "https://pesenta.bg/assets/img/og-bez-kray.jpg?v=4c202109",
+    "audio": "https://pesenta.bg/assets/audio/bez-kray.mp3?v=134c47a1",
+    "url": "https://pesenta.bg/pesni/bez-kray.html"
+  }
+  </script>
+
+  <!-- Cloudflare Web Analytics. Без бисквитки и без localStorage — затова
+       сайтът пак няма нужда от банер за съгласие. -->
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon='{"token": "902a1340b733442da0ef0ebfe90903dc"}'></script>
+</head>
+<body class="podarak">
+
+<!-- Шапката на сайта я няма нарочно — вж. бележката в nasheto-myasto.html. -->
+
+<main class="podarak-stranica">
+
+  <div class="podarak-posveshtenie">
+    <h1>За Вальо</h1>
+    <p class="podarak-poslanie">Ти и аз — без край.</p>
+    <p class="podarak-ot">от Силвия</p>
+  </div>
+
+  <!-- БЕЗ клас .reveal: той слага opacity:0 и разчита на скрипт да го върне.
+       На страница, чийто смисъл е тази песен, това значи празен екран, ако
+       скриптът не се зареди. -->
+  <figure class="podarak-kadar">
+    <img src="../assets/img/pesen-bez-kray-hero.jpg?v=6f17ec96"
+         srcset="../assets/img/pesen-bez-kray-hero-600.jpg?v=541fdc8e 600w, ../assets/img/pesen-bez-kray-hero.jpg?v=6f17ec96 1200w"
+         sizes="(max-width: 768px) 100vw, 720px" fetchpriority="high"
+         alt="Рисунка в стил комикс: вечер на хълм над долина — двама стоят прегърнати с гръб към нас и гледат осветените от залеза планини; до тях пейка и запален фенер."
+         width="1200" height="638">
+  </figure>
+
+  <div class="podarak-red">
+    <!-- Свалянето е ИЗВЪН .player нарочно: main.js слага клик върху целия
+         елемент и щракването по линка щеше да пуска и песента. -->
+    <div class="podarak-player player" data-src="../assets/audio/bez-kray.mp3?v=134c47a1"
+         role="button" tabindex="0" aria-label="Пусни „Без край“">
+      <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+      <div class="podarak-meta">
+        <h3>Без край</h3>
+        <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
+        <span class="time">3:11</span>
+      </div>
+    </div>
+    <a class="podarak-svali" href="../assets/audio/bez-kray.mp3?v=134c47a1"
+       download="Без край — Песента.mp3">Свали</a>
+  </div>
+
+  <!-- Дует: тя носи думите на Силвия, той отговаря като Вальо. Остават само тихите
+       обозначения кой пее. Производствените маркери ([Verse 1], [Stop]) ги няма, няма ги
+       и ударенията за Suno („тринайсти“, „пЕта“, „избиирам“) — те не са правопис.
+       Текстът е „ЗА ХОРА“ от pesenta-flags/bez-kray.txt, същият, който е вграден в MP3-то. -->
+  <div class="podarak-tekst">
+
+    <div class="strofa strofa-tiho">
+      <span class="glas">тя</span>
+      <p>(Ай-ай-ай) ти и аз — без край…</p>
+    </div>
+
+    <div class="strofa">
+      <span class="glas">тя</span>
+      <p>Не вярвах в приказки, не чаках чудеса,</p>
+      <p>а после дойде ти — и всичко стана ясно:</p>
+      <p>тринадесети юли,</p>
+      <p>две хиляди двадесет и пета…</p>
+      <p>оттогава съм твоя. Честно.</p>
+    </div>
+
+    <div class="strofa strofa-predpripev">
+      <span class="glas">тя</span>
+      <p>Вальо, избирам те — и днес, и всеки ден,</p>
+      <p>мечтите ни са общи, а пътят ни — един.</p>
+    </div>
+
+    <div class="strofa strofa-pripev">
+      <span class="glas">двамата</span>
+      <p>Обичам те, обичам те —</p>
+      <p>и сърцето ми го знае!</p>
+      <p>Обичам те, обичам те —</p>
+      <p>ти и аз — без край, без край! (ай-ай)</p>
+      <p>(Ай-ай-ай) ти и аз — без край,</p>
+      <p>(ай-ай-ай) ти и аз — без край!</p>
+    </div>
+
+    <div class="strofa">
+      <span class="glas">той</span>
+      <p>И аз те избирам — сега и завинаги,</p>
+      <p>ръка за ръка, накъдето поискаш — напред.</p>
+      <p>Един дом, една посока, един живот —</p>
+      <p>и няма буря, дето да ни спре.</p>
+    </div>
+
+    <div class="strofa strofa-predpripev">
+      <span class="glas">тя</span>
+      <p>Вальо, избирам те — и днес, и всеки ден,</p>
+    </div>
+
+    <div class="strofa strofa-predpripev">
+      <span class="glas">той</span>
+      <p>и аз до теб — и днес, и всеки ден,</p>
+    </div>
+
+    <div class="strofa strofa-predpripev">
+      <span class="glas">двамата</span>
+      <p>мечтите ни са общи, а пътят ни — един.</p>
+    </div>
+
+    <div class="strofa strofa-pripev">
+      <span class="glas">двамата</span>
+      <p>Обичам те, обичам те —</p>
+      <p>и сърцето ми го знае!</p>
+      <p>Обичам те, обичам те —</p>
+      <p>ти и аз — без край, без край! (ай-ай)</p>
+      <p>(Ай-ай-ай) ти и аз — без край,</p>
+      <p>(ай-ай-ай) ти и аз — без край!</p>
+    </div>
+
+    <div class="strofa strofa-most">
+      <span class="glas">тя</span>
+      <p>Не ми трябва цял свят, не ми трябват звезди —</p>
+      <p>стига ми до мене да си ти.</p>
+      <p>И ако ме питат какво е любов,</p>
+      <p>ще кажа: Вальо — и всеки ден е нов.</p>
+    </div>
+
+    <div class="strofa strofa-pripev">
+      <span class="glas">двамата</span>
+      <p>Обичам те, обичам те —</p>
+      <p>и сърцето ми го знае!</p>
+      <p>Обичам те, обичам те —</p>
+      <p>ти и аз — без край, без край! (ай-ай)</p>
+      <p>(Ай-ай-ай) ти и аз — без край,</p>
+      <p>(ай-ай-ай) ти и аз — без край!</p>
+    </div>
+
+    <div class="strofa strofa-tiho">
+      <span class="glas">тя</span>
+      <p>Обичам те, Вальо!</p>
+    </div>
+
+    <div class="strofa strofa-tiho">
+      <span class="glas">той</span>
+      <p>И аз те обичам!</p>
+    </div>
+
+    <div class="strofa strofa-tiho">
+      <span class="glas">тя</span>
+      <p>Ти и аз… без край.</p>
+    </div>
+
+  </div>
+
+  <div class="podarak-kraj">
+    <p class="podarak-red-kraj">И всеки ден е нов.</p>
+    <p class="podarak-imena">Вальо &amp; Силвия</p>
+  </div>
+
+  <!-- Знакът е подпис, не реклама — стои тихо. От 13.10.2026 (решение на Мирослав след
+       анализа) води към сайта: песента я чуват и гостите, а това е единственият път
+       обратно. utm_source=pesen — така идването се вижда в брифа (landing). -->
+  <div class="podarak-znak">
+    <a href="https://pesenta.bg/?utm_source=pesen" aria-label="Песента — песен по поръчка"><img src="../assets/img/logo.svg?v=a4b086db" alt="Песента" width="120" height="28"></a>
+    <p class="podarak-znak-red"><a href="https://pesenta.bg/?utm_source=pesen">Песен по поръчка · pesenta.bg</a></p>
+  </div>
+
+</main>
+
+<script src="../assets/js/main.js" defer></script>
+</body>
+</html>
