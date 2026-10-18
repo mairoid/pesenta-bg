@@ -63,6 +63,8 @@ function lo(u) { gr++; console.log("    ✗ " + u); }
 
   /* 6. текстът на страницата = вграденият в MP3-то */
   var stranica = (telo.match(/<div class="podarak-tekst">[\s\S]*?\n  <\/div>/) || [""])[0]
+    /* дуетите: „тя/той/двамата“ са само на страницата, в MP3-то ги няма (18.10.2026) */
+    .replace(/<span class="glas">[^<]*<\/span>/g, "")
     .replace(/<[^>]+>/g, "\n").split("\n").map(function (x) { return x.trim(); })
     .filter(Boolean).join("\n");
   var b = fs.readFileSync(R + "assets/audio/" + slug + ".mp3");
