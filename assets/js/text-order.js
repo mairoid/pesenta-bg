@@ -27,6 +27,7 @@
   /* Втори, независим път за разказа. FormSubmit е трета страна на безплатен
      план; тук записът е наш и стои при поръчката в базата. */
   var BRIEF_ENDPOINT = "https://pesenta-nap.pesenta-nap.workers.dev/brief";
+  var SNIMKI_ENDPOINT = "https://pesenta-nap.pesenta-nap.workers.dev/snimki";
   /* Ваучер за песен (15.10.2026): същият Worker — адресът идва от BRIEF_ENDPOINT,
      за да не се зашива втори път. */
   var WORKER = BRIEF_ENDPOINT.replace(/\/brief$/, "");
@@ -234,7 +235,35 @@
 
   /* Снимките и гласът тръгват в отделна заявка, преди поръчката. Отговорът е непрозрачен (no-cors),
      затова не чакаме повече от 8 секунди — клиентът не бива да стои пред касата заради нас. */
+  /* Снимките първо през нашия Worker (20.10.2026): FormSubmit разпознава формата по Referer,
+     а вграденият браузър на ChatGPT не го праща — и снимките от chatgpt.com тихо се губеха
+     (код 200 със страница за грешка). Worker-ът отговаря истински, затова чакаме отговора
+     (до 30 s) и падаме към FormSubmit само ако той откаже. */
+  function snimkiKamWorker(orderNo) {
+    if (!snimki.length) return Promise.resolve(false);
+    var fd = new FormData();
+    fd.append("order_no", orderNo);
+    fd.append("tip", "бърза");
+    snimki.forEach(function (s, i) { fd.append("snimka_" + (i + 1), s.blob, "snimka-" + orderNo + "-" + (i + 1) + ".jpg"); });
+    var ac = window.AbortController ? new AbortController() : null;
+    var spri = setTimeout(function () { if (ac) ac.abort(); }, 30000);
+    sendBtn.textContent = t("Качваме снимките…", "Uploading photos…");
+    return fetch(SNIMKI_ENDPOINT, { method: "POST", body: fd, signal: ac ? ac.signal : undefined })
+      .then(function (r) { return r.ok ? r.json() : { ok: false }; })
+      .then(function (j) { return !!(j && j.ok); })
+      .catch(function () { return false; })
+      .then(function (ok) { clearTimeout(spri); return ok; });
+  }
+
   function pratiSnimki(orderNo) {
+    if (!snimki.length && !glasBlob) return Promise.resolve();
+    return snimkiKamWorker(orderNo).then(function (snimkiStignaha) {
+      if (snimkiStignaha && !glasBlob) return;
+      return pratiPrezFormSubmit(orderNo, snimkiStignaha ? [] : snimki);
+    });
+  }
+
+  function pratiPrezFormSubmit(orderNo, snimki) {
     if (!snimki.length && !glasBlob) return Promise.resolve();
     var fd = new FormData();
     fd.append("_subject", (glasBlob ? (snimki.length ? "Гласов разказ и снимки — " : "Гласов разказ — ") : "Снимки за обложката — ") + orderNo);
@@ -245,7 +274,9 @@
     if (glasBlob) fd.append("glasovo", glasBlob, "glasovo-" + orderNo + "." + glasExt(glasBlob));
     snimki.forEach(function (s, i) { fd.append("snimka_" + (i + 1), s.blob, "snimka-" + orderNo + "-" + (i + 1) + ".jpg"); });
     return Promise.race([
-      fetch(FORM_ENDPOINT_NATIVE, { method: "POST", mode: "no-cors", body: fd }).catch(function () {}),
+      /* referrerPolicy изрично: без Referer FormSubmit не приема (вж. горе) — това спасява
+         гласовия запис, ако браузърът по подразбиране не го праща. */
+      fetch(FORM_ENDPOINT_NATIVE, { method: "POST", mode: "no-cors", body: fd, referrerPolicy: "strict-origin-when-cross-origin" }).catch(function () {}),
       /* гласът е до няколко MB — на мобилни данни качването иска повече време */
       new Promise(function (res) { setTimeout(res, glasBlob ? 25000 : 8000); })
     ]);

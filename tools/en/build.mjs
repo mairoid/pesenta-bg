@@ -44,7 +44,11 @@ function glava(p) {
   <meta charset="UTF-8">
   <script>document.documentElement.classList.add("js");setTimeout(function(){if(!window.__reveal)document.documentElement.classList.remove("js")},4000)</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
-  <meta name="theme-color" content="#0b0a1a">
+${p.file === "index.html" ? `  <!-- Изрично (20.10.2026): вграденият браузър на ChatGPT по подразбиране не праща Referer, а
+       FormSubmit без него отхвърля гласовия запис и снимките. Това е стойността по подразбиране
+       на всеки нормален браузър — тук само я налагаме. -->
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+` : ""}  <meta name="theme-color" content="#0b0a1a">
   <meta name="application-name" content="Pesenta">
   <meta name="apple-mobile-web-app-title" content="Pesenta">
   <title>${esc(p.title)}</title>

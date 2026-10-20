@@ -14,6 +14,7 @@
      GET  /p/<поръчка>?t=…      — чакалнята на песента; 302 към страницата ѝ, щом page_url е зададен
      POST /vaucher/nov, GET /vaucher/proverka, POST /vaucher/izpolzvai,
      GET  /vaucher/pdf/<ref>?t=… — ваучер за песен (vaucher.js; 15.10.2026)
+     POST /snimki              — снимките за обложката → писмо с прикачени (snimki.js; 20.10.2026)
 
    Тайните се задават с `wrangler secret put`, никога в кода — виж README.md.
    ───────────────────────────────────────────────────────────────────── */
@@ -28,6 +29,7 @@ import {
   REF_RE as VCH_RE, generirajKod, normKod, vLimita, chetiTelo, vjson, esc,
   handleVaucherNov, handleVaucherProverka, noviRef, vaucherBlokHtml
 } from "./vaucher.js";
+import { handleSnimki } from "./snimki.js";
 
 export default {
   async fetch(request, env, ctx) {
@@ -80,6 +82,13 @@ export default {
     if (url.pathname === "/brief") {
       if (request.method === "OPTIONS") return cors(new Response(null, { status: 204 }), env);
       if (request.method === "POST") return cors(await handleBrief(request, env), env);
+    }
+
+    /* Снимките за обложката (20.10.2026) — вместо FormSubmit, който без Referer
+       (вграденият браузър на ChatGPT) мълчаливо ги губи. Виж snimki.js. */
+    if (url.pathname === "/snimki") {
+      if (request.method === "OPTIONS") return cors(new Response(null, { status: 204 }), env);
+      if (request.method === "POST") return cors(await handleSnimki(request, env), env);
     }
 
     /* Анонимни събития от сайта (14.10.2026): кое е натиснато, на коя страница.
@@ -960,7 +969,7 @@ export async function notifyVatreshno(env, n) {
     if (dop.snimki) {
       trevogi += "<p style=\"background:#EAF2FB;border-left:4px solid #2E6DA4;padding:10px 14px\">" +
         "<strong>Клиентът е приложил " + dop.snimki + (dop.snimki === 1 ? " снимка" : " снимки") +
-        ".</strong> Те идват САМО в отделно писмо от FormSubmit „Снимки за обложката — " +
+        ".</strong> Те идват САМО в отделно писмо „Снимки за обложката — " +
         xmlEscape(String(n.order_no)) + "“. Ако то липсва, поискай ги от клиента.</p>";
     }
 

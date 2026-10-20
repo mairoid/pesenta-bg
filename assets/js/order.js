@@ -26,6 +26,7 @@
      затова пълните поръчки стояха в админа като „без разказ“, а картичката
      нямаше откъде да вземе името на получателя. Същият beacon, същото text/plain. */
   var BRIEF_ENDPOINT = "https://pesenta-nap.pesenta-nap.workers.dev/brief";
+  var SNIMKI_ENDPOINT = "https://pesenta-nap.pesenta-nap.workers.dev/snimki";
   function atr(k) { try { return sessionStorage.getItem(k) || ""; } catch (e) { return ""; } }
   var ORDER_EMAIL = "sales@pesenta.bg";
 
@@ -802,8 +803,34 @@
     };
 
     btnNext.disabled = true;
-    btnNext.textContent = "Изпращане…";
+    btnNext.textContent = snimki.length ? "Качваме снимките…" : "Изпращане…";
 
+    /* Снимките първо през нашия Worker (20.10.2026) — без Referer (вграденият браузър на
+       ChatGPT) нативният POST към FormSubmit връща страница с грешка и губи ЦЯЛАТА заявка.
+       Стигнат ли, без глас заявката тръгва по AJAX пътя, който не зависи от Referer. */
+    snimkiKamWorker(orderNo).then(function (snimkiStignaha) {
+      btnNext.textContent = "Изпращане…";
+      if (snimkiStignaha) payload["Снимки за обложката"] = "ДА — " + snimki.length + ", в ОТДЕЛНО писмо „Снимки за обложката — " + orderNo + "“";
+      izprati(orderNo, t, d, brief, payload, snimkiStignaha ? [] : snimki);
+    });
+  }
+
+  function snimkiKamWorker(orderNo) {
+    if (!snimki.length) return Promise.resolve(false);
+    var fd = new FormData();
+    fd.append("order_no", orderNo);
+    fd.append("tip", "пълна");
+    snimki.forEach(function (s, i) { fd.append("snimka_" + (i + 1), s.blob, "snimka-" + orderNo + "-" + (i + 1) + ".jpg"); });
+    var ac = window.AbortController ? new AbortController() : null;
+    var spri = setTimeout(function () { if (ac) ac.abort(); }, 30000);
+    return fetch(SNIMKI_ENDPOINT, { method: "POST", body: fd, signal: ac ? ac.signal : undefined })
+      .then(function (r) { return r.ok ? r.json() : { ok: false }; })
+      .then(function (j) { return !!(j && j.ok); })
+      .catch(function () { return false; })
+      .then(function (ok) { clearTimeout(spri); return ok; });
+  }
+
+  function izprati(orderNo, t, d, brief, payload, snimki) {
     /* Има гласов запис → нативен multipart POST: AJAX ендпойнтът на FormSubmit
        не пренася прикачени файлове. Страницата се сменя с THANKS_URL, затова
        заявката се записва предварително. */
