@@ -2,8 +2,8 @@ User-agent: *
 Allow: /
 
 # AI търсачки и асистенти — изрично добре дошли (20.10.2026). Клиенти вече идват
-# от ChatGPT (landing ?utm_source=chatgpt.com). Без Disallow: /docs/ не съществува
-# на живо (deploy.yml го трие преди качване), а забраната само сваляше оценката.
+# от ChatGPT (landing ?utm_source=chatgpt.com). Забрани няма: папката docs не се
+# качва (deploy.yml я трие), а старото правило за нея само сваляше оценката.
 User-agent: OAI-SearchBot
 User-agent: ChatGPT-User
 User-agent: GPTBot
