@@ -40,6 +40,11 @@ jobs:
       # става публичен, без никой да е поискал.
       - name: Strip non-site files from the artifact
         run: rm -rf nap-audit NAP-PLAN.md README.md CLAUDE.md .gitignore .github worker marketing docs
+      # 20.10.2026: коментарите остават в repo-то (там са бележките защо), но не тръгват към
+      # посетителя. style.css блокира първия текст, а коментарите в него са 24 от 39 KB
+      # компресиран. Lighthouse локално (телефон): 85 → 88, FCP 2,12 → 1,69 s. JS не се пипа.
+      - name: Strip comments from HTML and CSS
+        run: node tools/bez-komentari.mjs .
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

@@ -106,6 +106,10 @@
   }
 
   function zaredi() {
+    /* Постерът (70 KB) е в data-poster, не в poster: браузърът тегли poster и на скрито
+       видео — на телефон, където секцията никога не се показва, той ядеше лентата на
+       CSS-а и шрифтовете точно преди първия текст (Lighthouse, 20.10.2026). */
+    if (vid.dataset.poster && !vid.poster) vid.poster = vid.dataset.poster;
     var otkazano = false;
     var ctrl = ("AbortController" in window)
       ? new AbortController()
