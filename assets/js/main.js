@@ -277,6 +277,7 @@
         var pct = (audio.currentTime / audio.duration) * 100;
         fill.style.right = (100 - pct) + "%";
         time.textContent = fmt(audio.currentTime);
+        kazhiStoinost(pct / 100);
       }
     });
 
@@ -284,6 +285,7 @@
       pause();
       fill.style.right = "100%";
       time.textContent = fmt(audio.duration);
+      kazhiStoinost(0);
     });
 
     /* целият ред е бутон: клик или Enter/Space пуска и спира песента */
@@ -322,6 +324,17 @@
     function risuvai(del) {
       fill.style.right = (100 - del * 100) + "%";
       if (audio.duration) time.textContent = fmt(del * audio.duration);
+      kazhiStoinost(del);
+    }
+
+    /* Плъзгачът казва на екранния четец къде е — role="slider" без
+       aria-valuenow е грешка за достъпност (20.10.2026). */
+    function kazhiStoinost(del) {
+      if (!bar) return;
+      bar.setAttribute("aria-valuenow", String(Math.round(del * 100)));
+      if (audio.duration) {
+        bar.setAttribute("aria-valuetext", fmt(del * audio.duration) + (document.documentElement.lang === "en" ? " of " : " от ") + fmt(audio.duration));
+      }
     }
 
     bar.addEventListener("pointerdown", function (e) {
@@ -356,6 +369,12 @@
        Пет секунди на натискане, трийсет с Shift. */
     bar.setAttribute("role", "slider");
     bar.setAttribute("tabindex", "0");
+    /* В HTML-а лентата е aria-hidden (без скрипт е само украса). Щом стане плъзгач,
+       скритото трябва да падне: фокусируем елемент под aria-hidden е грешка (20.10.2026). */
+    bar.removeAttribute("aria-hidden");
+    bar.setAttribute("aria-valuemin", "0");
+    bar.setAttribute("aria-valuemax", "100");
+    kazhiStoinost(0);
     bar.setAttribute("aria-label", document.documentElement.lang === "en" ? "Seek the song" : "Превърти песента");
     bar.addEventListener("keydown", function (e) {
       if (!audio.duration) return;
