@@ -19,11 +19,14 @@
      ?/# и кратко пояснение — без бисквитки, без номер на посетител, без IP
      (Worker-ът не го пази). sendBeacon, защото често следва смяна на
      страницата. Името трябва да е в SABITIYA в worker/src/index.js, иначе
-     Worker-ът го отказва. Провал тук никога не спира действието. */
+     Worker-ът го отказва. Провал тук никога не спира действието.
+     Броят се само посещенията на pesenta.bg (22.10.2026): локалният преглед
+     (localhost:4173) пишеше в живата таблица — събитие от страница, която
+     още не беше качена. */
   var SABITIE_URL = "https://pesenta-nap.pesenta-nap.workers.dev/sabitie";
   window.psnSabitie = function (ime, detail) {
     try {
-      if (!navigator.sendBeacon) return;
+      if (!navigator.sendBeacon || location.hostname !== "pesenta.bg") return;
       navigator.sendBeacon(SABITIE_URL, new Blob([JSON.stringify({
         e: ime, p: location.pathname, d: detail == null || detail === "" ? undefined : String(detail).slice(0, 80)
       })], { type: "text/plain;charset=UTF-8" }));
