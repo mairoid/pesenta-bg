@@ -66,12 +66,15 @@ foreach ($p in @(@{s="babo-asi";        p="rojden-den-asi"; m="babo-asi-1.88.png
                  @{s="kade-sa-kapachkite";   p="kapachkite"; m="realist-v1-1.88.jpg"},
                  @{s="kade-sa-kapachkite-2"; p="kapachkite"; m="realist-v2-1.88.jpg"},
                  @{s="s-teb-vseki-den-e-yuli"; p="valio"; m="s-teb-1.88.jpg"},
-                 @{s="bez-kray";               p="valio"; m="bez-kray-1.88.jpg"})) {
+                 @{s="bez-kray";               p="valio"; m="bez-kray-1.88.jpg"},
+                 @{s="lelya-svetla"; p="lelq-svetla"; m="lelya-svetla-1.88.jpg"; k="lelya-svetla-16x9.jpg"})) {
     if ($Samo -and $p.s -ne $Samo) { continue }
     "  == $($p.s) =="
     $iz = "$MAS\$($p.p)\$($p.m)"
     Izrejzi-I-Mashtabiray $iz "$IZH\pesen-$($p.s)-hero.jpg"     1200 638
     Izrejzi-I-Mashtabiray $iz "$IZH\pesen-$($p.s)-hero-600.jpg"  600 319
     Izrejzi-I-Mashtabiray $iz "$IZH\og-$($p.s).jpg"             1200 630
+    # k = мастер 16:9 на клипа: постерът е с размера на видеото, иначе кадърът подскача.
+    if ($p.k) { Izrejzi-I-Mashtabiray "$MAS\$($p.p)\$($p.k)" "$IZH\pesen-$($p.s)-klip-poster.jpg" 1280 720 }
     ""
 }
