@@ -148,7 +148,7 @@ ${spisak.map((x) => `            <a href="${x.file}">${esc(x.menu)}</a>`).join("
   <div class="container">
     <div class="footer-grid">
       <div class="footer-col" style="max-width: 320px;">
-        <img src="../assets/img/logo-en.svg" alt="Pesenta" width="160" style="margin-bottom: 1rem;">
+        <img src="../assets/img/logo-en.svg" alt="Pesenta" width="160" height="37" style="margin-bottom: 1rem;">
         <p>Custom songs for every occasion. Your story, our music.</p>
         <div class="footer-social">
 ${SOCIAL}
