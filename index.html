@@ -83,7 +83,8 @@
         "@id": "https://pesenta.bg/#org",
         "name": "Песента",
         "url": "https://pesenta.bg/",
-        "logo": "https://pesenta.bg/assets/img/og-image.jpg",
+        "logo": { "@type": "ImageObject", "url": "https://pesenta.bg/assets/img/favicon-512.png", "width": 512, "height": 512 },
+        "image": "https://pesenta.bg/assets/img/produkt-pesen-1x1.jpg",
         "email": "sales@pesenta.bg",
         "description": "Персонализирани песни по поръчка за всеки повод — рожден ден, сватба, ергенско парти, годишнина.",
         "sameAs": [
@@ -110,7 +111,18 @@
         "provider": { "@id": "https://pesenta.bg/#org" },
         "areaServed": "BG",
         "description": "Авторска персонализирана песен по твоята история: текст, композиция и продукция. Комбинирай стилове, песни на 14 езика, доставка до 24 часа.",
+        "image": ["https://pesenta.bg/assets/img/produkt-pesen-1x1.jpg","https://pesenta.bg/assets/img/produkt-pesen-4x3.jpg","https://pesenta.bg/assets/img/produkt-pesen-16x9.jpg"],
         "offers": { "@type": "Offer", "name": "Песен по поръчка", "price": "19.90", "priceCurrency": "EUR" }
+      },
+      {
+        "@type": "Product",
+        "@id": "https://pesenta.bg/#pesen",
+        "name": "Песен по поръчка",
+        "description": "Една авторска песен по твоята история: текст и музика, MP3 с текста и лична страница на песента, до 24 часа. Една безплатна корекция. На български или още 13 езика.",
+        "image": ["https://pesenta.bg/assets/img/produkt-pesen-1x1.jpg","https://pesenta.bg/assets/img/produkt-pesen-4x3.jpg","https://pesenta.bg/assets/img/produkt-pesen-16x9.jpg"],
+        "brand": { "@type": "Brand", "name": "Песента" },
+        "category": "Персонализирана песен за подарък",
+        "offers": { "@type": "Offer", "url": "https://pesenta.bg/#order", "price": "19.90", "priceCurrency": "EUR", "availability": "https://schema.org/InStock", "seller": { "@id": "https://pesenta.bg/#org" } }
       },
       {
         "@type": "FAQPage",
@@ -1430,7 +1442,7 @@
 <!-- voice-order.js вече го няма (14.09.2026): гласовата поръчка отпадна; остана „Разкажи с гласово“ в poruchka.html.
      Скриптът и без това излиза на 15-ия ред без #fast-rec, но няма смисъл да
      се тегли. -->
-<script src="assets/js/text-order.js?v=9fc1863d" defer></script>
+<script src="assets/js/text-order.js?v=59ec1df1" defer></script>
 <!-- Плаващ бутон за връзка: Viber на мобилно (+359899456326 — ПЛЕЙСХОЛЪР номер, смени с реалния), имейл при десктоп -->
 <a class="float-contact float-contact--mobile" href="viber://chat?number=+359899456326" aria-label="Пиши ни във Viber">
   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>

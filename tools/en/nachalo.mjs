@@ -61,7 +61,7 @@ export function nachalo() {
     "@graph": [
       {
         "@type": "Organization", "@id": "https://pesenta.bg/#org", name: "Pesenta", alternateName: "Песента",
-        url: "https://pesenta.bg/", email: EMAIL, logo: "https://pesenta.bg/assets/img/og-image.jpg",
+        url: "https://pesenta.bg/", email: EMAIL, logo: { "@type": "ImageObject", url: "https://pesenta.bg/assets/img/favicon-512.png", width: 512, height: 512 }, image: "https://pesenta.bg/assets/img/produkt-pesen-1x1.jpg",
         description: "Personalised custom songs for every occasion — birthday, wedding, bachelor party, anniversary.",
         sameAs: ["https://www.tiktok.com/@pesentabg", "https://www.instagram.com/pesenta.bg/", "https://www.facebook.com/pesenta.bg", "https://www.youtube.com/@pesenta", "https://www.trustpilot.com/review/pesenta.bg"]
       },
