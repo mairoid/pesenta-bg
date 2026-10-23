@@ -35,7 +35,7 @@
   <meta property="og:title" content="Песента · Песен по поръчка за 19,90 €, готова до 24 часа">
   <meta property="og:description" content="Авторска песен по твоята история — 19,90 €, готова до 24 часа, идва по имейл. Текст, музика и безплатна корекция. Без абонамент.">
   <meta property="og:url" content="https://pesenta.bg/">
-  <meta property="og:image" content="https://pesenta.bg/assets/img/og-image.jpg">
+  <meta property="og:image" content="https://pesenta.bg/assets/img/produkt-pesen-og.jpg?v=8cad0e5e">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:type" content="image/jpeg">
@@ -44,7 +44,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Песента · Песен по поръчка за 19,90 €, готова до 24 часа">
   <meta name="twitter:description" content="Авторска песен по твоята история — 19,90 €, готова до 24 часа, идва по имейл. Текст, музика и безплатна корекция. Без абонамент.">
-  <meta name="twitter:image" content="https://pesenta.bg/assets/img/og-image.jpg">
+  <meta name="twitter:image" content="https://pesenta.bg/assets/img/produkt-pesen-og.jpg?v=8cad0e5e">
 
   <!-- Шрифтове -->
   <!-- Критичните (кирилски) шрифтове тръгват веднага, вместо да чакат CSS-а -->
@@ -119,7 +119,7 @@
         "@id": "https://pesenta.bg/#pesen",
         "name": "Песен по поръчка",
         "description": "Една авторска песен по твоята история: текст и музика, MP3 с текста и лична страница на песента, до 24 часа. Една безплатна корекция. На български или още 13 езика.",
-        "image": ["https://pesenta.bg/assets/img/produkt-pesen-1x1.jpg","https://pesenta.bg/assets/img/produkt-pesen-4x3.jpg","https://pesenta.bg/assets/img/produkt-pesen-16x9.jpg"],
+        "image": ["https://pesenta.bg/assets/img/produkt-pesen-1x1.jpg","https://pesenta.bg/assets/img/produkt-pesen-4x3.jpg","https://pesenta.bg/assets/img/produkt-pesen-16x9.jpg","https://pesenta.bg/assets/img/produkt-pesen-kadar.jpg"],
         "brand": { "@type": "Brand", "name": "Песента" },
         "category": "Персонализирана песен за подарък",
         "offers": { "@type": "Offer", "url": "https://pesenta.bg/#order", "price": "19.90", "priceCurrency": "EUR", "availability": "https://schema.org/InStock", "seller": { "@id": "https://pesenta.bg/#org" } }
@@ -1058,6 +1058,13 @@
       </figure>
       <div class="pricing-grid pricing-single">
         <div class="price-card featured reveal">
+          <!-- Снимката на продукта (23.10.2026): ChatGPT и Bing слагаха до Песента чужди картинки —
+               нашите живееха само в JSON-LD. Видима <img> с alt до цената е най-силният сигнал
+               коя картинка е наша. Кадърът е без надписи — марката е неонът; текстът е отдолу. -->
+          <img class="price-foto" src="assets/img/produkt-pesen-kadar.jpg?v=f9e2b463"
+               srcset="assets/img/produkt-pesen-kadar-600.jpg?v=1deb8d93 600w, assets/img/produkt-pesen-kadar.jpg?v=f9e2b463 1200w"
+               sizes="(max-width: 520px) 92vw, 460px" width="1200" height="900" loading="lazy" decoding="async"
+               alt="Песента — песен по поръчка за 19,90 €: студиен микрофон и неонов надпис pesenta.bg">
           <h3>Песен по поръчка</h3>
           <div class="price-line"><span class="amount">19,90 €</span></div>
           <!-- НЕ „с включен ДДС": дружеството е регистрирано по чл. 97а ЗДДС,

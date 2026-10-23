@@ -1138,6 +1138,18 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   text-align: center;
 }
 
+/* Снимката на продукта горе в картата — от ръб до ръб, отрязва се от заоблянето на картата. */
+.price-foto {
+  display: block;
+  width: calc(100% + 2 * var(--sp-6));
+  max-width: none; /* общото img { max-width: 100% } иначе я спира преди десния ръб */
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  margin: calc(-1 * var(--sp-8)) calc(-1 * var(--sp-6)) var(--sp-6);
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
 .price-card ul { list-style: none; margin: 0 0 var(--sp-6); padding: 0; flex: 1; }
 .price-card li {
   padding: var(--sp-2) 0 var(--sp-2) var(--sp-6);
