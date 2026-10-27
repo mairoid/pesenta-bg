@@ -20,6 +20,10 @@
   /* Кехлибарено — само за страниците-подарък: припевът и личното
      послание. Топло и по-тихо от розовото, за да не звучи търговски. */
   --kekhlibar: #FFC46B;
+  /* Грешка и успех — по един цвят (бяха 6 червени и 2 зелени на ръка).
+     И двата са над 6:1 върху тъмния фон. */
+  --err: #ff8080;
+  --ok: #6ee7a8;
   /* Преливането pink→orange е ЗА ДЕЙСТВИЕ — стои само на това, което се
      натиска: .btn-primary (собствен градиент), бутоните за пускане и техните
      .playing състояния, плаващият контакт, избраният чип. Плюс логото.
@@ -608,7 +612,7 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
    .step-num тук не е в ъгъла на карта, а в реда — затова позицията се връща. */
 .steps-short { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-4); max-width: 760px; }
 .steps-short li { display: flex; align-items: flex-start; gap: var(--sp-4); }
-.steps-short .step-num { position: static; flex: none; width: 36px; height: 36px; background: var(--grad); color: var(--ink); border: 0; font-size: var(--fs-base); }
+.steps-short .step-num { position: static; flex: none; width: 36px; height: 36px; background: var(--pink); color: var(--ink); border: 0; font-size: var(--fs-base); }
 .steps-short p { margin: 0; padding-top: 0.35rem; font-size: var(--fs-lg); color: var(--muted); }
 .steps-short strong { color: var(--text); }
 
@@ -1134,7 +1138,7 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   margin: var(--sp-3) 0 0;
   font-size: var(--fs-sm);
   font-weight: 600;
-  color: #6ee7a8;
+  color: var(--ok);
   text-align: center;
 }
 
@@ -1344,7 +1348,7 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 .footer-fold summary::-webkit-details-marker { display: none; }
 .footer-fold summary .arrow { margin-left: auto; font-size: 1.1em; transition: transform var(--dur-fast) var(--ease); }
 .footer-fold[open] summary .arrow { transform: rotate(180deg); }
-.footer-fold summary:focus-visible { outline: 2px solid var(--kekhlibar); outline-offset: 3px; }
+.footer-fold summary:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
 @media (max-width: 768px) {
   /* Отстъпите са свити, за да е подвалът под 600 px с пет цели по 44 px:
      логото 211 + 5×45 + долният ред 94 вече са 530. */
@@ -1518,7 +1522,7 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
    да реши (писмо или обаждане до нас), не грешка. */
 .dostavka-red { margin: 0.45rem 0 0; font-size: var(--fs-sm); color: var(--muted); line-height: 1.5; min-height: 1.5em; }
 .dostavka-red strong { color: var(--text); font-weight: 600; }
-.dostavka-red.blizo, .dostavka-red.blizo strong { color: var(--kekhlibar); }
+.dostavka-red.blizo, .dostavka-red.blizo strong { color: var(--orange); }
 .dostavka-red a { color: var(--orange); text-decoration: underline; }
 
 .field input[type="text"],
@@ -1544,7 +1548,7 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   outline: none;
   border-color: var(--pink);
 }
-.field input.invalid, .field textarea.invalid { border-color: #ff5b5b; }
+.field input.invalid, .field textarea.invalid { border-color: var(--err); }
 
 .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4); }
 
@@ -1569,12 +1573,12 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
    вид: гаси градиента за тъмна червена повърхност. Така и състоянието се
    различава от поканата „Разкажи с глас“, вместо да я повтаря. */
 .voice-btn.recording {
-  border-color: #ff5b5b;
-  color: #ff8080;
+  border-color: var(--err);
+  color: var(--err);
 }
 .btn-primary.voice-btn.recording {
   background: rgba(255, 91, 91, 0.16);
-  color: #ffc2c2;
+  color: var(--err);
   box-shadow: none;
 }
 @media (hover: hover) {
@@ -1589,8 +1593,8 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   50% { opacity: 0.35; }
 }
 .voice-status { color: var(--muted); font-size: var(--fs-sm); flex: 1; min-width: 200px; }
-.voice-status.err { color: #ff8080; }
-.voice-status.rec { color: #ff8080; }
+.voice-status.err { color: var(--err); }
+.voice-status.rec { color: var(--err); }
 .voice-play { display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; margin-top: var(--sp-3); }
 /* display:flex бие атрибута hidden — без това плейърът стоеше празен (0:00) преди запис */
 .voice-play[hidden] { display: none; }
@@ -1703,8 +1707,8 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 .promo-row { display: flex; gap: var(--sp-3); }
 .promo-row input { flex: 1; }
 .promo-msg { font-size: var(--fs-md); margin-top: var(--sp-2); }
-.promo-msg.ok { color: #4ade80; }
-.promo-msg.err { color: #ff8080; }
+.promo-msg.ok { color: var(--ok); }
+.promo-msg.err { color: var(--err); }
 
 .order-summary {
   margin-top: var(--sp-6);
@@ -1715,7 +1719,7 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 }
 .order-summary .row { display: flex; justify-content: space-between; padding: var(--sp-1) 0; color: var(--muted); font-size: var(--fs-md); }
 .order-summary .row.total { border-top: 1px solid var(--border); margin-top: var(--sp-2); padding-top: var(--sp-3); color: var(--text); font-weight: 800; font-size: var(--fs-xl); }
-.order-summary .row.discount { color: #4ade80; }
+.order-summary .row.discount { color: var(--ok); }
 
 .review-box {
   padding: var(--sp-6) var(--sp-6);
@@ -1745,7 +1749,7 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   border-radius: var(--radius-sm);
   background: rgba(255, 91, 91, 0.12);
   border: 1px solid rgba(255, 91, 91, 0.4);
-  color: #ffb4b4;
+  color: var(--err);
   font-size: var(--fs-md);
   margin-top: var(--sp-4);
 }
@@ -2257,7 +2261,7 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   font-size: 0.8em;
   font-weight: 800;
   letter-spacing: 0.04em;
-  color: #ff5d5d;
+  color: var(--err);
   margin-left: var(--sp-2);
   vertical-align: 1px;
 }
@@ -2268,8 +2272,8 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
    останалите видими карти реално се "вдигат" на мястото ѝ, вместо да чакат
    празна дупка. hidden атрибутът идва чак след прехода (виж main.js). */
 #demo-filters { margin: 0 auto var(--sp-6); max-width: 760px; justify-content: center; }
-.chip--muted { color: #ff8a8a; opacity: 0.65; }
-.chip--muted.selected { background: rgba(255, 100, 100, 0.22); color: #ff8a8a; opacity: 1; }
+.chip--muted { color: var(--err); opacity: 0.8; } /* 0.65 даваше 3,8:1 — под 4,5 */
+.chip--muted.selected { background: rgba(255, 100, 100, 0.22); color: var(--err); opacity: 1; }
 .track-row.track-hide {
   opacity: 0;
   max-height: 0;
@@ -3031,7 +3035,7 @@ body.podarak {
 .vaucher-banner strong { color: var(--text); font-size: var(--fs-base); line-height: 1.45; }
 .vaucher-banner .hint { color: var(--muted); font-size: var(--fs-sm); font-weight: 400; display: block; }
 .vaucher-banner.err { border-color: rgba(255, 91, 91, 0.4); background: rgba(255, 91, 91, 0.12); }
-.vaucher-banner.err strong { color: #ffb4b4; font-weight: 600; font-size: var(--fs-md); }
+.vaucher-banner.err strong { color: var(--err); font-weight: 600; font-size: var(--fs-md); }
 
 /* Свитото поле за кода: тиха връзка, отваря поле + „Провери“ */
 .vaucher-kod .link-btn { font-size: var(--fs-md); min-height: 44px; text-underline-offset: 3px; }
@@ -3067,9 +3071,9 @@ body.podarak {
 .vaucher-str .vaucher-forma-sub { margin: 0 0 var(--sp-6); font-size: var(--fs-md); }
 .vaucher-forma .field-row .field { min-width: 0; }
 .vaucher-broyach { display: block; text-align: right; font-size: var(--fs-sm); color: var(--muted); margin-top: var(--sp-1); font-variant-numeric: tabular-nums; }
-.vaucher-broyach.blizo { color: var(--kekhlibar); }
+.vaucher-broyach.blizo { color: var(--orange); }
 .vaucher-forma .hint a { color: var(--orange); }
-.form-error.skoro { background: rgba(255, 196, 107, 0.10); border-color: rgba(255, 196, 107, 0.45); color: var(--kekhlibar); }
+.form-error.skoro { background: rgba(255, 161, 77, 0.10); border-color: rgba(255, 161, 77, 0.45); color: var(--orange); }
 
 /* Преглед: посланието като куплет върху нотен стан (приблизително — истинският вид е в PDF-а) */
 .vaucher-pregled {
@@ -3120,7 +3124,7 @@ body.podarak {
   display: inline-block;
   padding: 2px 7px;
   border-radius: 999px;
-  background: var(--grad);
+  background: var(--pink);
   color: var(--ink);
   font-size: 10.5px;
   font-weight: 800;
