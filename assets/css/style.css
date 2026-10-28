@@ -3191,3 +3191,14 @@ body.podarak {
 /* Пояснението под формата за кода (16.10.2026): основанието е съгласие — човекът го вижда преди „Изпрати“. */
 .email-capture .email-capture-note { flex-basis: 100%; font-size: var(--fs-sm); margin: 0; }
 .email-capture .email-capture-note a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+
+/* Подарък за футболен фен (28.10.2026): кадър под заглавието, решетка с отборите
+   на общата страница (картите са .occasion-card от началната), бележка за марките. */
+.fen-kadar { margin: var(--sp-6) 0 var(--sp-8); }
+.fen-kadar img { display: block; width: 100%; height: auto; border-radius: var(--radius); box-shadow: var(--shadow); }
+.fen-otbori { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--sp-4); margin: var(--sp-6) 0 var(--sp-8); }
+.fen-otbori .occasion-card { padding: var(--sp-4); text-decoration: none; }
+.fen-otbori .occasion-photo { width: calc(100% + var(--sp-4) * 2); max-width: none; margin: calc(var(--sp-4) * -1) calc(var(--sp-4) * -1) var(--sp-3); aspect-ratio: 16 / 9; object-fit: cover; height: auto; }
+.fen-otbori h3 { margin: 0 0 var(--sp-1); font-size: var(--fs-lg); color: var(--text); }
+.fen-otbori p { margin: 0; font-size: var(--fs-sm); line-height: 1.5; }
+.fen-belezhka { font-size: var(--fs-sm) !important; opacity: 0.85; border-left: 2px solid var(--border); padding-left: var(--sp-3); }
