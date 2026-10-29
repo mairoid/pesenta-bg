@@ -924,37 +924,12 @@
   else if (mq.addListener) mq.addListener(prilozhi);
 })();
 
-/* Фонът на „Как работи“ (29.10.2026). Картинката е в HTML-а и стига за телефон,
-   за изключени анимации и за пестене на данни. Видеото (0,77 MB) се тегли чак
-   след load и чак когато секцията е на екран разстояние; извън екрана спира,
-   за да не върти декодера напразно. */
+/* Тъмното студио зад началната страница (style.css, html.sait-fon, 29.10.2026):
+   класът се слага чак след load, за да не тегли картинката в критичния път. */
 (function () {
   "use strict";
-  var vid = document.querySelector(".kak-fon-media video");
-  if (!vid) return;
-  /* Тъмното студио зад цялата страница (style.css, html.sait-fon) — за всички
-     ширини, но чак след load. */
+  if (!document.getElementById("prah-bg")) return;   /* само началната */
   function saitFon() { document.documentElement.classList.add("sait-fon"); }
   if (document.readyState === "complete") saitFon();
   else window.addEventListener("load", saitFon, { once: true });
-
-  if (!("IntersectionObserver" in window)) return;
-  if (!window.matchMedia("(min-width: 768px)").matches) return;
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  if (navigator.connection && navigator.connection.saveData) return;
-
-  var zaredeno = false;
-  vid.addEventListener("playing", function () { vid.classList.add("is-on"); });
-
-  function nablyudavay() {
-    new IntersectionObserver(function (zapisi) {
-      var vidimo = zapisi[0].isIntersecting;
-      if (vidimo && !zaredeno) { zaredeno = true; vid.src = vid.dataset.src; }
-      if (vidimo) { var p = vid.play(); if (p && p.catch) p.catch(function () {}); }
-      else if (zaredeno) vid.pause();
-    }, { rootMargin: "100% 0px" }).observe(vid.parentNode);
-  }
-
-  if (document.readyState === "complete") nablyudavay();
-  else window.addEventListener("load", nablyudavay, { once: true });
 })();

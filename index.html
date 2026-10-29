@@ -197,6 +197,7 @@
           data-cf-beacon='{"token": "902a1340b733442da0ef0ebfe90903dc"}'></script>
 </head>
 <body>
+  <canvas id="prah-bg" aria-hidden="true"></canvas>
   <canvas id="noti-bg" aria-hidden="true"></canvas>
   <a class="skip-link" href="#main">Към съдържанието</a>
 
@@ -550,8 +551,8 @@
     </div>
   </section>
 
-  <!-- Кинематичният вход (scrub, 300vh) стоеше тук до 29.10.2026. Видеото
-       му сега е фон на „Как работи“ — виж там. -->
+  <!-- Кинематичният вход (scrub, 300vh) стоеше тук до 29.10.2026. От 29.10 е махнат:
+       кадър от видеото стои като тъмен фон зад цялата страница (html.sait-fon). -->
 
   <!-- ДЕМО ПЕСНИ -->
   <section class="section" id="demo">
@@ -928,15 +929,7 @@
   </section>
 
   <!-- КАК РАБОТИ -->
-  <section class="section kak-fon" id="kak-raboti">
-    <!-- Фонът е видеото от бившия кинематичен вход (29.10.2026): напред и назад,
-         за да се върти без скок, 0,77 MB. Картинката (29 KB, lazy) е за всички;
-         видеото го пуска main.js само на десктоп, когато секцията наближи, и
-         го спира, когато излезе от екрана. -->
-    <div class="kak-fon-media" aria-hidden="true">
-      <img src="assets/img/kak-raboti-fon.webp" alt="" width="1280" height="720" loading="lazy" decoding="async">
-      <video muted loop playsinline preload="none" tabindex="-1" data-src="assets/video/kak-raboti-fon.mp4"></video>
-    </div>
+  <section class="section" id="kak-raboti">
     <div class="container">
       <div class="section-head reveal">
         <span class="section-eyebrow">
@@ -1444,6 +1437,7 @@
 <script src="assets/js/lenta.js" defer></script>
 <script src="assets/js/main.js" defer></script>
 <script src="assets/js/noti-bg.js" defer></script>
+<script src="assets/js/prah-bg.js" defer></script>
 <script src="assets/js/znamena.js" defer></script>
 <!-- Линковете за плащане живеят на едно място. Бързите поръчки пращат клиента
      право на касата, затова конфигурацията трябва да е и тук, не само в

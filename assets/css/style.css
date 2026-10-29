@@ -125,21 +125,42 @@ body {
    main.js след load — 29 KB извън критичния път, и само на началната.
    ::before е преди #noti-bg в реда, затова нотите остават отгоре. */
 html.sait-fon body::before {
+  --fon-op: 0.15;
   content: "";
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
   background: url("../img/kak-raboti-fon.webp") 50% 50% / cover no-repeat;
-  opacity: 0.1;
-  filter: blur(3px);
+  opacity: var(--fon-op);
+  /* Контрастът оставя тъмното тъмно, а лампите и неонът изсветляват —
+     затова може повече непрозрачност, без микрофонът да тъмнее зад текста.
+     Маската приглушава лявата колона, където стоят заглавията. */
+  filter: blur(2px) brightness(1.45) contrast(1.3) saturate(1.15);
+  -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.75) 45%, #000 75%);
+          mask-image: linear-gradient(to right, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.75) 45%, #000 75%);
   transform: scale(1.03); /* blur-ът изсветлява ръбовете — малко увеличение ги скрива */
   animation: sait-fon-vlez 1.6s var(--ease) both;
 }
-@keyframes sait-fon-vlez { from { opacity: 0; } to { opacity: 0.1; } }
+/* На телефон кадърът се реже до средата — оставаше само тъмният микрофон.
+   Отместен е надясно към неона и лампата, без маска (текстът е на цяла ширина). */
+@media (max-width: 767px) {
+  html.sait-fon body::before {
+    --fon-op: 0.2;
+    background-position: 84% 40%;
+    -webkit-mask-image: none;
+            mask-image: none;
+  }
+}
+@keyframes sait-fon-vlez { from { opacity: 0; } to { opacity: var(--fon-op); } }
 @media (prefers-reduced-motion: reduce) {
   html.sait-fon body::before { animation: none; }
 }
+
+/* Прахът от видеото — топли светещи точки, които се носят (assets/js/prah-bg.js).
+   Над тъмното студио, под нотите и съдържанието. */
+#prah-bg { position: fixed; inset: 0; z-index: -1; pointer-events: none; width: 100%; height: 100%; opacity: 0; transition: opacity 2s var(--ease); }
+#prah-bg.is-on { opacity: 1; }
 
 img { max-width: 100%; display: block; }
 
@@ -763,27 +784,6 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
     box-shadow: 0 20px 44px -16px color-mix(in srgb, var(--glow) 50%, transparent);
   }
   .occasion-card:hover .occasion-photo { transform: scale(1.04); }
-}
-
-/* ---------- Фон на „Как работи“ (29.10.2026) ---------- */
-/* Текстът е отляво, затова отляво сянката е по-плътна; горе и долу се слива
-   с фона на страницата, за да няма ръб между секциите. */
-.kak-fon { position: relative; overflow: hidden; isolation: isolate; }
-.kak-fon-media { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
-.kak-fon-media img,
-.kak-fon-media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 60% 50%; }
-.kak-fon-media video { opacity: 0; transition: opacity 1.2s var(--ease); }
-.kak-fon-media video.is-on { opacity: 1; }
-.kak-fon-media::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(to bottom, var(--bg) 0%, rgba(11, 10, 26, 0) 22%, rgba(11, 10, 26, 0) 78%, var(--bg) 100%),
-    linear-gradient(to right, rgba(11, 10, 26, 0.88) 0%, rgba(11, 10, 26, 0.7) 50%, rgba(11, 10, 26, 0.45) 100%);
-}
-@media (max-width: 767px) {
-  .kak-fon-media::after { background: linear-gradient(to bottom, var(--bg) 0%, rgba(11, 10, 26, 0.8) 20%, rgba(11, 10, 26, 0.8) 80%, var(--bg) 100%); }
 }
 
 /* ---------- Кинематичен вход (scrub) ---------- */
