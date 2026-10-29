@@ -43,7 +43,7 @@
 
   var telefon = window.matchMedia("(max-width: 767px)").matches;
   var kalmo = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var BROY = telefon ? 21 : 45;
+  var BROY = telefon ? 34 : 45;
   var TON = 34;                    /* кехлибарено, като лампите във видеото */
   var STAPKA = telefon ? 1 / 30 : 0;
   var DPR = Math.min(1.5, window.devicePixelRatio || 1);
@@ -102,7 +102,8 @@
        преоразмеряваме само при нова ширина. */
     var w = platno.clientWidth, h = platno.clientHeight;
     if (w === W && W) return;
-    W = w; H = h;
+    W = w; H = Math.max(h, window.innerHeight);
+    platno.style.height = H + "px";   /* закована височина — платното не се разтяга после */
     platno.width = Math.round(W * DPR); platno.height = Math.round(H * DPR);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     while (prah.length < BROY) prah.push(nova());

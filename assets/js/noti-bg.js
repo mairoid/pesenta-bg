@@ -159,10 +159,31 @@
   var imaKliuch = imaGlif("𝄞");
   var liniiaOt = imaKliuch ? NASTROIKI.liniiaNachalo : NASTROIKI.kliuchX;
 
+  /* На телефон лентата с адреса се крие и показва при скрол и мени
+     innerHeight — всяко такова „resize“ пренареждаше платното и петолинието
+     (заставаше по сегашната позиция на хедъра) и фонът подскачаше (29.10.2026,
+     Миро). Там височината е тази на целия екран (100lvh, мерена със сонда),
+     а платното се пренарежда само при нова ширина — завъртане. */
+  var tesen = window.matchMedia("(max-width: 767px)").matches;
+  var sonda = null;
+  function visochinaEkran() {
+    if (!tesen) return window.innerHeight;
+    if (!sonda) {
+      sonda = document.createElement("div");
+      sonda.style.cssText = "position:fixed;top:0;left:0;width:0;height:100vh;height:100lvh;visibility:hidden;pointer-events:none";
+      document.body.appendChild(sonda);
+    }
+    return Math.max(sonda.offsetHeight, window.innerHeight);
+  }
+  function promyana() {
+    return window.innerWidth !== W || (!tesen && window.innerHeight !== H);
+  }
+
   function orazmeri() {
+    if (tesen && W && window.innerWidth === W) return;
     DPR = Math.min(window.devicePixelRatio || 1, 2);
     W = window.innerWidth;
-    H = window.innerHeight;
+    H = visochinaEkran();
     platno.width = Math.round(W * DPR);
     platno.height = Math.round(H * DPR);
     platno.style.width = W + "px";
@@ -372,8 +393,8 @@
     }
     if (otpechatuk === posledenOtpechatuk) return;
     posledenOtpechatuk = otpechatuk;
-    if (window.innerWidth !== W || window.innerHeight !== H) orazmeri();
-    else presmetniPetolinie();
+    if (promyana()) orazmeri();
+    else if (!tesen) presmetniPetolinie();
   }
 
   /* ---------- Кадри ---------- */
