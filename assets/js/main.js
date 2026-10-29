@@ -931,7 +931,14 @@
 (function () {
   "use strict";
   var vid = document.querySelector(".kak-fon-media video");
-  if (!vid || !("IntersectionObserver" in window)) return;
+  if (!vid) return;
+  /* Тъмното студио зад цялата страница (style.css, html.sait-fon) — за всички
+     ширини, но чак след load. */
+  function saitFon() { document.documentElement.classList.add("sait-fon"); }
+  if (document.readyState === "complete") saitFon();
+  else window.addEventListener("load", saitFon, { once: true });
+
+  if (!("IntersectionObserver" in window)) return;
   if (!window.matchMedia("(min-width: 768px)").matches) return;
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   if (navigator.connection && navigator.connection.saveData) return;

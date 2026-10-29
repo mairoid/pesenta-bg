@@ -120,6 +120,27 @@ body {
    първия ред, така че на другите страници не прави нищо. */
 #noti-bg { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
 
+/* Тъмното студио зад цялата начална страница (29.10.2026, решение на Миро):
+   неподвижният кадър от видеото на „Как работи“, едва видим. Класът го слага
+   main.js след load — 29 KB извън критичния път, и само на началната.
+   ::before е преди #noti-bg в реда, затова нотите остават отгоре. */
+html.sait-fon body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: url("../img/kak-raboti-fon.webp") 50% 50% / cover no-repeat;
+  opacity: 0.1;
+  filter: blur(3px);
+  transform: scale(1.03); /* blur-ът изсветлява ръбовете — малко увеличение ги скрива */
+  animation: sait-fon-vlez 1.6s var(--ease) both;
+}
+@keyframes sait-fon-vlez { from { opacity: 0; } to { opacity: 0.1; } }
+@media (prefers-reduced-motion: reduce) {
+  html.sait-fon body::before { animation: none; }
+}
+
 img { max-width: 100%; display: block; }
 
 a { color: inherit; text-decoration: none; }
