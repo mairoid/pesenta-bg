@@ -27,11 +27,11 @@ http.createServer(function (req, res) {
       var ot = m[1] ? Number(m[1]) : Math.max(0, st.size - Number(m[2]));
       var do_ = m[1] && m[2] ? Math.min(Number(m[2]), st.size - 1) : st.size - 1;
       if (ot >= st.size || ot > do_) { res.writeHead(416, { "Content-Range": "bytes */" + st.size }); return res.end(); }
-      res.writeHead(206, { "Content-Type": tip, "Accept-Ranges": "bytes",
+      res.writeHead(206, { "Content-Type": tip, "Accept-Ranges": "bytes", "Cache-Control": "no-store",
         "Content-Range": "bytes " + ot + "-" + do_ + "/" + st.size, "Content-Length": do_ - ot + 1 });
       return fs.createReadStream(f, { start: ot, end: do_ }).pipe(res);
     }
-    res.writeHead(200, { "Content-Type": tip, "Accept-Ranges": "bytes", "Content-Length": st.size });
+    res.writeHead(200, { "Content-Type": tip, "Accept-Ranges": "bytes", "Cache-Control": "no-store", "Content-Length": st.size });
     fs.createReadStream(f).pipe(res);
   });
 }).listen(PORT, function () { console.log("pesenta.bg локално: http://localhost:" + PORT + "  (Range: да)"); });

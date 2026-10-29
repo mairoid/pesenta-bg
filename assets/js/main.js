@@ -929,7 +929,20 @@
 (function () {
   "use strict";
   if (!document.getElementById("prah-bg")) return;   /* само началната */
-  function saitFon() { document.documentElement.classList.add("sait-fon"); }
+  /* На телефон височината на фона се заковава в пиксели (--fon-h): лентата с
+     адреса мени височината на прозореца при скрол и фонът подскачаше.
+     Мени се само при нова ширина (завъртане). */
+  var root = document.documentElement, shirina = 0;
+  function zakovi() {
+    if (window.innerWidth === shirina) return;
+    shirina = window.innerWidth;
+    var s = document.createElement("div");
+    s.style.cssText = "position:fixed;top:0;left:0;width:0;height:100vh;height:100lvh;visibility:hidden";
+    document.body.appendChild(s);
+    root.style.setProperty("--fon-h", Math.max(s.offsetHeight, window.innerHeight) + "px");
+    document.body.removeChild(s);
+  }
+  function saitFon() { zakovi(); window.addEventListener("resize", zakovi); root.classList.add("sait-fon"); }
   if (document.readyState === "complete") saitFon();
   else window.addEventListener("load", saitFon, { once: true });
 })();

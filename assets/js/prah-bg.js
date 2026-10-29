@@ -126,6 +126,7 @@
     }
   }
 
+  var MASHTAB = telefon ? 1.3 : 1;   /* на телефон по-едри, за да се виждат */
   var YADRO = [6, 12, 20], OREOL = [32, 68, 160], OREOL_A = [0.3, 0.42, 0.55];
   function risuvay() {
     ctx.clearRect(0, 0, W, H);
@@ -134,8 +135,8 @@
         var f = prah[i]; if (f.plast !== L) continue;
         var w = 0.5 + 0.5 * Math.sin(t * f.temp + f.faza);
         var bavno = 0.65 + 0.35 * shum(f.seed * 3, t * 0.3);
-        var yarko = (0.08 + 0.92 * Math.pow(w, 4) * bavno) * (telefon ? 0.65 : 0.5);   /* кратък проблясък, после гасне */
-        var sp = spraytove[f.v], ys = YADRO[L] * f.razmer, os = OREOL[L] * f.razmer;
+        var yarko = (0.08 + 0.92 * Math.pow(w, 4) * bavno) * (telefon ? 0.85 : 0.5);   /* кратък проблясък, после гасне */
+        var sp = spraytove[f.v], ys = YADRO[L] * f.razmer * MASHTAB, os = OREOL[L] * f.razmer * MASHTAB;
         ctx.globalAlpha = Math.min(1, yarko * OREOL_A[L]);
         ctx.drawImage(sp.oreol, f.x - os / 2, f.y - os / 2, os, os);
         ctx.globalAlpha = Math.min(1, yarko);
