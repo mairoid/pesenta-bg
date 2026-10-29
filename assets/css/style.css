@@ -2508,6 +2508,8 @@ a.style-chip { text-decoration: none; color: inherit; }
 .studio-link:hover .studio-cta,
 .studio-link:focus-visible .studio-cta { opacity: 1; transform: none; }
 @media (hover: none) { .studio-cta { opacity: 1; transform: none; } }
+/* В тесните плочки на реакциите (две в ред на телефон) надписът е по-малък. */
+@media (max-width: 720px) { .reactions-grid .studio-cta { left: var(--sp-2); bottom: var(--sp-2); padding: 0.3rem 0.7rem; font-size: 0.8rem; } }
 .reactions-grid { grid-template-columns: repeat(3, 1fr); margin: var(--sp-10) 0 0; }
 
 .studio-pair img,
