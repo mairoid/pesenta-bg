@@ -43,7 +43,7 @@
 
   var telefon = window.matchMedia("(max-width: 767px)").matches;
   var kalmo = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var BROY = telefon ? 26 : 55;
+  var BROY = telefon ? 14 : 30;
   var TON = 34;                    /* кехлибарено, като лампите във видеото */
   var STAPKA = telefon ? 1 / 30 : 0;
   var DPR = Math.min(1.5, window.devicePixelRatio || 1);
@@ -91,7 +91,7 @@
     var r = Math.random(), plast = r < 0.45 ? 0 : r < 0.8 ? 1 : 2;
     return {
       x: Math.random() * W, y: Math.random() * H, vx: 0, vy: 0, plast: plast,
-      seed: Math.random() * 100, faza: Math.random() * 6.283, temp: 0.4 + Math.random() * 1.2,
+      seed: Math.random() * 100, faza: Math.random() * 6.283, temp: 0.9 + Math.random() * 1.6,
       v: Math.floor(Math.random() * 3), razmer: 0.7 + Math.random() * 0.5
     };
   }
@@ -120,7 +120,7 @@
     }
   }
 
-  var YADRO = [3, 6, 10], OREOL = [16, 34, 80], OREOL_A = [0.35, 0.5, 0.7];
+  var YADRO = [6, 12, 20], OREOL = [32, 68, 160], OREOL_A = [0.3, 0.42, 0.55];
   function risuvay() {
     ctx.clearRect(0, 0, W, H);
     for (var L = 0; L < 3; L++) {
@@ -128,7 +128,7 @@
         var f = prah[i]; if (f.plast !== L) continue;
         var w = 0.5 + 0.5 * Math.sin(t * f.temp + f.faza);
         var bavno = 0.65 + 0.35 * shum(f.seed * 3, t * 0.3);
-        var yarko = (0.18 + 0.82 * Math.pow(w, 2.2) * bavno) * 0.75;
+        var yarko = (0.08 + 0.92 * Math.pow(w, 4) * bavno) * 0.5;   /* кратък проблясък, после гасне */
         var sp = spraytove[f.v], ys = YADRO[L] * f.razmer, os = OREOL[L] * f.razmer;
         ctx.globalAlpha = Math.min(1, yarko * OREOL_A[L]);
         ctx.drawImage(sp.oreol, f.x - os / 2, f.y - os / 2, os, os);

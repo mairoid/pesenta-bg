@@ -142,14 +142,18 @@ html.sait-fon body::before {
   transform: scale(1.03); /* blur-ът изсветлява ръбовете — малко увеличение ги скрива */
   animation: sait-fon-vlez 1.6s var(--ease) both;
 }
-/* На телефон кадърът се реже до средата — оставаше само тъмният микрофон.
-   Отместен е надясно към неона и лампата, без маска (текстът е на цяла ширина). */
+/* На телефон с cover кадърът се режеше до средата — оставаше само тъмният
+   микрофон. Затова там е цялата снимка по ширината, в средата на екрана,
+   с меко разтопени горен и долен ръб. */
 @media (max-width: 767px) {
   html.sait-fon body::before {
-    --fon-op: 0.2;
-    background-position: 84% 40%;
-    -webkit-mask-image: none;
-            mask-image: none;
+    --fon-op: 0.32;
+    background-size: 100% auto;   /* цялата снимка по ширината, без рязане (29.10, Миро) */
+    background-position: 50% 42%;
+    filter: brightness(1.45) contrast(1.3) saturate(1.15);
+    transform: none;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 24%, #000 33%, #000 51%, transparent 60%);
+            mask-image: linear-gradient(to bottom, transparent 24%, #000 33%, #000 51%, transparent 60%);
   }
 }
 @keyframes sait-fon-vlez { from { opacity: 0; } to { opacity: var(--fon-op); } }
