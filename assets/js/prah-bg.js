@@ -43,7 +43,7 @@
 
   var telefon = window.matchMedia("(max-width: 767px)").matches;
   var kalmo = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var BROY = telefon ? 34 : 45;
+  var BROY = telefon ? 44 : 60;
   var TON = 34;                    /* кехлибарено, като лампите във видеото */
   var STAPKA = telefon ? 1 / 30 : 0;
   var DPR = Math.min(1.5, window.devicePixelRatio || 1);
@@ -115,9 +115,9 @@
     for (var i = 0; i < prah.length; i++) {
       var f = prah[i];
       var dalb = 0.5 + f.plast * 0.35;
-      var a = shum(f.x * 0.0025 + f.seed, f.y * 0.0025 - t * 0.1 + f.seed * 0.3) * 3.5 + f.seed;
-      var ax = Math.cos(a) * 14, ay = Math.sin(a) * 14 - 5;   /* леко нагоре, като прах в топъл въздух */
-      var gas = Math.exp(-1.1 * s);
+      var a = shum(f.x * 0.0025 + f.seed, f.y * 0.0025 - t * 0.22 + f.seed * 0.3) * 3.5 + f.seed;
+      var ax = Math.cos(a) * 34, ay = Math.sin(a) * 34 - 9;   /* леко нагоре, като прах в топъл въздух */
+      var gas = Math.exp(-0.8 * s);   /* по-малко триене — по-дълги, по-широки пътища */
       f.vx = (f.vx + ax * s) * gas; f.vy = (f.vy + ay * s) * gas;
       f.x += f.vx * s * dalb; f.y += f.vy * s * dalb;
       var m = 40;
@@ -126,7 +126,7 @@
     }
   }
 
-  var MASHTAB = telefon ? 1.3 : 1;   /* на телефон по-едри, за да се виждат */
+  var MASHTAB = telefon ? 1.3 : 1.5;   /* на телефон по-едри, за да се виждат */
   var YADRO = [6, 12, 20], OREOL = [32, 68, 160], OREOL_A = [0.3, 0.42, 0.55];
   function risuvay() {
     ctx.clearRect(0, 0, W, H);

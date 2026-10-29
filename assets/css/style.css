@@ -154,7 +154,10 @@ html.sait-fon body::before {
   html.sait-fon body::before {
     --fon-op: 0.3;
     inset: auto;
-    top: 0;
+    /* Закачен ДОЛУ: лентата с адреса е горе и когато се скрие, горният ръб
+       на екрана се мести с нея, а долният — не. Закачен горе, фонът се
+       плъзгаше с лентата (29.10). */
+    bottom: 0;
     left: 0;
     width: 100%;
     height: 100vh;
@@ -176,6 +179,7 @@ html.sait-fon body::before {
    Над тъмното студио, под нотите и съдържанието. */
 #prah-bg { position: fixed; top: 0; left: 0; z-index: -1; pointer-events: none; width: 100%; height: 100vh; height: 100lvh; opacity: 0; transition: opacity 2s var(--ease); }
 #prah-bg.is-on { opacity: 1; }
+@media (max-width: 767px) { #prah-bg { top: auto; bottom: 0; } }   /* като фона — закачен долу */
 
 img { max-width: 100%; display: block; }
 
@@ -2489,6 +2493,21 @@ a.style-chip { text-decoration: none; color: inherit; }
    историята оставаше 2415 px. Отзивите и реакциите остават. Снимките са
    loading="lazy", тоест скрити не се теглят. */
 @media (max-width: 768px) { .studio-pair { display: none; } }
+/* Снимките са връзки към поръчката (29.10.2026). Надписът седи долу вляво и
+   изплува при посочване или фокус; без посочване (тъч) се вижда винаги. */
+.studio-link { position: relative; display: block; border-radius: var(--radius); }
+.studio-cta {
+  position: absolute; left: var(--sp-4); bottom: var(--sp-4);
+  padding: 0.5rem 1rem; border-radius: 999px;
+  background: var(--grad, linear-gradient(90deg, #ff4d8d, #ff9a52)); color: var(--ink);
+  font-weight: 600; font-size: var(--fs-md, 1rem);
+  opacity: 0; transform: translateY(6px);
+  transition: opacity var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
+  pointer-events: none;
+}
+.studio-link:hover .studio-cta,
+.studio-link:focus-visible .studio-cta { opacity: 1; transform: none; }
+@media (hover: none) { .studio-cta { opacity: 1; transform: none; } }
 .reactions-grid { grid-template-columns: repeat(3, 1fr); margin: var(--sp-10) 0 0; }
 
 .studio-pair img,
