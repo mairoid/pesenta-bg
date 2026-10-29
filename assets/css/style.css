@@ -134,7 +134,7 @@ html.sait-fon body::before {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background: url("../img/studio-desktop.webp") 50% 50% / cover no-repeat;   /* 1600 px, без компресията на видеото */
+  background: url("../img/studio-desktop.webp") 50% 50% / cover no-repeat;   /* 2400 px, 90 KB: Gemini 3 Pro 2K (cyberninjas ab43aa81), изворът в THIRD BRAIN/pesenta-flags */
   opacity: var(--fon-op);
   /* Контрастът оставя тъмното тъмно, а лампите и неонът изсветляват —
      затова може повече непрозрачност, без микрофонът да тъмнее зад текста.
