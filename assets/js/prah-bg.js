@@ -43,7 +43,7 @@
 
   var telefon = window.matchMedia("(max-width: 767px)").matches;
   var kalmo = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var BROY = telefon ? 14 : 30;
+  var BROY = telefon ? 21 : 45;
   var TON = 34;                    /* кехлибарено, като лампите във видеото */
   var STAPKA = telefon ? 1 / 30 : 0;
   var DPR = Math.min(1.5, window.devicePixelRatio || 1);
@@ -97,7 +97,12 @@
   }
 
   function preorazmeri() {
-    W = window.innerWidth; H = window.innerHeight;
+    /* Височината е на платното (100lvh в CSS), не на прозореца: на телефон
+       лентата на браузъра се крие при скрол и innerHeight скача. Затова и
+       преоразмеряваме само при нова ширина. */
+    var w = platno.clientWidth, h = platno.clientHeight;
+    if (w === W && W) return;
+    W = w; H = h;
     platno.width = Math.round(W * DPR); platno.height = Math.round(H * DPR);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     while (prah.length < BROY) prah.push(nova());
@@ -128,7 +133,7 @@
         var f = prah[i]; if (f.plast !== L) continue;
         var w = 0.5 + 0.5 * Math.sin(t * f.temp + f.faza);
         var bavno = 0.65 + 0.35 * shum(f.seed * 3, t * 0.3);
-        var yarko = (0.08 + 0.92 * Math.pow(w, 4) * bavno) * 0.5;   /* кратък проблясък, после гасне */
+        var yarko = (0.08 + 0.92 * Math.pow(w, 4) * bavno) * (telefon ? 0.65 : 0.5);   /* кратък проблясък, после гасне */
         var sp = spraytove[f.v], ys = YADRO[L] * f.razmer, os = OREOL[L] * f.razmer;
         ctx.globalAlpha = Math.min(1, yarko * OREOL_A[L]);
         ctx.drawImage(sp.oreol, f.x - os / 2, f.y - os / 2, os, os);
