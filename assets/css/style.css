@@ -744,7 +744,29 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   .occasion-card:hover .occasion-photo { transform: scale(1.04); }
 }
 
+/* ---------- Фон на „Как работи“ (29.10.2026) ---------- */
+/* Текстът е отляво, затова отляво сянката е по-плътна; горе и долу се слива
+   с фона на страницата, за да няма ръб между секциите. */
+.kak-fon { position: relative; overflow: hidden; isolation: isolate; }
+.kak-fon-media { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.kak-fon-media img,
+.kak-fon-media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 60% 50%; }
+.kak-fon-media video { opacity: 0; transition: opacity 1.2s var(--ease); }
+.kak-fon-media video.is-on { opacity: 1; }
+.kak-fon-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, var(--bg) 0%, rgba(11, 10, 26, 0) 22%, rgba(11, 10, 26, 0) 78%, var(--bg) 100%),
+    linear-gradient(to right, rgba(11, 10, 26, 0.88) 0%, rgba(11, 10, 26, 0.7) 50%, rgba(11, 10, 26, 0.45) 100%);
+}
+@media (max-width: 767px) {
+  .kak-fon-media::after { background: linear-gradient(to bottom, var(--bg) 0%, rgba(11, 10, 26, 0.8) 20%, rgba(11, 10, 26, 0.8) 80%, var(--bg) 100%); }
+}
+
 /* ---------- Кинематичен вход (scrub) ---------- */
+/* От 29.10.2026 не е на началната страница; правилата остават за връщане. */
 
 /* Височината дава пътя за скрола: 300vh скрол = 8 секунди видео.
    Самата картина е sticky вътре, затова секцията изглежда като един екран,

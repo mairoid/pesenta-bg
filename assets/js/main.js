@@ -923,3 +923,31 @@
   if (mq.addEventListener) mq.addEventListener("change", prilozhi);
   else if (mq.addListener) mq.addListener(prilozhi);
 })();
+
+/* Фонът на „Как работи“ (29.10.2026). Картинката е в HTML-а и стига за телефон,
+   за изключени анимации и за пестене на данни. Видеото (0,77 MB) се тегли чак
+   след load и чак когато секцията е на екран разстояние; извън екрана спира,
+   за да не върти декодера напразно. */
+(function () {
+  "use strict";
+  var vid = document.querySelector(".kak-fon-media video");
+  if (!vid || !("IntersectionObserver" in window)) return;
+  if (!window.matchMedia("(min-width: 768px)").matches) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (navigator.connection && navigator.connection.saveData) return;
+
+  var zaredeno = false;
+  vid.addEventListener("playing", function () { vid.classList.add("is-on"); });
+
+  function nablyudavay() {
+    new IntersectionObserver(function (zapisi) {
+      var vidimo = zapisi[0].isIntersecting;
+      if (vidimo && !zaredeno) { zaredeno = true; vid.src = vid.dataset.src; }
+      if (vidimo) { var p = vid.play(); if (p && p.catch) p.catch(function () {}); }
+      else if (zaredeno) vid.pause();
+    }, { rootMargin: "100% 0px" }).observe(vid.parentNode);
+  }
+
+  if (document.readyState === "complete") nablyudavay();
+  else window.addEventListener("load", nablyudavay, { once: true });
+})();
