@@ -171,7 +171,8 @@ body {
 }
 /* Картите (въпроси, цена, стъпки…) са на --surface — 4,5% бяло, тоест почти
    прозрачни. Над студиото отзад текстът в тях ставаше шарен, затова при
-   фона повърхността е плътна, в същия тон, какъвто беше върху тъмното (29.10). */
+   фона повърхността е плътна, в същия тон, какъвто беше върху тъмното (29.10).
+   Класът е в <html> на index.html от самото начало — не се слага от скрипт. */
 html.sait-fon { --surface: rgba(22, 21, 37, 0.84); --surface-strong: rgba(30, 29, 47, 0.88); }
 @keyframes sait-fon-vlez { from { opacity: 0; } to { opacity: var(--fon-op); } }
 @media (prefers-reduced-motion: reduce) {
@@ -2496,6 +2497,9 @@ a.style-chip { text-decoration: none; color: inherit; }
    историята оставаше 2415 px. Отзивите и реакциите остават. Снимките са
    loading="lazy", тоест скрити не се теглят. */
 @media (max-width: 768px) { .studio-pair { display: none; } }
+/* Лентата с поводите (21 снимки + копията им) не се подрежда и не тегли снимки,
+   докато не наближи екрана; „auto“ помни истинската височина след първия път. */
+#povodi { content-visibility: auto; contain-intrinsic-size: auto 820px; }
 /* Снимките са връзки към поръчката (29.10.2026), без надпис — само клик. */
 .studio-link { display: block; border-radius: var(--radius); }
 .reactions-grid { grid-template-columns: repeat(3, 1fr); margin: var(--sp-10) 0 0; }

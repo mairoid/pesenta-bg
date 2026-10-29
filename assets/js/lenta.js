@@ -32,7 +32,10 @@
   function dvizhi(rail, track, skorost) {
     var tih = window.matchMedia("(prefers-reduced-motion: reduce)");
     var vidimo = true, nadvesen = false, vlacha = false;
-    var pipano = 0, posleden = 0, pozicia = rail.scrollLeft;
+    /* pozicia се чете в първия кадър, не тук: веднага след клонирането
+       rail.scrollLeft кара браузъра да подреди цялата страница насред
+       изпълнението на main.js (410 ms при CPU ×4, trace 29.10.2026). */
+    var pipano = 0, posleden = 0, pozicia = null;
     var startX = 0, baza = 0, premesteno = 0;
 
     function polovina() { return track.scrollWidth / 2; }
@@ -55,6 +58,7 @@
       /* Връщане от друг раздел на браузъра дава огромно dt — не бива да скача. */
       if (dt > 0.1) dt = 0.1;
 
+      if (pozicia === null) pozicia = rail.scrollLeft;
       if (vlacha || t - pipano < TISHINA) {
         /* Докато човекът командва, лентата е негова. Ние само гледаме къде я
            оставя и завъртаме шева вместо него, за да не опре в стена. При

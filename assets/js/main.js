@@ -96,12 +96,16 @@
     /* Без герой (страниците за повод, статиите) бутонът тръгва скрит: при отваряне
        човек започва да чете и бутонът стоеше върху текста (трета оценка, 14.10.2026).
        Показва се при превъртане нагоре или в края. Къса страница без превъртане — веднага. */
-    var kasa = document.documentElement.scrollHeight - window.innerHeight < 120;
-    var vHeroja = false, chete = !heroEl && !kasa, posledenY = window.scrollY;
+    /* scrollHeight принуждава браузъра да подреди цялата страница още докато
+       се зарежда (Lighthouse: 110 ms, 29.10.2026) — затова се пита само когато
+       няма герой; с герой „kasa“ не влияе на нищо. */
+    var kasa = !heroEl && document.documentElement.scrollHeight - window.innerHeight < 120;
+    var vHeroja = !!heroEl, chete = !heroEl && !kasa, posledenY = window.scrollY;
     var skriiPlika = function () { plavashti.forEach(function (b) { b.classList.toggle("float-contact--skrit", vHeroja || chete); }); };
     if (heroEl) {
-      var hr = heroEl.getBoundingClientRect();
-      vHeroja = hr.bottom > 0 && hr.top < window.innerHeight;
+      /* Героят е най-горе, значи в началото се вижда — без getBoundingClientRect,
+         който също подрежда страницата. Ако страницата се отвори превъртяна,
+         наблюдателят поправя състоянието още на първия кадър. */
       if ("IntersectionObserver" in window) {
         new IntersectionObserver(function (entries) { vHeroja = entries[0].isIntersecting; skriiPlika(); }).observe(heroEl);
       }
@@ -970,13 +974,20 @@
     platno.setAttribute("aria-hidden", "true");
     document.body.insertBefore(platno, document.body.firstChild);
     ctx = platno.getContext("2d");
-    root.classList.add("sait-fon");
+    /* Класът sait-fon е в самия <html> (index.html) от 29.10.2026: слаган тук
+       след load, той караше браузъра да пресметне стиловете на цялата страница
+       наново (228 ms при CPU ×4). */
     zakovi();
     window.addEventListener("resize", zakovi);
     img = new Image();
     img.decoding = "async";
-    img.onload = function () { risuvay(); platno.classList.add("is-on"); };
     img.src = telefon.matches ? "assets/img/studio-telefon.webp" : "assets/img/studio-desktop.webp";
+    /* decode() разкодира снимката извън главния поток. Иначе drawImage я
+       разкодираше синхронно — дълга задача от ~200 ms точно след load
+       (Lighthouse телефон: TBT 150 ms, Speed Index 4,8 s; 29.10.2026). */
+    var gotova = function () { risuvay(); platno.classList.add("is-on"); };
+    if (img.decode) img.decode().then(gotova, function () { img.onload = gotova; });
+    else img.onload = gotova;
   }
   if (document.readyState === "complete") saitFon();
   else window.addEventListener("load", saitFon, { once: true });
