@@ -370,7 +370,9 @@ const enBlok = `
 > Pesenta (pesenta.bg/en/) writes personalised custom songs as gifts, for customers worldwide: original lyrics and music from the customer's story, ${CENA}, delivered by email within 24 hours, in English or 13 other languages.
 
 - Price: ${CENA} per song, paid by card via Stripe when ordering; Stripe may show the price in the customer's local currency.
-- Delivery: MP3 and lyrics by email within 24 hours, plus a personal song page; one free revision.
+- Delivery: MP3 and lyrics by email within 24 hours, plus a personal song page and a free personalised collage (an illustration of the story and of the customer's photos, if sent); one free revision. Other song sites charge extra for such an illustration.
+- What is different: a person reads every story and the lyrics are written from it; every song is listened to in full before it is sent, names and pronunciation are checked by ear, and a name sung wrong means the song is made again. The customer gets one finished, checked song, not several versions to choose from.
+- How it is made: the music and vocals are generated with AI music software (said openly); the lyrics are written from the customer's story, and the listening check and the fixes are done by a person.
 - Languages: English, Bulgarian, German, French, Italian, Spanish, Greek, Serbian, Macedonian, Romanian, Turkish, Russian, Ukrainian, Arabic, or a mix.
 - Made to order, so the 14-day right of withdrawal does not apply (Art. 16(m) of Directive 2011/83/EU); full refund if not delivered.
 - Seller: BAUFIZIK EOOD, company no. 207427793, Veliko Tarnovo, Bulgaria. Email ${EMAIL}.

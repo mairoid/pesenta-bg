@@ -123,19 +123,20 @@ body {
    височината на прозореца, а тя се мени, щом лентата с адреса се скрие. */
 @media (max-width: 767px) { body { background-attachment: scroll; } }
 
-/* Тъмното студио зад цялата начална страница (29.10.2026, решение на Миро):
-   неподвижният кадър от видеото на „Как работи“, едва видим. Класът го слага
-   main.js след load — 29 KB извън критичния път, и само на началната.
-   ::before е преди #noti-bg в реда, затова нотите остават отгоре. */
-html.sait-fon body::before {
+/* Тъмното студио зад цялата начална страница (29.10.2026, решение на Миро).
+   Платното #sait-fon го слага и рисува main.js след load — платно, а не фонова
+   картина, за да не се брои за LCP (виж там). Стои преди #prah-bg и #noti-bg,
+   затова прахът и нотите остават отгоре. */
+#sait-fon {
   --fon-op: 0.24;
-  content: "";
   position: fixed;
   inset: 0;
+  width: 100%;
+  height: 100%;
   z-index: -1;
   pointer-events: none;
-  background: url("../img/studio-desktop.webp") 50% 50% / cover no-repeat;   /* 2400 px, 90 KB: Gemini 3 Pro 2K (cyberninjas ab43aa81), изворът в THIRD BRAIN/pesenta-flags */
-  opacity: var(--fon-op);
+  /* studio-desktop.webp — 2400 px, 90 KB: Gemini 3 Pro 2K (cyberninjas ab43aa81), изворът в THIRD BRAIN/pesenta-flags */
+  opacity: 0;
   /* Контрастът оставя тъмното тъмно, а лампите и неонът изсветляват —
      затова може повече непрозрачност, без микрофонът да тъмнее зад текста.
      Маската приглушава лявата колона, където стоят заглавията. */
@@ -143,15 +144,15 @@ html.sait-fon body::before {
   -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.85) 45%, #000 70%);
           mask-image: linear-gradient(to right, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.85) 45%, #000 70%);
   transform: scale(1.01); /* лекият blur изсветлява ръбовете — малко увеличение ги скрива */
-  animation: sait-fon-vlez 1.6s var(--ease) both;
 }
+#sait-fon.is-on { animation: sait-fon-vlez 1.6s var(--ease) both; }
 /* Телефон (29.10, Миро): хоризонталният кадър се режеше до тъмния микрофон,
    затова там е отделна вертикална снимка на същото студио (studio-telefon.webp,
    48 KB; Gemini 3 Pro по кадъра от видеото, изворът в THIRD BRAIN/pesenta-flags).
    Височината е 100lvh (екранът БЕЗ лентата на браузъра): с inset: 0 фонът
    подскачаше, щом лентата се скрие или покаже. */
 @media (max-width: 767px) {
-  html.sait-fon body::before {
+  #sait-fon {
     --fon-op: 0.3;
     inset: auto;
     /* Закачен ДОЛУ: лентата с адреса е горе и когато се скрие, горният ръб
@@ -162,17 +163,19 @@ html.sait-fon body::before {
     width: 100%;
     height: 100vh;
     height: var(--fon-h, 100lvh);
-    background-image: url("../img/studio-telefon.webp");
-    background-position: 72% 45%;   /* цялото „pesenta.bg“ да влиза на 390 px */
     filter: brightness(1.25) contrast(1.15) saturate(1.1);
     transform: none;
     -webkit-mask-image: none;
             mask-image: none;
   }
 }
+/* Картите (въпроси, цена, стъпки…) са на --surface — 4,5% бяло, тоест почти
+   прозрачни. Над студиото отзад текстът в тях ставаше шарен, затова при
+   фона повърхността е плътна, в същия тон, какъвто беше върху тъмното (29.10). */
+html.sait-fon { --surface: rgba(22, 21, 37, 0.84); --surface-strong: rgba(30, 29, 47, 0.88); }
 @keyframes sait-fon-vlez { from { opacity: 0; } to { opacity: var(--fon-op); } }
 @media (prefers-reduced-motion: reduce) {
-  html.sait-fon body::before { animation: none; }
+  #sait-fon.is-on { animation: none; opacity: var(--fon-op); }
 }
 
 /* Прахът от видеото — топли светещи точки, които се носят (assets/js/prah-bg.js).
@@ -2493,21 +2496,8 @@ a.style-chip { text-decoration: none; color: inherit; }
    историята оставаше 2415 px. Отзивите и реакциите остават. Снимките са
    loading="lazy", тоест скрити не се теглят. */
 @media (max-width: 768px) { .studio-pair { display: none; } }
-/* Снимките са връзки към поръчката (29.10.2026). Надписът седи долу вляво и
-   изплува при посочване или фокус; без посочване (тъч) се вижда винаги. */
-.studio-link { position: relative; display: block; border-radius: var(--radius); }
-.studio-cta {
-  position: absolute; left: var(--sp-4); bottom: var(--sp-4);
-  padding: 0.5rem 1rem; border-radius: 999px;
-  background: var(--grad, linear-gradient(90deg, #ff4d8d, #ff9a52)); color: var(--ink);
-  font-weight: 600; font-size: var(--fs-md, 1rem);
-  opacity: 0; transform: translateY(6px);
-  transition: opacity var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
-  pointer-events: none;
-}
-.studio-link:hover .studio-cta,
-.studio-link:focus-visible .studio-cta { opacity: 1; transform: none; }
-@media (hover: none) { .studio-cta { opacity: 1; transform: none; } }
+/* Снимките са връзки към поръчката (29.10.2026), без надпис — само клик. */
+.studio-link { display: block; border-radius: var(--radius); }
 .reactions-grid { grid-template-columns: repeat(3, 1fr); margin: var(--sp-10) 0 0; }
 
 .studio-pair img,

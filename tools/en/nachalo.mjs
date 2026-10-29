@@ -45,6 +45,8 @@ export function nachalo() {
   }).join("\n");
 
   const faq = [
+    ["How is Pesenta different from other song sites?", "A real person — Miro from Veliko Tarnovo — reads every story, and we write the lyrics from it word by word, with the names, nicknames and moments you tell us. Before a song goes out, we listen to all of it: names, stress and pronunciation are checked by ear, and if a name is sung wrong, the song is made again. Every song also comes with a free personalised collage — an illustration of your story, and of your photos if you send them — on the cover and on the song's personal page. Other sites charge extra for that. " + CENA + ", one free revision, and if the song isn't with you within 24 hours, you get your money back."],
+    ["Is the song made with AI?", "The music and the vocals — yes: they are generated with AI music software, and we say so openly. The difference is the work around them: we write the lyrics from your story, every song is listened to before it's sent, names and pronunciation are checked by ear, and a name sung wrong means a new song. So you get one finished, checked song — not a handful of versions to pick from yourself."],
     ["How long does it take?", "The song is ready within 24 hours after we receive your story and payment. Need it the same day? Email " + EMAIL + " before you pay — when we can, we do it. For weddings and company events we suggest ordering a week ahead so there's time for calm revisions."],
     ["How do I pay?", "You pay the full " + CENA + " when you order, by card through Stripe's secure checkout (Apple Pay, Google Pay and other local methods may also appear). Stripe can show the price in your local currency. Right after payment you get an electronic sales receipt by email."],
     ["What languages can the song be in?", "English, Bulgarian, German, French, Italian, Spanish, Greek, Serbian, Macedonian, Romanian, Turkish, Russian, Ukrainian, Arabic — or a mix of two. If you need another language, write it in your story and ask."],
@@ -353,7 +355,7 @@ ${karti}
           <ul>
             <li>Original lyrics from your story</li>
             <li>A full song in the style you choose</li>
-            <li>A personal song page with cover art</li>
+            <li>A free collage of your story and a personal song page</li>
             <li>Free revision</li>
             <li>MP3 + lyrics by email within 24 hours</li>
           </ul>

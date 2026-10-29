@@ -924,16 +924,36 @@
   else if (mq.addListener) mq.addListener(prilozhi);
 })();
 
-/* Тъмното студио зад началната страница (style.css, html.sait-fon, 29.10.2026):
-   класът се слага чак след load, за да не тегли картинката в критичния път. */
+/* Тъмното студио зад началната страница (style.css, #sait-fon, 29.10.2026).
+   Рисува се в платно, а не като фонова картина: картина на цял екран, появила
+   се след load, Chrome я брои за „най-голямото съдържание“ (LCP) — Lighthouse
+   на телефон падаше 85 → 79, LCP 3,3 → 4,2 s. Платното не е кандидат за LCP,
+   а изглежда същото. Тръгва след load, само на началната. */
 (function () {
   "use strict";
   if (!document.getElementById("prah-bg")) return;   /* само началната */
-  /* На телефон височината на фона се заковава в пиксели (--fon-h): лентата с
-     адреса мени височината на прозореца при скрол и фонът подскачаше.
-     Мени се само при нова ширина (завъртане). */
-  var root = document.documentElement, shirina = 0;
+  var root = document.documentElement;
+  var telefon = window.matchMedia("(max-width: 767px)");
+  var platno = null, ctx = null, img = null, shirina = 0;
+
+  /* Като background-size: cover с background-position px%/py%. */
+  function risuvay() {
+    if (!img || !img.naturalWidth) return;
+    var dpr = Math.min(2, window.devicePixelRatio || 1);
+    var w = platno.clientWidth, h = platno.clientHeight;
+    platno.width = Math.round(w * dpr); platno.height = Math.round(h * dpr);
+    var m = Math.max(w / img.naturalWidth, h / img.naturalHeight);
+    var dw = img.naturalWidth * m, dh = img.naturalHeight * m;
+    var px = telefon.matches ? 0.72 : 0.5, py = telefon.matches ? 0.45 : 0.5;   /* на телефон — целият неон */
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.drawImage(img, (w - dw) * px, (h - dh) * py, dw, dh);
+  }
+
+  /* На телефон височината се заковава в пиксели (--fon-h): лентата с адреса
+     мени височината на прозореца при скрол и фонът подскачаше. Пренарежда се
+     само при нова ширина (завъртане). */
   function zakovi() {
+    if (!telefon.matches) { risuvay(); return; }   /* на компютър — при всяко преоразмеряване */
     if (window.innerWidth === shirina) return;
     shirina = window.innerWidth;
     var s = document.createElement("div");
@@ -941,8 +961,23 @@
     document.body.appendChild(s);
     root.style.setProperty("--fon-h", Math.max(s.offsetHeight, window.innerHeight) + "px");
     document.body.removeChild(s);
+    risuvay();
   }
-  function saitFon() { zakovi(); window.addEventListener("resize", zakovi); root.classList.add("sait-fon"); }
+
+  function saitFon() {
+    platno = document.createElement("canvas");
+    platno.id = "sait-fon";
+    platno.setAttribute("aria-hidden", "true");
+    document.body.insertBefore(platno, document.body.firstChild);
+    ctx = platno.getContext("2d");
+    root.classList.add("sait-fon");
+    zakovi();
+    window.addEventListener("resize", zakovi);
+    img = new Image();
+    img.decoding = "async";
+    img.onload = function () { risuvay(); platno.classList.add("is-on"); };
+    img.src = telefon.matches ? "assets/img/studio-telefon.webp" : "assets/img/studio-desktop.webp";
+  }
   if (document.readyState === "complete") saitFon();
   else window.addEventListener("load", saitFon, { once: true });
 })();
