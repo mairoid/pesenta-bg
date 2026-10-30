@@ -34,7 +34,7 @@ export function demoRed(k, kat) {
   const s = DEMO[k];
   return `        <div class="track-row player reveal"${kat ? ` data-category="${kat}"` : ""} data-src="../assets/audio/${s.src}" role="button" tabindex="0" aria-label="Play “${esc(s.t)}”">
           <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
-          <img class="track-thumb" src="../assets/img/cover-${s.img}.jpg" srcset="../assets/img/cover-${s.img}-400.jpg 400w, ../assets/img/cover-${s.img}.jpg 600w" sizes="(max-width: 760px) 46vw, (max-width: 980px) 30vw, 260px" alt="" loading="lazy" width="600" height="600">
+          <img class="track-thumb" src="../assets/img/cover-${s.img}.webp" srcset="../assets/img/cover-${s.img}-360.webp 360w, ../assets/img/cover-${s.img}.webp 600w" sizes="(max-width: 760px) 46vw, (max-width: 980px) 30vw, 260px" alt="" loading="lazy" width="600" height="600">
           <div class="track-info">
             <h3>${esc(s.t)}</h3>
             <span>${esc(s.d)}</span>

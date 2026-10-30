@@ -16,7 +16,7 @@ const EZITSI = ["English", "Bulgarian", "German", "French", "Italian", "Spanish"
 
 const chip = (v) => `<span class="chip" data-value="${esc(v)}">${esc(v)}</span>`;
 
-/* Картите в „Occasions“ — снимките са общите povod-*.jpg (без надписи). */
+/* Картите в „Occasions“ — снимките са общите povod-*.webp (без надписи). */
 const KARTI = [
   ["birthday", "rojden-den", "A gift that celebrates the person, not the shelf next to the other presents."],
   ["wedding", "svatba", "A song the couple will remember longer than the menu."],
@@ -38,7 +38,7 @@ export function nachalo() {
   const karti = KARTI.map(([k, img, t]) => {
     const x = POVODI.find((y) => y.key === k);
     return `        <a class="occasion-card" href="${x.file}">
-          <img class="occasion-photo" src="../assets/img/povod-${img}.jpg" loading="lazy" decoding="async" width="600" height="400" alt="${esc(x.menu)}">
+          <img class="occasion-photo" src="../assets/img/povod-${img}.webp" loading="lazy" decoding="async" width="600" height="400" alt="${esc(x.menu)}">
           <h3>${esc(x.chip || x.menu)}</h3>
           <p>${esc(t)}</p>
         </a>`;
