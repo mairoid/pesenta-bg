@@ -5,7 +5,7 @@ var R = "D:/My Documents 2026/Cyber Hora/pesenta.bg/";
 var gr = 0;
 function lo(u) { gr++; console.log("    ✗ " + u); }
 
-["babo-asi", "cyal-edin-svyat", "nashiyat-otbor", "chestit-krasi", "nazdrave-salute-sherefe", "za-sekundi", "kade-sa-kapachkite", "kade-sa-kapachkite-2", "s-teb-vseki-den-e-yuli", "bez-kray", "lelya-svetla"].forEach(function (slug) {
+["babo-asi", "cyal-edin-svyat", "nashiyat-otbor", "chestit-krasi", "nazdrave-salute-sherefe", "za-sekundi", "kade-sa-kapachkite", "kade-sa-kapachkite-2", "s-teb-vseki-den-e-yuli", "bez-kray", "lelya-svetla", "za-teb-e-tazi-pesen-stelche", "stelche-slanchitse"].forEach(function (slug) {
   console.log("  == " + slug + " ==");
   var f = R + "pesni/" + slug + ".html";
   var syr = fs.readFileSync(f, "utf8");
@@ -33,12 +33,12 @@ function lo(u) { gr++; console.log("    ✗ " + u); }
 
   /* 3. следи от генератора в тялото */
   /* Истински думи с две еднакви гласни („пее“, „живее“, „поети“) не са ударения за Suno —
-     махат се само за това търсене (23.09.2026, „всеки пее с мен“; 07.10.2026 — „кутиите“, „кутии“, „смее“); telo остава цял за сверката с MP3-то. */
+     махат се само за това търсене (23.09.2026, „всеки пее с мен“; 07.10.2026 — „кутиите“, „кутии“, „смее“; 30.10.2026 — „истории“); telo остава цял за сверката с MP3-то. */
   var telo = h.slice(h.indexOf("<body"));
   [[/\[(Verse|Chorus|Bridge|Intro|Outro|Stop|Instrumental)[^\]]*\]/i, "производствен маркер"],
    [/([аеиоуъюя])\1/i, "удвоена гласна"],
    [/suno/i, "суно"]].forEach(function (p) {
-    var m = telo.replace(/(пее|живее|живеем|живеете|поеми|поема|поети|смее|кутиите|кутии)(?![а-я])/gi, "").match(p[0]);
+    var m = telo.replace(/(пее|живее|живеем|живеете|поеми|поема|поети|смее|кутиите|кутии|истории)(?![а-я])/gi, "").match(p[0]);
     if (m) lo(p[1] + ": „" + m[0] + "“");
   });
 
