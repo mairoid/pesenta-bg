@@ -1373,7 +1373,7 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
 .cta-band-photo {
   background-image:
     linear-gradient(rgba(11, 10, 26, 0.62), rgba(11, 10, 26, 0.62)),
-    url("../img/podaruk-moment.jpg");
+    url("../img/podaruk-moment.webp");
   background-size: cover;
   background-position: center;
 }

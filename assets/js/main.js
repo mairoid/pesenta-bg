@@ -800,12 +800,30 @@
   "use strict";
   if (!window.lenta) return;
 
+  /* Лентата тръгва чак когато човек стигне на екран и половина от нея.
+     Иначе клонингите (около 200 елемента само при поводите) и първото
+     четене на scrollLeft се плащат при зареждането на страницата, за
+     ленти далеч под херото (trace 30.10.2026, CPU ×4). */
+  function kogatoBlizo(rail, pusni) {
+    if (!("IntersectionObserver" in window)) { pusni(); return; }
+    var nabl = new IntersectionObserver(function (e) {
+      if (!e[0].isIntersecting) return;
+      nabl.disconnect();
+      pusni();
+    }, { rootMargin: "150% 0px" });
+    nabl.observe(rail);
+  }
+
   var otzivi = document.getElementById("quotes-rail");
   /* Отзивите вървят по-бавно от рождениците — те се четат, а не се разглеждат. */
-  if (otzivi) window.lenta(otzivi, document.getElementById("quotes-track"), { skorost: 26 });
+  if (otzivi) kogatoBlizo(otzivi, function () {
+    window.lenta(otzivi, document.getElementById("quotes-track"), { skorost: 26 });
+  });
 
   var povodi = document.getElementById("povodi-rail");
-  if (povodi) window.lenta(povodi, document.getElementById("povodi-track"), { skorost: 34 });
+  if (povodi) kogatoBlizo(povodi, function () {
+    window.lenta(povodi, document.getElementById("povodi-track"), { skorost: 34 });
+  });
 })();
 
 /* ---------- Липсващо изображение не бива да личи ----------

@@ -38,7 +38,7 @@ export function nachalo() {
   const karti = KARTI.map(([k, img, t]) => {
     const x = POVODI.find((y) => y.key === k);
     return `        <a class="occasion-card" href="${x.file}">
-          <img class="occasion-photo" src="../assets/img/povod-${img}.webp" loading="lazy" decoding="async" width="600" height="400" alt="${esc(x.menu)}">
+          <img class="occasion-photo" src="../assets/img/povod-${img}.webp" srcset="../assets/img/povod-${img}-440.webp 440w, ../assets/img/povod-${img}.webp 600w" sizes="250px" loading="lazy" decoding="async" width="600" height="400" alt="${esc(x.menu)}">
           <h3>${esc(x.chip || x.menu)}</h3>
           <p>${esc(t)}</p>
         </a>`;
