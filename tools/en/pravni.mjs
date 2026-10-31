@@ -10,7 +10,6 @@ import { CENA, EMAIL, esc } from "./obshto.mjs";
 const FIRMA = "BAUFIZIK EOOD („БАУФИЗИК“ ЕООД)";
 const ADRES = "39 Tsanko Tserkovski St., office 214, 5000 Veliko Tarnovo, Bulgaria";
 const EIK = "207427793";
-const UPRAVITEL = "Avram Rusev Avramov";
 
 const legal = (h, s) => `  <h1>${h}</h1>
 ${s}`;
@@ -47,7 +46,7 @@ export function PRAVNI() {
     </ol>
 
     <h2>The company</h2>
-    <p>${esc(FIRMA)}, company no. ${EIK}, ${esc(ADRES)}; managing director Eng. Avram Avramov. Pesenta.bg is a registered online shop; after every payment you receive an electronic sales receipt by email.</p>
+    <p>${esc(FIRMA)}, company no. ${EIK}, ${esc(ADRES)}. Pesenta.bg is a registered online shop; after every payment you receive an electronic sales receipt by email.</p>
     <p>Write to us at <a href="mailto:${EMAIL}">${EMAIL}</a>. The order conditions are in our <a href="terms.html">Terms</a>.</p>
   </article>
 
@@ -75,7 +74,7 @@ export function PRAVNI() {
     <p class="updated">Effective from 14 October 2026 (the previous version, from 5 July 2026, applies to orders placed before that date). This is the English version of our Bulgarian terms; both have the same content.</p>
 
     <h2>1. Who runs Pesenta.bg</h2>
-    <p>The website pesenta.bg is operated by ${esc(FIRMA)}, company no. ${EIK}, registered office: ${esc(ADRES)}, represented by its manager ${esc(UPRAVITEL)} (“we”, “the Provider”).</p>
+    <p>The website pesenta.bg is operated by ${esc(FIRMA)}, company no. ${EIK}, registered office: ${esc(ADRES)} (“we”, “the Provider”).</p>
     <p>Contact: <a href="mailto:${EMAIL}">${EMAIL}</a></p>
 
     <h2>2. What we offer</h2>
@@ -144,7 +143,7 @@ export function PRAVNI() {
     <div class="box"><p><strong>In short:</strong> we collect only what we need to make your song and issue your receipt or invoice. No advertising cookies, no tracking, no selling of data. Fonts and content load from our own server; the only external thing on the page is a visit counter that uses no cookies. We don't pass your data to third parties for marketing.</p></div>
 
     <h2>1. Data controller</h2>
-    <p><strong>${esc(FIRMA)}</strong>, company no. ${EIK}, ${esc(ADRES)}, represented by ${esc(UPRAVITEL)}.</p>
+    <p><strong>${esc(FIRMA)}</strong>, company no. ${EIK}, ${esc(ADRES)}.</p>
     <p>Contact for all personal data questions: <a href="mailto:${EMAIL}">${EMAIL}</a></p>
 
     <h2>2. What data we collect and why</h2>

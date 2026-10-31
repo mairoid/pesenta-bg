@@ -94,7 +94,7 @@
   </div>
 
   <h2>1. Администратор на личните данни</h2>
-  <p id="legal-admin"><strong>„БАУФИЗИК“ ЕООД</strong>, ЕИК 207427793, гр. Велико Търново 5000, ул. „Цанко Церковски“ № 39, офис 214, представлявано от Аврам Русев Аврамов.</p>
+  <p id="legal-admin"><strong>„БАУФИЗИК“ ЕООД</strong>, ЕИК 207427793, гр. Велико Търново 5000, ул. „Цанко Церковски“ № 39, офис 214.</p>
   <p>Контакт по всички въпроси за лични данни: <a data-legal-mail="site" href="mailto:sales@pesenta.bg">sales@pesenta.bg</a></p>
 
   <h2>2. Какви данни събираме и защо</h2>
@@ -315,7 +315,7 @@
   /* администратор */
   document.getElementById("legal-admin").innerHTML =
     "<strong>" + esc(L.company.name) + "</strong>, ЕИК " + esc(L.company.eik) + ", " +
-    esc(L.company.address) + ", представлявано от " + esc(L.company.manager) + ".";
+    esc(L.company.address) + ".";
   var mail = document.querySelector("[data-legal-mail]");
   if (mail) { mail.href = "mailto:" + L.contacts.site; mail.textContent = L.contacts.site; }
 
