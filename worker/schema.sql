@@ -189,3 +189,25 @@ CREATE TABLE IF NOT EXISTS vaucher_opiti (
 --   npx wrangler d1 execute pesenta-nap --remote --command "CREATE INDEX IF NOT EXISTS idx_vaucheri_status ON vaucheri(status, created_at); CREATE INDEX IF NOT EXISTS idx_vaucheri_session ON vaucheri(stripe_session); CREATE INDEX IF NOT EXISTS idx_vaucheri_order ON vaucheri(izpolzvan_order)"
 --   npx wrangler d1 execute pesenta-nap --remote --command "CREATE TABLE IF NOT EXISTS vaucher_opiti (ip_hash TEXT NOT NULL, chas TEXT NOT NULL, broi INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (ip_hash, chas))"
 -- Връщане: DROP TABLE vaucher_opiti; DROP TABLE vaucheri; (само ако няма платени ваучери!)
+
+-- Отказ от договора по чл. 52а ЗЗП (03.11.2026, otkaz.js). Пази се и заявлението, и
+-- какво е направила системата — доказателството, че е подадено и потвърдено навреме.
+-- Записът се прави ПРЕДИ всичко друго (deystvie = priet), после се допълва.
+CREATE TABLE IF NOT EXISTS otkazi (
+  id               TEXT PRIMARY KEY,          -- OTK-ГГММДД-NNNN
+  created_at       TEXT NOT NULL,             -- сървърното време на подаване (ISO, UTC)
+  ime              TEXT NOT NULL,
+  nomer            TEXT NOT NULL,             -- както е въведен: код, VCH-… или PSN-…
+  email            TEXT NOT NULL,             -- каналът за потвърждението
+  vaucher_ref      TEXT,
+  v_status         TEXT,                      -- статус на ваучера в момента на подаването
+  deystvie         TEXT NOT NULL DEFAULT 'priet', -- priet | otmenen | izpolzvan | veche_otmenen | sled_sroka | drug_imeyl | pesen | nenameren | greshka
+  pismo_at         TEXT,                      -- кога тръгна потвърждението до клиента
+  pismo_opiti      INTEGER NOT NULL DEFAULT 0,
+  pismo_greshka    TEXT,
+  izvestie_at      TEXT                       -- кога тръгна известието до нас
+);
+CREATE INDEX IF NOT EXISTS idx_otkazi_created ON otkazi(created_at);
+-- В D1 (еднократно, ПРЕДИ deploy на Worker-а — без таблицата отказът връща грешка):
+--   npx wrangler d1 execute pesenta-nap --remote --command "CREATE TABLE IF NOT EXISTS otkazi (id TEXT PRIMARY KEY, created_at TEXT NOT NULL, ime TEXT NOT NULL, nomer TEXT NOT NULL, email TEXT NOT NULL, vaucher_ref TEXT, v_status TEXT, deystvie TEXT NOT NULL DEFAULT 'priet', pismo_at TEXT, pismo_opiti INTEGER NOT NULL DEFAULT 0, pismo_greshka TEXT, izvestie_at TEXT); CREATE INDEX IF NOT EXISTS idx_otkazi_created ON otkazi(created_at)"
+-- Връщане: DROP TABLE otkazi; (заявленията са доказателство — първо ги изнеси)

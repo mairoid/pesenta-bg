@@ -1458,6 +1458,8 @@ h3 { font-size: var(--fs-xl); font-weight: 600; }
   .footer-grid a { padding: 2px 0; line-height: 1.45; }
 }
 .footer-bottom { border-top: 1px solid var(--border); padding-top: var(--sp-6); font-size: var(--fs-sm); }
+/* „Откажете се от договора тук“ (чл. 52а ЗЗП, 03.11.2026) — трябва да се вижда, че е връзка */
+.footer-bottom a { color: var(--text); text-decoration: underline; text-underline-offset: 3px; }
 
 /* ---------- Плаващ бутон за връзка (Viber/имейл) ----------
    Два отделни <a>, показва се само единият — избор чрез CSS media query по

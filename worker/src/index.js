@@ -14,6 +14,7 @@
      GET  /p/<поръчка>?t=…      — чакалнята на песента; 302 към страницата ѝ, щом page_url е зададен
      POST /vaucher/nov, GET /vaucher/proverka, POST /vaucher/izpolzvai,
      GET  /vaucher/pdf/<ref>?t=… — ваучер за песен (vaucher.js; 15.10.2026)
+     POST /otkaz               — отказ от договора по чл. 52а ЗЗП (otkaz.js; 03.11.2026)
      POST /snimki              — снимките за обложката → писмо с прикачени (snimki.js; 20.10.2026)
 
    Тайните се задават с `wrangler secret put`, никога в кода — виж README.md.
@@ -30,6 +31,7 @@ import {
   handleVaucherNov, handleVaucherProverka, noviRef, vaucherBlokHtml
 } from "./vaucher.js";
 import { handleSnimki } from "./snimki.js";
+import { handleOtkaz, otkazCron } from "./otkaz.js";
 
 export default {
   async fetch(request, env, ctx) {
@@ -49,6 +51,15 @@ export default {
       if (url.pathname === "/vaucher/nov" && request.method === "POST") return cors(await handleVaucherNov(request, env), env);
       if (url.pathname === "/vaucher/proverka" && request.method === "GET") return cors(await handleVaucherProverka(request, env), env);
       if (url.pathname === "/vaucher/izpolzvai" && request.method === "POST") return cors(await handleVaucherIzpolzvai(request, env, ctx), env);
+    }
+    /* Отказ от договора по чл. 52а ЗЗП (03.11.2026) — otkaz.js. */
+    if (url.pathname === "/otkaz") {
+      if (request.method === "OPTIONS") return cors(new Response(null, { status: 204 }), env);
+      /* Всяка грешка — пак JSON с CORS: страницата трябва да може да каже „не стигна, пишете ни“. */
+      if (request.method === "POST") {
+        try { return cors(await handleOtkaz(request, env, ctx, { brevo, pratiVatreshno }), env); }
+        catch (e) { return cors(vjson({ ok: false, prichina: "greshka" }, 500), env); }
+      }
     }
     const vPdf = url.pathname.match(/^\/vaucher\/pdf\/(VCH-\d{6}-\d{4})$/);
     if (vPdf && request.method === "GET") return handleVaucherPdf(request, env, vPdf[1]);
@@ -127,6 +138,7 @@ export default {
   async scheduled(event, env, ctx) {
     ctx.waitUntil(napomniNeplateni(env).catch(() => {}));
     ctx.waitUntil(vaucherCron(env).catch(() => {}));
+    ctx.waitUntil(otkazCron(env, { brevo, pratiVatreshno }).catch(() => {}));
   }
 };
 
@@ -1202,6 +1214,10 @@ export function vaucherPismoHtml(sale, v, belUrl, sPdf) {
          p("Документ <strong>" + esc(padDoc(sale.doc_n)) + "</strong> по поръчка <strong>" + esc(sale.order_no) + "</strong>: " +
            '<a href="' + esc(belUrl) + '" style="color:#FFA14D;">Отвори документа</a>', "font-size:14px;"),
          "22px 32px 8px 32px") +
+      /* чл. 52а ЗЗП (03.11.2026): пътят към отказа стои и в писмото, не само на сайта. */
+      td(p("Можеш да се откажеш от ваучера в 14 дни от покупката, докато кодът не е използван: " +
+           '<a href="https://pesenta.bg/otkaz.html?kod=' + encodeURIComponent(v.kod || "") + '" style="color:#A9A4C9;">откажете се от договора тук</a>.', "font-size:13px;color:#A9A4C9;"),
+         "4px 32px 0 32px") +
       td(p("Песента · pesenta.bg", "font-size:13px;color:#A9A4C9;"), "10px 32px 26px 32px") +
     "</table></td></tr></table></body></html>";
 }
