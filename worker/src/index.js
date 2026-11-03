@@ -422,7 +422,7 @@ async function recordSale(env, event, ctx) {
   });
 }
 
-async function recordRefund(env, event) {
+export async function recordRefund(env, event) {
   const ch = event.data.object;
   const key = "ch:" + ch.id + ":" + ch.amount_refunded;
   const exists = await env.DB.prepare("SELECT 1 FROM refunds WHERE stripe_event_key = ?")
@@ -439,21 +439,31 @@ async function recordRefund(env, event) {
   const orderNo = sale ? sale.order_no
     : ("STRIPE-" + String(ch.payment_intent || ch.id).slice(-12));
 
+  /* ch.amount_refunded е НАТРУПАНАТО върнатото по плащането. При второ частично
+     връщане записваме само разликата спрямо вече записаното по същото ch_…,
+     иначе одиторският файл показва повече върнато (30 + 50 вместо 30 + 20). */
+  const predi = await env.DB.prepare(
+    "SELECT COALESCE(SUM(amount_eur_c), 0) AS c FROM refunds WHERE stripe_event_key LIKE ?"
+  ).bind("ch:" + ch.id + ":%").first();
+  const natrupano = ch.amount_refunded || 0;
+  const sega = natrupano - Number(predi ? predi.c : 0);
+  if (sega <= 0) return;
+
   await env.DB.prepare(
     `INSERT INTO refunds (order_no, amount_st, amount_eur_c, refund_date, r_paym,
        stripe_event_key, created_at)
      VALUES (?,?,?,?,2,?,?)`
   ).bind(
     orderNo,
-    eurToSt(ch.amount_refunded, Number(env.BGN_RATE)),
-    ch.amount_refunded || null,
+    eurToSt(sega, Number(env.BGN_RATE)),
+    sega,
     isoDate(new Date()), key, new Date().toISOString()
   ).run();
 
   /* Уведомяваме клиента. Както при бележката, провалът на писмото НЕ вдига
      грешка нагоре — връщането вече е записано, а 500 би накарало Stripe да
      ретрайва и да го запише втори път. */
-  const sent = await sendRefundEmail(env, sale, ch.amount_refunded || 0);
+  const sent = await sendRefundEmail(env, sale, sega, natrupano);
   await env.DB.prepare(
     "UPDATE refunds SET email_sent_at = ?, email_error = ? WHERE stripe_event_key = ?"
   ).bind(sent.ok ? new Date().toISOString() : null, sent.ok ? null : sent.error, key).run();
@@ -474,12 +484,13 @@ async function recordRefund(env, event) {
    Частичните връщания се разпознават по сумата: схемата на НАП изрично
    говори за „изцяло или частично върнати поръчки", тоест случаят е реален
    и текстът не бива да твърди, че всичко е върнато. */
-export async function sendRefundEmail(env, sale, amountC) {
+export async function sendRefundEmail(env, sale, amountC, natrupanoC) {
   if (!env.BREVO_API_KEY) return { ok: false, error: "BREVO_API_KEY не е зададен" };
   if (!sale) return { ok: false, error: "връщането не е свързано с продажба — няма кому да се пише" };
   if (!sale.customer_email) return { ok: false, error: "продажбата няма имейл на клиента" };
 
-  const full = sale.total_eur_c != null && amountC >= sale.total_eur_c;
+  // „изцяло“ се решава по натрупаното, сумата в писмото е само това връщане
+  const full = sale.total_eur_c != null && (natrupanoC != null ? natrupanoC : amountC) >= sale.total_eur_c;
   const sum = money(amountC) + " €";
   const bgn = money(eurToSt(amountC, Number(env.BGN_RATE))) + " лв.";
 
