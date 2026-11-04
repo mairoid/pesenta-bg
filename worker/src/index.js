@@ -992,8 +992,12 @@ export async function notifyVatreshno(env, n) {
     if (dop.snimki) {
       trevogi += "<p style=\"background:#EAF2FB;border-left:4px solid #2E6DA4;padding:10px 14px\">" +
         "<strong>Клиентът е приложил " + dop.snimki + (dop.snimki === 1 ? " снимка" : " снимки") +
-        ".</strong> Те идват САМО в отделно писмо „Снимки за обложката — " +
-        xmlEscape(String(n.order_no)) + "“. Ако то липсва, поискай ги от клиента.</p>";
+        /* от 04.11.2026 до 30, по до 5 в писмо — темата казва частта: „… (6–10 от 12)“ */
+        (dop.snimki > 5
+          ? ".</strong> Те идват САМО в отделни писма „Снимки за обложката — " + xmlEscape(String(n.order_no)) +
+            " (1–5 от " + dop.snimki + ")“ и следващите, по до 5 в писмо. Ако някое липсва, поискай липсващите от клиента.</p>"
+          : ".</strong> Те идват САМО в отделно писмо „Снимки за обложката — " +
+            xmlEscape(String(n.order_no)) + "“. Ако то липсва, поискай ги от клиента.</p>");
     }
 
     var razkazBlok = "";
@@ -1006,7 +1010,7 @@ export async function notifyVatreshno(env, n) {
         (dop.data      ? red("Дата на повода", dop.data) : "") +
         (brief.stilove ? red("Стилове", brief.stilove) : "") +
         (brief.ezik    ? red("Език", brief.ezik)       : "") +
-        (dop.snimkiIzvestni ? red("Снимки", dop.snimki ? dop.snimki + " (в отделно писмо)" : "няма") : "") +
+        (dop.snimkiIzvestni ? red("Снимки", dop.snimki ? dop.snimki + (dop.snimki > 5 ? " (в отделни писма, по до 5)" : " (в отделно писмо)") : "няма") : "") +
         "</table>" +
         "<p style=\"font:14px/1.6 sans-serif;background:#F6F5FA;border-left:3px solid #D2577F;" +
         "padding:12px 16px;margin-top:12px;white-space:pre-wrap\">" +
@@ -1303,7 +1307,7 @@ async function notifyOsrebren(env, v, orderNo) {
       red("Ваучерът е за", v.za_kogo) + red("От", v.ot_kogo) + red("Имейл (поръчката)", pl.email) +
       red("Вид", b && b.vid) + red("Повод", b && b.povod) + red("Дата на повода", dop.data) +
       red("Стилове", b && b.stilove) + red("Език", b && b.ezik) +
-      (dop.snimkiIzvestni ? red("Снимки", dop.snimki ? dop.snimki + " (в отделно писмо)" : "няма") : "") +
+      (dop.snimkiIzvestni ? red("Снимки", dop.snimki ? dop.snimki + (dop.snimki > 5 ? " (в отделни писма, по до 5)" : " (в отделно писмо)") : "няма") : "") +
     "</table>" +
     (b ? "<p style=\"font:14px/1.6 sans-serif;background:#F6F5FA;border-left:3px solid #D2577F;padding:12px 16px;" +
          "margin-top:12px;white-space:pre-wrap\">" + xmlEscape(String(b.razkaz || "—")) + "</p>"

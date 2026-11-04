@@ -49,7 +49,8 @@
   /* Снимки за обложката: [{ blob, name, url }] — смалени копия. Собствено копие на
      функциите от order.js — файловете нарочно не си споделят код (виж главата). */
   var snimki = [];
-  var SNIMKI_MAX = 3, SNIMKI_PX = 1600, SNIMKI_MB = 6;
+  var SNIMKI_MAX = 30, SNIMKI_PX = 1600, SNIMKI_MB = 6;
+  var SNIMKI_GRUPA = 5, SNIMKI_GRUPA_BAJTA = 3.5 * 1048576; // една заявка към Worker-а = едно писмо
   function smaliSnimka(file) {
     return new Promise(function (res) {
       var img = new Image();
@@ -239,28 +240,64 @@
      а вграденият браузър на ChatGPT не го праща — и снимките от chatgpt.com тихо се губеха
      (код 200 със страница за грешка). Worker-ът отговаря истински, затова чакаме отговора
      (до 30 s) и падаме към FormSubmit само ако той откаже. */
+  /* До SNIMKI_MAX снимки (04.11.2026: 30 — и за видеа). Към Worker-а тръгват на групи до SNIMKI_GRUPA
+     снимки и до SNIMKI_GRUPA_BAJTA — всяка група е отделно писмо „Снимки за обложката — PSN… (6–10 от 30)“:
+     едно писмо с 30 снимки е твърде голямо, а Worker-ът на безплатния план има малко процесорно време.
+     Полетата носят общия номер на снимката (snimka_7), за да не се бъркат имената между писмата.
+     Две групи подред не минат ли (няма мрежа, Worker-ът отказва) — останалите не се пробват, за да не
+     чака клиентът по 30 s на група. Връща номерата (от 1), които НЕ стигнаха; [] значи, че всичко е там. */
   function snimkiKamWorker(orderNo) {
-    if (!snimki.length) return Promise.resolve(false);
-    var fd = new FormData();
-    fd.append("order_no", orderNo);
-    fd.append("tip", "бърза");
-    snimki.forEach(function (s, i) { fd.append("snimka_" + (i + 1), s.blob, "snimka-" + orderNo + "-" + (i + 1) + ".jpg"); });
-    var ac = window.AbortController ? new AbortController() : null;
-    var spri = setTimeout(function () { if (ac) ac.abort(); }, 30000);
-    sendBtn.textContent = t("Качваме снимките…", "Uploading photos…");
-    return fetch(SNIMKI_ENDPOINT, { method: "POST", body: fd, signal: ac ? ac.signal : undefined })
-      .then(function (r) { return r.ok ? r.json() : { ok: false }; })
-      .then(function (j) { return !!(j && j.ok); })
-      .catch(function () { return false; })
-      .then(function (ok) { clearTimeout(spri); return ok; });
+    if (!snimki.length) return Promise.resolve([]);
+    var grupi = [], g = [], bajta = 0;
+    snimki.forEach(function (s, i) {
+      if (g.length && (g.length >= SNIMKI_GRUPA || bajta + s.blob.size > SNIMKI_GRUPA_BAJTA)) { grupi.push(g); g = []; bajta = 0; }
+      g.push(i); bajta += s.blob.size;
+    });
+    if (g.length) grupi.push(g);
+    var lipsvat = [], podred = 0;
+    return grupi.reduce(function (p, gr, k) {
+      return p.then(function () {
+        if (podred >= 2) { gr.forEach(function (i) { lipsvat.push(i + 1); }); return; }
+        sendBtn.textContent = grupi.length > 1 ? t("Качваме снимките… ", "Uploading photos… ") + (k + 1) + "/" + grupi.length : t("Качваме снимките…", "Uploading photos…");
+        var fd = new FormData();
+        fd.append("order_no", orderNo);
+        fd.append("tip", "бърза");
+        fd.append("obshto", String(snimki.length));
+        gr.forEach(function (i) { fd.append("snimka_" + (i + 1), snimki[i].blob, "snimka-" + orderNo + "-" + (i + 1) + ".jpg"); });
+        var ac = window.AbortController ? new AbortController() : null;
+        var spri = setTimeout(function () { if (ac) ac.abort(); }, 30000);
+        return fetch(SNIMKI_ENDPOINT, { method: "POST", body: fd, signal: ac ? ac.signal : undefined })
+          .then(function (r) { return r.ok ? r.json() : { ok: false }; })
+          .then(function (j) { return !!(j && j.ok); })
+          .catch(function () { return false; })
+          .then(function (ok) {
+            clearTimeout(spri);
+            podred = ok ? 0 : podred + 1;
+            if (!ok) gr.forEach(function (i) { lipsvat.push(i + 1); });
+          });
+      });
+    }, Promise.resolve()).then(function () { return lipsvat; });
   }
 
+  /* Връща номерата на снимките, които не стигнаха през Worker-а (за писмото с поръчката). */
   function pratiSnimki(orderNo) {
-    if (!snimki.length && !glasBlob) return Promise.resolve();
-    return snimkiKamWorker(orderNo).then(function (snimkiStignaha) {
-      if (snimkiStignaha && !glasBlob) return;
-      return pratiPrezFormSubmit(orderNo, snimkiStignaha ? [] : snimki);
+    if (!snimki.length && !glasBlob) return Promise.resolve([]);
+    return snimkiKamWorker(orderNo).then(function (lipsvat) {
+      if (!lipsvat.length && !glasBlob) return lipsvat;
+      /* нестигналите — до 3 по стария път, със своите номера; гласът винаги е през FormSubmit */
+      return pratiPrezFormSubmit(orderNo, lipsvat.slice(0, 3).map(function (n) { return { blob: snimki[n - 1].blob, n: n }; }))
+        .then(function () { return lipsvat; });
     });
+  }
+
+  /* Не стигнали ли са всички снимки — писмото с поръчката казва кои. */
+  function snimkiVPismoto(fd, orderNo, lipsvat) {
+    if (!lipsvat || !lipsvat.length) return;
+    var stignali = snimki.length - lipsvat.length;
+    fd.set("Снимки за обложката", "ДА — " + snimki.length + "; " +
+      (stignali ? stignali + " в отделни писма „Снимки за обложката — " + orderNo + "“; " : "") +
+      "НЕ стигнаха през Worker-а № " + lipsvat.join(", ") +
+      (lipsvat.length > 3 ? " — № " + lipsvat.slice(0, 3).join(", ") + " идват през FormSubmit, останалите поискай по имейл" : " — идват през FormSubmit"));
   }
 
   function pratiPrezFormSubmit(orderNo, snimki) {
@@ -272,7 +309,7 @@
     fd.append("Към заявка", orderNo);
     fd.append("Тип", (glasBlob ? "Гласов разказ" + (snimki.length ? " и снимки за обложката" : "") : "Снимки за обложката") + " към бърза текстова поръчка");
     if (glasBlob) fd.append("glasovo", glasBlob, "glasovo-" + orderNo + "." + glasExt(glasBlob));
-    snimki.forEach(function (s, i) { fd.append("snimka_" + (i + 1), s.blob, "snimka-" + orderNo + "-" + (i + 1) + ".jpg"); });
+    snimki.forEach(function (s, i) { var n = s.n || i + 1; fd.append("snimka_" + n, s.blob, "snimka-" + orderNo + "-" + n + ".jpg"); });
     return Promise.race([
       /* referrerPolicy изрично: без Referer FormSubmit не приема (вж. горе) — това спасява
          гласовия запис, ако браузърът по подразбиране не го праща. */
@@ -776,7 +813,7 @@
       "Стилове": styles.length ? styles.join(", ") : "— не са избрани, виж разказа",
       "Език": language,
       "Разказ": story,
-      "Снимки за обложката": snimki.length ? "ДА — " + snimki.length + ", в ОТДЕЛНО писмо със snimka-" + orderNo + "-N.jpg" : "не",
+      "Снимки за обложката": snimki.length ? "ДА — " + snimki.length + ", в отделни писма (по 5) със snimka-" + orderNo + "-N.jpg" : "не",
       "Гласов разказ": glasBlob ? "ДА — glasovo-" + orderNo + "." + glasExt(glasBlob) + " в ОТДЕЛНО писмо; разказът горе е автоматичният препис, свери го със записа" : "не",
       /* Ако няма отметка, пишем изрично „не иска" — така при преглед се вижда
          разликата между „не е поискана" и „забравили сме да я запишем". */
@@ -804,7 +841,7 @@
         "Език: " + language,
         "Имейл: " + (email || "—"),
         "",
-        (snimki.length ? "(!) Клиентът е приложил " + snimki.length + " снимки за обложката — идват в отделно писмо, файлове snimka-" + orderNo + "-N.jpg. Ползвай ги за корицата и за личната страница.\n" : ""),
+        (snimki.length ? "(!) Клиентът е приложил " + snimki.length + " снимки за обложката — идват в отделни писма (по 5), файлове snimka-" + orderNo + "-N.jpg. Ползвай ги за корицата и за личната страница.\n" : ""),
         (glasBlob ? "(!) Клиентът е разказал С ГЛАС — файлът glasovo-" + orderNo + "." + glasExt(glasBlob) + " идва в отделно писмо. Разказът долу е автоматичен препис (може да е дописан ръчно) — имената и детайлите свери със записа.\n" : ""),
         glasBlob ? "## Разказ (автоматичен препис от гласа — свери със записа)" : "## Разказ (директно от клиента, без транскрипция)",
         story,
@@ -870,7 +907,8 @@
           rememberOrder(orderNo, "Песен с ваучер за подарък");
           if (window.psnSabitie) window.psnSabitie("Voucher Redeem", "бърза" + (glasBlob ? " + глас" : "") + (snimki.length ? " + снимки" : ""));
           var kamBlagodarim = function () { window.location.href = "blagodarim.html?vaucher=1"; };
-          pratiSnimki(orderNo).then(function () {
+          pratiSnimki(orderNo).then(function (lipsvat) {
+            snimkiVPismoto(fd, orderNo, lipsvat);
             return fetch(FORM_ENDPOINT, { method: "POST", headers: { "Accept": "application/json" }, body: fd });
           }).then(kamBlagodarim).catch(kamBlagodarim);
           return;
@@ -917,7 +955,8 @@
       }
     } catch (e) { /* без beacon оставаме на стария път */ }
 
-    pratiSnimki(orderNo).then(function () {
+    pratiSnimki(orderNo).then(function (lipsvat) {
+      snimkiVPismoto(fd, orderNo, lipsvat);
       return fetch(FORM_ENDPOINT, { method: "POST", headers: { "Accept": "application/json" }, body: fd })
         .then(function (res) {
           if (!res.ok) throw new Error("HTTP " + res.status);

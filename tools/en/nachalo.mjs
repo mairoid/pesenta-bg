@@ -167,7 +167,7 @@ export function nachalo() {
 
             <div class="field snimki-box" id="text-snimki-box">
               <label for="text-snimki">Photos for the cover
-                <span class="hint">Optional — up to 3 photos of the person or the group. We use them for the song's cover and its personal page.</span>
+                <span class="hint">Optional — up to 30 photos of the person or the group. We use them for the song's cover and its personal page.</span>
               </label>
               <input type="file" id="text-snimki" name="text-snimki" accept="image/*" multiple hidden>
               <div class="snimki-row">

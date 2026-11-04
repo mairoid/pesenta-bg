@@ -12,14 +12,20 @@
    базата, нито другаде — писмото е единственото копие, точно както при FormSubmit.
 
    Пази се от злоупотреба: само PSN-номер, само JPEG (по първите байтове, не по
-   името), най-много 3 файла и SNIMKI_MAX_BAJTA общо, до 12 заявки на час от IP. */
+   името), най-много SNIMKI_BROI файла и SNIMKI_MAX_BAJTA общо на заявка, до NA_CHAS заявки на час от IP.
+
+   04.11.2026: до SNIMKI_NOMER_MAX (30) снимки на поръчка — сайтът ги праща на групи до 5
+   (полетата носят общия номер: snimka_6…snimka_10), всяка група е отделно писмо с
+   „(6–10 от 30)“ в темата. Base64 — с вградения Uint8Array.toBase64(): проба 04.11 на
+   временен Worker — 5 снимки по 500 KB струваха 5–9 ms CPU срещу 20–36 ms с JS цикъла. */
 
 import { ipHash } from "./vaucher.js";
 
-export const SNIMKI_BROI = 3;
+export const SNIMKI_BROI = 5;        // на заявка (= на писмо)
+export const SNIMKI_NOMER_MAX = 30;  // на поръчка — полетата snimka_1…snimka_30
 /* Сайтът ги смалява до 1600 px, JPEG 0,85 — обикновено 200–700 KB една. */
 export const SNIMKI_MAX_BAJTA = 6 * 1024 * 1024;
-const NA_CHAS = 12;
+export const NA_CHAS = 30; // 30 снимки = 6–9 заявки; остава място за повторен опит
 
 function sjson(obj, status) {
   return new Response(JSON.stringify(obj), {
@@ -34,6 +40,7 @@ export function eJpeg(u8) {
 }
 
 function base64(u8) {
+  if (typeof u8.toBase64 === "function") return u8.toBase64();
   let s = "";
   for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000));
   return btoa(s);
@@ -64,14 +71,15 @@ export async function handleSnimki(request, env) {
 
   const failove = [];
   let obshto = 0;
-  for (let i = 1; i <= SNIMKI_BROI; i++) {
+  for (let i = 1; i <= SNIMKI_NOMER_MAX; i++) {
     const f = fd.get("snimka_" + i);
     if (!f || typeof f === "string") continue;
+    if (failove.length >= SNIMKI_BROI) return sjson({ ok: false, prichina: "mnogo" }, 400);
     const u8 = new Uint8Array(await f.arrayBuffer());
     if (!eJpeg(u8)) return sjson({ ok: false, prichina: "ne_e_jpeg" }, 415);
     obshto += u8.length;
     if (obshto > SNIMKI_MAX_BAJTA) return sjson({ ok: false, prichina: "golyamo" }, 413);
-    failove.push({ name: "snimka-" + orderNo + "-" + i + ".jpg", content: base64(u8), kb: Math.round(u8.length / 1024) });
+    failove.push({ name: "snimka-" + orderNo + "-" + i + ".jpg", content: base64(u8), kb: Math.round(u8.length / 1024), nomer: i });
   }
   if (!failove.length) return sjson({ ok: false, prichina: "nyama_snimki" }, 400);
 
@@ -82,8 +90,13 @@ export async function handleSnimki(request, env) {
     .split(",").map((a) => a.trim()).filter(Boolean).map((a) => ({ email: a }));
 
   const tip = String(fd.get("tip") || "бърза").slice(0, 40);
+  /* Част от повече писма → „(6–10 от 30)“ в темата и в текста. */
+  const vsichko = parseInt(String(fd.get("obshto") || ""), 10);
+  const nomera = failove.map((f) => f.nomer);
+  const chast = vsichko > failove.length && vsichko <= SNIMKI_NOMER_MAX
+    ? " (" + (nomera.length > 1 ? nomera[0] + "–" + nomera[nomera.length - 1] : nomera[0]) + " от " + vsichko + ")" : "";
   const html =
-    "<p>Снимки за обложката към поръчка <strong>" + orderNo + "</strong> (" + tip.replace(/[<>&"]/g, "") + " форма).</p>" +
+    "<p>Снимки за обложката към поръчка <strong>" + orderNo + "</strong>" + chast + " (" + tip.replace(/[<>&"]/g, "") + " форма).</p>" +
     "<ul>" + failove.map((f) => "<li>" + f.name + " — " + f.kb + " KB</li>").join("") + "</ul>" +
     "<p style=\"color:#666\">Дошли през Worker-а (/snimki), не през FormSubmit.</p>";
 
@@ -95,7 +108,7 @@ export async function handleSnimki(request, env) {
       body: JSON.stringify({
         sender: { name: env.MAIL_SENDER_NAME || "Песента", email: env.MAIL_SENDER },
         to: poluchateli,
-        subject: "Снимки за обложката — " + orderNo,
+        subject: "Снимки за обложката — " + orderNo + chast,
         htmlContent: html,
         attachment: failove.map((f) => ({ name: f.name, content: f.content }))
       })

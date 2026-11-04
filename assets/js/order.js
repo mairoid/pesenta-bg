@@ -105,7 +105,8 @@
   var voiceBlob = null;
   /* Снимки за обложката: [{ blob, name, url }] — смалени копия, не оригиналите (23.09.2026). */
   var snimki = [];
-  var SNIMKI_MAX = 3, SNIMKI_PX = 1600, SNIMKI_MB = 6;
+  var SNIMKI_MAX = 30, SNIMKI_PX = 1600, SNIMKI_MB = 6;
+  var SNIMKI_GRUPA = 5, SNIMKI_GRUPA_BAJTA = 3.5 * 1048576; // една заявка към Worker-а = едно писмо
 
   var form = document.getElementById("order-form");
   var errBox = document.getElementById("form-error");
@@ -564,7 +565,7 @@
       "## Историята",
       d.story || "—",
       (voiceBlob ? "\n(!) Клиентът е приложил и ГЛАСОВ запис на историята — виж прикачения файл glasovo-" + orderNo + "." : ""),
-      (snimki.length ? "\n(!) Клиентът е приложил " + snimki.length + " снимки за обложката — прикачените файлове snimka-" + orderNo + "-1.jpg… Ползвай ги за корицата и за личната страница." : ""),
+      (snimki.length ? "\n(!) Клиентът е приложил " + snimki.length + " снимки за обложката — файловете snimka-" + orderNo + "-N.jpg (в писмата „Снимки за обложката — " + orderNo + "“ или прикачени тук). Ползвай ги за корицата и за личната страница." : ""),
       "",
       "## Качества и навици",
       d.qualities || "—",
@@ -808,26 +809,60 @@
     /* Снимките първо през нашия Worker (20.10.2026) — без Referer (вграденият браузър на
        ChatGPT) нативният POST към FormSubmit връща страница с грешка и губи ЦЯЛАТА заявка.
        Стигнат ли, без глас заявката тръгва по AJAX пътя, който не зависи от Referer. */
-    snimkiKamWorker(orderNo).then(function (snimkiStignaha) {
+    snimkiKamWorker(orderNo).then(function (lipsvat) {
       btnNext.textContent = "Изпращане…";
-      if (snimkiStignaha) payload["Снимки за обложката"] = "ДА — " + snimki.length + ", в ОТДЕЛНО писмо „Снимки за обложката — " + orderNo + "“";
-      izprati(orderNo, t, d, brief, payload, snimkiStignaha ? [] : snimki);
+      var stignali = snimki.length - lipsvat.length;
+      /* Нестигналите — до 3 по стария път (FormSubmit, прикачени към поръчката), със своите номера. */
+      var ostanali = lipsvat.slice(0, 3).map(function (n) { return { blob: snimki[n - 1].blob, n: n }; });
+      if (snimki.length && !lipsvat.length) {
+        payload["Снимки за обложката"] = "ДА — " + snimki.length + ", в отделни писма „Снимки за обложката — " + orderNo + "“";
+      } else if (stignali) {
+        payload["Снимки за обложката"] = "ДА — " + stignali + " от " + snimki.length + " в отделни писма; НЕ стигнаха № " + lipsvat.join(", ") +
+          (lipsvat.length > 3 ? " (тук са прикачени № " + lipsvat.slice(0, 3).join(", ") + " — останалите поискай по имейл)" : " (прикачени тук)");
+      } else if (lipsvat.length > 3) {
+        payload["Снимки за обложката"] = "ДА — " + snimki.length + " избрани; Worker-ът не ги прие — тук са прикачени първите 3, останалите поискай по имейл";
+      }
+      izprati(orderNo, t, d, brief, payload, ostanali);
     });
   }
 
+  /* До SNIMKI_MAX снимки (04.11.2026: 30 — и за видеа). Към Worker-а тръгват на групи до SNIMKI_GRUPA
+     снимки и до SNIMKI_GRUPA_BAJTA — всяка група е отделно писмо „Снимки за обложката — PSN… (6–10 от 30)“:
+     едно писмо с 30 снимки е твърде голямо, а Worker-ът на безплатния план има малко процесорно време.
+     Полетата носят общия номер на снимката (snimka_7), за да не се бъркат имената между писмата.
+     Две групи подред не минат ли (няма мрежа, Worker-ът отказва) — останалите не се пробват, за да не
+     чака клиентът по 30 s на група. Връща номерата (от 1), които НЕ стигнаха; [] значи, че всичко е там. */
   function snimkiKamWorker(orderNo) {
-    if (!snimki.length) return Promise.resolve(false);
-    var fd = new FormData();
-    fd.append("order_no", orderNo);
-    fd.append("tip", "пълна");
-    snimki.forEach(function (s, i) { fd.append("snimka_" + (i + 1), s.blob, "snimka-" + orderNo + "-" + (i + 1) + ".jpg"); });
-    var ac = window.AbortController ? new AbortController() : null;
-    var spri = setTimeout(function () { if (ac) ac.abort(); }, 30000);
-    return fetch(SNIMKI_ENDPOINT, { method: "POST", body: fd, signal: ac ? ac.signal : undefined })
-      .then(function (r) { return r.ok ? r.json() : { ok: false }; })
-      .then(function (j) { return !!(j && j.ok); })
-      .catch(function () { return false; })
-      .then(function (ok) { clearTimeout(spri); return ok; });
+    if (!snimki.length) return Promise.resolve([]);
+    var grupi = [], g = [], bajta = 0;
+    snimki.forEach(function (s, i) {
+      if (g.length && (g.length >= SNIMKI_GRUPA || bajta + s.blob.size > SNIMKI_GRUPA_BAJTA)) { grupi.push(g); g = []; bajta = 0; }
+      g.push(i); bajta += s.blob.size;
+    });
+    if (g.length) grupi.push(g);
+    var lipsvat = [], podred = 0;
+    return grupi.reduce(function (p, gr, k) {
+      return p.then(function () {
+        if (podred >= 2) { gr.forEach(function (i) { lipsvat.push(i + 1); }); return; }
+        if (grupi.length > 1) btnNext.textContent = "Качваме снимките… " + (k + 1) + "/" + grupi.length;
+        var fd = new FormData();
+        fd.append("order_no", orderNo);
+        fd.append("tip", "пълна");
+        fd.append("obshto", String(snimki.length));
+        gr.forEach(function (i) { fd.append("snimka_" + (i + 1), snimki[i].blob, "snimka-" + orderNo + "-" + (i + 1) + ".jpg"); });
+        var ac = window.AbortController ? new AbortController() : null;
+        var spri = setTimeout(function () { if (ac) ac.abort(); }, 30000);
+        return fetch(SNIMKI_ENDPOINT, { method: "POST", body: fd, signal: ac ? ac.signal : undefined })
+          .then(function (r) { return r.ok ? r.json() : { ok: false }; })
+          .then(function (j) { return !!(j && j.ok); })
+          .catch(function () { return false; })
+          .then(function (ok) {
+            clearTimeout(spri);
+            podred = ok ? 0 : podred + 1;
+            if (!ok) gr.forEach(function (i) { lipsvat.push(i + 1); });
+          });
+      });
+    }, Promise.resolve()).then(function () { return lipsvat; });
   }
 
   function izprati(orderNo, t, d, brief, payload, snimki) {
@@ -841,7 +876,7 @@
         payload["Гласово съобщение"] = fileName + " (прикачен — историята горе е автоматичната транскрипция)";
         files.push({ blob: voiceBlob, name: fileName, pole: "attachment" });
       }
-      snimki.forEach(function (s, i) { files.push({ blob: s.blob, name: "snimka-" + orderNo + "-" + (i + 1) + ".jpg", pole: "snimka_" + (i + 1) }); });
+      snimki.forEach(function (s, i) { var n = s.n || i + 1; files.push({ blob: s.blob, name: "snimka-" + orderNo + "-" + n + ".jpg", pole: "snimka_" + n }); });
       payload["_captcha"] = "false";
       payload["_next"] = THANKS_URL;
       rememberOrder(orderNo, PLANS[state.plan].label, eur(t.total));

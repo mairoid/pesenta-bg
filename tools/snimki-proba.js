@@ -4,17 +4,22 @@
    Какво пази (телефонен изглед 375 px):
    1) избор на 2 снимки → 2 миниатюри, редът казва „2 снимки, N KB“, бутонът става „Добави още“;
    2) „×“ на първата → остава 1;
-   3) избор на още 3 → таванът е 3, редът казва „взехме първите 2“, бутонът се крие;
-   4) прегледът на стъпка 3 показва „Снимки за обложката 3 ✓“;
-   5) изпращане: нативният POST носи 3 файла snimka-<PSN>-1..3.jpg (image/jpeg), всеки в свое
-      поле snimka_N — FormSubmit пази по един файл на име на поле (проба по имейл, 23.09), полето
-      „Снимки за обложката“ казва „ДА — 3 прикачени“, брифът съдържа бележката, а beacon-ът
-      към worker-а носи snimki: 3; на 375 px без препълване;
+   3) избор на още 3 → 4, без предупреждение; после още 30 → таванът е 30 (04.11.2026; беше 3),
+      редът казва „взехме първите 26“, бутонът се крие; на 375 px без препълване;
+   4) прегледът на стъпка 3 показва „Снимки за обложката 30 ✓“;
+   5) изпращане, Worker-ът отказва: към /snimki тръгват групи по 5 (snimka_1..5, после 6..10) и
+      след два провала подред спира; нативният POST носи първите 3 файла snimka-<PSN>-1..3.jpg
+      (image/jpeg), всеки в свое поле snimka_N — FormSubmit пази по един файл на име на поле
+      (проба по имейл, 23.09), полето „Снимки за обложката“ казва колко не са прикачени, брифът
+      съдържа бележката, а beacon-ът към worker-а носи snimki: 30;
+   5б) Worker-ът приема 2 → AJAX, „ДА — 2, в отделни писма“; 5в) от 7 приема първата група, втората
+      не → нативният POST носи snimka_6 и snimka_7 със същите номера, полето казва „5 от 7“;
    6) без снимки: старият път (AJAX, без прикачени) и „Снимки за обложката: не“;
    7) бързата форма на началната: 2 снимки → миниатюри; при изпращане снимките тръгват ПЪРВИ,
       в отделна multipart заявка (no-cors) към нативния ендпойнт (AJAX-ът дава 500 при файл),
-      поръчката — по стария AJAX път с „ДА — 2, в ОТДЕЛНО писмо“, beacon snimki: 2; без снимки —
-      само AJAX. Записите живеят в localStorage, Stripe е блокиран;
+      поръчката — по стария AJAX път; полето казва кои не са стигнали през Worker-а (или „в отделни
+      писма“, ако са), beacon snimki: 2; от 7 с отказ за втората група — FormSubmit носи 6 и 7; без
+      снимки — само AJAX. Записите живеят в localStorage, Stripe е блокиран;
    8) конзолата чиста. Код 1 при FAIL. Нищо не се праща наистина: form.submit, fetch и
       sendBeacon са подменени в страницата. */
 const { spawn } = require("child_process");
@@ -49,7 +54,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   /* нищо не тръгва навън: формата, fetch-ът и beacon-ът се записват в window */
   const STUB = `(function(){window.__forma=null;window.__fetch=null;window.__brief=null;
     HTMLFormElement.prototype.submit=function(){var o={fields:{},files:[]};[].forEach.call(this.elements,function(el){if(el.type==="file"){[].forEach.call(el.files,function(f){o.files.push({pole:el.name,name:f.name,type:f.type,size:f.size});});}else if(el.name){o.fields[el.name]=el.value;}});window.__forma=o;};
-    window.fetch=function(u,o){if(/\\/snimki$/.test(String(u))){var e=[];o.body.forEach(function(v,k){e.push([k,(v instanceof Blob)?("FILE:"+(v.name||"")+":"+v.size):String(v)]);});window.__snimki=e;return Promise.resolve({ok:true,json:function(){return Promise.resolve({ok:!!window.__snimkiOk});}});}window.__fetch={url:String(u),body:o&&o.body?String(o.body):""};return Promise.resolve({ok:true,json:function(){return Promise.resolve({success:"true"});}});};
+    window.fetch=function(u,o){if(/\\/snimki$/.test(String(u))){var e=[];o.body.forEach(function(v,k){e.push([k,(v instanceof Blob)?("FILE:"+(v.name||"")+":"+v.size):String(v)]);});window.__snimki=window.__snimki||[];window.__snimki.push(e);var okv=window.__snimkiOk,ok=Array.isArray(okv)?!!okv[window.__snimki.length-1]:!!okv;return Promise.resolve({ok:true,json:function(){return Promise.resolve({ok:ok});}});}window.__fetch={url:String(u),body:o&&o.body?String(o.body):""};return Promise.resolve({ok:true,json:function(){return Promise.resolve({success:"true"});}});};
     navigator.sendBeacon=function(u,b){b.text().then(function(t){window.__brief=JSON.parse(t);});return true;};})()`;
   const OUT = process.argv[3] || null;
   /* снимка на самата кутия (clip по елемента), не на горния край на страницата */
@@ -73,25 +78,44 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     /* 3) таванът */
     await setFiles([F("cover-tutso-400.jpg"), F("cover-habibi-400.jpg"), F("pesen-nashiyat-otbor-hero.jpg")]);
     s = await evalJS(SAST);
-    ok("още 3 → таван 3, редът предупреждава, бутонът се крие", s.n === 3 && /взехме първите 2/.test(s.status) && s.skrit === true, s.n + " / " + s.status);
-    await evalJS(`document.getElementById("snimki-box").scrollIntoView({block:"center"})`); await snimka("snimki-tri", "#snimki-box");
-    ok("375 px с три миниатюри без препълване", s.sw <= s.cw, s.sw + "/" + s.cw);
+    ok("още 3 → 4, без предупреждение, бутонът остава", s.n === 4 && /^4 снимки,/.test(s.status) && !s.skrit, s.n + " / " + s.status);
+    await setFiles(Array.from({ length: 30 }, (_, i) => F(i % 2 ? "cover-habibi-400.jpg" : "cover-tutso-400.jpg"))); await sleep(2500);
+    s = await evalJS(SAST);
+    ok("още 30 → таван 30, редът предупреждава „взехме първите 26“, бутонът се крие", s.n === 30 && /До 30 снимки — взехме първите 26/.test(s.status) && s.skrit === true, s.n + " / " + s.status);
+    await evalJS(`document.getElementById("snimki-box").scrollIntoView({block:"center"})`); await snimka("snimki-trideset", "#snimki-box");
+    ok("375 px с 30 миниатюри без препълване", s.sw <= s.cw, s.sw + "/" + s.cw);
     /* 4) прегледът на стъпка 3 */
     await evalJS(`document.getElementById("btn-next").click()`); await sleep(300);
     await evalJS(`document.getElementById("btn-next").click()`); await sleep(300);
     const pregled = await evalJS(`document.body.textContent.replace(/\\s+/g," ")`);
-    ok("стъпка 3: прегледът показва „Снимки за обложката 3 ✓“", /Снимки за обложката\s*3 ✓/.test(pregled));
+    ok("стъпка 3: прегледът показва „Снимки за обложката 30 ✓“", /Снимки за обложката\s*30 ✓/.test(pregled));
     /* 5) изпращане с прикачени */
     await evalJS(`document.getElementById("cust-name").value="Проба Пробова";document.getElementById("cust-email").value="proba@primer.bg";document.getElementById("consent").checked=true;document.getElementById("btn-next").click();`);
-    await sleep(800);
+    await sleep(1500);
     const fo = await evalJS(`window.__forma`), br = await evalJS(`window.__brief`);
     const psn = fo && fo.fields["Номер на заявка"];
-    ok("Worker-ът отказва → нативният POST носи 3 файла snimka-<PSN>-1..3.jpg, image/jpeg, всеки в свое поле snimka_N (FormSubmit пази по един файл на поле)", !!fo && fo.files.length === 3 && fo.files.every((f, i) => f.pole === "snimka_" + (i + 1) && f.name === "snimka-" + psn + "-" + (i + 1) + ".jpg" && f.type === "image/jpeg" && f.size > 1000), fo ? fo.files.map(f => f.pole + "=" + f.name + " " + f.size).join(", ") : "няма форма");
-    ok("полето „Снимки за обложката“ казва „ДА — 3 прикачени“; брифът носи бележката", !!fo && /^ДА — 3 прикачени/.test(fo.fields["Снимки за обложката"] || "") && /3 снимки за обложката/.test(fo.fields["CLAUDE BRIEF"] || ""), fo ? (fo.fields["Снимки за обложката"] || "").slice(0, 40) : "");
-    ok("beacon-ът към worker-а носи snimki: 3", !!br && br.snimki === 3 && br.order_no === psn, br ? JSON.stringify({ snimki: br.snimki, order_no: br.order_no }) : "няма beacon");
+    ok("Worker-ът отказва → нативният POST носи първите 3 файла snimka-<PSN>-1..3.jpg, image/jpeg, всеки в свое поле snimka_N (FormSubmit пази по един файл на поле)", !!fo && fo.files.length === 3 && fo.files.every((f, i) => f.pole === "snimka_" + (i + 1) && f.name === "snimka-" + psn + "-" + (i + 1) + ".jpg" && f.type === "image/jpeg" && f.size > 1000), fo ? fo.files.map(f => f.pole + "=" + f.name + " " + f.size).join(", ") : "няма форма");
+    ok("полето „Снимки за обложката“ казва „30 избрани … първите 3, останалите поискай“; брифът носи бележката", !!fo && /^ДА — 30 избрани; Worker-ът не ги прие — тук са прикачени първите 3, останалите поискай по имейл/.test(fo.fields["Снимки за обложката"] || "") && /30 снимки за обложката/.test(fo.fields["CLAUDE BRIEF"] || ""), fo ? (fo.fields["Снимки за обложката"] || "").slice(0, 90) : "");
+    ok("beacon-ът към worker-а носи snimki: 30", !!br && br.snimki === 30 && br.order_no === psn, br ? JSON.stringify({ snimki: br.snimki, order_no: br.order_no }) : "няма beacon");
     ok("формата тръгва към FormSubmit нативно, с _next към благодарим", !!fo && fo.fields._next === "https://pesenta.bg/blagodarim.html" && fo.fields._captcha === "false");
-    const sw = await evalJS(`window.__snimki`);
-    ok("пълната форма: снимките тръгват първо към Worker-а (/snimki): order_no, tip=пълна, snimka_1..3", !!sw && (sw.find(p => p[0] === "order_no") || [])[1] === psn && (sw.find(p => p[0] === "tip") || [])[1] === "пълна" && sw.filter(p => /^snimka_\d$/.test(p[0])).length === 3, sw ? sw.map(p => p[0]).join(",") : "няма заявка към /snimki");
+    const sw = await evalJS(`window.__snimki`) || [];
+    const poleta = z => z.filter(p => /^snimka_\d+$/.test(p[0])).map(p => +p[0].slice(7)).join(",");
+    ok("пълната форма: снимките тръгват първо към Worker-а на групи по 5 (order_no, tip=пълна, obshto=30); след два отказа подред — спира", sw.length === 2 && sw.every(z => (z.find(p => p[0] === "order_no") || [])[1] === psn && (z.find(p => p[0] === "tip") || [])[1] === "пълна" && (z.find(p => p[0] === "obshto") || [])[1] === "30") && poleta(sw[0]) === "1,2,3,4,5" && poleta(sw[1]) === "6,7,8,9,10", sw.map(poleta).join(" | "));
+    ok("имената на файловете към Worker-а носят общия номер (snimka-<PSN>-7.jpg)", !!sw[1] && sw[1].some(p => p[0] === "snimka_7" && p[1].indexOf("FILE:snimka-" + psn + "-7.jpg:") === 0), sw[1] && sw[1].map(p => p[1]).join(" ").slice(0, 120));
+    /* 5в) от 7 снимки Worker-ът приема първата група и отказва втората → FormSubmit носи 6 и 7 */
+    await idi(BASE + "/poruchka.html");
+    await evalJS(`localStorage.removeItem("pesenta_draft")`);
+    await evalJS(STUB); await evalJS(`window.__snimkiOk=[true,false]`);
+    await setFiles(Array.from({ length: 7 }, (_, i) => F(i % 2 ? "cover-habibi-400.jpg" : "cover-tutso-400.jpg")));
+    await evalJS(`document.getElementById("btn-next").click()`); await sleep(300);
+    await evalJS(`document.getElementById("btn-next").click()`); await sleep(300);
+    await evalJS(`document.getElementById("cust-name").value="Проба Пробова";document.getElementById("cust-email").value="proba@primer.bg";document.getElementById("consent").checked=true;document.getElementById("btn-next").click();`);
+    await sleep(1200);
+    const fo7 = await evalJS(`window.__forma`), sw7 = await evalJS(`window.__snimki`) || [];
+    const psn7 = fo7 && fo7.fields["Номер на заявка"];
+    ok("от 7: две заявки към Worker-а (1–5 и 6–7)", sw7.length === 2 && poleta(sw7[0]) === "1,2,3,4,5" && poleta(sw7[1]) === "6,7", sw7.map(poleta).join(" | "));
+    ok("от 7, втората група отказана → нативният POST носи snimka_6 и snimka_7 със същите номера", !!fo7 && fo7.files.map(f => f.pole + "=" + f.name).join(",") === "snimka_6=snimka-" + psn7 + "-6.jpg,snimka_7=snimka-" + psn7 + "-7.jpg", fo7 ? fo7.files.map(f => f.pole + "=" + f.name).join(",") : "няма форма");
+    ok("от 7: полето казва „ДА — 5 от 7 в отделни писма; НЕ стигнаха № 6, 7 (прикачени тук)“", !!fo7 && fo7.fields["Снимки за обложката"] === "ДА — 5 от 7 в отделни писма; НЕ стигнаха № 6, 7 (прикачени тук)", fo7 && fo7.fields["Снимки за обложката"]);
     /* 5б) Worker-ът приема → AJAX път (не зависи от Referer), без нативна форма */
     await idi(BASE + "/poruchka.html");
     await evalJS(`localStorage.removeItem("pesenta_draft")`);
@@ -103,7 +127,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     await sleep(800);
     const fe5 = await evalJS(`window.__fetch`), fo5 = await evalJS(`window.__forma`);
     let t5 = null; try { t5 = JSON.parse(fe5.body); } catch (e) {}
-    ok("Worker-ът приема → AJAX към FormSubmit, без нативна форма, „ДА — 2, в ОТДЕЛНО писмо“", !fo5 && !!fe5 && /formsubmit\.co\/ajax\//.test(fe5.url) && !!t5 && /^ДА — 2, в ОТДЕЛНО писмо/.test(t5["Снимки за обложката"] || ""), fo5 ? "има нативна форма" : (t5 && t5["Снимки за обложката"]));
+    ok("Worker-ът приема → AJAX към FormSubmit, без нативна форма, „ДА — 2, в отделни писма“", !fo5 && !!fe5 && /formsubmit\.co\/ajax\//.test(fe5.url) && !!t5 && /^ДА — 2, в отделни писма „Снимки за обложката — PSN-/.test(t5["Снимки за обложката"] || ""), fo5 ? "има нативна форма" : (t5 && t5["Снимки за обложката"]));
     /* 6) без снимки — старият път */
     await idi(BASE + "/poruchka.html");
     await evalJS(`localStorage.removeItem("pesenta_draft")`);
@@ -120,13 +144,13 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     await send("Network.setBlockedURLs", { urls: ["*buy.stripe.com*", "*/sabitie*"] }); /* не пълни истинските броеве */
     const STUB2 = `(function(){localStorage.removeItem("__proba");var z=[];function pishi(){localStorage.setItem("__proba",JSON.stringify(z));}
       window.fetch=function(u,o){var e=[];if(o&&o.body instanceof FormData){o.body.forEach(function(v,k){e.push([k,(v instanceof Blob)?("FILE:"+(v.name||"")+":"+v.size):String(v).slice(0,k==="CLAUDE BRIEF"?4000:60)]);});}
-        z.push({vid:"fetch",url:String(u),mode:o&&o.mode||"",e:e});pishi();if(/\\/snimki$/.test(String(u)))return Promise.resolve({ok:true,json:function(){return Promise.resolve({ok:localStorage.getItem("__snimkiOk")==="1"});}});return Promise.resolve({ok:true,json:function(){return Promise.resolve({success:"true"});}});};
+        z.push({vid:"fetch",url:String(u),mode:o&&o.mode||"",e:e});pishi();if(/\\/snimki$/.test(String(u))){var v=localStorage.getItem("__snimkiOk")||"0",k=z.filter(function(x){return /\\/snimki$/.test(x.url);}).length-1,ok=(v.length>1?v.charAt(k):v)==="1";return Promise.resolve({ok:true,json:function(){return Promise.resolve({ok:ok});}});}return Promise.resolve({ok:true,json:function(){return Promise.resolve({success:"true"});}});};
       navigator.sendBeacon=function(u,b){b.text().then(function(t){z.push({vid:"beacon",url:String(u),tyalo:JSON.parse(t)});pishi();});return true;};})()`;
     const barza = async (sSnimki) => {
       await idi(BASE + "/index.html");
       await evalJS(STUB2);
       await evalJS(`document.getElementById("fast-text").click()`); await sleep(1200);
-      if (sSnimki) { const doc = await send("DOM.getDocument", { depth: 1 }); const n = await send("DOM.querySelector", { nodeId: doc.root.nodeId, selector: "#text-snimki" }); await send("DOM.setFileInputFiles", { nodeId: n.nodeId, files: [F("cover-tutso-400.jpg"), F("cover-habibi-400.jpg")] }); await sleep(1500); }
+      if (sSnimki) { const doc = await send("DOM.getDocument", { depth: 1 }); const n = await send("DOM.querySelector", { nodeId: doc.root.nodeId, selector: "#text-snimki" }); await send("DOM.setFileInputFiles", { nodeId: n.nodeId, files: Array.isArray(sSnimki) ? sSnimki : [F("cover-tutso-400.jpg"), F("cover-habibi-400.jpg")] }); await sleep(1500); }
       const t = await evalJS(`(function(){return {n:document.querySelectorAll("#text-snimki-preview .snimki-thumb").length,st:document.getElementById("text-snimki-status").textContent,sw:document.documentElement.scrollWidth,cw:document.documentElement.clientWidth};})()`);
       /* имейлът е задължителен от 13.10.2026 — без него формата спира преди изпращане */
       await evalJS(`document.getElementById("text-story").value="Проба: за Данчо, 40 години, обича риболова.";document.getElementById("text-email").value="proba@example.com";document.getElementById("text-consent").checked=true;document.getElementById("text-send").click();`);
@@ -141,15 +165,23 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     const sw1 = b1.z.find(x => x.vid === "fetch" && /\/snimki$/.test(x.url));
     const nat = b1.z.find(x => x.vid === "fetch" && /formsubmit\.co\/(?!ajax)/.test(x.url)), aj = b1.z.find(x => x.vid === "fetch" && /\/ajax\//.test(x.url)), bc = b1.z.find(x => x.vid === "beacon" && /\/brief$/.test(x.url));
     const psn2 = aj && (aj.e.find(p => p[0] === "Номер на заявка") || [])[1];
-    const fajlove = nat ? nat.e.filter(p => /^snimka_\d$/.test(p[0])) : [];
-    ok("бързата: снимките тръгват първо към Worker-а (/snimki), преди поръчката", !!sw1 && b1.z.indexOf(sw1) < b1.z.indexOf(aj) && sw1.e.filter(p => /^snimka_\d$/.test(p[0])).length === 2 && (sw1.e.find(p => p[0] === "order_no") || [])[1] === psn2, sw1 ? sw1.e.map(p => p[0]).join(",") : "няма /snimki");
+    const fajlove = nat ? nat.e.filter(p => /^snimka_\d+$/.test(p[0])) : [];
+    ok("бързата: снимките тръгват първо към Worker-а (/snimki), преди поръчката, с obshto=2", !!sw1 && b1.z.indexOf(sw1) < b1.z.indexOf(aj) && sw1.e.filter(p => /^snimka_\d+$/.test(p[0])).length === 2 && (sw1.e.find(p => p[0] === "order_no") || [])[1] === psn2 && (sw1.e.find(p => p[0] === "obshto") || [])[1] === "2", sw1 ? sw1.e.map(p => p[0]).join(",") : "няма /snimki");
     ok("Worker-ът отказва → резервно: отделна multipart заявка (no-cors) към нативния ендпойнт: snimka_1, snimka_2 + номерът", !!nat && b1.z.indexOf(nat) < b1.z.indexOf(aj) && nat.mode === "no-cors" && fajlove.length === 2 && fajlove.every((p, i) => p[1] === "FILE:snimka-" + psn2 + "-" + (i + 1) + ".jpg:" + p[1].split(":")[2] && +p[1].split(":")[2] > 1000) && (nat.e.find(p => p[0] === "Към заявка") || [])[1] === psn2, nat ? nat.e.map(p => p[0] + "=" + p[1]).join(", ").slice(0, 160) : "няма нативна заявка");
-    ok("поръчката тръгва по стария AJAX път: „Снимки за обложката: ДА — 2, в ОТДЕЛНО писмо“, брифът с бележка; beacon snimki: 2", !!aj && /^ДА — 2, в ОТДЕЛНО писмо/.test((aj.e.find(p => p[0] === "Снимки за обложката") || [])[1] || "") && /2 снимки за обложката/.test((aj.e.find(p => p[0] === "CLAUDE_BRIEF" || p[0] === "CLAUDE BRIEF") || [])[1] || ""), aj ? (aj.e.find(p => p[0] === "Снимки за обложката") || [])[1] : "няма ajax");
+    ok("поръчката тръгва по стария AJAX път: „Снимки за обложката: ДА — 2; НЕ стигнаха през Worker-а № 1, 2“, брифът с бележка", !!aj && /^ДА — 2; НЕ стигнаха през Worker-а № 1, 2/.test((aj.e.find(p => p[0] === "Снимки за обложката") || [])[1] || "") && /2 снимки за обложката/.test((aj.e.find(p => p[0] === "CLAUDE_BRIEF" || p[0] === "CLAUDE BRIEF") || [])[1] || ""), aj ? (aj.e.find(p => p[0] === "Снимки за обложката") || [])[1] : "няма ajax");
     ok("beacon-ът от бързата форма носи snimki: 2", !!bc && bc.tyalo.snimki === 2 && bc.tyalo.order_no === psn2, bc ? JSON.stringify({ snimki: bc.tyalo.snimki }) : "няма beacon");
     await evalJS(`localStorage.setItem("__snimkiOk","1")`);
     const b2 = await barza(true);
     const nat2 = b2.z.find(x => x.vid === "fetch" && /formsubmit\.co\/(?!ajax)/.test(x.url)), sw2 = b2.z.find(x => x.vid === "fetch" && /\/snimki$/.test(x.url)), aj2 = b2.z.find(x => x.vid === "fetch" && /\/ajax\//.test(x.url));
-    ok("бързата: Worker-ът приема → без нативна заявка към FormSubmit, поръчката по AJAX", !!sw2 && !nat2 && !!aj2, (sw2 ? "snimki " : "") + (nat2 ? "НАТИВНА " : "") + (aj2 ? "ajax" : ""));
+    ok("бързата: Worker-ът приема → без нативна заявка към FormSubmit, поръчката по AJAX с „ДА — 2, в отделни писма“", !!sw2 && !nat2 && !!aj2 && /^ДА — 2, в отделни писма/.test((aj2.e.find(p => p[0] === "Снимки за обложката") || [])[1] || ""), (sw2 ? "snimki " : "") + (nat2 ? "НАТИВНА " : "") + (aj2 ? "ajax" : ""));
+    /* от 7: първата група минава, втората — не → FormSubmit носи 6 и 7, полето го казва */
+    await evalJS(`localStorage.setItem("__snimkiOk","10")`);
+    const b7 = await barza(Array.from({ length: 7 }, (_, i) => F(i % 2 ? "cover-habibi-400.jpg" : "cover-tutso-400.jpg")));
+    const sw7b = b7.z.filter(x => x.vid === "fetch" && /\/snimki$/.test(x.url)), nat7 = b7.z.find(x => x.vid === "fetch" && /formsubmit\.co\/(?!ajax)/.test(x.url)), aj7 = b7.z.find(x => x.vid === "fetch" && /\/ajax\//.test(x.url));
+    const psn7b = aj7 && (aj7.e.find(p => p[0] === "Номер на заявка") || [])[1];
+    const pol = x => x.e.filter(p => /^snimka_\d+$/.test(p[0])).map(p => p[0].slice(7)).join(",");
+    ok("бързата от 7: две заявки към Worker-а (1–5, 6–7), FormSubmit носи snimka_6 и snimka_7 с имената им", sw7b.length === 2 && pol(sw7b[0]) === "1,2,3,4,5" && pol(sw7b[1]) === "6,7" && !!nat7 && pol(nat7) === "6,7" && nat7.e.some(p => p[0] === "snimka_7" && p[1].indexOf("FILE:snimka-" + psn7b + "-7.jpg:") === 0), sw7b.map(pol).join(" | ") + " / " + (nat7 ? pol(nat7) : "няма нативна"));
+    ok("бързата от 7: полето казва „ДА — 7; 5 в отделни писма …; НЕ стигнаха № 6, 7“", !!aj7 && /^ДА — 7; 5 в отделни писма/.test((aj7.e.find(p => p[0] === "Снимки за обложката") || [])[1] || ""), aj7 && (aj7.e.find(p => p[0] === "Снимки за обложката") || [])[1]);
     await evalJS(`localStorage.removeItem("__snimkiOk")`);
     const b0 = await barza(false);
     const nat0 = b0.z.find(x => x.vid === "fetch" && /formsubmit\.co\/(?!ajax)/.test(x.url)), aj0 = b0.z.find(x => x.vid === "fetch" && /\/ajax\//.test(x.url)), bc0 = b0.z.find(x => x.vid === "beacon" && /\/brief$/.test(x.url));
