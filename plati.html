@@ -19,12 +19,11 @@
   <!-- Критичните (кирилски) шрифтове тръгват веднага, вместо да чакат CSS-а -->
   <link rel="preload" href="assets/fonts/unbounded-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
-  <!-- Латинските подмножества се теглят на ВСЯКА страница: запетаята, точката,
-       тирето, кавичките и цифрите живеят в тях, не в кирилските. Без preload
-       браузърът ги открива чак след като разбере CSS-а — цял round-trip по-късно,
-       заради което пунктуацията в заглавията за миг е с резервния шрифт. -->
-  <link rel="preload" href="assets/fonts/unbounded-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <!-- Латинските подмножества (пунктуацията, цифрите) са БЕЗ preload (05.11.2026):
+       четирите preload-а се бореха за трафика със style.css и първият текст излизаше
+       0,56 s по-късно (HTTP/2, бавно 4G, CPU ×4, медиана от 9 мерения). С „нисък
+       приоритет“ (fetchpriority=low) печалбата по HTTP/2 е нула. Цената: пунктуацията
+       в заглавията за миг е с резервния шрифт (метрично изравнен — нищо не подскача). -->
   <link rel="stylesheet" href="assets/css/fonts.css">
   <link rel="stylesheet" href="assets/css/style.css">
   <!-- Cloudflare Web Analytics. Без бисквитки и без localStorage — затова
