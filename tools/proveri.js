@@ -45,7 +45,9 @@ function lo(u) { gr++; console.log("    ✗ " + u); }
   /* 4. частност */
   if (!/noindex, nofollow/.test(h)) lo("липсва noindex");
   var sm = fs.readFileSync(R + "sitemap.xml", "utf8");
-  if (sm.indexOf(slug) > -1) lo("стои в sitemap.xml");
+  /* Цяло име, не част от име: публичната primer-lelya-svetla не е частната lelya-svetla. */
+  var adresRe = new RegExp("(^|[^a-z0-9-])" + slug + "\\.html");
+  if (adresRe.test(sm)) lo("стои в sitemap.xml");
 
   /* 5. никой да не сочи насам */
   var sochat = [];
@@ -56,7 +58,7 @@ function lo(u) { gr++; console.log("    ✗ " + u); }
       if (fs.statSync(p).isDirectory()) return obhod(p);
       if (!/\.(html|js|xml|json)$/.test(n)) return;
       if (path.resolve(p) === path.resolve(f)) return;
-      if (fs.readFileSync(p, "utf8").indexOf(slug + ".html") > -1) sochat.push(n);
+      if (adresRe.test(fs.readFileSync(p, "utf8"))) sochat.push(n);
     });
   })(R);
   if (sochat.length) lo("сочат насам: " + sochat.join(", "));

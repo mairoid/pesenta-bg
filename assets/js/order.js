@@ -31,7 +31,8 @@
   var ORDER_EMAIL = "sales@pesenta.bg";
 
   var PLANS = {
-    pesen: { label: "Песен по поръчка", price: 19.9, desc: "авторски текст, безплатна корекция, MP3 + текст" }
+    pesen: { label: "Песен по поръчка", price: 19.9, desc: "авторски текст, безплатна корекция, MP3 + текст" },
+    pesenVideo: { label: "Песен + персонализирано видео", price: 24.9, desc: "песента плюс видео със снимките на клиента" }
   };
   /* Срокът е до 24 часа за всички (21.09.2026); платената експресна изработка (+9,90 €)
      отпадна. За същия ден — имейл или телефон, при възможност. */
@@ -590,6 +591,7 @@
       "",
       "## Пакет",
       "- " + PLANS[state.plan].label + " (" + PLANS[state.plan].desc + ")",
+      (state.plan === "pesenVideo" ? "(!) ИСКА ВИДЕО — от снимките му; ако не е пратил снимки, генерираме подходящи за песента. Срок до 24 часа." : ""),
       "- Обща цена: " + eur(t.total) + (state.promoCode ? " (промо код " + state.promoCode + ", −" + state.promoPct + "%)" : ""),
       "",
       "## Бележки от клиента",
@@ -1038,6 +1040,20 @@
      възстановена чернова с дата смята с нея. */
   presmetniDostavka();
   state.plan = "pesen";
+  /* Видео към песента (+5 €, 09.11.2026). Редът е скрит, докато в payments.js няма
+     линк за 24,90 €. Отметката не се възстановява от черновата, както и пакетът горе. */
+  (function () {
+    var red = document.getElementById("video-red"), chk = document.getElementById("s-video");
+    var cfg = window.PESENTA_PAYMENTS;
+    if (!red || !chk || !(cfg && cfg.enabled && cfg.paymentLinks && cfg.paymentLinks.pesenVideo)) return;
+    red.hidden = false;
+    chk.checked = false;
+    chk.addEventListener("change", function () {
+      state.plan = chk.checked ? "pesenVideo" : "pesen";
+      renderSummary();
+      saveDraft();
+    });
+  })();
   /* Поводът от връзката печели пред черновата (21.09.2026). Преди важеше само при
      празна чернова: който веднъж беше избрал „Рожден ден“, идваше после от страницата
      за бебе и пак виждаше „Рожден ден“. Връзката е по-новото намерение. Избраният чип

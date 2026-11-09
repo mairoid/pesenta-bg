@@ -205,8 +205,8 @@
            запис. Не влизат в черновата (localStorage не побира снимки); в брифа към worker-а
            отива само броят. Полето е скрито, бутонът го отваря — така изглежда като останалите. -->
       <div class="field snimki-box" id="snimki-box">
-        <label for="snimki">Снимки за обложката
-          <span class="hint">По желание — до 30 снимки на човека или на компанията. Ще ги ползваме за корицата на песента и за личната ѝ страница.</span>
+        <label for="snimki">Снимки за обложката и видеото
+          <span class="hint">По желание — до 30 снимки на човека или на компанията. Ще ги ползваме за корицата на песента, за личната ѝ страница и за видеото, ако го поръчаш.</span>
         </label>
         <input type="file" id="snimki" name="snimki" accept="image/*" multiple hidden>
         <div class="snimki-row">
@@ -363,6 +363,13 @@
           <button type="button" class="btn btn-ghost" id="promo-apply">Приложи</button>
         </div>
         <div class="promo-msg" id="promo-msg" role="status"></div>
+      </div>
+
+      <div class="toggle-row" id="video-red" hidden>
+        <label for="s-video">Добави персонализирано видео с твоите снимки · +5 €
+          <span class="hint">Общо 24,90 €. Колкото повече и по-подходящи снимки ни пратиш, толкова по-хубаво видео ще направим. Ако не добавиш снимки, ще генерираме подходящи за песента.</span>
+        </label>
+        <input type="checkbox" id="s-video" name="video">
       </div>
 
       <div class="order-summary" id="order-summary" aria-live="polite">

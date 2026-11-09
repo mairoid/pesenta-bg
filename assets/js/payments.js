@@ -64,7 +64,10 @@ window.PESENTA_PAYMENTS = {
        поръчка“, БЕЗ промо кодове (ваучерът е подарък на пълна цена), пълно име, връщане
        на https://pesenta.bg/vaucher-blagodarim.html?session_id=…. Същото plink_… стои в
        VAUCHER_PLINK на Worker-а. Изпразни ли се — бутонът казва „…съвсем скоро“. */
-    vaucher: "https://buy.stripe.com/8x2dRa4qA4Mbalc1Rh9IQ03"
+    vaucher: "https://buy.stripe.com/8x2dRa4qA4Mbalc1Rh9IQ03",
+    /* Песен + персонализирано видео — 24,90 € (09.11.2026). Докато е празно, отметката
+       за видео не се показва и поръчките вървят само за 19,90 €. */
+    pesenVideo: "https://buy.stripe.com/fZuaEYbT26Ujbpg67x9IQ06" /* plink_1UZqg2Ji5XII3dF8f9cTkB8T */
     /* Връзката „Песен + Експресна изработка“ (29,80 €, plink_1TxA8FJi5XII3dF8AoDMUL21) е
        махната оттук на 21.09.2026: срокът е до 24 часа за всички, без доплащане. Самият
        Payment Link в Stripe се изключва от таблото — сайтът вече не води към него. */
@@ -72,6 +75,7 @@ window.PESENTA_PAYMENTS = {
 
   /* Показни данни за страницата за плащане */
   plans: {
-    pesen: { label: "Песен по поръчка", price: 19.9 }
+    pesen: { label: "Песен по поръчка", price: 19.9 },
+    pesenVideo: { label: "Песен + персонализирано видео", price: 24.9 }
   }
 };

@@ -46,6 +46,18 @@
   var errEl = document.getElementById("text-error");
   var storyEl = document.getElementById("text-story");
   var SEND_TEXT = sendBtn.textContent; /* „Продължи към плащане · 19,90 €“ — връща се при махнат код */
+  /* Видео към песента (+5 €, 09.11.2026): редът е скрит, докато в payments.js няма линк за
+     24,90 €, и изчезва при ваучер — ваучерът покрива само песента. */
+  var videoChk = document.getElementById("text-video"), videoRed = document.getElementById("text-video-red");
+  var videoCfg = window.PESENTA_PAYMENTS;
+  var videoIma = !!(videoChk && videoRed && videoCfg && videoCfg.enabled && videoCfg.paymentLinks && videoCfg.paymentLinks.pesenVideo);
+  function sasVideo() { return videoIma && !videoRed.hidden && videoChk.checked; }
+  function sendEtiket() { return sasVideo() ? SEND_TEXT.replace("19,90", "24,90") : SEND_TEXT; }
+  if (videoIma) {
+    videoRed.hidden = false;
+    videoChk.checked = false;
+    videoChk.addEventListener("change", function () { if (!sendBtn.disabled) sendBtn.textContent = sendEtiket(); });
+  }
   /* Снимки за обложката: [{ blob, name, url }] — смалени копия. Собствено копие на
      функциите от order.js — файловете нарочно не си споделят код (виж главата). */
   var snimki = [];
@@ -392,7 +404,7 @@
     /* Английският сайт има своя връзка (продукт „Custom song“ вместо „Песен по
        поръчка“); докато я няма в payments.js — общата. */
     var link = cfg && cfg.enabled && cfg.paymentLinks &&
-               ((EN && cfg.paymentLinks.pesenEn) || cfg.paymentLinks.pesen);
+               ((sasVideo() && cfg.paymentLinks.pesenVideo) || (EN && cfg.paymentLinks.pesenEn) || cfg.paymentLinks.pesen);
     if (!link) return "plati.html?order=" + encodeURIComponent(orderNo) + "&plan=pesen";
     /* prefilled_email: имейлът от формата идва попълнен в касата (13.10.2026). */
     /* locale (13.10.2026): от българския сайт касата е винаги на български —
@@ -600,7 +612,8 @@
     if (kodInp) kodInp.readOnly = vkl;
     if (kodBtn) kodBtn.hidden = vkl;
     if (kodMahni) kodMahni.hidden = !vkl;
-    if (!sendBtn.disabled) sendBtn.textContent = vkl ? "Изпрати разказа" : SEND_TEXT;
+    if (videoIma) { videoRed.hidden = vkl; if (vkl) videoChk.checked = false; }
+    if (!sendBtn.disabled) sendBtn.textContent = vkl ? "Изпрати разказа" : sendEtiket();
     presmetniDostavka();
   }
   function proveriKod(kod, otVrazka) {
@@ -690,6 +703,17 @@
         window.scrollTo({ top: Math.max(0, window.scrollY + pr.top - top - 12), behavior: "smooth" });
       }
     }, 650);
+  });
+
+  /* „Поръчай песен с видео“ от секция „Какво получаваш“: отваря формата и слага
+     отметката — иначе човекът стига до формата и изборът му го няма. */
+  var videoCta = document.getElementById("s-video-cta");
+  if (videoCta && videoIma) videoCta.addEventListener("click", function () {
+    if (!vaucher && !videoRed.hidden) {
+      videoChk.checked = true;
+      if (!sendBtn.disabled) sendBtn.textContent = sendEtiket();
+    }
+    if (fieldsWrap.hidden) textBtn.click();
   });
 
   /* Обратната посока (само там, където има бутон за запис): кликне ли се
@@ -806,6 +830,7 @@
          който пътува със самото плащане като client_reference_id. */
       "Състояние": vch ? "ПЛАТЕНО С ВАУЧЕР " + vchOpis + ". Без Stripe — Worker-ът отбеляза кода като използван." : "ОЧАКВА ПЛАЩАНЕ — клиентът е пренасочен към Stripe",
       "Клиент": vch ? "— получател на ваучер; името е в разказа" : "— името идва от Stripe след плащането",
+      "Персонализирано видео": sasVideo() ? "ДА — +5 € (общо 24,90 €)" : "не",
       "Имейл": email || "—",
       "_replyto": email,
       "Повод": occasion || "— не е избран, виж разказа",
@@ -835,6 +860,7 @@
              "\n" + inv.name + ", " + inv.addr)
           : "ФАКТУРА: не е поискана.",
         "",
+        (sasVideo() ? "(!) ИСКА ВИДЕО — от снимките му; ако не е пратил снимки, генерираме подходящи за песента. Срок до 24 часа.\n" : ""),
         "Повод: " + (occasion || "— не е избран, виж разказа"),
         "Дата на повода: " + (eventDate || "— не е посочена"),
         "Стилове: " + (styles.length ? styles.join(", ") : "— не са избрани, виж разказа"),

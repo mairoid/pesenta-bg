@@ -7,8 +7,8 @@
    ───────────────────────────────────────────────────────── */
 
 window.PESENTA_LEGAL = {
-  privacy: { version: "1.4", updated: "16.10.2026" },
-  terms: { updated: "15.10.2026" },
+  privacy: { version: "1.5", updated: "09.11.2026" },
+  terms: { updated: "09.11.2026" },
 
   company: {
     name: "„БАУФИЗИК“ ЕООД",

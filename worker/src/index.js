@@ -349,7 +349,13 @@ async function recordSale(env, event, ctx) {
      Различаваме я по сумата, защото line items не идват в webhook-а без
      отделна заявка към Stripe API — а тя би изисквала таен ключ тук. */
   const isExpress = !jeVaucher && s.amount_subtotal >= 2500;
+  /* Видео (09.11.2026): по сумата преди отстъпката, по същата причина като експреса.
+     24,90 € = песен + видео; 5 € = видео, доплатено след готовата песен. */
+  const saVideo = !jeVaucher && s.amount_subtotal === Number(env.VIDEO_CENTI);
+  const samoVideo = !jeVaucher && s.amount_subtotal === Number(env.VIDEO_DOPL_CENTI);
   const artName = jeVaucher ? (env.VAUCHER_ART_NAME || "Ваучер за песен по поръчка")
+    : samoVideo ? env.VIDEO_DOPL_ART_NAME
+    : saVideo ? env.VIDEO_ART_NAME
     : env.ART_NAME + (isExpress ? " + експресна изработка (24 ч)" : "");
 
   const docN = await nextDocNumber(env);
@@ -418,6 +424,7 @@ async function recordSale(env, event, ctx) {
     customer_name: sale.customer_name, customer_email: sale.customer_email,
     amount_c: s.amount_total, currency: currency, currency_ok: currencyOk,
     express: isExpress, payment_intent: s.payment_intent,
+    video: saVideo ? "ДА — песен + видео" : samoVideo ? "ДА — доплатено след песента" : "не",
     beleshka: sent
   });
 }
@@ -945,7 +952,8 @@ export async function notifyVatreshno(env, n) {
       red("Сума", suma) +
       red("Клиент", n.customer_name || "без име") +
       red("Имейл", n.customer_email || "няма") +
-      red("Експрес", n.express ? "ДА — 24 часа" : "не");
+      red("Експрес", n.express ? "ДА — 24 часа" : "не") +
+      red("Видео", n.video || "не");
 
     /* Двете предупреждения са причината писмото да съществува: и в двата
        случая някой трябва да пипне нещо на ръка, и то днес. */

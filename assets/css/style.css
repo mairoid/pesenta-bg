@@ -2792,7 +2792,7 @@ body.podarak {
 /* ---------- Посвещението ---------- */
 
 .podarak-posveshtenie {
-  padding: clamp(var(--sp-12), 11vw, var(--sp-20)) 0 var(--sp-10);
+  padding: clamp(var(--sp-12), 11vw, 5rem) 0 var(--sp-10);
   text-align: center;
 }
 .podarak-posveshtenie h1 {
@@ -3275,3 +3275,18 @@ body.podarak {
 .fen-otbori h3 { margin: 0 0 var(--sp-1); font-size: var(--fs-lg); color: var(--text); }
 .fen-otbori p { margin: 0; font-size: var(--fs-sm); line-height: 1.5; }
 .fen-belezhka { font-size: var(--fs-sm) !important; opacity: 0.85; border-left: 2px solid var(--border); padding-left: var(--sp-3); }
+
+/* Какво получаваш (09.11.2026): примерът вляво, списъкът вдясно, видеото отдолу на цяла ширина. */
+.toggle-row[hidden] { display: none; }
+.price-addon { margin: 0 0 var(--sp-4); font-size: var(--fs-sm); color: var(--muted); text-align: center; }
+.poluchavash { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-6); align-items: center; }
+.poluchavash-primer { display: block; margin: 0; color: inherit; text-decoration: none; }
+.poluchavash-primer img { display: block; width: 100%; height: auto; border-radius: var(--radius); box-shadow: var(--shadow); }
+.poluchavash-primer span { display: block; margin-top: var(--sp-3); font-weight: 700; color: var(--orange); }
+.poluchavash-spisak { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-4); }
+.poluchavash-spisak strong { display: block; color: var(--text); }
+.poluchavash-spisak span { color: var(--muted); }
+.poluchavash-video { margin-top: var(--sp-6); padding: var(--sp-6); background: linear-gradient(160deg, rgba(255, 77, 141, 0.12), rgba(255, 161, 77, 0.07)), var(--surface); border: 1px solid rgba(255, 77, 141, 0.45); border-radius: var(--radius); }
+.poluchavash-video h3 { margin: 0 0 var(--sp-2); }
+.poluchavash-video p { margin: 0 0 var(--sp-4); color: var(--muted); }
+@media (max-width: 760px) { .poluchavash { grid-template-columns: 1fr; } }

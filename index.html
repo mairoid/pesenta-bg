@@ -419,8 +419,8 @@
                  Тръгват в ОТДЕЛНА заявка към нативния ендпойнт на FormSubmit (AJAX-ът дава 500 при
                  файл) преди поръчката — писмото с поръчката остава по стария път. text-order.js. -->
             <div class="field snimki-box" id="text-snimki-box">
-              <label for="text-snimki">Снимки за обложката
-                <span class="hint">По желание — до 30 снимки на човека или на компанията. Ще ги ползваме за корицата на песента и за личната ѝ страница.</span>
+              <label for="text-snimki">Снимки за обложката и видеото
+                <span class="hint">По желание — до 30 снимки на човека или на компанията. Ще ги ползваме за корицата на песента, за личната ѝ страница и за видеото, ако го поръчаш.</span>
               </label>
               <input type="file" id="text-snimki" name="text-snimki" accept="image/*" multiple hidden>
               <div class="snimki-row">
@@ -478,6 +478,13 @@
             <div class="field">
               <label for="text-email">Имейл, на който да получиш песента *</label>
               <input type="email" id="text-email" name="email" autocomplete="email" inputmode="email" placeholder="ime@primer.bg" required>
+            </div>
+
+            <div class="toggle-row" id="text-video-red" hidden>
+              <label for="text-video">Добави персонализирано видео с твоите снимки · +5 €
+                <span class="hint">Общо 24,90 €. Колкото повече и по-подходящи снимки ни пратиш, толкова по-хубаво видео ще направим. Ако не добавиш снимки, ще генерираме подходящи за песента.</span>
+              </label>
+              <input type="checkbox" id="text-video" name="video">
             </div>
 
             <label class="consent">
@@ -572,6 +579,16 @@
           <span class="chip chip--muted" data-filter="18-plus">18+</span>
       </div>
       <div class="tracks-list">
+          <div class="track-row player reveal" data-category="za-podarak" data-src="assets/audio/lelya-svetla.mp3?v=9ebef79c" role="button" tabindex="0" aria-label="Пусни „Леля Светла“">
+            <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+            <img class="track-thumb" src="assets/img/cover-lelya-svetla.jpg" srcset="assets/img/cover-lelya-svetla-360.jpg 360w, assets/img/cover-lelya-svetla.jpg 600w" sizes="(max-width: 760px) 46vw, (max-width: 980px) 30vw, 260px" alt="" loading="lazy" width="600" height="600">
+            <div class="track-info">
+              <h3>Леля Светла</h3>
+              <span>За рожден ден · <a href="pesni/primer-lelya-svetla.html">виж личната страница →</a></span>
+            </div>
+            <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
+            <span class="time">3:30</span>
+          </div>
           <!-- Песен за публични личности. Води към собствената си страница,
                защото е правена, за да се споделя — картата пуска, линкът
                в заглавието отваря страницата с истинските Open Graph тагове. -->
@@ -1015,18 +1032,53 @@
   </section>
 
   <!-- ЦЕНИ -->
-  <section class="section" id="ceni">
+  <!-- КАКВО ПОЛУЧАВАШ (09.11.2026): личната страница е това, което всяка поръчка получава;
+       примерът е леля Светла. Клипът на нейната частна страница тук е заменен със снимка. -->
+  <section class="section" id="poluchavash">
     <div class="container">
       <div class="section-head reveal">
         <span class="section-eyebrow">
           <span class="sec-no" aria-hidden="true">05</span>
+          <span class="kicker">С всяка поръчка</span>
+        </span>
+        <h2>Какво получаваш</h2>
+        <p>Всяка песен идва с лична страница, която се отваря от телефон и от компютър.</p>
+      </div>
+      <div class="poluchavash reveal">
+        <a class="poluchavash-primer" href="pesni/primer-lelya-svetla.html">
+          <img src="assets/img/pesen-primer-lelya-svetla-hero.jpg?v=4184f6e6"
+               srcset="assets/img/pesen-primer-lelya-svetla-hero-600.jpg?v=793b20f8 600w, assets/img/pesen-primer-lelya-svetla-hero.jpg?v=4184f6e6 1200w"
+               sizes="(max-width: 760px) 92vw, 540px" width="1200" height="638" loading="lazy" decoding="async"
+               alt="Колаж към песента „Леля Светла“: леля Светла и Пламен в сребрист Хюндай, пред тях Кавказ, Сахара и торта на багажника">
+          <span>Виж примера: страницата на „Леля Светла“ →</span>
+        </a>
+        <ul class="poluchavash-spisak">
+          <li><strong>Лична страница на песента</strong><span>На нея са песента, колажът и целият текст. Препращаш я на когото поискаш.</span></li>
+          <li><strong>Песента за сваляне</strong><span>MP3 на имейла ти и с едно докосване от страницата.</span></li>
+          <li><strong>Текстът на песента</strong><span>На страницата и на имейла ти.</span></li>
+          <li><strong>Безплатна корекция</strong><span>Ако нещо не е точно, го оправяме.</span></li>
+        </ul>
+      </div>
+      <div class="poluchavash-video reveal">
+        <h3>Искаш и видео? +5 €, общо 24,90 €</h3>
+        <p>Правим персонализирано видео с твоите снимки. Сваля се от страницата, както песента. Колкото повече и по-подходящи снимки ни пратиш, толкова по-хубаво видео ще направим. Ако не добавиш снимки, ще генерираме подходящи за песента.</p>
+        <a class="btn btn-primary" id="s-video-cta" href="#order">Поръчай песен с видео</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="ceni">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="section-eyebrow">
+          <span class="sec-no" aria-hidden="true">06</span>
           <span class="kicker">Прозрачна цена</span>
         </span>
         <h2>Една песен, една цена</h2>
-        <p>Без пакети и без скрити такси. Една цена, платена веднага, и песента тръгва.</p>
+        <p>Без скрити такси. Една цена, платена веднага, и песента тръгва. Видеото е по избор.</p>
       </div>
       <!-- Отзив ПРЕДИ цената, не след нея. Истинските коментари живеят в
-           секция 07, тоест човек вижда 19,90 € преди каквото и да е
+           секция 08, тоест човек вижда 19,90 € преди каквото и да е
            доказателство. Тук стои един, дословно същият като долу — не е
            нов текст, а същият пренесен там, където се взима решението. -->
       <!-- Числото е реално: над 50 написани песни, потвърдено от Миро
@@ -1060,6 +1112,7 @@
             <li>Безплатна корекция</li>
             <li>MP3 + текст на имейла ти до 24 часа</li>
           </ul>
+          <p class="price-addon">По желание: видео с твоите снимки +5 € · общо 24,90 €</p>
           <a class="btn btn-primary" href="#order">Поръчай сега</a>
             <!-- Гаранцията стои ТУК, не само в FAQ-а и в дребния шрифт
                  отдолу: точно под бутона е моментът, в който човек се
@@ -1079,7 +1132,7 @@
     <div class="container">
       <div class="section-head reveal">
         <span class="section-eyebrow">
-          <span class="sec-no" aria-hidden="true">06</span>
+          <span class="sec-no" aria-hidden="true">07</span>
           <span class="kicker">Питай смело</span>
         </span>
         <h2>Често задавани въпроси</h2>
@@ -1143,7 +1196,7 @@
     <div class="container">
       <div class="section-head reveal">
         <span class="section-eyebrow">
-          <span class="sec-no" aria-hidden="true">07</span>
+          <span class="sec-no" aria-hidden="true">08</span>
           <span class="kicker">Зад кулисите</span>
         </span>
         <h2>Как се раждат песните</h2>
@@ -1458,7 +1511,7 @@
 <!-- voice-order.js вече го няма (14.09.2026): гласовата поръчка отпадна; остана „Разкажи с гласово“ в poruchka.html.
      Скриптът и без това излиза на 15-ия ред без #fast-rec, но няма смисъл да
      се тегли. -->
-<script src="assets/js/text-order.js?v=659e4417" defer></script>
+<script src="assets/js/text-order.js?v=0cce2457" defer></script>
 <!-- Плаващ бутон за връзка: Viber на мобилно (+359899456326 — ПЛЕЙСХОЛЪР номер, смени с реалния), имейл при десктоп -->
 <a class="float-contact float-contact--mobile" href="viber://chat?number=+359899456326" aria-label="Пиши ни във Viber">
   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
