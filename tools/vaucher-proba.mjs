@@ -211,6 +211,31 @@ try {
   const sPsn = red("SELECT * FROM sales WHERE stripe_event_key = 'cs:cs_test_psn'");
   proveri(psnS.status === 200 && sPsn && sPsn.art_name === env.ART_NAME && !red("SELECT 1 FROM vaucheri WHERE stripe_session = 'cs_test_psn'"), "обикновената песен не е ваучер");
 
+  /* ============ 6а. номер VCH- по чужда връзка (одит 10.11.2026) ============ */
+  glava("VCH- по връзката за видео или за песен НЕ е ваучер");
+  isprazni();
+  const predi = red("SELECT count(*) n FROM vaucheri").n;
+  r = await webhook(sesia("cs_test_ataka1", { client_reference_id: "VCH-261110-1234", payment_link: "plink_video5", amount_subtotal: 500, amount_total: 500 }));
+  const sA1 = red("SELECT * FROM sales WHERE stripe_event_key = 'cs:cs_test_ataka1'");
+  proveri(r.status === 200 && sA1 && sA1.art_name !== env.VAUCHER_ART_NAME && sA1.total_eur_c === 500, "5 € с VCH- → продажбата е записана, но не като ваучер");
+  proveri(red("SELECT count(*) n FROM vaucheri").n === predi && !red("SELECT 1 FROM vaucheri WHERE ref = 'VCH-261110-1234'"), "няма нов ред във vaucheri");
+  proveri(kupuvach().every((m) => !/kod=|Осребри/.test(m.htmlContent) && !m.attachment), "купувачът не получава код, нито PDF");
+  proveri(miro().length === 1 && miro()[0].subject.startsWith("[ВАУЧЕР?] ") && miro()[0].htmlContent.includes("Ваучер НЕ е издаден"), "известието вдига тревога (" + (miro()[0] && miro()[0].subject) + ")");
+  /* чакащ ред от формата + плащане по връзката за песен с промо код */
+  await post("/vaucher/nov", nov({ ref: "VCH-261110-5678" }));
+  isprazni();
+  r = await webhook(sesia("cs_test_ataka2", { client_reference_id: "VCH-261110-5678", payment_link: "plink_pesen", amount_total: 1592 }));
+  const vA2 = red("SELECT * FROM vaucheri WHERE ref = 'VCH-261110-5678'");
+  proveri(r.status === 200 && vA2 && vA2.status === "chaka" && !vA2.kod, "чакащият ваучер остава chaka без код");
+  /* повторен webhook за същото плащане също не активира */
+  r = await webhook(sesia("cs_test_ataka2", { client_reference_id: "VCH-261110-5678", payment_link: "plink_pesen", amount_total: 1592 }));
+  proveri(red("SELECT status FROM vaucheri WHERE ref = 'VCH-261110-5678'").status === "chaka", "и при повторен webhook остава chaka");
+  /* без VAUCHER_PLINK в настройките нищо не е ваучер */
+  const plinkPredi = env.VAUCHER_PLINK; env.VAUCHER_PLINK = "";
+  r = await webhook(sesia("cs_test_ataka3", { client_reference_id: "VCH-261110-9999" }));
+  env.VAUCHER_PLINK = plinkPredi;
+  proveri(r.status === 200 && !red("SELECT 1 FROM vaucheri WHERE ref = 'VCH-261110-9999'"), "празен VAUCHER_PLINK → няма ваучер");
+
   /* ============ 7. второ плащане за същия ref ============ */
   glava("второ плащане за вече платен ref");
   isprazni();

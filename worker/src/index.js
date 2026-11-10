@@ -300,10 +300,14 @@ async function recordSale(env, event, ctx) {
      регистрира по чл. 52о. */
   if (s.payment_status !== "paid") return;
 
-  /* Ваучер за песен (15.10.2026): по номера VCH-… или по отделната Payment Link.
-     VAUCHER_PLINK е празен, докато връзката не е създадена — тогава само по номера. */
+  /* Ваучер за песен (15.10.2026) — САМО по отделната Payment Link (10.11.2026).
+     Номерът VCH-… идва от адреса и купувачът може да го смени: с него върху връзката
+     за видео (5 €) се получаваше активен код за цяла песен. Затова номерът вече само
+     свързва плащането с формата, а дали е ваучер решава коя връзка е платена.
+     Номер VCH-… по друга връзка се записва като обикновена продажба и вдига тревога. */
   const crid = String(s.client_reference_id || "");
-  const jeVaucher = /^VCH-/.test(crid) || (!!env.VAUCHER_PLINK && s.payment_link === env.VAUCHER_PLINK);
+  const jeVaucher = !!env.VAUCHER_PLINK && s.payment_link === env.VAUCHER_PLINK;
+  const vchPoDrugaVrazka = !jeVaucher && /^VCH-/.test(crid);
 
   const key = "cs:" + s.id;
   const exists = await env.DB.prepare("SELECT 1 FROM sales WHERE stripe_event_key = ?")
@@ -425,6 +429,7 @@ async function recordSale(env, event, ctx) {
     amount_c: s.amount_total, currency: currency, currency_ok: currencyOk,
     express: isExpress, payment_intent: s.payment_intent,
     video: saVideo ? "ДА — песен + видео" : samoVideo ? "ДА — доплатено след песента" : "не",
+    vch_po_druga_vrazka: vchPoDrugaVrazka,
     beleshka: sent
   });
 }
@@ -991,7 +996,14 @@ export async function notifyVatreshno(env, n) {
       }
     }
 
-    if (!brief && !v) {
+    if (n.vch_po_druga_vrazka) {
+      trevogi += "<p style=\"background:#FDECEA;border-left:4px solid #C0392B;padding:10px 14px\">" +
+        "<strong>Номер на ваучер, платен по друга връзка.</strong> Ваучер НЕ е издаден и код няма. " +
+        "Провери в Stripe какво и колко е платено. Ако човекът наистина е купил ваучер, " +
+        "значи VAUCHER_PLINK в настройките не съвпада с връзката за ваучер.</p>";
+    }
+
+    if (!brief && !v && !n.vch_po_druga_vrazka) {
       trevogi += "<p style=\"background:#FDECEA;border-left:4px solid #C0392B;padding:10px 14px\">" +
         "<strong>За тази поръчка НЯМА разказ.</strong> Плащането е минало, но историята " +
         "не е стигнала до нас — песента не може да се напише. Пиши на клиента да я разкаже.</p>";
@@ -1030,7 +1042,7 @@ export async function notifyVatreshno(env, n) {
       to: poluchateli,
       subject: (n.currency_ok ? "" : "[ВАЛУТА] ") +
                ((n.beleshka && n.beleshka.ok) ? "" : "[БЕЛЕЖКА] ") +
-               (brief || v ? "" : "[БЕЗ РАЗКАЗ] ") +
+               (n.vch_po_druga_vrazka ? "[ВАУЧЕР?] " : (brief || v ? "" : "[БЕЗ РАЗКАЗ] ")) +
                (v ? "Продаден ваучер " : "Плащане ") + suma + " · " + n.order_no,
       htmlContent:
         "<h2 style=\"font:600 18px sans-serif;margin:0 0 12px\">" + (v ? "Продаден ваучер" : "Постъпи плащане") + "</h2>" +
