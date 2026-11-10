@@ -7,6 +7,21 @@
      и не променя нищо, ако скриптът не се е заредил (adblock, бавна мрежа). */
   function trackPlausible(name, props) {
     if (window.plausible) window.plausible(name, props ? { props: props } : undefined);
+    /* До 10.11.2026 изпращането от тази страница не стигаше до таблицата sabitiya:
+       Plausible го няма от 18.08, а psnSabitie не се викаше. */
+    if (window.psnSabitie) window.psnSabitie(name, (props && props.method) || "");
+  }
+
+  /* ---------- Фунията на формата (10.11.2026) ----------
+     Къде се отказват хората: първо докосване на формата, всяка стъпка напред
+     и полето, което спира изпращането. Само номер на стъпка или име на поле,
+     без текст от формата. По веднъж на страница, за да не броим едно и също. */
+  var pratenoFuniya = {};
+  function funiya(ime, detail) {
+    var k = ime + "|" + detail;
+    if (pratenoFuniya[k] || !window.psnSabitie) return;
+    pratenoFuniya[k] = true;
+    window.psnSabitie(ime, detail);
   }
 
   /* ============ Конфигурация (редактирай тук) ============ */
@@ -113,6 +128,14 @@
   var errBox = document.getElementById("form-error");
   var btnNext = document.getElementById("btn-next");
   var btnBack = document.getElementById("btn-back");
+  /* Първото докосване на формата е „отворена форма“: самото зареждане на
+     страницата още не е намерение (всеки клик от реклама води тук). */
+  var orderForm = document.getElementById("order-form");
+  if (orderForm) {
+    ["focusin", "change"].forEach(function (ev) {
+      orderForm.addEventListener(ev, function () { funiya("Order Form Open", "poruchka"); }, true);
+    });
+  }
 
   /* ============ Помощни ============ */
 
@@ -356,8 +379,9 @@
        обявява за грешно. clearError() иначе се вика само при смяна на стъпка. */
     clearError();
     var err = validateStep(state.step);
-    if (err) { showError(err.msg, err.field); return; }
+    if (err) { funiya("Order Step", "спира: " + err.field); showError(err.msg, err.field); return; }
     if (state.step < TOTAL_STEPS) {
+      funiya("Order Step", "стъпка " + (state.step + 1));
       goTo(state.step + 1);
     } else {
       submitOrder();

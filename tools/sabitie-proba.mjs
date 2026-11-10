@@ -37,6 +37,11 @@ const r2 = db.prepare("SELECT detail FROM sabitiya WHERE ime = 'Voice Recorded'"
 proveri(r2 && r2.detail.indexOf("@") < 0 && r2.detail.indexOf("\n") < 0, "в пояснението няма @ и нов ред (" + (r2 && r2.detail) + ")");
 proveri(db.prepare("SELECT count(*) n FROM sabitiya").get().n === 2, "в базата са точно двете валидни събития");
 
+/* Фунията на poruchka.html (10.11.2026): стъпката и полето, което спира изпращането */
+proveri(await prati({ e: "Order Step", p: "/poruchka.html", d: "спира: cust-email" }) === 200, "Order Step → 200");
+const r3 = db.prepare("SELECT detail FROM sabitiya WHERE ime = 'Order Step'").get();
+proveri(r3 && r3.detail === "спира: cust-email", "полето е записано (" + (r3 && r3.detail) + ")");
+
 /* Всяко име, което сайтът праща, трябва да е в списъка на Worker-а */
 const kod = ["assets/js/main.js", "assets/js/text-order.js"].map((f) => fs.readFileSync(new URL("../" + f, import.meta.url), "utf8")).join("\n");
 const prashtani = [...new Set([...kod.matchAll(/(?:trackPlausible|psnSabitie)\("([^"]+)"/g)].map((m) => m[1]))];
