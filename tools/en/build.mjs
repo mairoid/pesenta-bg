@@ -181,7 +181,7 @@ ${GRUPI.map((g) => kolona(g.ime, g.kod)).join("\n")}
       </div>
     </div>
     <div class="footer-bottom">
-      © <span id="year">2026</span> Pesenta.bg — BAUFIZIK EOOD („БАУФИЗИК“ ЕООД), company no. 207427793, Veliko Tarnovo, Bulgaria. All rights reserved. No tracking cookies.
+      © <span id="year">2026</span> Pesenta.bg — BAUFIZIK EOOD („БАУФИЗИК“ ЕООД), company no. 207427793, Veliko Tarnovo, Bulgaria. All rights reserved. <a href="/en/privacy.html#cookies">Cookies</a>
     </div>
   </div>
 </footer>

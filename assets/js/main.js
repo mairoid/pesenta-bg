@@ -32,6 +32,14 @@
       })], { type: "text/plain;charset=UTF-8" }));
     } catch (e) { /* без броене */ }
   };
+  /* Прозорецът за бисквитките и пикселът на Meta (08.11.2026): отделен файл, зареден от
+     тук, за да не се слага таг в 148 страници. Трябва да е след psnSabitie. */
+  (function () {
+    var s = document.createElement("script");
+    s.src = "/assets/js/saglasie.js";
+    document.head.appendChild(s);
+  })();
+
   function trackPlausible(name, props) {
     if (window.plausible) window.plausible(name, props ? { props: props } : undefined);
     var p = props || {};

@@ -139,8 +139,8 @@ export function PRAVNI() {
       body: legal("Privacy Policy", `    <!-- Превод на poveritelnost.html (версия 1.1, 18.08.2026). Българската страница
          се пълни от assets/js/legal-config.js; тази НЕ — при промяна там (нов
          обработващ, срок) смени и тук на ръка. -->
-    <p class="updated">Version 1.3 · last updated: 15 October 2026</p>
-    <div class="box"><p><strong>In short:</strong> we collect only what we need to make your song and issue your receipt or invoice. No advertising cookies, no tracking, no selling of data. Fonts and content load from our own server; the only external thing on the page is a visit counter that uses no cookies. We don't pass your data to third parties for marketing.</p></div>
+    <p class="updated">Version 2.0 · last updated: 8 November 2026</p>
+    <div class="box"><p><strong>In short:</strong> we collect only what we need to make your song and issue your receipt or invoice, and we don't sell data. Meta (Facebook and Instagram) advertising cookies load only if you accept them; without your consent nothing from Meta loads. Fonts and content come from our own server, and the visit counter uses no cookies.</p></div>
 
     <h2>1. Data controller</h2>
     <p><strong>${esc(FIRMA)}</strong>, company no. ${EIK}, ${esc(ADRES)}.</p>
@@ -153,10 +153,11 @@ export function PRAVNI() {
         <tr><td>Name, email, phone (optional)</td><td>performing your order, issuing the sales receipt, sending the finished song, contacting you — including a reminder if a payment wasn't completed</td><td>Art. 6(1)(b) — performance of a contract and steps before it</td></tr>
         <tr><td>Your story and the details for the song (may include personal data about you and third parties)</td><td>writing the lyrics and creating the music with music-generation software (Suno, USA)</td><td>Art. 6(1)(b); for third parties' data — you declare that you have the right to share it</td></tr>
         <tr><td>Invoicing data</td><td>issuing an invoice and accounting</td><td>Art. 6(1)(c) — legal obligation</td></tr>
+        <tr><td>Meta advertising cookies, only if you accept them: browser identifier, IP address, device type, pages visited and actions (form opened, order sent, payment and its amount)</td><td>seeing whether our Facebook and Instagram ads lead to orders and showing them to the right people</td><td>Art. 6(1)(a) — your consent; you can withdraw it at any time (section 5)</td></tr>
         <tr><td>IP address and technical logs</td><td>technical operation and security of hosting</td><td>Art. 6(1)(f) — legitimate interest</td></tr>
       </tbody>
     </table>
-    <p>We do not knowingly collect data about children; orders are accepted only from persons over 18. We do not profile and do not make automated decisions.</p>
+    <p>We do not knowingly collect data about children; orders are accepted only from persons over 18. We do not make automated decisions. Profiling for advertising happens only if you accept advertising cookies (section 5).</p>
     <p><strong>Where you came from.</strong> We remember the first page you opened and where you arrived from — only for the duration of your visit and only in your browser, without cookies — and send it with your order so we know which pages are useful.</p>
     <p><strong>Photos for the cover.</strong> If you upload photos with your order, they reach us as attachments to the order email, resized by your browser. We use them only for the song's cover and personal page and keep them as long as the order itself.</p>
     <p><strong>Telling the story by voice.</strong> If you use "Or tell it by voice", the recording of your voice reaches us as an attachment and is used for the same purpose as your written story (making the song). Turning speech into text is done by your browser — in some browsers (e.g. Google Chrome) through the speech service of its maker, under that maker's privacy policy. It is entirely optional; you can type the story instead.</p>
@@ -171,11 +172,12 @@ export function PRAVNI() {
         <tr><td>Google (Gmail)</td><td>the mailbox where we receive and keep correspondence</td><td>order data and follow-up communication</td><td><a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policy</a></td></tr>
         <tr><td>Cloudflare (Web Analytics; Workers)</td><td>counting page visits and anonymous actions without cookies; storing your order story and issuing the sales receipt</td><td>IP address (processed instantly, not stored), page address, referrer, browser and device type; the order story and order number</td><td><a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">policy</a></td></tr>
         <tr><td>Brevo (Sendinblue SAS, France)</td><td>sending the automatic emails — the sales receipt and reminders</td><td>email address and the content of the email</td><td><a href="https://www.brevo.com/legal/privacypolicy/" target="_blank" rel="noopener">policy</a></td></tr>
+        <tr><td>Meta Platforms Ireland Ltd. (only if you accepted advertising cookies)</td><td>measuring whether our Facebook and Instagram ads lead to orders and showing them to the right people</td><td>browser identifier, IP address, device type, pages visited and actions (form opened, order sent, payment and its amount); NO name, email, phone or your story is sent</td><td><a href="https://www.facebook.com/privacy/policy/" target="_blank" rel="noopener">policy</a></td></tr>
         <tr><td>GitHub Pages (hosting)</td><td>technical operation of the website; standard server logs</td><td>IP address and technical data when loading the site</td><td><a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">policy</a></td></tr>
         <tr><td>Stripe Payments Europe</td><td>processing card payments</td><td>payment data — entered directly with Stripe, not with us</td><td><a href="https://stripe.com/privacy" target="_blank" rel="noopener">policy</a></td></tr>
       </tbody>
     </table>
-    <p>We do not sell or rent data to third parties for marketing purposes.</p>
+    <p>We do not sell or rent data to third parties for marketing purposes. Our only advertising partner is Meta, which receives data only if you accepted advertising cookies.</p>
 
     <h2>4. How long we keep data</h2>
     <ul>
@@ -183,12 +185,15 @@ export function PRAVNI() {
       <li>data on issued invoices and receipts — 10 years, as required by accounting law</li>
     </ul>
 
-    <h2>5. Cookies and local storage</h2>
-    <p>The website uses no cookies — not for tracking, analytics or advertising — so there's no cookie banner either. To count visits we use Cloudflare Web Analytics, which sets no cookies, stores nothing in your browser and doesn't track individual visitors. We also count a few actions anonymously — playing a sample, opening the order form, recording by voice, sending an order: only the action's name, the page (without the address parameters) and the time, with no cookies, no IP address and no visitor ID. They are kept in our own database at Cloudflare and used only to learn what on the site helps. The only things we keep are functional entries in your device's localStorage (they are not sent to us):</p>
+    <h2 id="cookies">5. Cookies and local storage</h2>
+    <p><strong>Advertising cookies are used only if you accept them.</strong> On your first visit we ask, both buttons are equal and the site works the same if you decline. If you accept, we load the Meta Platforms Ireland Ltd. pixel and your browser receives the <code>_fbp</code> and <code>_fbc</code> cookies (kept for up to 90 days). Meta sees which pages you opened and whether you opened the form, sent an order or paid, and the amount. We do not send it your name, email, phone or story, and the pixel does not load on personal song pages, the payment page or the withdrawal page. The data may be transferred to the USA. We and Meta are joint controllers for collecting and transmitting it; its further processing is under <a href="https://www.facebook.com/privacy/policy/" target="_blank" rel="noopener">Meta's policy</a>. Your choice lasts 6 months.</p>
+    <p><button type="button" class="btn btn-ghost" data-saglasie-promeni>Change my cookie choice</button></p>
+    <p>To count visits we use Cloudflare Web Analytics, which sets no cookies, stores nothing in your browser and doesn't track individual visitors. We also count a few actions anonymously — playing a sample, opening the order form, recording by voice, sending an order: only the action's name, the page (without the address parameters) and the time, with no cookies, no IP address and no visitor ID. They are kept in our own database at Cloudflare and used only to learn what on the site helps. We also keep functional entries in your device's localStorage (they are not sent to us):</p>
     <table>
       <thead><tr><th>Key</th><th>Purpose</th><th>How long</th></tr></thead>
       <tbody>
         <tr><td><code>pesenta_orders</code></td><td>a “My orders” list, visible only on your device</td><td>until you clear your browser data</td></tr>
+        <tr><td><code>pesenta_saglasie</code></td><td>remembers your advertising cookie choice and the last counted payment, so it isn't counted twice</td><td>6 months, then we ask again</td></tr>
         <tr><td><code>pesenta_lang</code></td><td>remembers that you ordered from the English site, so the page after payment is in English</td><td>until you clear your browser data</td></tr>
       </tbody>
     </table>
