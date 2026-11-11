@@ -211,3 +211,24 @@ CREATE INDEX IF NOT EXISTS idx_otkazi_created ON otkazi(created_at);
 -- В D1 (еднократно, ПРЕДИ deploy на Worker-а — без таблицата отказът връща грешка):
 --   npx wrangler d1 execute pesenta-nap --remote --command "CREATE TABLE IF NOT EXISTS otkazi (id TEXT PRIMARY KEY, created_at TEXT NOT NULL, ime TEXT NOT NULL, nomer TEXT NOT NULL, email TEXT NOT NULL, vaucher_ref TEXT, v_status TEXT, deystvie TEXT NOT NULL DEFAULT 'priet', pismo_at TEXT, pismo_opiti INTEGER NOT NULL DEFAULT 0, pismo_greshka TEXT, izvestie_at TEXT); CREATE INDEX IF NOT EXISTS idx_otkazi_created ON otkazi(created_at)"
 -- Връщане: DROP TABLE otkazi; (заявленията са доказателство — първо ги изнеси)
+
+-- Магнитите — безплатен гайд срещу имейл (11.11.2026, magnit.js). Записът се прави ПРЕДИ
+-- писмото, за да не се губи имейл, ако Brevo откаже. marketing = 1 само при отметнато
+-- съгласие за още писма (отделно от гайда). IP-то не се пази — отпечатък с сол.
+CREATE TABLE IF NOT EXISTS magnit_zapisi (
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  magnit        TEXT NOT NULL,             -- ключът от MAGNITI, напр. koleda-9
+  email         TEXT NOT NULL,
+  marketing     INTEGER NOT NULL DEFAULT 0, -- 1 = съгласен за още писма
+  ip_hash       TEXT NOT NULL,
+  ot            TEXT,                      -- страница и utm, без лични данни
+  created_at    TEXT NOT NULL,
+  pismo_at      TEXT,                      -- кога тръгна писмото с гайда
+  pismo_greshka TEXT,
+  otpisan_at    TEXT                       -- поискал е да не му пишем повече
+);
+CREATE INDEX IF NOT EXISTS idx_magnit_ip ON magnit_zapisi(ip_hash, created_at);
+CREATE INDEX IF NOT EXISTS idx_magnit_email ON magnit_zapisi(email, magnit, created_at);
+-- В D1 (еднократно, ПРЕДИ deploy — без таблицата /magnit връща грешка):
+--   npx wrangler d1 execute pesenta-nap --remote --command "CREATE TABLE IF NOT EXISTS magnit_zapisi (id INTEGER PRIMARY KEY AUTOINCREMENT, magnit TEXT NOT NULL, email TEXT NOT NULL, marketing INTEGER NOT NULL DEFAULT 0, ip_hash TEXT NOT NULL, ot TEXT, created_at TEXT NOT NULL, pismo_at TEXT, pismo_greshka TEXT, otpisan_at TEXT); CREATE INDEX IF NOT EXISTS idx_magnit_ip ON magnit_zapisi(ip_hash, created_at); CREATE INDEX IF NOT EXISTS idx_magnit_email ON magnit_zapisi(email, magnit, created_at)"
+-- Връщане: DROP TABLE magnit_zapisi; (имейлите са със съгласие — първо ги изнеси)

@@ -194,3 +194,9 @@ HTML-а и е сверено с файловете (`scratchpad/demo-vremена.
 с двата комита на push-а; ръчно: `node tools/indexnow.mjs <преди> <след> --proba` само печата.
 Ключът е публичен по замисъл: `dadbf1a58c108bbafe3c6a2ea6a9ec75.txt` в корена. Частните страници
 (`pesni/`, `plati`, `blagodarim`…) не са в картата и не тръгват.
+
+**`magnit-proba.mjs`** — магнитите, безплатен гайд срещу имейл (11.11.2026): POST /magnit без мрежа,
+Brevo подменен. Запис преди писмото, съгласието отделно от гайда, лимит 5/час от адрес, повтор без
+второ писмо, при отказ на Brevo страницата получава връзката към PDF-а. `node tools/magnit-proba.mjs`.
+PDF-ът се печата от извора `tools/magnit/koleda-9.html` (светъл фон, логото в тъмната лента):
+`chrome --headless=new --no-pdf-header-footer --allow-file-access-from-files --print-to-pdf=assets/magnit/9-podaraka-za-chovek-koyto-ima-vsichko.pdf file:///…/tools/magnit/koleda-9.html`

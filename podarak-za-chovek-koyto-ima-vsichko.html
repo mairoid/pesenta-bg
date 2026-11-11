@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="bg">
+<!-- Магнит „koleda-9“ (11.11.2026): безплатен PDF срещу имейл, за рекламата в Meta.
+     Целта е евтина проба кой ъгъл вади хора (THIRD BRAIN/agentura/magniti-pesenta-2026-11-11.md).
+     Формата праща към Worker-а /magnit (worker/src/magnit.js), той записва и праща писмото.
+     Изворът на PDF-а: tools/magnit/koleda-9.html. -->
+<head>
+  <meta charset="UTF-8">
+  <script>document.documentElement.classList.add("js");setTimeout(function(){if(!window.__reveal)document.documentElement.classList.remove("js")},4000)</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
+  <meta name="theme-color" content="#0b0a1a">
+  <meta name="application-name" content="Песента">
+  <title>9 подаръка за човек, който има всичко — безплатен списък</title>
+  <meta name="description" content="Безплатен списък: 9 подаръка за човек, който има всичко, и нито един не е чорапи. Избираш за 15 минути подарък, който ще помни.">
+  <link rel="canonical" href="https://pesenta.bg/podarak-za-chovek-koyto-ima-vsichko.html">
+  <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="bg_BG">
+  <meta property="og:site_name" content="Песента">
+  <meta property="og:title" content="9 подаръка за човек, който има всичко — безплатен списък">
+  <meta property="og:description" content="И нито един не е чорапи. Избираш за 15 минути подарък, който ще помни, а не ще прибере в шкафа.">
+  <meta property="og:url" content="https://pesenta.bg/podarak-za-chovek-koyto-ima-vsichko.html">
+  <meta property="og:image" content="https://pesenta.bg/assets/img/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <link rel="preload" href="assets/fonts/unbounded-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/fonts.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    /* Само за тази страница — формата трябва да се вижда без превъртане на телефон. */
+    .mg { width: min(1040px, 92vw); margin: 0 auto; padding: var(--sp-12, 3rem) 0 var(--sp-16, 4rem); display: grid; grid-template-columns: 1.1fr .9fr; gap: 2.5rem; align-items: start; }
+    .mg h1 { font-size: clamp(1.7rem, 4vw, 2.7rem); line-height: 1.1; margin: .4em 0 .5em; }
+    .mg .pod { color: var(--muted); font-size: var(--fs-xl); line-height: 1.55; }
+    .mg-karta { background: var(--surface-strong); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.6rem; box-shadow: var(--shadow); }
+    .mg-karta h2 { font-size: var(--fs-xl); margin: 0 0 .3em; }
+    .mg-karta p { color: var(--muted); font-size: var(--fs-md); margin: 0 0 1rem; }
+    .mg-karta label.pole { display: block; font-size: var(--fs-sm); color: var(--muted); margin-bottom: .35rem; }
+    .mg-karta input[type=email] { width: 100%; font: inherit; font-size: var(--fs-base); color: var(--text); background: rgba(0,0,0,.25); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: .85rem 1rem; }
+    .mg-karta input[type=email]:focus { outline: 2px solid var(--pink); outline-offset: 1px; }
+    .mg-karta .btn { width: 100%; margin-top: .9rem; justify-content: center; }
+    .mg-otmetka { display: flex; gap: .6rem; align-items: flex-start; margin-top: .9rem; font-size: var(--fs-sm); color: var(--muted); line-height: 1.5; cursor: pointer; }
+    .mg-otmetka input { margin-top: .2rem; accent-color: var(--pink); width: 1.05rem; height: 1.05rem; flex: none; }
+    .mg-dreben { font-size: var(--fs-xs) !important; margin: .9rem 0 0 !important; line-height: 1.5; }
+    .mg-dreben a { color: var(--orange); }
+    .mg-otgovor { margin-top: 1rem; font-size: var(--fs-md); line-height: 1.55; }
+    .mg-otgovor.ok { color: var(--ok); }
+    .mg-otgovor.zle { color: var(--err); }
+    .mg-otgovor a { color: var(--orange); font-weight: 700; }
+    .mg-spisak { list-style: none; padding: 0; margin: 1.6rem 0 0; display: grid; gap: .7rem; }
+    .mg-spisak li { display: grid; grid-template-columns: 2.2rem 1fr; gap: .6rem; align-items: baseline; color: var(--text); font-weight: 600; }
+    .mg-spisak li span { font-family: var(--font-display); font-weight: 800; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; font-size: 1.3rem; }
+    .mg-spisak li.skrito { color: var(--muted); font-weight: 500; }
+    @media (max-width: 820px) { .mg { grid-template-columns: 1fr; gap: 1.6rem; padding-top: 1.6rem; } .mg-karta { order: -1; } .mg .vav { order: -2; } }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-in">
+    <a class="logo" href="index.html" aria-label="Песента — начало">
+      <img src="assets/img/logo.svg" alt="Песента — песен по поръчка" width="190" height="44">
+    </a>
+  </div>
+</header>
+
+<main id="main">
+  <section class="mg">
+    <div class="vav">
+      <span class="kicker">Безплатен списък · Коледа</span>
+      <h1>9 подаръка за човек, който има <span class="grad-text">всичко</span></h1>
+      <p class="pod">И нито един не е чорапи. Избираш за 15 минути подарък, който ще помни, а не ще прибере в шкафа.</p>
+    </div>
+
+    <div class="mg-karta" id="forma-karta">
+      <h2>Вземи списъка безплатно</h2>
+      <p>Остави имейл и списъкът е при теб след минута. Три страници, PDF.</p>
+      <form id="mg-forma" novalidate>
+        <label class="pole" for="mg-email">Твоят имейл</label>
+        <input id="mg-email" name="email" type="email" autocomplete="email" inputmode="email" required placeholder="ime@primer.bg">
+        <label class="mg-otmetka"><input type="checkbox" id="mg-marketing"> Пращайте ми понякога и други идеи за подаръци. Отписвам се с един отговор.</label>
+        <button class="btn btn-primary" type="submit" id="mg-buton">Изпрати ми списъка</button>
+        <p class="mg-dreben">Имейлът ти отива само за това писмо (и за другите идеи, ако си отметнал). Не го даваме на никого. Повече в <a href="poveritelnost.html">Политиката за поверителност</a>.</p>
+        <div class="mg-otgovor" id="mg-otgovor" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+
+    <div>
+      <ul class="mg-spisak">
+        <li><span>1</span>Време, но за двама</li>
+        <li><span>2</span>Спомен, който се държи в ръка</li>
+        <li><span>3</span>Поправи нещо, което отлага</li>
+        <li><span>4</span>Вкус от детството</li>
+        <li class="skrito"><span>+5</span>още пет, плюс бонус за най-трудните — в списъка</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom">
+      © <span id="year">2026</span> Pesenta.bg — „БАУФИЗИК“ ЕООД, ЕИК 207427793. <a href="/usloviya.html">Общи условия</a> · <a href="/poveritelnost.html">Поверителност</a> · <a href="/poveritelnost.html#biskvitki">Бисквитки</a>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/main.js" defer></script>
+<script>
+(function () {
+  "use strict";
+  var URL_MAGNIT = "https://pesenta-nap.pesenta-nap.workers.dev/magnit";
+  var forma = document.getElementById("mg-forma");
+  var pole = document.getElementById("mg-email");
+  var buton = document.getElementById("mg-buton");
+  var otg = document.getElementById("mg-otgovor");
+  var IMEYL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  var prateno = false;
+
+  function kaji(tekst, klas) { otg.className = "mg-otgovor " + (klas || ""); otg.innerHTML = tekst; }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+
+  forma.addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (prateno) return;
+    var email = pole.value.trim();
+    if (!IMEYL.test(email)) { kaji("Провери имейла — изглежда непълен.", "zle"); pole.focus(); return; }
+    buton.disabled = true; buton.textContent = "Пращаме…"; kaji("");
+    /* text/plain, за да не тръгва предварителна CORS заявка (същото като /brief). */
+    fetch(URL_MAGNIT, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=UTF-8" },
+      body: JSON.stringify({
+        email: email, magnit: "koleda-9",
+        marketing: document.getElementById("mg-marketing").checked === true,
+        ot: location.pathname + location.search
+      })
+    }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { s: r.status, j: j }; }); })
+      .then(function (o) {
+        if (o.j && o.j.ok) {
+          prateno = true;
+          buton.textContent = "Изпратено ✓";
+          kaji("Готово! Изпратихме списъка на <strong>" + esc(email) + "</strong>. Ако не го виждаш до минута, погледни в „Промоции“ или „Спам“.", "ok");
+          try { if (window.psnSabitie) window.psnSabitie("Magnet Lead", "koleda-9"); } catch (x) { /* без броене */ }
+          return;
+        }
+        buton.disabled = false; buton.textContent = "Изпрати ми списъка";
+        if (o.j && o.j.pdf) { kaji("Писмото не тръгна, но ето го направо: <a href=\"" + esc(o.j.pdf) + "\" target=\"_blank\" rel=\"noopener\">изтегли списъка (PDF)</a>.", "zle"); return; }
+        if (o.s === 429) { kaji("Твърде много опити от тази връзка. Пробвай пак след час.", "zle"); return; }
+        if (o.j && o.j.prichina === "email") { kaji("Провери имейла — изглежда непълен.", "zle"); return; }
+        kaji("Нещо се обърка. Пробвай пак след минута или ни пиши на sales@pesenta.bg.", "zle");
+      })
+      .catch(function () {
+        buton.disabled = false; buton.textContent = "Изпрати ми списъка";
+        kaji("Няма връзка. Провери интернета и пробвай пак.", "zle");
+      });
+  });
+})();
+</script>
+</body>
+</html>

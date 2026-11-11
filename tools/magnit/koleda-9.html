@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="bg">
+<!-- Изворът на PDF-а за магнит „koleda-9“ (11.11.2026). Не е страница на сайта: Chrome го
+     печата в assets/magnit/9-podaraka-za-chovek-koyto-ima-vsichko.pdf —
+     командата е в tools/README.md (раздел „magnit“). Светъл фон нарочно: хората го печатат
+     или четат на телефона посред бял ден; тъмната лента горе носи логото, което е светло. -->
+<head>
+<meta charset="UTF-8">
+<title>9 подаръка за човек, който има всичко — Песента</title>
+<style>
+  @font-face { font-family: "Unbounded"; src: url("../../assets/fonts/unbounded-cyrillic.woff2") format("woff2"); font-weight: 200 900; }
+  @font-face { font-family: "Manrope"; src: url("../../assets/fonts/manrope-cyrillic.woff2") format("woff2"); font-weight: 200 800; }
+  @font-face { font-family: "Manrope"; src: url("../../assets/fonts/manrope-latin.woff2") format("woff2"); font-weight: 200 800; unicode-range: U+0000-00FF, U+2010-2027, U+20AC; }
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --ink: #1b1530; --muted: #5d5878; --pink: #ff4d8d; --orange: #ffa14d; --bg: #0b0a1a; --krem: #fbf8f4; }
+  html, body { background: var(--krem); color: var(--ink); font: 400 11.5pt/1.55 "Manrope", sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .str { width: 210mm; height: 297mm; position: relative; overflow: hidden; page-break-after: always; }
+  .str:last-child { page-break-after: auto; }
+  .lenta { background: var(--bg); padding: 12mm 16mm 10mm; }
+  .lenta img { height: 11mm; display: block; align-self: flex-start; }
+  .grad { background: linear-gradient(100deg, var(--pink), var(--orange)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .vatre { padding: 12mm 16mm 0; }
+  .korica .lenta { height: 120mm; display: flex; flex-direction: column; justify-content: space-between; }
+  .korica h1 { font: 800 30pt/1.08 "Unbounded", sans-serif; color: #f4f2ff; letter-spacing: -.01em; }
+  .korica .kicker { font: 700 9pt/1 "Manrope", sans-serif; letter-spacing: .14em; text-transform: uppercase; color: #ffc46b; margin-bottom: 5mm; }
+  .podzaglavie { font-size: 14pt; line-height: 1.45; color: var(--ink); margin: 12mm 0 8mm; font-weight: 600; }
+  .zakogo { color: var(--muted); font-size: 11pt; }
+  .kak { margin-top: 12mm; border-left: 3px solid var(--pink); padding: 2mm 0 2mm 6mm; }
+  .kak h2 { font: 700 12pt/1.3 "Unbounded", sans-serif; margin-bottom: 3mm; }
+  .kak p + p { margin-top: 2.5mm; }
+  .podpis { position: absolute; left: 16mm; right: 16mm; bottom: 12mm; color: var(--muted); font-size: 9pt; display: flex; justify-content: space-between; }
+  .tochka { display: grid; grid-template-columns: 15mm 1fr; gap: 0 4mm; padding: 5.5mm 0; border-bottom: 1px solid #e8e1d8; }
+  .tochka:last-child { border-bottom: 0; }
+  .n { font: 800 24pt/1 "Unbounded", sans-serif; }
+  .tochka h3 { font: 700 12.5pt/1.3 "Unbounded", sans-serif; margin-bottom: 1.5mm; }
+  .tochka p { color: #2c2546; }
+  .primer { color: var(--muted); font-size: 10pt; margin-top: 1.5mm; }
+  .zaglavka { font: 700 9pt/1 "Manrope", sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 2mm; }
+  .bonus { margin-top: 8mm; background: var(--bg); color: #f4f2ff; border-radius: 6mm; padding: 9mm 10mm; }
+  .bonus .zaglavka { color: #ffc46b; }
+  .bonus h3 { font: 800 16pt/1.2 "Unbounded", sans-serif; margin: 2mm 0 4mm; }
+  .bonus p { color: #d9d5f0; }
+  .bonus p + p { margin-top: 3mm; }
+  .bonus .cta { margin-top: 6mm; display: inline-block; background: linear-gradient(100deg, var(--pink), var(--orange)); color: #16091c; font-weight: 800; padding: 3.5mm 7mm; border-radius: 99px; text-decoration: none; }
+  .bonus small { display: block; margin-top: 4mm; color: #a9a4c9; font-size: 9pt; }
+  .chek { margin-top: 8mm; }
+  .chek li { list-style: none; padding-left: 8mm; position: relative; margin-bottom: 2mm; }
+  .chek li::before { content: ""; position: absolute; left: 0; top: 1.2mm; width: 3.6mm; height: 3.6mm; border: 1.6px solid var(--pink); border-radius: 1mm; }
+</style>
+</head>
+<body>
+
+<section class="str korica">
+  <div class="lenta">
+    <img src="../../assets/img/logo.svg" alt="Песента">
+    <div>
+      <div class="kicker">Безплатен списък · Коледа</div>
+      <h1>9 подаръка за човек, който има <span class="grad">всичко</span></h1>
+    </div>
+  </div>
+  <div class="vatre">
+    <p class="podzaglavie">И нито един не е чорапи. Как да избереш за 15 минути подарък, който ще помни, а не ще прибере в шкафа.</p>
+    <p class="zakogo">За всеки, който купува за мама, тате, половинката или приятел с „всичко“ — и чува всяка година „нищо не ми трябва“.</p>
+
+    <div class="kak">
+      <h2>Преди да почнеш: смени въпроса</h2>
+      <p>„Какво му трябва?“ е грешният въпрос. Човек с всичко няма нужда от вещ — затова всяка вещ изглежда като поредната.</p>
+      <p>Питай друго: <strong>„Какво ще го накара да се усмихне на масата?“</strong> Отговорът почти винаги е нещо, което показва, че го познаваш: спомен, внимание, време, история. Деветте идеи отдолу са подредени точно така.</p>
+    </div>
+  </div>
+  <div class="podpis"><span>pesenta.bg</span><span>1 / 3</span></div>
+</section>
+
+<section class="str">
+  <div class="vatre" style="padding-top:14mm">
+    <div class="zaglavka">Деветте</div>
+
+    <div class="tochka"><div class="n grad">1</div><div>
+      <h3>Време, но за двама</h3>
+      <p>Билет за мач, концерт или театър — само за теб и него. Датата в календара е половината подарък: чака я седмици.</p>
+      <p class="primer">Пример: два билета и бележка „ти караш, аз черпя след това“.</p>
+    </div></div>
+
+    <div class="tochka"><div class="n grad">2</div><div>
+      <h3>Спомен, който се държи в ръка</h3>
+      <p>Фотокнига от една година или от едно пътуване. Тайната не е в снимките, а в 2–3 реда под всяка: кой какво каза тогава.</p>
+    </div></div>
+
+    <div class="tochka"><div class="n grad">3</div><div>
+      <h3>Поправи нещо, което отлага</h3>
+      <p>Ремонт на любимия часовник, нова каишка, рамка за старата снимка, която стои в чекмеджето. Показва, че си забелязал — а това рядко се купува.</p>
+    </div></div>
+
+    <div class="tochka"><div class="n grad">4</div><div>
+      <h3>Вкус от детството</h3>
+      <p>Кутия с неща от родния му край или от годините, когато е бил млад: бонбоните, които вече не се правят (или почти същите), домашно сладко, вино от селото, музиката от тогава.</p>
+    </div></div>
+
+    <div class="tochka"><div class="n grad">5</div><div>
+      <h3>Преживяване вместо предмет</h3>
+      <p>Кулинарен курс, дегустация, ден в СПА, полет с балон. Вещта се прибира, преживяването се разказва на следващата Коледа.</p>
+    </div></div>
+
+    <div class="tochka"><div class="n grad">6</div><div>
+      <h3>Писмо на ръка</h3>
+      <p>Една страница: какво ти е дал, какъв спомен пазиш, за какво му благодариш. Струва 0 € и често разплаква повече от всичко под елхата.</p>
+      <p class="primer">Започни с „Помниш ли, когато…“ — останалото тръгва само.</p>
+    </div></div>
+  </div>
+  <div class="podpis"><span>pesenta.bg</span><span>2 / 3</span></div>
+</section>
+
+<section class="str">
+  <div class="vatre" style="padding-top:14mm">
+    <div class="tochka"><div class="n grad">7</div><div>
+      <h3>Нещо, което носи неговата история</h3>
+      <p>Не гравирана химикалка с името му, а нещо, което разказва кой е той: карта на местата, където е живял; рамкирана първа заплата; рецептата на баба му, написана наново.</p>
+    </div></div>
+
+    <div class="tochka"><div class="n grad">8</div><div>
+      <h3>Нещо за общата маса</h3>
+      <p>Игра за цялото семейство, албум, в който всеки пише по ред, тост, подготвен предварително. Подарък, който събира хората, вместо да стои на рафта.</p>
+    </div></div>
+
+    <div class="tochka"><div class="n grad">9</div><div>
+      <h3>Малка вещ + лично послание</h3>
+      <p>Ако все пак купуваш вещ — сложи до нея две изречения защо точно тази. Чашата става „чашата за сутрешното ни кафе в неделя“. Посланието е подаръкът, вещта е опаковката.</p>
+    </div></div>
+
+    <ul class="chek">
+      <li>Избрах една идея от деветте.</li>
+      <li>Записах 2 реда на ръка, които отиват с нея.</li>
+      <li>Знам кога и пред кого ще я дам.</li>
+    </ul>
+
+    <div class="bonus">
+      <div class="zaglavka">Бонус · за най-трудните</div>
+      <h3>Идеи 2, 6 и 7 в едно</h3>
+      <p>Спомен, писмо и неговата история, събрани в нещо, което се пуска на масата на Бъдни вечер и всички чуват какъв човек е той: <strong>песен с неговото име</strong>, написана по историята, която ни разкажеш.</p>
+      <p>Ти ни пишеш няколко реда за него — прякора, шегите, какво обича. Ние правим текста и музиката. Готова е до 24 часа и идва по имейл, без куриери в най-натоварената седмица.</p>
+      <a class="cta" href="https://pesenta.bg/poruchka.html?utm_source=pdf&amp;utm_campaign=magnit-koleda">Песен за него · 19,90 €</a>
+      <small>pesenta.bg/poruchka.html · отговори на писмото, с което получи този списък, ако имаш въпрос</small>
+    </div>
+  </div>
+  <div class="podpis"><span>pesenta.bg</span><span>3 / 3</span></div>
+</section>
+
+</body>
+</html>

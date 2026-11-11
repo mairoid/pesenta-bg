@@ -109,7 +109,7 @@
   }
 
   /* Само имена на събития. Пояснението към тях (d) остава при нас. */
-  var SABITIYA = { "Order Form Open": "InitiateCheckout", "Voucher Checkout": "InitiateCheckout", "Order Submitted": "Lead" };
+  var SABITIYA = { "Order Form Open": "InitiateCheckout", "Voucher Checkout": "InitiateCheckout", "Order Submitted": "Lead", "Magnet Lead": "Lead" };
   var pratili = {};
   function kamMeta(ime) {
     var s = SABITIYA[ime];

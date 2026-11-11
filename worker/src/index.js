@@ -32,6 +32,7 @@ import {
 } from "./vaucher.js";
 import { handleSnimki } from "./snimki.js";
 import { handleOtkaz, otkazCron } from "./otkaz.js";
+import { handleMagnit } from "./magnit.js";
 
 export default {
   async fetch(request, env, ctx) {
@@ -93,6 +94,12 @@ export default {
     if (url.pathname === "/brief") {
       if (request.method === "OPTIONS") return cors(new Response(null, { status: 204 }), env);
       if (request.method === "POST") return cors(await handleBrief(request, env), env);
+    }
+
+    /* Безплатните гайдове срещу имейл (11.11.2026) — виж magnit.js. */
+    if (url.pathname === "/magnit") {
+      if (request.method === "OPTIONS") return cors(new Response(null, { status: 204 }), env);
+      if (request.method === "POST") return cors(await handleMagnit(request, env, ctx, { brevo }), env);
     }
 
     /* Снимките за обложката (20.10.2026) — вместо FormSubmit, който без Referer
@@ -617,7 +624,9 @@ export const SABITIYA = [
   /* ваучерът (15.10.2026): vaucher.js на сайта и осребряването в text-order.js */
   "Voucher Checkout", "Voucher Redeem",
   /* фунията на poruchka.html (10.11.2026): стъпка напред и полето, което спира изпращането */
-  "Order Step"
+  "Order Step",
+  /* магнитите (11.11.2026): имейлът за гайда е оставен успешно */
+  "Magnet Lead"
 ];
 
 export async function handleSabitie(request, env) {
