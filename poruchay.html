@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="bg">
+<!-- Форма за поръчка по един въпрос на екран (13.11.2026).
+     В poruchka.html първата стъпка пита всичко наведнъж: 27 повода, име, роднинство,
+     разказ, глас, снимки. От 10 до 12.11 там има 75 отворени форми и само 8 натиснати
+     „Напред“. Тук въпросите са същите, но по един: за кого, повод, разказ, звук, имейл.
+     Полетата са със СЪЩИТЕ id — изпращането, черновата, брифът и плащането са общият
+     assets/js/order.js. Водещата логика (чипове, подсказки, брояч) е в stapki.js.
+     noindex: докато се мери срещу poruchka.html, в търсачките стои само старата. -->
+<head>
+  <meta charset="UTF-8">
+  <script>document.documentElement.classList.add("js");setTimeout(function(){if(!window.__reveal)document.documentElement.classList.remove("js")},4000)</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
+  <!-- FormSubmit отхвърля гласовия запис и снимките без този ред — виж poruchka.html. -->
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="theme-color" content="#0b0a1a">
+  <meta name="application-name" content="Песента">
+  <meta name="apple-mobile-web-app-title" content="Песента">
+  <title>Поръчай песен | Pesenta.bg</title>
+  <meta name="description" content="Пет кратки въпроса и песента е поръчана: 19,90 €, готова до 24 часа или ти връщаме парите.">
+  <meta name="robots" content="noindex, follow">
+  <link rel="canonical" href="https://pesenta.bg/poruchka.html">
+  <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+
+  <link rel="preload" href="assets/fonts/unbounded-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/fonts.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    /* Само за тази страница. Общите стилове на съветника (.wizard-step, .chips,
+       .field) идват от style.css; тук е това, което прави екрана „един въпрос“. */
+    .stapki { max-width: 620px; padding-top: var(--sp-6); padding-bottom: var(--sp-16); }
+    .stapki .wizard-progress { margin-bottom: var(--sp-2); }
+    .stapka-broi { color: var(--muted); font-size: var(--fs-sm); margin: 0 0 var(--sp-6); }
+    .stapki .step-title { font-size: clamp(1.5rem, 5.4vw, 2rem); margin-bottom: var(--sp-2); outline: none; }
+    .stapki .step-sub { color: var(--muted); margin-bottom: var(--sp-6); }
+    /* Чиповете са отговорите — на телефон трябва да се уцелват с палец. */
+    .stapki .chip { padding: 0.7rem 1.05rem; font-size: var(--fs-base); }
+    .stapki .chips.kratko .chip.ryadak:not(.selected) { display: none; }
+    .povod-oshte { background: none; border: 0; color: var(--orange); font: inherit; font-weight: 600; padding: var(--sp-3) 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+    .povod-oshte[hidden] { display: none; }
+    .stapki textarea#story { min-height: 9.5rem; }
+    .podskazki { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-bottom: var(--sp-3); }
+    .podskazka { background: var(--surface); border: 1px dashed var(--border); border-radius: 999px; color: var(--muted); font: inherit; font-size: var(--fs-sm); padding: 0.45rem 0.85rem; cursor: pointer; }
+    .podskazka::before { content: "+ "; color: var(--pink); font-weight: 700; }
+    .podskazka.polzvana { opacity: 0.5; }
+    .po-zhelanie { color: var(--muted); font-size: var(--fs-sm); margin: calc(var(--sp-2) * -1) 0 var(--sp-6); }
+    .garancia-red { display: flex; gap: var(--sp-3); align-items: flex-start; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: var(--sp-4); margin: var(--sp-5) 0; font-size: var(--fs-md); }
+    .garancia-red svg { flex: none; color: var(--ok); margin-top: 2px; }
+    .garancia-red p { margin: 0; color: var(--muted); }
+    .garancia-red strong { color: var(--text); }
+    .stapki .consent { font-size: var(--fs-sm); }
+    /* Лентата с бутоните стои на дъното на екрана: „Напред“ е винаги на едно
+       място, колкото и дълъг да е екранът. */
+    /* Без отрицателни полета встрани: с тях страницата ставаше с 1 px по-широка
+       от екрана на телефон (мерено 376/375). */
+    .stapki .wizard-nav { position: sticky; bottom: 0; z-index: 5; margin: var(--sp-6) 0 0; padding: var(--sp-3) 0 calc(var(--sp-3) + env(safe-area-inset-bottom, 0px)); background: rgba(11, 10, 26, 0.96); border-top: 1px solid var(--border); }
+    /* Лентата за бисквитките (saglasie.js) също стои на дъното и при първо идване
+       закриваше „Напред“. Докато тя е на екрана, бутоните стоят над нея. */
+    body:has(.saglasie) .stapki .wizard-nav { bottom: 4.6rem; }
+    .stapki .wizard-nav #btn-next { flex: 1; white-space: nowrap; padding-left: var(--sp-4); padding-right: var(--sp-4); font-size: var(--fs-base); }
+    .stapki .wizard-nav #btn-back { flex: none; padding-left: var(--sp-5); padding-right: var(--sp-5); }
+    .stapki .wizard-nav.parva #btn-back { display: none; }
+    /* За плащането се говори чак на екрана с плащането. */
+    .doverie { display: none; text-align: center; color: var(--muted); font-size: var(--fs-sm); margin: var(--sp-3) 0 0; }
+    .stapki form.posledna .doverie { display: block; }
+    /* Знакът пред надписа помага окото да намери своя отговор сред десетина чипа. */
+    .stapki .chip .em { margin-right: 0.4em; font-style: normal; }
+  </style>
+
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon='{"token": "902a1340b733442da0ef0ebfe90903dc"}'></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Към съдържанието</a>
+
+<header class="site-header">
+  <div class="container header-in">
+    <a class="logo" href="index.html" aria-label="Песента — начало">
+      <img src="assets/img/logo.svg" alt="Песента — песен по поръчка" width="190" height="44">
+    </a>
+    <nav class="main-nav open" aria-label="Основна навигация" style="display:flex;position:static;padding:0;background:none;border:none;box-shadow:none;">
+      <a href="chuy.html">Чуй примери</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="container order-wrap stapki">
+
+  <div class="wizard-progress" aria-hidden="true">
+    <div class="seg active" data-seg="1"></div>
+    <div class="seg" data-seg="2"></div>
+    <div class="seg" data-seg="3"></div>
+    <div class="seg" data-seg="4"></div>
+    <div class="seg" data-seg="5"></div>
+  </div>
+  <!-- Цената стои тук през цялото време: който е дошъл направо във формата, не бива
+       да я научава чак на последния екран. -->
+  <p class="stapka-broi"><span id="stapka-broi" aria-live="polite">Стъпка 1 от 5</span> · 19,90 €, готова до 24 часа</p>
+
+  <!-- data-napravo-kasa: след изпращането order.js води право на касата на Stripe. -->
+  <form id="order-form" novalidate data-napravo-kasa>
+
+    <!-- 1: ЗА КОГО -->
+    <section class="wizard-step current" data-step="1">
+      <h1 class="step-title" tabindex="-1">За кого е песента?</h1>
+      <p class="step-sub">Пет кратки въпроса. Задължителни са само името и имейлът ти накрая.</p>
+
+      <p class="promo-msg ok" id="preselect-note" hidden></p>
+
+      <div class="field">
+        <label id="relation-etiket">Какъв ти е този човек?</label>
+        <!-- Не е в CHIP_GROUPS на order.js: стойността се пази в #relation отдолу. -->
+        <div class="chips" id="relation-chips" data-single aria-labelledby="relation-etiket">
+          <span class="chip" data-value="Майка / Баща"><span class="em" aria-hidden="true">🧡</span>Майка / Баща</span>
+          <span class="chip" data-value="Половинка / Партньор"><span class="em" aria-hidden="true">💑</span>Половинка</span>
+          <span class="chip" data-value="Приятел / Приятелка"><span class="em" aria-hidden="true">🤝</span>Приятел / Приятелка</span>
+          <span class="chip" data-value="Брат / Сестра"><span class="em" aria-hidden="true">👫</span>Брат / Сестра</span>
+          <span class="chip" data-value="Баба / Дядо"><span class="em" aria-hidden="true">👵</span>Баба / Дядо</span>
+          <span class="chip" data-value="Син / Дъщеря"><span class="em" aria-hidden="true">🧒</span>Син / Дъщеря</span>
+          <span class="chip" data-value="Колега"><span class="em" aria-hidden="true">💼</span>Колега</span>
+          <span class="chip ryadak" data-value="Шеф"><span class="em" aria-hidden="true">👔</span>Шеф</span>
+          <span class="chip ryadak" data-value="Кръстник / Кръстница"><span class="em" aria-hidden="true">🕊️</span>Кръстник / Кръстница</span>
+          <span class="chip ryadak" data-value="Треньор"><span class="em" aria-hidden="true">🏅</span>Треньор</span>
+          <span class="chip ryadak" data-value="Песента е за мен"><span class="em" aria-hidden="true">🙋</span>За мен</span>
+          <span class="chip" data-value="Друго"><span class="em" aria-hidden="true">✨</span>Друг</span>
+        </div>
+        <button type="button" class="povod-oshte" data-za="relation-chips">Още ▾</button>
+        <select id="relation" name="relation" hidden aria-hidden="true" tabindex="-1">
+          <option value="">Избери…</option>
+          <option>Приятел / Приятелка</option>
+          <option>Брат / Сестра</option>
+          <option>Половинка / Партньор</option>
+          <option>Майка / Баща</option>
+          <option>Син / Дъщеря</option>
+          <option>Баба / Дядо</option>
+          <option>Кръстник / Кръстница</option>
+          <option>Треньор</option>
+          <option>Колега</option>
+          <option>Шеф</option>
+          <option>Песента е за мен</option>
+          <option>Друго</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="recipient">Как се казва?
+          <span class="hint">Име или прякор — така, както искаш да звучи в песента</span>
+        </label>
+        <input type="text" id="recipient" name="recipient" autocomplete="off" enterkeyhint="next" placeholder="напр. Влади, мама Мария, Rosen Abi…">
+      </div>
+    </section>
+
+    <!-- 2: ПОВОД -->
+    <section class="wizard-step" data-step="2">
+      <h2 class="step-title" tabindex="-1">Какъв е поводът?</h2>
+      <p class="step-sub">Избери един — продължаваме веднага.</p>
+
+      <div class="field">
+        <!-- Същите 27 стойности като в poruchka.html (tools/povod-proba.js ги сверява там).
+             .ryadak са по-редките: stapki.js ги крие зад „Още поводи“. data-auto: изборът
+             минава напред сам. -->
+        <div class="chips" id="occasion-chips" data-single data-auto aria-label="Повод">
+          <span class="chip" data-value="Коледа"><span class="em" aria-hidden="true">🎄</span>Коледа</span>
+          <span class="chip" data-value="Рожден ден"><span class="em" aria-hidden="true">🎂</span>Рожден ден</span>
+          <span class="chip" data-value="Имен ден"><span class="em" aria-hidden="true">🎉</span>Имен ден</span>
+          <span class="chip" data-value="Годишнина"><span class="em" aria-hidden="true">💞</span>Годишнина</span>
+          <span class="chip" data-value="Юбилей"><span class="em" aria-hidden="true">🥂</span>Юбилей</span>
+          <span class="chip" data-value="Сватба"><span class="em" aria-hidden="true">💍</span>Сватба</span>
+          <span class="chip" data-value="Признание в любов"><span class="em" aria-hidden="true">❤️</span>Признание в любов</span>
+          <span class="chip" data-value="Шега / Изненада"><span class="em" aria-hidden="true">😄</span>Шега / Изненада</span>
+          <span class="chip ryadak" data-value="Нова година"><span class="em" aria-hidden="true">🎆</span>Нова година</span>
+          <span class="chip ryadak" data-value="Свети Валентин"><span class="em" aria-hidden="true">💘</span>Свети Валентин</span>
+          <span class="chip ryadak" data-value="За мама"><span class="em" aria-hidden="true">🌷</span>За мама</span>
+          <span class="chip ryadak" data-value="За приятел"><span class="em" aria-hidden="true">🍻</span>За приятел</span>
+          <span class="chip ryadak" data-value="Ергенско"><span class="em" aria-hidden="true">🎩</span>Ергенско</span>
+          <span class="chip ryadak" data-value="Моминско"><span class="em" aria-hidden="true">👑</span>Моминско</span>
+          <span class="chip ryadak" data-value="Бебе"><span class="em" aria-hidden="true">👶</span>Бебе</span>
+          <span class="chip ryadak" data-value="Кръщене"><span class="em" aria-hidden="true">🕊️</span>Кръщене</span>
+          <span class="chip ryadak" data-value="Пенсиониране"><span class="em" aria-hidden="true">🌴</span>Пенсиониране</span>
+          <span class="chip ryadak" data-value="Годеж"><span class="em" aria-hidden="true">💎</span>Годеж</span>
+          <span class="chip ryadak" data-value="Абитуриентски бал"><span class="em" aria-hidden="true">🎓</span>Абитуриентски бал</span>
+          <span class="chip ryadak" data-value="Пълнолетие"><span class="em" aria-hidden="true">🔑</span>Пълнолетие</span>
+          <span class="chip ryadak" data-value="Фирмено събитие"><span class="em" aria-hidden="true">🏢</span>Фирмено събитие</span>
+          <span class="chip ryadak" data-value="Дипломиране"><span class="em" aria-hidden="true">📜</span>Дипломиране</span>
+          <span class="chip ryadak" data-value="Нов дом"><span class="em" aria-hidden="true">🏡</span>Нов дом</span>
+          <span class="chip ryadak" data-value="За учител"><span class="em" aria-hidden="true">🍎</span>За учител</span>
+          <span class="chip ryadak" data-value="За кумовете"><span class="em" aria-hidden="true">🤵</span>За кумовете</span>
+          <span class="chip ryadak" data-value="За ловец"><span class="em" aria-hidden="true">🦌</span>За ловец</span>
+          <span class="chip" data-value="Друго"><span class="em" aria-hidden="true">✨</span>Друго</span>
+          <!-- бутонът на order.js за идване с ?povod= — виж бележката в poruchka.html -->
+          <button type="button" class="chips-oshte" id="occasion-oshte" hidden>Друг повод ▾</button>
+        </div>
+        <button type="button" class="povod-oshte" id="povod-oshte-btn" data-za="occasion-chips">Още поводи ▾</button>
+      </div>
+    </section>
+
+    <!-- 3: РАЗКАЗЪТ -->
+    <section class="wizard-step" data-step="3">
+      <h2 class="step-title" tabindex="-1" id="zagl-razkaz">Разкажи ни за човека</h2>
+      <p class="step-sub">Три-четири изречения стигат. Не е нужно да е красиво — пиши както говориш, или го кажи с глас.</p>
+
+      <div class="field">
+        <label for="story">Историята
+          <span class="hint">Натисни подсказка, за да започнеш изречението.</span>
+        </label>
+        <div class="podskazki">
+          <button type="button" class="podskazka" data-nachalo="Запознахме се ">Как се запознахте</button>
+          <button type="button" class="podskazka" data-nachalo="Най-много обича ">Какво обича</button>
+          <button type="button" class="podskazka" data-nachalo="Най-смешната ни случка е ">Смешна случка</button>
+          <button type="button" class="podskazka" data-nachalo="Всички го знаят с ">Прякор или лаф</button>
+          <button type="button" class="podskazka" data-nachalo="Искам да му благодаря за ">За какво благодариш</button>
+        </div>
+        <textarea id="story" name="story" placeholder="Разкажи каквото ти дойде — случки, лафове, спомени…"></textarea>
+      </div>
+
+      <div class="voice-box" id="voice-box">
+        <div class="voice-row">
+          <button type="button" class="btn btn-ghost voice-btn" id="voice-rec">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg>
+            <span id="voice-btn-label">Разкажи с гласово</span>
+          </button>
+          <span class="voice-status" id="voice-status">Говори на български — думите ти се появяват в полето горе, а записът пътува със заявката.</span>
+        </div>
+        <div class="voice-play" id="voice-play" hidden>
+          <audio controls id="voice-audio" style="height:40px;max-width:100%;"></audio>
+          <button type="button" class="btn btn-ghost" id="voice-del" style="padding:0.5rem 1rem;font-size:0.85rem;">Изтрий записа</button>
+        </div>
+      </div>
+
+      <details class="more-fields">
+        <summary>Снимки, дата и още детайли <span class="hint">(по желание)</span></summary>
+        <div class="more-fields-body">
+          <div class="field snimki-box" id="snimki-box">
+            <label for="snimki">Снимки за обложката и видеото
+              <span class="hint">По желание — до 30 снимки на човека или на компанията. Ще ги ползваме за корицата на песента, за личната ѝ страница и за видеото, ако го поръчаш.</span>
+            </label>
+            <input type="file" id="snimki" name="snimki" accept="image/*" multiple hidden>
+            <div class="snimki-row">
+              <button type="button" class="btn btn-ghost snimki-btn" id="snimki-add">Добави снимки</button>
+              <span class="voice-status" id="snimki-status">JPG или PNG от телефона — смаляваме ги сами.</span>
+            </div>
+            <div class="snimki-preview" id="snimki-preview" aria-live="polite"></div>
+          </div>
+          <div class="field">
+            <label for="event-date">Кога е събитието?</label>
+            <input type="date" id="event-date" name="event_date">
+            <p class="dostavka-red" id="dostavka-red" aria-live="polite"></p>
+          </div>
+          <div class="field">
+            <label for="qualities">Качества и навици</label>
+            <textarea id="qualities" name="qualities" placeholder="напр. винаги закъснява, но винаги идва; прави най-добрата скара…"></textarea>
+          </div>
+          <div class="field">
+            <label for="jokes">Смешни случки и вътрешни шеги</label>
+            <textarea id="jokes" name="jokes" placeholder="напр. онзи път на морето, когато…"></textarea>
+          </div>
+          <div class="field">
+            <label for="must-have">Задължителни думи и имена</label>
+            <textarea id="must-have" name="must_have" placeholder="прякори, места, фрази…"></textarea>
+          </div>
+          <div class="field">
+            <label for="avoid">Какво да избегнем</label>
+            <textarea id="avoid" name="avoid" placeholder="теми или думи, които не искаш…"></textarea>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <!-- 4: ЗВУКЪТ -->
+    <section class="wizard-step" data-step="4">
+      <h2 class="step-title" tabindex="-1">Как да звучи?</h2>
+      <p class="step-sub">Избери настроение. Не си сигурен за стила? Натисни „Напред“ и ще преценим ние.</p>
+
+      <div class="field">
+        <label>Настроение</label>
+        <div class="chips" id="mood-chips" data-single>
+          <span class="chip" data-value="Весело и енергично"><span class="em" aria-hidden="true">⚡</span>Весело и енергично</span>
+          <span class="chip" data-value="Трогателно"><span class="em" aria-hidden="true">🥹</span>Трогателно</span>
+          <span class="chip" data-value="Романтично"><span class="em" aria-hidden="true">🌹</span>Романтично</span>
+          <span class="chip" data-value="Шеговито"><span class="em" aria-hidden="true">😜</span>Шеговито</span>
+          <span class="chip" data-value="Епично"><span class="em" aria-hidden="true">🏔️</span>Епично</span>
+          <span class="chip" data-value="Носталгично"><span class="em" aria-hidden="true">📻</span>Носталгично</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Музикален стил <span class="hint">Може повече от един</span></label>
+        <div class="chips" id="style-chips">
+          <span class="chip" data-value="Поп">Поп</span>
+          <span class="chip" data-value="Балада">Балада</span>
+          <span class="chip" data-value="Рок">Рок</span>
+          <span class="chip" data-value="Рап / Хип-хоп">Рап / Хип-хоп</span>
+          <span class="chip" data-value="Поп-фолк / Чалга">Поп-фолк / Чалга</span>
+          <span class="chip" data-value="Кючек">Кючек</span>
+          <span class="chip" data-value="Народна музика">Народна музика</span>
+          <span class="chip" data-value="Диско / Ретро">Диско / Ретро</span>
+          <span class="chip" data-value="EDM / Денс">EDM / Денс</span>
+          <span class="chip" data-value="R&B / Соул">R&amp;B / Соул</span>
+          <span class="chip" data-value="Джаз / Суинг">Джаз / Суинг</span>
+          <span class="chip" data-value="Кънтри">Кънтри</span>
+          <span class="chip" data-value="Латино / Регетон">Латино / Регетон</span>
+          <span class="chip" data-value="Ориенталски">Ориенталски</span>
+          <span class="chip" data-value="Акустична китара">Акустична китара</span>
+          <span class="chip" data-value="Метъл">Метъл</span>
+          <span class="chip" data-value="Детска песен">Детска песен</span>
+          <span class="chip" data-value="Естрада / Шансон">Естрада / Шансон</span>
+          <span class="chip" data-value="Кино / Епично">Кино / Епично</span>
+        </div>
+        <div class="count-note" id="style-count">Избрани стилове: 0</div>
+      </div>
+
+      <details class="more-fields">
+        <summary>Език, глас и темпо <span class="hint">(по желание — иначе на български)</span></summary>
+        <div class="more-fields-body">
+          <div class="field">
+            <!-- Няколко езика наведнъж (13.11.2026). В poruchka.html това е падащо меню с
+                 „Смесен (комбинация от езици)“ — но там няма къде да се каже КОИ езици.
+                 Тук се избират направо. order.js чете #language като текст, затова
+                 stapki.js записва избора в скритото поле: „Български + Английски“. -->
+            <label id="language-etiket">Език на песента <span class="hint">Може повече от един — тогава ги смесваме в песента</span></label>
+            <div class="chips" id="language-chips" aria-labelledby="language-etiket">
+              <span class="chip selected" data-value="Български">Български</span>
+              <span class="chip" data-value="Английски">Английски</span>
+              <span class="chip" data-value="Немски">Немски</span>
+              <span class="chip" data-value="Френски">Френски</span>
+              <span class="chip" data-value="Италиански">Италиански</span>
+              <span class="chip" data-value="Испански">Испански</span>
+              <span class="chip" data-value="Гръцки">Гръцки</span>
+              <span class="chip" data-value="Сръбски">Сръбски</span>
+              <span class="chip" data-value="Македонски">Македонски</span>
+              <span class="chip" data-value="Румънски">Румънски</span>
+              <span class="chip" data-value="Турски">Турски</span>
+              <span class="chip" data-value="Руски">Руски</span>
+              <span class="chip" data-value="Украински">Украински</span>
+              <span class="chip" data-value="Арабски">Арабски</span>
+              <span class="chip" data-value="Друг (уточни в бележките)">Друг</span>
+            </div>
+            <div class="count-note" id="language-izbor">Песента ще е на: Български</div>
+            <input type="hidden" id="language" name="language" value="Български">
+          </div>
+          <div class="field">
+            <label>Вокал</label>
+            <div class="chips" id="voice-chips" data-single>
+              <span class="chip" data-value="Мъжки">Мъжки</span>
+              <span class="chip" data-value="Женски">Женски</span>
+              <span class="chip" data-value="Дует">Дует</span>
+              <span class="chip" data-value="Без значение">Без значение</span>
+            </div>
+          </div>
+          <div class="field">
+            <label>Темпо</label>
+            <div class="chips" id="tempo-chips" data-single>
+              <span class="chip" data-value="Бавно">Бавно</span>
+              <span class="chip" data-value="Средно">Средно</span>
+              <span class="chip" data-value="Бързо">Бързо</span>
+            </div>
+          </div>
+          <div class="field">
+            <label for="reference">Референтна песен или изпълнител
+              <span class="hint">„Да звучи като…“</span>
+            </label>
+            <input type="text" id="reference" name="reference" placeholder="напр. като ранния Слави / Ed Sheeran…">
+          </div>
+          <div class="toggle-row">
+            <label for="explicit">Разрешавам нецензурни изрази в текста
+              <span class="hint">Само за аудитория 18+. Без отметка песента е 100% цензурна.</span>
+            </label>
+            <input type="checkbox" id="explicit" name="explicit">
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <!-- 5: КЪДЕ ДА Я ИЗПРАТИМ -->
+    <section class="wizard-step" data-step="5">
+      <h2 class="step-title" tabindex="-1">Къде да я изпратим?</h2>
+      <p class="step-sub">Песента идва на имейла ти. След това остава само плащането с карта.</p>
+
+      <div class="field">
+        <label for="cust-email">Имейл *</label>
+        <input type="email" id="cust-email" name="email" autocomplete="email" inputmode="email" placeholder="ti@primer.bg">
+      </div>
+      <div class="field">
+        <label for="cust-name">Твоето име * <span class="hint">трябва ни за документа за продажбата</span></label>
+        <input type="text" id="cust-name" name="name" autocomplete="name" placeholder="Име и фамилия">
+      </div>
+
+      <div class="toggle-row" id="video-red" hidden>
+        <label for="s-video">Добави персонализирано видео с твоите снимки · +5 €
+          <span class="hint">Общо 24,90 €. Колкото повече и по-подходящи снимки ни пратиш, толкова по-хубаво видео ще направим. Ако не добавиш снимки, ще генерираме подходящи за песента.</span>
+        </label>
+        <input type="checkbox" id="s-video" name="video">
+      </div>
+
+      <div class="order-summary" id="order-summary" aria-live="polite">
+        <!-- попълва се от order.js -->
+      </div>
+
+      <div class="garancia-red">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+        <p><strong>Песента е при теб до 24 часа — или ти връщаме парите.</strong> Не е точно? Една корекция е безплатна.</p>
+      </div>
+
+      <details class="more-fields">
+        <summary>Промо код, телефон, бележка <span class="hint">(по желание)</span></summary>
+        <div class="more-fields-body">
+          <div class="field">
+            <label for="promo">Промо код</label>
+            <div class="promo-row">
+              <input type="text" id="promo" name="promo" autocomplete="off" placeholder="Въведи код…" style="text-transform:uppercase;">
+              <button type="button" class="btn btn-ghost" id="promo-apply">Приложи</button>
+            </div>
+            <div class="promo-msg" id="promo-msg" role="status"></div>
+          </div>
+          <div class="field">
+            <label for="cust-phone">Телефон</label>
+            <input type="tel" id="cust-phone" name="phone" autocomplete="tel" placeholder="+359 …">
+          </div>
+          <div class="field">
+            <label for="notes">Още нещо, което да знаем?</label>
+            <input type="text" id="notes" name="notes" placeholder="Специални желания, въпроси…">
+          </div>
+        </div>
+      </details>
+
+      <details class="more-fields">
+        <summary>Провери какво ни написа</summary>
+        <div class="more-fields-body">
+          <div class="review-box" id="review-box">
+            <!-- попълва се от order.js -->
+          </div>
+        </div>
+      </details>
+
+      <!-- Двата текста отдолу са дума по дума от poruchka.html — правни са, не се редактират тук. -->
+      <p class="izrabotka">Текстът пишем ние, по твоята история. Музиката и гласът се генерират по него с музикален софтуер.</p>
+
+      <label class="consent">
+        <input type="checkbox" id="consent">
+        <span>Запознах се с <a href="usloviya.html" target="_blank" style="color:var(--orange);text-decoration:underline;">Общите условия</a> и <a href="poveritelnost.html" target="_blank" style="color:var(--orange);text-decoration:underline;">Политиката за поверителност</a> и се съгласявам данните от формата да бъдат използвани за изработката на песента. Изрично се съгласявам изпълнението да започне веднага след плащането и потвърждавам, че <strong>губя 14-дневното право на отказ</strong> по чл. 50 ЗЗП (чл. 57, т. 3 и т. 13 ЗЗП) — песента се изработва лично за мен по мои указания и плащам предварително, за да започне работата.</span>
+      </label>
+    </section>
+
+    <div class="form-error" id="form-error" role="alert"></div>
+
+    <div class="wizard-nav parva">
+      <button type="button" class="btn btn-ghost" id="btn-back" style="visibility:hidden;" aria-label="Назад">←</button>
+      <button type="button" class="btn btn-primary btn-lg" id="btn-next">Напред →</button>
+    </div>
+    <p class="doverie">Плащането е през Stripe. Не пазим данни за картата ти.</p>
+  </form>
+
+  <!-- УСПЕХ: вижда се само ако касата не може да се отвори направо (промо код или
+       изключени плащания) — тогава важи старият път през plati.html. -->
+  <div class="success-box" id="success-box" hidden>
+    <div class="check">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#16091c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+    </div>
+    <h2>Остана плащането</h2>
+    <div class="order-no" id="success-no">PSN-000000-0000</div>
+    <p>Разказът ти стигна до нас. Плати с карта, за да започнем — веднага след това получаваш документа за продажбата на имейла си, а песента е готова до <strong id="success-eta">24 часа</strong>.</p>
+    <p style="margin-top:1.2rem;"><a class="btn btn-primary btn-lg" id="success-pay" href="plati.html">Плати с карта</a></p>
+    <p class="hint" style="margin-top:0.8rem;">Предпочиташ банков превод? Пиши ни на <a href="mailto:sales@pesenta.bg" style="color:var(--orange);text-decoration:underline;">sales@pesenta.bg</a> и ти изпращаме фактура.</p>
+    <p style="margin-top:1rem;"><a class="btn btn-ghost" href="index.html">← Обратно към началото</a></p>
+  </div>
+
+  <section class="my-orders" id="my-orders" hidden>
+    <h2>Моите заявки</h2>
+    <div id="orders-list"></div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom">
+      <a href="mailto:sales@pesenta.bg">sales@pesenta.bg</a> · <a href="tel:+359899456326">+359 899 456 326</a> · <a href="usloviya.html">Общи условия</a> · <a href="poveritelnost.html">Поверителност</a><br>
+      © <span id="year">2026</span> Pesenta.bg — „БАУФИЗИК“ ЕООД, ЕИК 207427793. Всички права запазени. <a href="/poveritelnost.html#biskvitki">Бисквитки</a> · <a href="/otkaz.html">Откажете се от договора тук</a>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/main.js" defer></script>
+<script src="assets/js/payments.js" defer></script>
+<script src="assets/js/order.js" defer></script>
+<script src="assets/js/stapki.js" defer></script>
+</body>
+</html>

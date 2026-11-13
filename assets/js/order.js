@@ -115,7 +115,13 @@
     promoCode: null,
     promoPct: 0
   };
-  var TOTAL_STEPS = 3;
+  /* Броят на стъпките идва от страницата (13.11.2026): poruchka.html има три,
+     poruchay.html — пет, по един въпрос на екран. Кодът е общ за двете. */
+  var TOTAL_STEPS = document.querySelectorAll(".wizard-step").length || 3;
+  /* poruchay.html: след изпращането човек отива право на касата, както при бързата
+     форма на началната. В poruchka.html остава междинният екран „Остана плащането“. */
+  var NAPRAVO_KASA = !!(document.getElementById("order-form") && document.getElementById("order-form").hasAttribute("data-napravo-kasa"));
+  function posledenNadpis() { return NAPRAVO_KASA ? "Продължи към плащане" : "Изпрати заявката"; }
 
   /* Записано гласово съобщение (Blob) — прикача се към заявката */
   var voiceBlob = null;
@@ -337,9 +343,9 @@
       seg.classList.toggle("active", Number(seg.getAttribute("data-seg")) <= step);
     });
     btnBack.style.visibility = step === 1 ? "hidden" : "visible";
-    btnNext.textContent = step === TOTAL_STEPS ? "Изпрати заявката" : "Напред →";
+    btnNext.textContent = step === TOTAL_STEPS ? posledenNadpis() : "Напред →";
     clearError();
-    if (step === 3) {
+    if (step === TOTAL_STEPS) {
       renderSummary();
       renderReview();
     }
@@ -358,7 +364,7 @@
      Връща { msg, field } вместо голо съобщение, за да знае showError кое поле
      да маркира и фокусира. */
   function validateStep(step) {
-    if (step === 3) {
+    if (step === TOTAL_STEPS) {
       if (!val("cust-name")) {
         return { msg: "Напиши името си — трябва ни за фактурата.", field: "cust-name" };
       }
@@ -939,7 +945,7 @@
       .catch(function () {
         /* Резервен вариант: имейл клиент с попълнен бриф */
         btnNext.disabled = false;
-        btnNext.textContent = "Изпрати заявката";
+        btnNext.textContent = posledenNadpis();
         var mailto =
           "mailto:" + ORDER_EMAIL +
           "?subject=" + encodeURIComponent("Нова заявка за песен — " + orderNo) +
@@ -971,6 +977,21 @@
       localStorage.removeItem("pesenta_draft");
     } catch (e) { /* localStorage недостъпен — не е фатално */ }
 
+    /* Право на касата (poruchay.html). Само при пълна цена: връзката на Stripe е за
+       точна сума, а промо кодът я сменя — тогава остава пътят през plati.html.
+       Същият адрес като в text-order.js: номерът на поръчката свързва плащането
+       с брифа, имейлът идва попълнен, касата е на български. */
+    var kasaCfg = window.PESENTA_PAYMENTS;
+    var kasaLink = NAPRAVO_KASA && !state.promoPct && kasaCfg && kasaCfg.enabled && kasaCfg.paymentLinks &&
+                   (state.plan === "pesenVideo" ? kasaCfg.paymentLinks.pesenVideo : kasaCfg.paymentLinks.pesen);
+    if (kasaLink) {
+      var kasaEmail = val("cust-email");
+      window.location.href = kasaLink + (kasaLink.indexOf("?") === -1 ? "?" : "&") +
+        "client_reference_id=" + encodeURIComponent(orderNo) +
+        (kasaEmail ? "&prefilled_email=" + encodeURIComponent(kasaEmail) : "") + "&locale=bg";
+      return;
+    }
+
     document.getElementById("success-no").textContent = orderNo;
     /* Датата вместо „24 часа“: същата сметка като в живия ред под датата на
        събитието — личен факт, не общо обещание. */
@@ -985,7 +1006,8 @@
     }
     form.hidden = true;
     document.querySelector(".wizard-progress").hidden = true;
-    document.querySelector(".order-head").hidden = true;
+    var glava = document.querySelector(".order-head");
+    if (glava) glava.hidden = true;
     document.getElementById("success-box").hidden = false;
     renderMyOrders();
     window.scrollTo({ top: 0, behavior: "smooth" });
