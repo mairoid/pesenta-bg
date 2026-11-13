@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="bg">
+<!-- Страница за рекламите (13.11.2026). ТЕСТ-11 водеше право във формата на
+     poruchka.html: 162 клика, 75 отворени форми, 0 поръчки. Човекът не чуваше
+     нищо, преди да му поискаме пари. Тук редът е обратен: първо три песни за
+     слушане, после цената и гаранцията, и чак тогава бутонът към формата.
+     Не е в sitemap.xml и е noindex — само за платен трафик, за да не се бори
+     със страниците по поводи за същите търсения. -->
+<head>
+  <meta charset="UTF-8">
+  <script>document.documentElement.classList.add("js");setTimeout(function(){if(!window.__reveal)document.documentElement.classList.remove("js")},4000)</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
+  <meta name="theme-color" content="#0b0a1a">
+  <meta name="application-name" content="Песента">
+  <meta name="apple-mobile-web-app-title" content="Песента">
+  <title>Чуй как звучи песен по поръчка | 19,90 €</title>
+  <meta name="description" content="Три истински песни по нечия история. Твоята е с вашите имена и случки: 19,90 €, готова до 24 часа или ти връщаме парите.">
+  <meta name="robots" content="noindex, follow">
+  <link rel="canonical" href="https://pesenta.bg/chuy.html">
+  <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="bg_BG">
+  <meta property="og:site_name" content="Песента">
+  <meta property="og:title" content="Чуй как звучи песен по поръчка | 19,90 €">
+  <meta property="og:description" content="Три истински песни по нечия история. Твоята е с вашите имена и случки: 19,90 €, готова до 24 часа.">
+  <meta property="og:url" content="https://pesenta.bg/chuy.html">
+  <meta property="og:image" content="https://pesenta.bg/assets/img/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:type" content="image/jpeg">
+
+  <link rel="preload" href="assets/fonts/unbounded-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/fonts.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    /* Само за тази страница. Песните трябва да са на първия екран на телефон,
+       затова горното поле на .article е свито, а редът с фактите е на един ред. */
+    .chuy { padding-top: var(--sp-8); padding-bottom: 0; }
+    .chuy h1 { margin-bottom: 0.3em; }
+    .chuy .lead { color: var(--muted); font-size: var(--fs-lg); margin: 0 0 var(--sp-6); }
+    .chuy .tracks-list { grid-template-columns: repeat(3, 1fr); margin-bottom: var(--sp-6); }
+    .chuy-fakti { list-style: none; margin: 0 0 var(--sp-6); padding: 0; display: grid; gap: var(--sp-2); }
+    .chuy-fakti li { padding-left: 1.6rem; position: relative; }
+    .chuy-fakti li::before { content: "✓"; position: absolute; left: 0; color: var(--pink); font-weight: 700; }
+    .chuy-cta { display: grid; gap: var(--sp-2); justify-items: start; margin-bottom: var(--sp-6); }
+    .chuy-cta .hint { margin: 0; }
+    .chuy-fakti { margin-bottom: var(--sp-12); }
+    .chuy-otzivi { display: grid; gap: var(--sp-4); grid-template-columns: repeat(3, 1fr); }
+    .chuy-otzivi .quote-card { margin: 0; flex: none; }
+    @media (max-width: 760px) {
+      /* Трите песни на един ред. В общия стил са по две и третата пада сама
+         на нов ред — тогава бутонът слиза под първия екран (мерено: y≈1300). */
+      .chuy .tracks-list { grid-template-columns: repeat(3, 1fr); gap: var(--sp-2); margin-bottom: var(--sp-4); }
+      .chuy .track-info { padding: var(--sp-2) var(--sp-2) var(--sp-3); }
+      .chuy .track-info h3 { font-size: var(--fs-xs); }
+      .chuy .track-info > span { display: none; }
+      .chuy .track-row .play-btn { width: 44px; height: 44px; }
+      .chuy .track-row .play-btn svg { width: 20px; height: 20px; }
+      .chuy .lead { font-size: var(--fs-base); margin-bottom: var(--sp-4); }
+      .chuy-otzivi { grid-template-columns: 1fr; }
+      .chuy-cta { justify-items: stretch; }
+      .chuy-cta .btn { text-align: center; }
+    }
+  </style>
+
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon='{"token": "902a1340b733442da0ef0ebfe90903dc"}'></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Към съдържанието</a>
+
+<!-- Без менюто на сайта: от тази страница има само два изхода — пускане на
+     песен и бутонът за поръчка. -->
+<header class="site-header">
+  <div class="container header-in">
+    <a class="logo" href="index.html" aria-label="Песента — начало">
+      <img src="assets/img/logo.svg" alt="Песента — песен по поръчка" width="190" height="44">
+    </a>
+    <nav class="main-nav open" aria-label="Основна навигация" style="display:flex;position:static;padding:0;background:none;border:none;box-shadow:none;">
+      <a class="btn btn-primary" href="./#order">Поръчай песен</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <article class="article chuy">
+    <span class="kicker">Първо чуй</span>
+    <h1>Така звучи песен, писана за <span class="grad-text">един човек</span></h1>
+    <p class="lead">Три истински песни, всяка по нечия история. Твоята ще е с вашите имена, вашите места и шегите, които разбирате само вие.</p>
+
+    <!-- Първите три подаръчни песни от началната, в същия ред. Редовете са
+         същата разметка като там — пуска ги main.js и брои „Demo Play“. -->
+    <div class="tracks-list">
+      <div class="track-row player" data-src="assets/audio/lelya-svetla.mp3?v=9ebef79c" role="button" tabindex="0" aria-label="Пусни „Леля Светла“">
+        <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+        <img class="track-thumb" src="assets/img/cover-lelya-svetla.jpg" srcset="assets/img/cover-lelya-svetla-360.jpg 360w, assets/img/cover-lelya-svetla.jpg 600w" sizes="(max-width: 760px) 46vw, (max-width: 980px) 30vw, 260px" alt="" width="600" height="600">
+        <div class="track-info">
+          <h3>Леля Светла</h3>
+          <span>За рожден ден · <a href="pesni/primer-lelya-svetla.html">виж личната страница →</a></span>
+        </div>
+        <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
+        <span class="time">3:30</span>
+      </div>
+      <div class="track-row player" data-src="assets/audio/chestit-krasi.mp3" role="button" tabindex="0" aria-label="Пусни „Честит рожден ден, Краси“">
+        <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+        <img class="track-thumb" src="assets/img/cover-krasi.webp" srcset="assets/img/cover-krasi-360.webp 360w, assets/img/cover-krasi.webp 600w" sizes="(max-width: 760px) 46vw, (max-width: 980px) 30vw, 260px" alt="" width="600" height="600">
+        <div class="track-info">
+          <h3>Честит рожден ден, Краси</h3>
+          <span>За рожден ден · весел рап с женски припев</span>
+        </div>
+        <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
+        <span class="time">2:56</span>
+      </div>
+      <div class="track-row player" data-src="assets/audio/za-teb-brate-vladi.mp3" role="button" tabindex="0" aria-label="Пусни „За теб, брате Влади“">
+        <button class="play-btn" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+        <img class="track-thumb" src="assets/img/cover-vladi.webp" srcset="assets/img/cover-vladi-360.webp 360w, assets/img/cover-vladi.webp 600w" sizes="(max-width: 760px) 46vw, (max-width: 980px) 30vw, 260px" alt="" width="600" height="600">
+        <div class="track-info">
+          <h3>За теб, брате Влади</h3>
+          <span>За приятел · песен-послание</span>
+        </div>
+        <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
+        <span class="time">4:27</span>
+      </div>
+    </div>
+
+    <!-- Бутонът е преди фактите: на телефон трябва да се вижда на първия екран,
+         веднага под песните. -->
+    <div class="chuy-cta">
+      <a class="btn btn-primary btn-lg" href="./#order">Поръчай песен — 19,90 €</a>
+      <p class="hint">Отнема около 5 минути. За Коледа поръчай до 23 декември.</p>
+    </div>
+
+    <ul class="chuy-fakti">
+      <li><strong>19,90 €</strong> за текст и песен. Без абонамент и без доплащане за стил или език.</li>
+      <li><strong class="garancia">Готова до 24 часа — или ти връщаме парите.</strong></li>
+      <li>Не е точно? <strong>Една корекция е безплатна.</strong></li>
+    </ul>
+  </article>
+
+  <!-- КАК СТАВА — същите три реда като на началната -->
+  <section class="section" id="kak-raboti">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="kicker">Три стъпки</span>
+        <h2>Как става</h2>
+      </div>
+      <ol class="steps-short reveal">
+        <li><span class="step-num" aria-hidden="true">1</span><p><strong>Разказваш</strong> за кого е и какъв е поводът — с думи или с глас — и плащаш 19,90 €.</p></li>
+        <li><span class="step-num" aria-hidden="true">2</span><p><strong>Правим я.</strong> Пишем текста по историята ти, а музиката е в стила, който избереш. Преди да тръгне към теб, я слушаме цялата.</p></li>
+        <li><span class="step-num" aria-hidden="true">3</span><p><strong>Получаваш я</strong> на имейла до 24 часа — или ти връщаме парите. Не е точно? Коригираме безплатно.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ОТЗИВИ — три от реалните на началната, дума по дума. Без движеща се
+       лента: тук са три и трябва да се прочетат, не да минат. -->
+  <section class="section" id="otzivi">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="kicker">Какво казват</span>
+        <h2>След като я чуха</h2>
+      </div>
+      <div class="chuy-otzivi reveal">
+        <figure class="quote-card">
+          <div class="quote-mark">“</div>
+          <blockquote>Искам да Ви благодаря от цялото си сърце, песента е съвършена, нямам думи. Огромно благодаря!</blockquote>
+          <figcaption class="who">Гергана С.</figcaption>
+        </figure>
+        <figure class="quote-card">
+          <div class="quote-mark">“</div>
+          <blockquote>Следваща стъпка… Продуцент 😁😁 че напоследък много слаби песни. Аз тая за Влади си я слушам в колата 🤣🤣</blockquote>
+          <figcaption class="who">Николай М.</figcaption>
+        </figure>
+        <figure class="quote-card">
+          <div class="quote-mark">“</div>
+          <blockquote>Миро, много ти благодаря, батко! Твоите песни правят купона! ❤️</blockquote>
+          <figcaption class="who">Владимир Н.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ — само въпросите, които спират човек точно преди поръчката -->
+  <section class="section" id="vaprosi">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="kicker">Питай смело</span>
+        <h2>Преди да поръчаш</h2>
+      </div>
+      <div class="faq-list reveal">
+        <details class="faq-item">
+          <summary>Какво трябва да ви напиша?</summary>
+          <div class="faq-body">Името на човека, повода и една-две ваши истории: прякор, любимо място, смешна случка. Не е нужно да пишеш красиво, може и да го разкажеш с глас.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Кога най-късно да поръчам за Коледа?</summary>
+          <div class="faq-body">Срокът е до 24 часа: поръчка до 23 декември е при теб навреме. Пред празниците не чакай последния ден — пиши ни на sales@pesenta.bg или се обади на +359 899 456 326, ако е спешно.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Какво получавам?</summary>
+          <div class="faq-body">MP3 и текста по имейл, плюс лична страница на песента с илюстрация, която можеш да пратиш като линк. Срещу 5 € повече правим и видео, общо 24,90 €.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Ами ако не ми хареса?</summary>
+          <div class="faq-body">Една корекция е безплатна: казваш ни какво не е точно и я поправяме. Ако песента не е при теб до 24 часа, връщаме парите.</div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-band reveal">
+        <h2>Сега е ред на вашата история</h2>
+        <p>Разкажи ни за човека. До 24 часа песента е на имейла ти.</p>
+        <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+          <a class="btn btn-primary btn-lg" href="./#order">Поръчай сега — 19,90 €</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom">
+      <a href="mailto:sales@pesenta.bg">sales@pesenta.bg</a> · <a href="tel:+359899456326">+359 899 456 326</a> · <a href="usloviya.html">Общи условия</a> · <a href="poveritelnost.html">Поверителност</a><br>
+      © <span id="year">2026</span> Pesenta.bg — „БАУФИЗИК“ ЕООД, ЕИК 207427793. Всички права запазени. <a href="/poveritelnost.html#biskvitki">Бисквитки</a> · <a href="/otkaz.html">Откажете се от договора тук</a>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/main.js" defer></script>
+</body>
+</html>
