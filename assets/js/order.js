@@ -800,6 +800,9 @@
           jokes: d.jokes || "",
           must_have: d.must_have || "",
           avoid: d.avoid || "",
+          /* 15.11.2026: имейлът — без него напомнянето до неплатилите (napomniNeplateni
+             в Worker-а) пропуска всяка пълна форма с „без имейл“. text-order.js го праща. */
+          email: d.email || "",
           plan: state.plan,
           snimki: snimki.length,
           landing: atr("psn_landing"),
