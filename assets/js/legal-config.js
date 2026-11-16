@@ -7,7 +7,7 @@
    ───────────────────────────────────────────────────────── */
 
 window.PESENTA_LEGAL = {
-  privacy: { version: "2.1", updated: "11.11.2026" },
+  privacy: { version: "2.2", updated: "16.11.2026" },
   terms: { updated: "09.11.2026" },
 
   company: {
@@ -66,7 +66,7 @@ window.PESENTA_LEGAL = {
       policy: "https://www.brevo.com/legal/privacypolicy/"
     },
     {
-      name: "Meta Platforms Ireland Ltd. (само ако си приел рекламните бисквитки)",
+      name: "Meta Platforms Ireland Ltd. (докато не изключиш рекламните бисквитки)",
       purpose: "измерване дали рекламите ни във Facebook и Instagram водят до поръчки и показването им на подходящи хора",
       data: "идентификатор в браузъра, IP адрес, тип устройство, посетени страници и действия (отворена форма, изпратена заявка, плащане и сумата му); НЕ се изпращат име, имейл, телефон или разказът ти",
       policy: "https://www.facebook.com/privacy/policy/"

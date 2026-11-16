@@ -1,8 +1,10 @@
 /* Песента — прозорец за бисквитките и пикселът на Meta (08.11.2026)
    ─────────────────────────────────────────────────────────────────
    Рекламата във Facebook/Instagram има нужда да вижда кой поръчва, а това иска
-   бисквитки. Затова: нищо от Meta не се зарежда преди „Приемам“, двата бутона са
-   равностойни, а отказът се помни също като приемането.
+   бисквитки. От 16.11.2026 (решение на Мирослав, след юриста) пикселът тръгва за всеки
+   посетител, освен ако вече е натиснал „Изключи“. Лентата казва, че бисквитките са
+   включени, и дава изключване с едно натискане; изборът се помни 6 месеца.
+   Преди това: нищо от Meta не се зареждаше преди „Приемам“ (виж историята в git).
 
    Докато PIXEL_ID е празен, този файл не прави нищо: няма прозорец, няма заявки. */
 (function () {
@@ -23,12 +25,12 @@
 
   var EN = document.documentElement.lang === "en";
   var T = EN ? {
-    tekst: "?",
-    priemi: "Accept", otkaji: "Decline", poveche: "Meta ad cookies", etiket: "Cookies",
+    tekst: " are on.",
+    priemi: "OK", otkaji: "Turn off", poveche: "Meta ad cookies", etiket: "Cookies",
     politika: "/en/privacy.html#cookies"
   } : {
-    tekst: "?",
-    priemi: "Приемам", otkaji: "Отказвам", poveche: "Бисквитки за реклами", etiket: "Бисквитки",
+    tekst: " са включени.",
+    priemi: "Добре", otkaji: "Изключи", poveche: "Бисквитки за реклами", etiket: "Бисквитки",
     politika: "/poveritelnost.html#biskvitki"
   };
 
@@ -185,7 +187,7 @@
       x.addEventListener("click", fn);
       b.appendChild(x);
     }
-    buton(T.priemi, function () { zapis(true); skrii(); pusni(); });
+    buton(T.priemi, function () { zapis(true); skrii(); });
     buton(T.otkaji, function () {
       var beshe = pusnat;
       zapis(false);
@@ -207,7 +209,8 @@
     if (t) { e.preventDefault(); pokaji(); }
   });
 
+  /* Пикселът работи, докато човек не го изключи; лентата стои, докато не избере. */
   var izbor = chetene();
+  if (!izbor || izbor.prie) pusni();
   if (!izbor) pokaji();
-  else if (izbor.prie) pusni();
 })();

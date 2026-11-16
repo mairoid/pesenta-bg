@@ -372,7 +372,9 @@
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
         return { msg: "Въведи валиден имейл — там ще получиш песента.", field: "cust-email" };
       }
-      if (!document.getElementById("consent").checked) {
+      /* poruchay.html няма отметка от 16.11.2026 (решение на Мирослав): там съгласието е с изпращането. */
+      var otmetka = document.getElementById("consent");
+      if (otmetka && !otmetka.checked) {
         return { msg: "Моля, потвърди съгласието с Общите условия, за да изпратим заявката.", field: "consent" };
       }
     }

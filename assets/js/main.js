@@ -32,6 +32,14 @@
       })], { type: "text/plain;charset=UTF-8" }));
     } catch (e) { /* без броене */ }
   };
+  /* Идването на двете страници, към които водят рекламите (16.11.2026): без него не се
+     вижда колко от кликовете изобщо стигат до страницата. Записва се само пътят и кодът
+     на рекламата (utm_content), нищо за човека. */
+  if (/^\/(chuy|poruchay)\.html$/.test(location.pathname)) {
+    var idvaOt = "";
+    try { idvaOt = new URLSearchParams(location.search).get("utm_content") || ""; } catch (e) { /* стар браузър */ }
+    window.psnSabitie("Page Arrive", idvaOt.replace(/[^\w\-]/g, "").slice(0, 20) || "bez-kod");
+  }
   /* Прозорецът за бисквитките и пикселът на Meta (08.11.2026): отделен файл, зареден от
      тук, за да не се слага таг в 148 страници. Трябва да е след psnSabitie. */
   (function () {

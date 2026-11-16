@@ -621,6 +621,8 @@ function briefPoleta(telo) {
 export const SABITIYA = [
   "Order CTA Click", "Order Form Open", "Order Submitted", "Demo Play", "Style Play",
   "Hero Sample Play", "Voice Start", "Voice Recorded", "Song Page CTA",
+  /* идването на страниците от рекламите (16.11.2026): chuy.html и poruchay.html, от main.js */
+  "Page Arrive",
   /* ваучерът (15.10.2026): vaucher.js на сайта и осребряването в text-order.js */
   "Voucher Checkout", "Voucher Redeem",
   /* фунията на poruchka.html (10.11.2026): стъпка напред и полето, което спира изпращането */
