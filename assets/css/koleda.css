@@ -1,0 +1,99 @@
+/* Коледният слой (виж assets/js/koleda.js). Зарежда се от самия скрипт, не от HTML-а,
+   така че без JavaScript не се тегли нищо. Цветовете идват от палитрата на сайта. */
+
+.koleda-snyag[hidden], .koleda-kopche[hidden] { display: none; }
+
+/* Снегът лежи над страницата, но никога не поема докосване. z-index 40 е под
+   хедъра (50), та менюто и лентата си остават чисти. */
+.koleda-snyag {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Лампичките висят от долния ръб на хедъра (top: 100%) и не заемат място в потока —
+   затова нищо под хедъра не се измества. Родителят .site-header е sticky, значи е
+   и опорната точка за absolute. overflow: hidden е на самия гирлянд, не на хедъра. */
+.koleda-lampi {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 20px;
+  padding: 0 3%;
+  display: flex;
+  justify-content: space-between;
+  overflow: hidden;
+  pointer-events: none;
+}
+.koleda-lampi::before {
+  content: '';
+  position: absolute;
+  left: -2%;
+  right: -2%;
+  top: -9px;
+  height: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 0 0 50% 50% / 0 0 100% 100%;
+}
+.koleda-lampi i {
+  position: relative;
+  width: 7px;
+  height: 10px;
+  margin-top: calc(4px + 3px * sin(var(--i) * 30deg));
+  border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+  background: var(--c);
+  box-shadow: 0 0 10px 2px var(--c);
+  animation: koleda-svetene 3.2s ease-in-out calc(var(--i) * -0.45s) infinite;
+}
+/* Четирите цвята са от палитрата на сайта: --pink, --orange, --kekhlibar, --ok. */
+.koleda-lampi i:nth-child(4n + 1) { --c: #ff4d8d; }
+.koleda-lampi i:nth-child(4n + 2) { --c: #ffa14d; }
+.koleda-lampi i:nth-child(4n + 3) { --c: #FFC46B; }
+.koleda-lampi i:nth-child(4n) { --c: #6ee7a8; }
+@keyframes koleda-svetene { 0%, 100% { opacity: .45; } 50% { opacity: 1; } }
+/* На тесен екран дванайсет лампички стигат; повече биха били тъпкано. */
+@media (max-width: 700px) { .koleda-lampi i:nth-child(n + 13) { display: none; } }
+
+/* Бутонът е долу вляво: долу вдясно вече са .float-contact и .intro-pill. */
+.koleda-kopche {
+  position: fixed;
+  left: 14px;
+  bottom: 14px;
+  z-index: 55;
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .4rem .75rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgba(20, 19, 43, 0.88);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
+.koleda-kopche:hover, .koleda-kopche:focus-visible { color: var(--text); }
+.koleda-kopche[aria-pressed=false] { opacity: .75; }
+
+/* Когато банерът за бисквитки (.saglasie, fixed най-долу) е на екрана, бутонът се
+   вдига над него; същата стойност сайтът вече ползва за .wizard-nav в poruchay.html. */
+body:has(.saglasie) .koleda-kopche { bottom: 4.6rem; }
+
+/* На телефон остава само знакът: текстът се скрива визуално, но не и за екранни четци. */
+@media (max-width: 900px) {
+  .koleda-kopche { min-width: 44px; min-height: 44px; justify-content: center; padding: .45rem .6rem; }
+  .koleda-kopche-tekst { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .koleda-lampi i { animation: none; opacity: .85; }
+}
+@media print {
+  .koleda-snyag, .koleda-lampi, .koleda-kopche { display: none !important; }
+}
