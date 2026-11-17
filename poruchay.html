@@ -66,6 +66,8 @@
     /* За плащането се говори чак на екрана с плащането. */
     .doverie { display: none; text-align: center; color: var(--muted); font-size: var(--fs-sm); margin: var(--sp-3) 0 0; }
     .stapki form.posledna .doverie { display: block; }
+    .video-pod { display: none; margin-top: var(--sp-5); }
+    .stapki form.posledna .video-pod { display: block; }
     /* Знакът пред надписа помага окото да намери своя отговор сред десетина чипа. */
     .stapki .chip .em { margin-right: 0.4em; font-style: normal; }
   </style>
@@ -377,7 +379,7 @@
     <!-- 5: КЪДЕ ДА Я ИЗПРАТИМ -->
     <section class="wizard-step" data-step="5">
       <h2 class="step-title" tabindex="-1">Къде да я изпратим?</h2>
-      <p class="step-sub">Песента идва на имейла ти. След това остава само плащането с карта.</p>
+      <p class="step-sub">Плащаш сега с карта, а песента идва на имейла ти до 24 часа.</p>
 
       <div class="field">
         <label for="cust-email">Имейл *</label>
@@ -388,20 +390,8 @@
         <input type="text" id="cust-name" name="name" autocomplete="name" placeholder="Име и фамилия">
       </div>
 
-      <div class="toggle-row" id="video-red" hidden>
-        <label for="s-video">Добави персонализирано видео с твоите снимки · +5 €
-          <span class="hint">Общо 24,90 €. Колкото повече и по-подходящи снимки ни пратиш, толкова по-хубаво видео ще направим. Ако не добавиш снимки, ще генерираме подходящи за песента.</span>
-        </label>
-        <input type="checkbox" id="s-video" name="video">
-      </div>
-
       <div class="order-summary" id="order-summary" aria-live="polite">
         <!-- попълва се от order.js -->
-      </div>
-
-      <div class="garancia-red">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
-        <p><strong>Песента е при теб до 24 часа — или ти връщаме парите.</strong> Не е точно? Една корекция е безплатна.</p>
       </div>
 
       <details class="more-fields">
@@ -441,6 +431,12 @@
       <!-- 16.11.2026 (решение на Мирослав): без отметка и без отказ от правото на отказ тук; който поиска парите си, ги получава.
            Старият текст с отметката е в poruchka.html и в историята на git. -->
       <p class="consent">С изпращането приемаш <a href="usloviya.html" target="_blank" style="color:var(--orange);text-decoration:underline;">Общите условия</a> и <a href="poveritelnost.html" target="_blank" style="color:var(--orange);text-decoration:underline;">Политиката за поверителност</a>. Данните от формата ползваме само за изработката на песента.</p>
+
+      <!-- 17.11.2026: гаранцията е последна, точно над бутона за плащане. -->
+      <div class="garancia-red">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+        <p><strong>Песента е на имейла ти до 24 часа — или ти връщаме парите.</strong> Не е точно? Една корекция е безплатна.</p>
+      </div>
     </section>
 
     <div class="form-error" id="form-error" role="alert"></div>
@@ -450,6 +446,15 @@
       <button type="button" class="btn btn-primary btn-lg" id="btn-next">Напред →</button>
     </div>
     <p class="doverie">Плащането е през Stripe. Не пазим данни за картата ти.</p>
+    <!-- 17.11.2026: видеото е под бутона, за да не е нов избор преди плащането. -->
+    <div class="video-pod">
+      <div class="toggle-row" id="video-red" hidden>
+        <label for="s-video">Добави персонализирано видео с твоите снимки · +5 €
+          <span class="hint">Общо 24,90 €. Колкото повече и по-подходящи снимки ни пратиш, толкова по-хубаво видео ще направим. Ако не добавиш снимки, ще генерираме подходящи за песента.</span>
+        </label>
+        <input type="checkbox" id="s-video" name="video">
+      </div>
+    </div>
   </form>
 
   <!-- УСПЕХ: вижда се само ако касата не може да се отвори направо (промо код или
