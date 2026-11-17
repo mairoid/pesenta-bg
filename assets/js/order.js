@@ -730,9 +730,26 @@
   /* files: [{ blob, name, pole }] — гласовият запис и снимките. FormSubmit пази по ЕДИН файл
      на име на поле (проба 23.09.2026: две „attachment“ → стигна само второто), затова всеки
      файл е в свой <input type="file"> със свое име: „attachment“ за гласа, snimka_1..3. */
-  function postWithAttachment(fields, files) {
+  /* 17.11.2026: формата вече не сменя страницата — тръгва в скрит iframe, а клиентът
+     продължава към касата. gotovo() се вика веднъж: когато iframe-ът зареди (файловете
+     са качени) или след 20 s, каквото дойде първо. Брифът вече е в базата през beacon. */
+  function postWithAttachment(fields, files, gotovo) {
+    var imeRamka = "psn-prikacheni-" + Date.now();
+    var ramka = document.createElement("iframe");
+    ramka.name = imeRamka;
+    ramka.title = "изпращане";
+    ramka.style.display = "none";
+    document.body.appendChild(ramka);
+    var veche = false;
+    function kraj() { if (veche) return; veche = true; if (gotovo) gotovo(); }
+    /* празният iframe зарежда about:blank веднага — броим само зареждане СЛЕД submit() */
+    var poslano = false;
+    ramka.addEventListener("load", function () { if (poslano) kraj(); });
+    setTimeout(kraj, 20000);
+
     var f = document.createElement("form");
     f.method = "POST";
+    f.target = imeRamka;
     f.action = FORM_ENDPOINT_NATIVE;
     f.enctype = "multipart/form-data";
     f.acceptCharset = "UTF-8";
@@ -761,6 +778,7 @@
 
     document.body.appendChild(f);
     f.submit();
+    poslano = true;
   }
 
   function rememberOrder(orderNo, planLabel, totalStr) {
@@ -916,12 +934,13 @@
       snimki.forEach(function (s, i) { var n = s.n || i + 1; files.push({ blob: s.blob, name: "snimka-" + orderNo + "-" + n + ".jpg", pole: "snimka_" + n }); });
       payload["_captcha"] = "false";
       payload["_next"] = THANKS_URL;
-      rememberOrder(orderNo, PLANS[state.plan].label, eur(t.total));
-      try { localStorage.removeItem("pesenta_draft"); } catch (e) { /* ок */ }
-      /* нативният POST навигира веднага след submit() — събитието трябва да
-         тръгне ПРЕДИ него, друг момент за него няма */
       trackPlausible("Order Submitted", { plan: payload["Пакет"], method: voiceBlob ? "voice-attachment" : "photo-attachment" });
-      postWithAttachment(payload, files);
+      /* 17.11.2026: преди тук страницата отиваше на blagodarim.html и клиентът
+         не стигаше до касата. Сега писмото с файловете тръгва във фон, а след
+         него (или след 20 s) — onSuccess → Stripe, като при обикновената форма. */
+      btnNext.disabled = true;
+      btnNext.textContent = voiceBlob ? "Качваме гласовото…" : "Качваме снимките…";
+      postWithAttachment(payload, files, function () { onSuccess(orderNo, t); });
       return;
     }
 
@@ -938,16 +957,30 @@
       body: JSON.stringify(payload)
     };
 
+    /* 17.11.2026: касата не чака FormSubmit повече от 6 s и не спира при грешка от него.
+       Брифът вече е в базата (beacon в submitOrder), а номерът на поръчката пътува към
+       Stripe — писмото е удобство, не условие за плащане. keepalive: заявката довършва и
+       след като страницата се смени. Резервът с имейл остава само ако директна каса няма
+       (промо код → plati.html). */
+    var kasaIma = imaDirektnaKasa();
+    var svarshi = false;
+    function kamKasata(nachin) {
+      if (svarshi) return; svarshi = true;
+      trackPlausible("Order Submitted", { plan: payload["Пакет"], method: nachin });
+      onSuccess(orderNo, t);
+    }
+    fetchOpts.keepalive = true;
+    if (kasaIma) setTimeout(function () { kamKasata("form-timeout"); }, 6000);
+
     fetch(FORM_ENDPOINT, fetchOpts)
       .then(function (res) {
         if (!res.ok) throw new Error("HTTP " + res.status);
         return res.json();
       })
-      .then(function () {
-        trackPlausible("Order Submitted", { plan: payload["Пакет"], method: "form" });
-        onSuccess(orderNo, t);
-      })
+      .then(function () { kamKasata("form"); })
       .catch(function () {
+        if (svarshi) return;
+        if (kasaIma) { kamKasata("form-greshka"); return; }
         /* Резервен вариант: имейл клиент с попълнен бриф */
         btnNext.disabled = false;
         btnNext.textContent = posledenNadpis();
@@ -965,6 +998,12 @@
             '.webm" style="color:#ffd36e;font-weight:700;">Свали гласовото съобщение, за да го изпратиш ръчно →</a>';
         }
       });
+  }
+
+  function imaDirektnaKasa() {
+    var c = window.PESENTA_PAYMENTS;
+    return !!(NAPRAVO_KASA && !state.promoPct && c && c.enabled && c.paymentLinks &&
+              (state.plan === "pesenVideo" ? c.paymentLinks.pesenVideo : c.paymentLinks.pesen));
   }
 
   function onSuccess(orderNo, t) {

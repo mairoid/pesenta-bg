@@ -981,13 +981,18 @@
       }
     } catch (e) { /* без beacon оставаме на стария път */ }
 
+    /* 17.11.2026: касата се отваря веднъж и не чака FormSubmit повече от 8 s —
+       досега бавен отговор оставяше бутона да виси на „Отваряме плащането…“. */
+    var kamKasata = false;
+    function kasaVednazh() { if (kamKasata) return; kamKasata = true; toPayment(); }
     pratiSnimki(orderNo).then(function (lipsvat) {
       snimkiVPismoto(fd, orderNo, lipsvat);
+      setTimeout(kasaVednazh, 8000);
       return fetch(FORM_ENDPOINT, { method: "POST", headers: { "Accept": "application/json" }, body: fd })
         .then(function (res) {
           if (!res.ok) throw new Error("HTTP " + res.status);
           return res.json();
         });
-    }).then(toPayment).catch(toPayment);
+    }).then(kasaVednazh).catch(kasaVednazh);
   });
 })();
