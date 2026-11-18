@@ -279,20 +279,25 @@ export function brandPismo(zaglavie, obrashtenie, redove, lang) {
       '<tr><td bgcolor="#D2577F" height="3" style="background-color:#D2577F;height:3px;font-size:0;line-height:0;">&nbsp;</td></tr>' +
       td('<p style="margin:0 0 14px 0;' + PISMO_F + 'font-size:20px;line-height:1.3;font-weight:bold;color:#F4F2FF;">' + obrashtenie + "</p>" +
          redove.join(""), "32px 32px 6px 32px") +
-      /* Подписът е същият като в писмото за готова песен (imeyl-stelche.html), 18.11.2026. */
-      td('<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">' +
-        '<tr><td bgcolor="#2A2640" height="1" style="background-color:#2A2640;height:1px;font-size:0;line-height:0;">&nbsp;</td></tr>' +
-        '<tr><td bgcolor="#12101F" style="background-color:#12101F;padding-top:24px;">' +
-        '<p style="margin:0 0 14px 0;' + PISMO_F + 'font-size:15px;line-height:1.6;color:#D9D5EE;">' + (lang === "en" ? "Best," : "Поздрави,") + "</p>" +
-        '<p style="margin:0 0 3px 0;' + PISMO_F + 'font-size:19px;line-height:1.25;color:#F4F2FF;font-weight:bold;">' + (lang === "en" ? "Miro" : "Миро") + "</p>" +
-        '<a href="https://pesenta.bg" style="text-decoration:none;"><img src="https://pesenta.bg/assets/img/logo-mail-v1-podpis.png" width="150" height="29" alt="pesenta.bg" ' +
-        'style="display:block;width:150px;height:29px;border:0;outline:none;text-decoration:none;margin:4px 0 14px 0;' + PISMO_F + 'font-size:12px;color:#8F8AB0;"></a>' +
-        '<p style="margin:0;' + PISMO_F + 'font-size:14px;line-height:1.85;color:#A9A4C9;">' +
-        '<a href="tel:+359899456326" style="color:#D2577F;text-decoration:none;font-weight:bold;">+359 899 456 326</a><br>' +
-        '<a href="mailto:sales@pesenta.bg" style="color:#A9A4C9;text-decoration:none;">sales@pesenta.bg</a>&nbsp;&middot;&nbsp;' +
-        '<a href="https://pesenta.bg" style="color:#A9A4C9;text-decoration:none;">pesenta.bg</a></p>' +
-        "</td></tr></table>", "20px 32px 30px 32px") +
+      pismoPodpis(lang) +
     "</table></td></tr></table></body></html>";
+}
+/* Подписът е същият като в писмото за готова песен (imeyl-stelche.html), 18.11.2026.
+   Връща цял ред <tr> за тъмната таблица 600 px — ползват го brandPismo и ваучерът. */
+export function pismoPodpis(lang) {
+  return '<tr><td bgcolor="#12101F" style="background-color:#12101F;padding:20px 32px 30px 32px;">' +
+    '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">' +
+    '<tr><td bgcolor="#2A2640" height="1" style="background-color:#2A2640;height:1px;font-size:0;line-height:0;">&nbsp;</td></tr>' +
+    '<tr><td bgcolor="#12101F" style="background-color:#12101F;padding-top:24px;">' +
+    '<p style="margin:0 0 14px 0;' + PISMO_F + 'font-size:15px;line-height:1.6;color:#D9D5EE;">' + (lang === "en" ? "Best," : "Поздрави,") + "</p>" +
+    '<p style="margin:0 0 3px 0;' + PISMO_F + 'font-size:19px;line-height:1.25;color:#F4F2FF;font-weight:bold;">' + (lang === "en" ? "Miro" : "Миро") + "</p>" +
+    '<a href="https://pesenta.bg" style="text-decoration:none;"><img src="https://pesenta.bg/assets/img/logo-mail-v1-podpis.png" width="150" height="29" alt="pesenta.bg" ' +
+    'style="display:block;width:150px;height:29px;border:0;outline:none;text-decoration:none;margin:4px 0 14px 0;' + PISMO_F + 'font-size:12px;color:#8F8AB0;"></a>' +
+    '<p style="margin:0;' + PISMO_F + 'font-size:14px;line-height:1.85;color:#A9A4C9;">' +
+    '<a href="tel:+359899456326" style="color:#D2577F;text-decoration:none;font-weight:bold;">+359 899 456 326</a><br>' +
+    '<a href="mailto:sales@pesenta.bg" style="color:#A9A4C9;text-decoration:none;">sales@pesenta.bg</a>&nbsp;&middot;&nbsp;' +
+    '<a href="https://pesenta.bg" style="color:#A9A4C9;text-decoration:none;">pesenta.bg</a></p>' +
+    "</td></tr></table></td></tr>";
 }
 
 export function napomnyanePismo(env, r, p, email, sega, koe) {
@@ -664,24 +669,25 @@ export async function sendRefundEmail(env, sale, amountC, natrupanoC) {
   const sum = money(amountC) + " €";
   const bgn = money(eurToSt(amountC, Number(env.BGN_RATE))) + " лв.";
 
+  const subject = (full ? "Върнахме плащането" : "Върнахме част от плащането") +
+             " по поръчка " + sale.order_no + " — Песента";
+  const A = pismoAbzac;
   const body = {
     sender: { name: env.MAIL_SENDER_NAME || "Песента", email: env.MAIL_SENDER },
     to: [{ email: sale.customer_email, name: sale.customer_name || undefined }],
-    subject: (full ? "Върнахме плащането" : "Върнахме част от плащането") +
-             " по поръчка " + sale.order_no + " — Песента",
-    htmlContent:
-      "<p>Здравей" + (sale.customer_name ? " " + xmlEscape(sale.customer_name) : "") + ",</p>" +
-      "<p>" + (full
+    subject,
+    /* Брандираният шаблон с подписа от писмото за готова песен (18.11.2026). */
+    htmlContent: brandPismo(subject, "Здравей" + (sale.customer_name ? ", " + xmlEscape(sale.customer_name) : "") + ",", [
+      A(full
         ? "Плащането по поръчка <strong>" + xmlEscape(sale.order_no) + "</strong> е върнато изцяло."
-        : "Част от плащането по поръчка <strong>" + xmlEscape(sale.order_no) + "</strong> е върната.") +
-      "</p>" +
-      "<p>Върната сума: <strong>" + sum + "</strong> (" + bgn + ")<br>" +
-      "Документ за продажбата: <strong>" + padDoc(sale.doc_n) + "</strong></p>" +
-      "<p>Сумата се връща по същата карта, с която е платено. " +
-      "Банката обикновено я отразява до няколко работни дни — при някои издатели отнема " +
-      "малко повече, затова не се притеснявай, ако не се появи веднага.</p>" +
-      (full ? "<p>Ако връщането е по недоразумение или искаме да опитаме пак — просто отговори на това писмо.</p>" : "") +
-      "<p>Песента · pesenta.bg</p>"
+        : "Част от плащането по поръчка <strong>" + xmlEscape(sale.order_no) + "</strong> е върната."),
+      A("Върната сума: <strong>" + sum + "</strong> (" + bgn + ")<br>" +
+        "Документ за продажбата: <strong>" + padDoc(sale.doc_n) + "</strong>"),
+      A("Сумата се връща по същата карта, с която е платено. " +
+        "Банката обикновено я отразява до няколко работни дни — при някои издатели отнема " +
+        "малко повече, затова не се притеснявай, ако не се появи веднага."),
+      (full ? A("Ако връщането е по недоразумение или искаме да опитаме пак — просто отговори на това писмо.") : "")
+    ])
   };
 
   try {
@@ -1427,7 +1433,7 @@ export function vaucherPismoHtml(sale, v, belUrl, sPdf) {
       td(p("Можеш да се откажеш от ваучера в 14 дни от покупката, докато кодът не е използван: " +
            '<a href="https://pesenta.bg/otkaz.html?kod=' + encodeURIComponent(v.kod || "") + '" style="color:#A9A4C9;">откажете се от договора тук</a>.', "font-size:13px;color:#A9A4C9;"),
          "4px 32px 0 32px") +
-      td(p("Песента · pesenta.bg", "font-size:13px;color:#A9A4C9;"), "10px 32px 26px 32px") +
+      pismoPodpis("bg") +
     "</table></td></tr></table></body></html>";
 }
 
