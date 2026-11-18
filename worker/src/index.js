@@ -1016,6 +1016,34 @@ export function ezikNaKlienta(vidBrif, darzhava) {
   return "bg";
 }
 
+/* Писмото с документа за продажба — в брандирания шаблон с подписа (18.11.2026).
+   Чужд клиент: на английски, без картичката (тя е на български). Самият документ
+   остава български — той е по Наредба Н-18. Чиста функция, за проверката в tools/. */
+export function beleshkaPismo(sale, url, kart) {
+  const A = pismoAbzac;
+  const doc = padDoc(sale.doc_n);
+  const nomer = xmlEscape(sale.order_no);
+  const ime = sale.customer_name ? xmlEscape(sale.customer_name) : "";
+  if (sale.ezik === "en") {
+    const subject = "Sales receipt " + doc + " — Pesenta";
+    return { subject, html: brandPismo(subject, "Hi" + (ime ? " " + ime : "") + ",", [
+      A("We've received your payment. Here is the sales receipt <strong>" + doc + "</strong> for order <strong>" + nomer + "</strong>:"),
+      pismoButon(url, "Open the receipt"),
+      A("The receipt is a Bulgarian fiscal document, so it is in Bulgarian.", "font-size:13px;color:#A9A4C9;"),
+      A("Your song will arrive at this email within 24 hours, together with the lyrics.")
+    ], "en") };
+  }
+  const subject = "Документ за продажба " + doc + " — Песента";
+  return { subject, html: brandPismo(subject, "Здравей" + (ime ? ", " + ime : "") + ",", [
+    A("Плащането е получено. Ето документа за продажбата <strong>" + doc + "</strong> по поръчка <strong>" + nomer + "</strong>:"),
+    pismoButon(url, "Отвори документа"),
+    A("Песента пристига до 24 часа на този имейл, заедно с текста."),
+    (kart ? A('Подаръкът е за днес? <a href="' + xmlEscape(kart) + '" style="color:#FFA14D;">Ето картичката</a> — за печат на А6 или ' +
+              'направо на телефона: „Песента ти пътува. Утре е при теб.“, с името на човека и QR код, ' +
+              'който води към песента, щом е готова.') : "")
+  ]) };
+}
+
 async function sendBeleshkaEmail(env, sale) {
   if (!env.BREVO_API_KEY) return { ok: false, error: "BREVO_API_KEY не е зададен" };
   if (!sale.customer_email) return { ok: false, error: "клиентът няма имейл в Stripe" };
@@ -1024,36 +1052,12 @@ async function sendBeleshkaEmail(env, sale) {
   if (!url) return { ok: false, error: "липсва AUDIT_TOKEN или PUBLIC_BASE — линкът не може да се подпише" };
   const kart = await kartichkaUrl(env, sale.order_no);
 
-  /* Чужд клиент: писмото на английски, без картичката (тя е на български).
-     Самият документ остава български — той е по Наредба Н-18. */
-  const body = sale.ezik === "en" ? {
-    sender: { name: "Pesenta", email: env.MAIL_SENDER },
+  const m = beleshkaPismo(sale, url, kart);
+  const body = {
+    sender: { name: sale.ezik === "en" ? "Pesenta" : (env.MAIL_SENDER_NAME || "Песента"), email: env.MAIL_SENDER },
     to: [{ email: sale.customer_email, name: sale.customer_name || undefined }],
-    subject: "Sales receipt " + padDoc(sale.doc_n) + " — Pesenta",
-    htmlContent:
-      "<p>Hi" + (sale.customer_name ? " " + xmlEscape(sale.customer_name) : "") + ",</p>" +
-      "<p>We've received your payment. Here is the sales receipt " +
-      "<strong>" + padDoc(sale.doc_n) + "</strong> for order " +
-      "<strong>" + xmlEscape(sale.order_no) + "</strong>:</p>" +
-      '<p><a href="' + url + '">Open the receipt</a></p>' +
-      "<p>The receipt is a Bulgarian fiscal document, so it is in Bulgarian.</p>" +
-      "<p>Your song will arrive at this email within 24 hours, together with the lyrics.</p>" +
-      "<p>Pesenta · pesenta.bg</p>"
-  } : {
-    sender: { name: env.MAIL_SENDER_NAME || "Песента", email: env.MAIL_SENDER },
-    to: [{ email: sale.customer_email, name: sale.customer_name || undefined }],
-    subject: "Документ за продажба " + padDoc(sale.doc_n) + " — Песента",
-    htmlContent:
-      "<p>Здравей" + (sale.customer_name ? " " + xmlEscape(sale.customer_name) : "") + ",</p>" +
-      "<p>Плащането е получено. Ето документа за продажбата " +
-      "<strong>" + padDoc(sale.doc_n) + "</strong> по поръчка " +
-      "<strong>" + xmlEscape(sale.order_no) + "</strong>:</p>" +
-      '<p><a href="' + url + '">Отвори документа</a></p>' +
-      "<p>Песента пристига до 24 часа на този имейл, заедно с текста.</p>" +
-      (kart ? '<p>Подаръкът е за днес? <a href="' + kart + '">Ето картичката</a> — за печат на А6 или ' +
-              'направо на телефона: „Песента ти пътува. Утре е при теб.“, с името на човека и QR код, ' +
-              'който води към песента, щом е готова.</p>' : "") +
-      "<p>Песента · pesenta.bg</p>"
+    subject: m.subject,
+    htmlContent: m.html
   };
 
   try {
