@@ -185,6 +185,13 @@ html.sait-fon #text-fields:not([hidden]) {
   position: relative;
   z-index: 1;
 }
+/* Докато човек пише (18.11.2026, Миро): лентата за бисквитките и бутонът за
+   снега са закачени долу на екрана — с отворена клавиатура сядаха точно върху
+   полето за разказа. Скриват се, докато поле е на фокус, и се връщат след това.
+   Бутонът за снега не се показва и докато формата на началната е отворена. */
+body:has(:is(input, textarea, select):focus) .saglasie,
+body:has(:is(input, textarea, select):focus) .koleda-kopche,
+body:has(#text-fields:not([hidden])) .koleda-kopche { display: none !important; }
 @keyframes sait-fon-vlez { from { opacity: 0; } to { opacity: var(--fon-op); } }
 @media (prefers-reduced-motion: reduce) {
   #sait-fon.is-on { animation: none; opacity: var(--fon-op); }
