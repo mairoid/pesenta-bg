@@ -149,37 +149,70 @@ export default {
   }
 };
 
-/* ============ Напомняне до неплатила поръчка (13.10.2026) ============
-   4 от 7 души, попълнили историята, не платиха и в Stripe нямаше нито един
-   отказ — затварят касата. Едно писмо 20–48 часа след брифа, с готова връзка
-   за плащане. ВЕДНЪЖ на поръчка: всяко решение (пратено или защо не) се пише
-   в napomnyania, за да не се гледа втори път. Пропуска: без имейл, наш адрес,
-   платил с друга поръчка след брифа, мина ли датата на повода. */
+/* ============ Напомняне до неплатила поръчка (13.10.2026, ново разписание 18.11.2026) ============
+   Хората попълват историята, стигат до касата и я затварят. Най-много ДВЕ писма
+   на поръчка, никога между 21:00 и 9:00 българско време:
+   1) първото — същия ден, 2–3 часа след брифа, ако той е преди 17:00; иначе на
+      другата сутрин след 9:00. Пита имало ли е проблем на плащането и дава телефона.
+   2) второто — около 24 часа след брифа, ако още не е платено.
+   Всяко решение (пратено или защо не) се пише в napomnyania (първото) и
+   napomnyania2 (второто), за да не се гледа втори път. Пропуска: без имейл, наш
+   адрес, платил с друга поръчка след брифа, мина ли датата на повода. Ред в
+   napomnyania с ok = 0 значи „на тази поръчка не се пише“ — и второ няма. */
 const VATRESHNI = /@(russev\.net|pesenta\.bg|energieausweis-shop\.at)$/i;
+const NAP_TELEFON = "+359 899 456 326";
+
+/* Кое напомняне е ред сега: 0 = никое, 1 = първото, 2 = второто. Чиста функция. */
+export function koeNapomnyane(createdIso, sega, parvoIso, imaVtoro) {
+  const sg = sofiaParts(sega);
+  const chas = Number(sg.time.slice(0, 2));
+  if (chas < 9 || chas >= 21) return 0;
+  const created = new Date(createdIso);
+  const vazrast = (sega.getTime() - created.getTime()) / 3600e3;
+  if (!(vazrast >= 0)) return 0;
+  if (!parvoIso) {
+    if (vazrast > 48) return 0;
+    const cr = sofiaParts(created);
+    if (Number(cr.time.slice(0, 2)) < 17) return vazrast >= 2 ? 1 : 0;
+    return sg.date > cr.date ? 1 : 0;
+  }
+  if (imaVtoro) return 0;
+  if (vazrast < 24 || vazrast > 72) return 0;
+  if ((sega.getTime() - new Date(parvoIso).getTime()) / 3600e3 < 6) return 0;
+  return 2;
+}
 
 export async function napomniNeplateni(env, sega) {
   sega = sega || new Date();
   if (!env.BREVO_API_KEY || !env.MAIL_SENDER || !env.PAYMENT_LINK) return { pregledani: 0, prateni: 0, prichina: "липсва настройка" };
-  const ot = new Date(sega.getTime() - 48 * 3600e3).toISOString();
-  const do_ = new Date(sega.getTime() - 20 * 3600e3).toISOString();
-  /* Поръчка, осребрена с ваучер (15.10.2026), е платена — но не е в sales. Без таблицата
-     vaucheri (базата преди миграцията) — старата заявка: тогава осребрени няма. */
-  const sql = `SELECT b.order_no, b.created_at, b.vid, b.povod, b.poleta FROM briefs b
-     WHERE b.created_at BETWEEN ? AND ?
-       AND NOT EXISTS (SELECT 1 FROM sales s WHERE s.order_no = b.order_no)
-       AND NOT EXISTS (SELECT 1 FROM napomnyania n WHERE n.order_no = b.order_no)`;
+  const ot = new Date(sega.getTime() - 72 * 3600e3).toISOString();
+  /* Поръчка, осребрена с ваучер (15.10.2026), е платена — но не е в sales. */
+  const osnova = `SELECT b.order_no, b.created_at, b.vid, b.povod, b.poleta,
+       n.created_at AS parvo_at, n.ok AS parvo_ok, n.order_no AS parvo`;
+  const otkade = ` FROM briefs b LEFT JOIN napomnyania n ON n.order_no = b.order_no`;
+  const kade = ` WHERE b.created_at >= ?
+       AND NOT EXISTS (SELECT 1 FROM sales s WHERE s.order_no = b.order_no)`;
   let redove;
+  let imaVtoraTablica = true;
   try {
-    redove = (await env.DB.prepare(sql + `
-       AND NOT EXISTS (SELECT 1 FROM vaucheri v WHERE v.izpolzvan_order = b.order_no)`
-    ).bind(ot, do_).all()).results || [];
+    redove = (await env.DB.prepare(osnova + `, n2.order_no AS vtoro` + otkade +
+      ` LEFT JOIN napomnyania2 n2 ON n2.order_no = b.order_no` + kade +
+      ` AND NOT EXISTS (SELECT 1 FROM vaucheri v WHERE v.izpolzvan_order = b.order_no)`
+    ).bind(ot).all()).results || [];
   } catch (e) {
+    /* База преди миграцията (без napomnyania2 или vaucheri): само първото писмо. */
     if (!/no such table/i.test(String(e && e.message || e))) throw e;
-    redove = (await env.DB.prepare(sql).bind(ot, do_).all()).results || [];
+    imaVtoraTablica = false;
+    redove = (await env.DB.prepare(osnova + otkade + kade).bind(ot).all()).results || [];
   }
 
   let prateni = 0;
+  let pregledani = 0;
   for (const r of redove) {
+    if (r.parvo && Number(r.parvo_ok) !== 1) continue;
+    const koe = koeNapomnyane(r.created_at, sega, r.parvo ? r.parvo_at : null, !imaVtoraTablica || !!r.vtoro);
+    if (!koe) continue;
+    pregledani++;
     let p = {};
     try { p = JSON.parse(r.poleta || "{}") || {}; } catch (e) { p = {}; }
     const email = String(p.email || "").trim().toLowerCase();
@@ -190,57 +223,103 @@ export async function napomniNeplateni(env, sega) {
       .bind(email, r.created_at).first()) prichina = "платил с друга поръчка";
     else if (/^\d{4}-\d{2}-\d{2}$/.test(String(p.event_date || "")) && p.event_date < sofiaParts(sega).date) prichina = "поводът мина";
 
-    const rez = prichina ? { ok: false, error: prichina } : await pratiNapomnyane(env, r, p, email, sega);
-    await env.DB.prepare("INSERT OR IGNORE INTO napomnyania (order_no, created_at, email, ok, error) VALUES (?,?,?,?,?)")
+    const rez = prichina ? { ok: false, error: prichina } : await pratiNapomnyane(env, r, p, email, sega, koe);
+    await env.DB.prepare("INSERT OR IGNORE INTO " + (koe === 2 ? "napomnyania2" : "napomnyania") +
+      " (order_no, created_at, email, ok, error) VALUES (?,?,?,?,?)")
       .bind(r.order_no, sega.toISOString(), email || null, rez.ok ? 1 : 0, rez.ok ? null : String(rez.error).slice(0, 300)).run();
     if (rez.ok) prateni++;
   }
-  return { pregledani: redove.length, prateni };
+  return { pregledani, prateni };
 }
 
-export function napomnyanePismo(env, r, p, email, sega) {
+/* Името на получателя за шегата („песента за Светльо Пухчо“). Само ако е кратко
+   и прилича на име — не адрес, не връзка, не цяло изречение. */
+export function napomnyaneZaKogo(p) {
+  const s = String((p && p.recipient) || "").replace(/\s+/g, " ").trim();
+  if (!s || s.length > 40 || /[@<>\/\\]|https?:|www\./i.test(s)) return "";
+  return s;
+}
+
+export function napomnyanePismo(env, r, p, email, sega, koe) {
   const en = /\(EN\)/.test(String(r.vid || ""));
   const link = (en && env.PAYMENT_LINK_EN) || env.PAYMENT_LINK;
   const url = link + (link.indexOf("?") === -1 ? "?" : "&") +
     "client_reference_id=" + encodeURIComponent(r.order_no) +
     "&prefilled_email=" + encodeURIComponent(email) + "&locale=" + (en ? "auto" : "bg");
-  const povod = String(r.povod || "");
-  const imaPovod = povod && povod.charAt(0) !== "—";
+  const zaKogo = napomnyaneZaKogo(p);
+  const nomer = xmlEscape(r.order_no);
   /* Датата на повода — само ако още не е минала; тогава казва, че има време. */
   const d = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(p.event_date || ""));
   const predi = d && p.event_date > sofiaParts(sega).date;
   const btn = (t) => '<p><a href="' + url + '" style="display:inline-block;padding:12px 22px;border-radius:999px;' +
     'background:#ff4d8d;color:#ffffff;text-decoration:none;font-weight:bold;">' + t + "</a></p>";
+  const vtoro = koe === 2;
+
   if (en) {
+    if (vtoro) {
+      return {
+        subject: "Shall we start your song? — " + r.order_no,
+        html: "<p>Hi,</p>" +
+          "<p>One last note about order <strong>" + nomer + "</strong>: your story" + (zaKogo ? " for " + xmlEscape(zaKogo) : "") +
+          " is still with us and only the payment is missing.</p>" +
+          btn("Pay and start my song") +
+          "<p>€19.90. The song is with you within 24 hours after payment — or you get your money back.</p>" +
+          "<p>If something stopped you at checkout, reply to this email or call us any time on " + NAP_TELEFON + ".</p>" +
+          "<p>If you've changed your mind, you don't need to do anything — we won't write about this order again.</p>" +
+          "<p>Pesenta · pesenta.bg</p>",
+        url
+      };
+    }
     return {
-      subject: "Your song is still waiting — " + r.order_no,
+      subject: (zaKogo ? "The song for " + zaKogo : "Your song") + " is still waiting 🎶",
       html: "<p>Hi,</p>" +
-        "<p>You told us a story for a song" + (imaPovod ? " (" + xmlEscape(povod) + ")" : "") + ". Order <strong>" + xmlEscape(r.order_no) +
-        "</strong> hasn't been paid yet, so we haven't started.</p>" +
-        "<p>If you'd still like it, you can pay here — €19.90, and the song is ready within 24 hours after payment:</p>" +
+        "<p>We read your story and we're already smiling: " + (zaKogo ? "the song for " + xmlEscape(zaKogo) : "your song") +
+        " is going to be a good one. 🙂</p>" +
+        "<p>Order <strong>" + nomer + "</strong> hasn't been paid yet, so we haven't started.</p>" +
+        "<p>Did something go wrong at checkout? If the card didn't go through, the page didn't open or something wasn't clear, " +
+        "reply to this email with one line and we'll fix it. For a technical problem you can also call us any time on " + NAP_TELEFON + ".</p>" +
+        "<p>If all is fine, you can pay here — €19.90:</p>" +
         btn("Pay and start my song") +
         (predi ? "<p>The occasion is on " + d[3] + "." + d[2] + "." + d[1] + " — pay today and it arrives in time.</p>" : "") +
-        "<p>If something stopped you — the price, paying by card, a question — just reply to this email.</p>" +
+        "<p>The song is with you within 24 hours after payment — or you get your money back.</p>" +
         "<p>Pesenta · pesenta.bg</p>",
       url
     };
   }
+
+  if (vtoro) {
+    return {
+      subject: "Да започваме ли песента" + (zaKogo ? " за " + zaKogo : "") + "? — " + r.order_no,
+      html: "<p>Здравей,</p>" +
+        "<p>Пишем ти за последно за поръчка <strong>" + nomer + "</strong>: историята ти" + (zaKogo ? " за " + xmlEscape(zaKogo) : "") +
+        " още стои при нас и чака само плащането.</p>" +
+        btn("Плащам и започвате") +
+        "<p>19,90 €. Песента е при теб до 24 часа след плащането — или ти връщаме парите.</p>" +
+        "<p>Ако нещо те спря на плащането, отговори на това писмо или ни звънни по всяко време на " + NAP_TELEFON + ".</p>" +
+        "<p>Ако си се отказал, не е нужно да правиш нищо — повече няма да ти пишем за тази поръчка.</p>" +
+        "<p>Песента · pesenta.bg</p>",
+      url
+    };
+  }
   return {
-    subject: "Песента ти още чака — " + r.order_no,
+    subject: (zaKogo ? "Песента за " + zaKogo : "Песента ти") + " още чака 🎶",
     html: "<p>Здравей,</p>" +
-      "<p>Разказа ни история за песен" + (imaPovod ? " (повод: " + xmlEscape(povod) + ")" : "") + ". Поръчката <strong>" + xmlEscape(r.order_no) +
-      "</strong> още не е платена, затова не сме започнали.</p>" +
-      "<p>Ако все още я искаш, плащането е тук — 19,90 €, а песента е готова до 24 часа след него:</p>" +
+      "<p>Прочетохме историята ти и вече се усмихваме: " + (zaKogo ? "песента за " + xmlEscape(zaKogo) : "песента ти") +
+      " ще стане много добра. 🙂</p>" +
+      "<p>Поръчката <strong>" + nomer + "</strong> още не е платена, затова не сме започнали.</p>" +
+      "<p>Имаше ли проблем на плащането? Ако картата не мина, страницата не се отвори или нещо не беше ясно, " +
+      "отговори на това писмо с един ред и ще го оправим. При технически проблем можеш и да ни звъннеш по всяко време на " + NAP_TELEFON + ".</p>" +
+      "<p>Ако всичко е наред, плащането е тук — 19,90 €:</p>" +
       btn("Плащам и започвате") +
       (predi ? "<p>Поводът е на " + d[3] + "." + d[2] + "." + d[1] + " — платиш ли днес, песента е при теб навреме.</p>" : "") +
-      "<p>Ако нещо те е спряло — цената, плащането с карта, въпрос — просто отговори на това писмо.</p>" +
+      "<p>Песента е при теб до 24 часа след плащането — или ти връщаме парите.</p>" +
       "<p>Песента · pesenta.bg</p>",
     url
   };
 }
 
-async function pratiNapomnyane(env, r, p, email, sega) {
-  const m = napomnyanePismo(env, r, p, email, sega);
+async function pratiNapomnyane(env, r, p, email, sega, koe) {
+  const m = napomnyanePismo(env, r, p, email, sega, koe);
   const en = /\(EN\)/.test(String(r.vid || ""));
   try {
     const res = await fetch("https://api.brevo.com/v3/smtp/email", {

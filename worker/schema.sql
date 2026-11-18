@@ -131,6 +131,15 @@ CREATE TABLE IF NOT EXISTS napomnyania (
   error       TEXT
 );
 
+-- Второто напомняне (около 24 часа след брифа), от 18.11.2026. Същите колони.
+CREATE TABLE IF NOT EXISTS napomnyania2 (
+  order_no    TEXT PRIMARY KEY,
+  created_at  TEXT NOT NULL,
+  email       TEXT,
+  ok          INTEGER NOT NULL DEFAULT 0,
+  error       TEXT
+);
+
 -- Анонимни събития от сайта (14.10.2026): натискания, пускания, отворена форма.
 -- Без IP, без браузър, без номер на посетител — само име, страница и кратко пояснение.
 CREATE TABLE IF NOT EXISTS sabitiya (
