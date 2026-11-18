@@ -191,7 +191,8 @@
       if (!document.hidden && videoVidimo && videoZareden && heroVideo.paused && mozheDaVarvi()) playHeroVideo();
     });
 
-    /* Бутонът за звука: първото натискане пуска рекламата от началото със звук. */
+    /* Бутонът за звука: първото натискане пуска рекламата от началото със звук.
+       Текстовете на английската начална идват от data-tekst-zvuk / data-tekst-bez. */
     var zvukBtn = document.querySelector(".hero-zvuk");
     if (zvukBtn) {
       var zvukIkona = zvukBtn.querySelector(".hero-zvuk-ikona");
@@ -205,13 +206,13 @@
           playHeroVideo();
           zvukBtn.setAttribute("aria-pressed", "true");
           if (zvukIkona) zvukIkona.textContent = "🔇";
-          if (zvukTekst) zvukTekst.textContent = "Без звук";
+          if (zvukTekst) zvukTekst.textContent = zvukBtn.getAttribute("data-tekst-bez") || "Без звук";
           if (window.psnSabitie) window.psnSabitie("Demo Play", "херо елфи · звук");
         } else {
           heroVideo.muted = true;
           zvukBtn.setAttribute("aria-pressed", "false");
           if (zvukIkona) zvukIkona.textContent = "🔊";
-          if (zvukTekst) zvukTekst.textContent = "Пусни със звук";
+          if (zvukTekst) zvukTekst.textContent = zvukBtn.getAttribute("data-tekst-zvuk") || "Пусни със звук";
         }
       });
     }

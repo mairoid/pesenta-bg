@@ -233,11 +233,16 @@ export function nachalo() {
         <p class="hero-sub">Original lyrics · Ready within 24 hours · No subscription</p>
       </div>
       <div class="hero-photo">
-        <video class="hero-video" muted loop playsinline preload="none"
-               data-poster="../assets/img/hero-poster-ergensko.webp"
-               data-src="../assets/video/hero-ergensko.mp4"
-               width="800" height="800"
-               aria-label="Friends at a bachelor party listening to a custom song about the groom"></video>
+        <!-- 18.11.2026: the elves hero ("This Christmas the elves make songs", 15 s, 720×1280,
+             English captions, Bulgarian song). Muted loop; the button restarts it with sound. -->
+        <video class="hero-video hero-video-elfi" muted loop playsinline preload="none"
+               data-poster="../assets/img/hero-poster-elfi-en.webp?v=1"
+               data-src="../assets/video/hero-elfi-en.mp4?v=1"
+               width="720" height="1280"
+               aria-label="Christmas ad: elves in their workshop write and sing a custom song"></video>
+        <button type="button" class="hero-zvuk" aria-pressed="false" data-tekst-zvuk="Sound on" data-tekst-bez="Mute">
+          <span class="hero-zvuk-ikona" aria-hidden="true">🔊</span><span class="hero-zvuk-tekst">Sound on</span>
+        </button>
       </div>
     </div>
   </section>
