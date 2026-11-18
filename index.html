@@ -5,7 +5,8 @@
   <script>document.documentElement.classList.add("js");setTimeout(function(){if(!window.__reveal)document.documentElement.classList.remove("js")},4000)</script>
   <!-- resizes-content: при отворена клавиатура layout-ът се свива, вместо да се
        скролва — фиксираните елементи сядат НАД клавиатурата, не под нея.
-       Безопасно е: в style.css няма нито една vh-базирана височина. -->
+       Безопасно е: в style.css няма vh-базирана височина. Единственото vh (18.11.2026)
+       е таванът на херото с елфите над 860 px; под 860 px той е заменен с 300px. -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
   <!-- Изрично (20.10.2026): вграденият браузър на ChatGPT по подразбиране не праща Referer, а
        FormSubmit без него отхвърля гласовия запис и снимките. Това е стойността по подразбиране
@@ -550,14 +551,17 @@
       </div>
 
       <div class="hero-photo">
-        <!-- Poster-ът се показва веднага (39 KB); самото видео (266 KB) се зарежда
-             СЛЕД load event и само на desktop — виж main.js. При изключени анимации
-             (prefers-reduced-motion) остава само poster-ът. -->
-        <video class="hero-video" muted loop playsinline preload="none"
-               data-poster="assets/img/hero-poster-ergensko.webp"
-               data-src="assets/video/hero-ergensko.mp4"
-               width="800" height="800"
-               aria-label="Приятели на ергенско парти слушат песен по поръчка за младоженеца"></video>
+        <!-- 18.11.2026: херото с елфите (рекламата „Елфите правят песни“, 15 s, 720×1280,
+             със звук). Тихо и в кръг; бутонът пуска звука от началото. На телефон стои
+             под бутоните и се тегли чак когато наближи екрана — виж main.js. -->
+        <video class="hero-video hero-video-elfi" muted loop playsinline preload="none"
+               data-poster="assets/img/hero-poster-elfi.webp?v=1"
+               data-src="assets/video/hero-elfi.mp4?v=1"
+               width="720" height="1280"
+               aria-label="Коледна реклама: елфите в работилницата пишат и пеят песен по поръчка"></video>
+        <button type="button" class="hero-zvuk" aria-pressed="false">
+          <span class="hero-zvuk-ikona" aria-hidden="true">🔊</span><span class="hero-zvuk-tekst">Пусни със звук</span>
+        </button>
       </div>
     </div>
   </section>

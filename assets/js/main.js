@@ -138,52 +138,83 @@
   }
 
   /* ---------- Hero видео ----------
-     Само на desktop: под 860px .hero-photo е display:none, а браузърът тегли
-     poster атрибута независимо от CSS — затова и poster-ът, и видеото се
-     задават от JS, за да не хабят трафик на мобилни.
-     Poster (39 KB) се задава веднага, видеото (266 KB) чак след load event,
-     за да остане извън критичния път. При prefers-reduced-motion остава
-     само неподвижният poster. */
+     18.11.2026: херото е рекламата с елфите (вертикална, 2,4 MB, със звук).
+     Вече се вижда и на телефон (под бутоните), затова „само на desktop“ го няма:
+     постерът и видеото се дават от JS едва когато кадърът наближи екрана
+     (IntersectionObserver), а видеото — и след load event, извън критичния път.
+     Скрит кадър (display:none, напр. при отворена форма на телефон) не пресича
+     екрана, тоест не тегли и спира. При prefers-reduced-motion остава постерът,
+     докато човек сам не натисне „Пусни със звук“. */
   var heroVideo = document.querySelector(".hero-video[data-src]");
   if (heroVideo) {
-    /* Проверката беше еднократна при зареждане: тесен прозорец, после
-       разширен, даваше празна рамка без видео (06.09.2026). Сега се слуша
-       промяната на media query-то. Постерът и src-ът се задават само
-       първия път, когато стане широко; при стесняване видеото спира. */
-    var shirokoMQ = window.matchMedia("(min-width: 861px)");
     var tihoMQ = window.matchMedia("(prefers-reduced-motion: reduce)");
-    var videoZareden = false, videoSlushaTab = false;
+    var videoZareden = false, videoVidimo = false, zvukPusnat = false;
+    var dajPoster = function () {
+      if (!heroVideo.poster) heroVideo.poster = heroVideo.getAttribute("data-poster");
+    };
+    var zarediVideo = function () {
+      if (videoZareden) return;
+      videoZareden = true;
+      dajPoster();
+      heroVideo.src = heroVideo.getAttribute("data-src");
+    };
     var playHeroVideo = function () {
       var p = heroVideo.play();
       /* autoplay на muted видео е разрешено, но при отказ остава poster-ът */
       if (p && p.catch) p.catch(function () {});
     };
+    var mozheDaVarvi = function () { return !tihoMQ.matches || zvukPusnat; };
     var startHeroVideo = function () {
-      if (!shirokoMQ.matches) return;   /* load дойде, след като пак е тясно */
-      if (!videoZareden) { videoZareden = true; heroVideo.src = heroVideo.getAttribute("data-src"); }
+      if (!videoVidimo || !mozheDaVarvi()) return;
+      zarediVideo();
       playHeroVideo();
-      /* Браузърът паузира видео в скрит таб — възобновяваме при връщане */
-      if (!videoSlushaTab) {
-        videoSlushaTab = true;
-        document.addEventListener("visibilitychange", function () {
-          if (!document.hidden && heroVideo.paused && shirokoMQ.matches) playHeroVideo();
+    };
+    var sledLoad = function (fn) {
+      if (document.readyState === "complete") fn();
+      else window.addEventListener("load", fn, { once: true });
+    };
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (zapisi) {
+        zapisi.forEach(function (z) {
+          videoVidimo = z.isIntersecting;
+          if (videoVidimo) { dajPoster(); sledLoad(startHeroVideo); }
+          else if (!heroVideo.paused) heroVideo.pause();
         });
-      }
-    };
-    var prilozhiVideo = function () {
-      if (shirokoMQ.matches) {
-        if (!heroVideo.poster) heroVideo.poster = heroVideo.getAttribute("data-poster");
-        if (tihoMQ.matches) return;   /* при изключени анимации остава само постерът */
-        /* Видеото (266 KB) чак след load event — извън критичния път */
-        if (document.readyState === "complete") startHeroVideo();
-        else window.addEventListener("load", startHeroVideo, { once: true });
-      } else if (!heroVideo.paused) {
-        heroVideo.pause();
-      }
-    };
-    prilozhiVideo();
-    if (shirokoMQ.addEventListener) shirokoMQ.addEventListener("change", prilozhiVideo);
-    else if (shirokoMQ.addListener) shirokoMQ.addListener(prilozhiVideo);   /* стар Safari */
+      }, { rootMargin: "200px 0px" }).observe(heroVideo);
+    } else {
+      videoVidimo = true;
+      dajPoster();
+      sledLoad(startHeroVideo);
+    }
+    /* Браузърът паузира видео в скрит таб — възобновяваме при връщане */
+    document.addEventListener("visibilitychange", function () {
+      if (!document.hidden && videoVidimo && videoZareden && heroVideo.paused && mozheDaVarvi()) playHeroVideo();
+    });
+
+    /* Бутонът за звука: първото натискане пуска рекламата от началото със звук. */
+    var zvukBtn = document.querySelector(".hero-zvuk");
+    if (zvukBtn) {
+      var zvukIkona = zvukBtn.querySelector(".hero-zvuk-ikona");
+      var zvukTekst = zvukBtn.querySelector(".hero-zvuk-tekst");
+      zvukBtn.addEventListener("click", function () {
+        zarediVideo();
+        if (heroVideo.muted) {
+          heroVideo.muted = false;
+          zvukPusnat = true;
+          try { heroVideo.currentTime = 0; } catch (e) { /* още без метаданни */ }
+          playHeroVideo();
+          zvukBtn.setAttribute("aria-pressed", "true");
+          if (zvukIkona) zvukIkona.textContent = "🔇";
+          if (zvukTekst) zvukTekst.textContent = "Без звук";
+          if (window.psnSabitie) window.psnSabitie("Demo Play", "херо елфи · звук");
+        } else {
+          heroVideo.muted = true;
+          zvukBtn.setAttribute("aria-pressed", "false");
+          if (zvukIkona) zvukIkona.textContent = "🔊";
+          if (zvukTekst) zvukTekst.textContent = "Пусни със звук";
+        }
+      });
+    }
   }
 
   /* ---------- Scroll reveal ----------
