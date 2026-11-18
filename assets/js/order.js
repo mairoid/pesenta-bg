@@ -825,6 +825,8 @@
           email: d.email || "",
           /* 18.11.2026: телефонът по желание — досега стигаше само до писмото от FormSubmit. */
           phone: d.phone || "",
+          /* 18.11.2026: името — за личното обръщение в напомнянето („Здравей, Петя,“). */
+          ime: d.name || "",
           plan: state.plan,
           snimki: snimki.length,
           landing: atr("psn_landing"),

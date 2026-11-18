@@ -93,7 +93,7 @@ export default {
        (pesenta.bg) през sendBeacon, затова носи CORS. */
     if (url.pathname === "/brief") {
       if (request.method === "OPTIONS") return cors(new Response(null, { status: 204 }), env);
-      if (request.method === "POST") return cors(await handleBrief(request, env), env);
+      if (request.method === "POST") return cors(await handleBrief(request, env, ctx), env);
     }
 
     /* Безплатните гайдове срещу имейл (11.11.2026) — виж magnit.js. */
@@ -240,6 +240,47 @@ export function napomnyaneZaKogo(p) {
   return s;
 }
 
+/* Малкото име на клиента за обръщението („Здравей, Петя,“). Идва от брифа (ime),
+   ако формата го е пратила. Само ако прилича на име; взима се първата дума. */
+export function napomnyaneIme(p) {
+  const s = String((p && (p.ime || p.name)) || "").replace(/\s+/g, " ").trim();
+  if (!s || s.length > 60 || /[@<>\/\\0-9]|https?:|www\./i.test(s)) return "";
+  const parvo = s.split(" ")[0];
+  if (parvo.length < 2 || parvo.length > 24) return "";
+  return parvo;
+}
+
+/* Общият вид на писмата до клиента (18.11.2026): същият тъмен шаблон с логото
+   като писмото за ваучера. redove са готови HTML абзаци/бутони. */
+const PISMO_F = "font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;";
+export function pismoAbzac(t, st) {
+  return '<p style="margin:0 0 14px 0;' + PISMO_F + 'font-size:15px;line-height:1.62;color:#D9D5EE;' + (st || "") + '">' + t + "</p>";
+}
+export function pismoButon(url, tekst) {
+  return '<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:6px 0 20px 0;"><tr>' +
+    '<td bgcolor="#FF4D8D" style="background-color:#FF4D8D;border-radius:999px;">' +
+    '<a href="' + xmlEscape(url) + '" style="display:inline-block;padding:13px 26px;' + PISMO_F +
+    'font-size:16px;font-weight:bold;color:#FFFFFF;text-decoration:none;border-radius:999px;">' + tekst + "</a></td></tr></table>";
+}
+export function brandPismo(zaglavie, obrashtenie, redove, lang) {
+  const td = (vatre, pad) => '<tr><td bgcolor="#12101F" style="background-color:#12101F;padding:' + pad + ';">' + vatre + "</td></tr>";
+  return '<!DOCTYPE html><html lang="' + (lang || "bg") + '"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">' +
+    '<meta name="color-scheme" content="dark light"><title>' + xmlEscape(zaglavie) + "</title></head>" +
+    '<body style="margin:0;padding:0;background-color:#0B0A1A;" bgcolor="#0B0A1A">' +
+    '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="#0B0A1A" style="background-color:#0B0A1A;">' +
+    '<tr><td align="center" bgcolor="#0B0A1A" style="background-color:#0B0A1A;padding:28px 12px;">' +
+    '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" bgcolor="#12101F" style="width:600px;max-width:600px;background-color:#12101F;">' +
+      '<tr><td bgcolor="#0B0A1A" style="background-color:#0B0A1A;padding:26px 32px 22px 32px;">' +
+        '<a href="https://pesenta.bg" style="text-decoration:none;"><img src="https://pesenta.bg/assets/img/logo-mail-v1.png" width="230" height="44" alt="pesenta.bg" ' +
+        'style="display:block;width:230px;height:44px;border:0;' + PISMO_F + 'font-size:22px;font-weight:bold;color:#F4F2FF;"></a>' +
+      "</td></tr>" +
+      '<tr><td bgcolor="#D2577F" height="3" style="background-color:#D2577F;height:3px;font-size:0;line-height:0;">&nbsp;</td></tr>' +
+      td('<p style="margin:0 0 14px 0;' + PISMO_F + 'font-size:20px;line-height:1.3;font-weight:bold;color:#F4F2FF;">' + obrashtenie + "</p>" +
+         redove.join(""), "32px 32px 6px 32px") +
+      td(pismoAbzac((lang === "en" ? "Pesenta" : "Песента") + " · pesenta.bg", "font-size:13px;color:#A9A4C9;"), "10px 32px 26px 32px") +
+    "</table></td></tr></table></body></html>";
+}
+
 export function napomnyanePismo(env, r, p, email, sega, koe) {
   const en = /\(EN\)/.test(String(r.vid || ""));
   const link = (en && env.PAYMENT_LINK_EN) || env.PAYMENT_LINK;
@@ -247,75 +288,92 @@ export function napomnyanePismo(env, r, p, email, sega, koe) {
     "client_reference_id=" + encodeURIComponent(r.order_no) +
     "&prefilled_email=" + encodeURIComponent(email) + "&locale=" + (en ? "auto" : "bg");
   const zaKogo = napomnyaneZaKogo(p);
+  const ime = napomnyaneIme(p);
   const nomer = xmlEscape(r.order_no);
+  const tel = '<span style="white-space:nowrap;color:#F4F2FF;">' + NAP_TELEFON + "</span>";
+  const A = pismoAbzac;
   /* Датата на повода — само ако още не е минала; тогава казва, че има време. */
   const d = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(p.event_date || ""));
   const predi = d && p.event_date > sofiaParts(sega).date;
-  const btn = (t) => '<p><a href="' + url + '" style="display:inline-block;padding:12px 22px;border-radius:999px;' +
-    'background:#ff4d8d;color:#ffffff;text-decoration:none;font-weight:bold;">' + t + "</a></p>";
   const vtoro = koe === 2;
 
   if (en) {
+    const hi = "Hi" + (ime ? " " + xmlEscape(ime) : "") + ",";
     if (vtoro) {
-      return {
-        subject: "Shall we start your song? — " + r.order_no,
-        html: "<p>Hi,</p>" +
-          "<p>One last note about order <strong>" + nomer + "</strong>: your story" + (zaKogo ? " for " + xmlEscape(zaKogo) : "") +
-          " is still with us and only the payment is missing.</p>" +
-          btn("Pay and start my song") +
-          "<p>€19.90. The song is with you within 24 hours after payment — or you get your money back.</p>" +
-          "<p>If something stopped you at checkout, reply to this email or call us any time on " + NAP_TELEFON + ".</p>" +
-          "<p>If you've changed your mind, you don't need to do anything — we won't write about this order again.</p>" +
-          "<p>Pesenta · pesenta.bg</p>",
-        url
-      };
+      const subject = "Shall we start your song? — " + r.order_no;
+      return { subject, url, html: brandPismo(subject, hi, [
+        A("One last note about order <strong>" + nomer + "</strong>: your story" + (zaKogo ? " for " + xmlEscape(zaKogo) : "") +
+          " is still with us and only the payment is missing."),
+        pismoButon(url, "Pay and start my song"),
+        A("€19.90. The song is with you within 24 hours after payment — or you get your money back."),
+        A("If something stopped you at checkout, reply to this email or call us any time on " + tel + "."),
+        A("If you've changed your mind, you don't need to do anything — we won't write about this order again.", "font-size:13px;color:#A9A4C9;")
+      ], "en") };
     }
-    return {
-      subject: (zaKogo ? "The song for " + zaKogo : "Your song") + " is still waiting 🎶",
-      html: "<p>Hi,</p>" +
-        "<p>We read your story and we're already smiling: " + (zaKogo ? "the song for " + xmlEscape(zaKogo) : "your song") +
-        " is going to be a good one. 🙂</p>" +
-        "<p>Order <strong>" + nomer + "</strong> hasn't been paid yet, so we haven't started.</p>" +
-        "<p>Did something go wrong at checkout? If the card didn't go through, the page didn't open or something wasn't clear, " +
-        "reply to this email with one line and we'll fix it. For a technical problem you can also call us any time on " + NAP_TELEFON + ".</p>" +
-        "<p>If all is fine, you can pay here — €19.90:</p>" +
-        btn("Pay and start my song") +
-        (predi ? "<p>The occasion is on " + d[3] + "." + d[2] + "." + d[1] + " — pay today and it arrives in time.</p>" : "") +
-        "<p>The song is with you within 24 hours after payment — or you get your money back.</p>" +
-        "<p>Pesenta · pesenta.bg</p>",
-      url
-    };
+    const subject = (zaKogo ? "The song for " + zaKogo : "Your song") + " is still waiting 🎶";
+    return { subject, url, html: brandPismo(subject, hi, [
+      A("We read your story and we're already smiling: " + (zaKogo ? "the song for " + xmlEscape(zaKogo) : "your song") +
+        " is going to be a good one. 🙂"),
+      A("Order <strong>" + nomer + "</strong> hasn't been paid yet, so we haven't started."),
+      A("Did something go wrong at checkout? If the card didn't go through, the page didn't open or something wasn't clear, " +
+        "reply to this email with one line and we'll fix it. For a technical problem you can also call us any time on " + tel + "."),
+      A("If all is fine, you can pay here — €19.90:"),
+      pismoButon(url, "Pay and start my song"),
+      (predi ? A("The occasion is on " + d[3] + "." + d[2] + "." + d[1] + " — pay today and it arrives in time.") : ""),
+      A("The song is with you within 24 hours after payment — or you get your money back.")
+    ], "en") };
   }
 
+  const zdr = "Здравей" + (ime ? ", " + xmlEscape(ime) : "") + ",";
   if (vtoro) {
-    return {
-      subject: "Да започваме ли песента" + (zaKogo ? " за " + zaKogo : "") + "? — " + r.order_no,
-      html: "<p>Здравей,</p>" +
-        "<p>Пишем ти за последно за поръчка <strong>" + nomer + "</strong>: историята ти" + (zaKogo ? " за " + xmlEscape(zaKogo) : "") +
-        " още стои при нас и чака само плащането.</p>" +
-        btn("Плащам и започвате") +
-        "<p>19,90 €. Песента е при теб до 24 часа след плащането — или ти връщаме парите.</p>" +
-        "<p>Ако нещо те спря на плащането, отговори на това писмо или ни звънни по всяко време на " + NAP_TELEFON + ".</p>" +
-        "<p>Ако си се отказал, не е нужно да правиш нищо — повече няма да ти пишем за тази поръчка.</p>" +
-        "<p>Песента · pesenta.bg</p>",
-      url
-    };
+    const subject = "Да започваме ли песента" + (zaKogo ? " за " + zaKogo : "") + "? — " + r.order_no;
+    return { subject, url, html: brandPismo(subject, zdr, [
+      A("Пишем ти за последно за поръчка <strong>" + nomer + "</strong>: историята ти" + (zaKogo ? " за " + xmlEscape(zaKogo) : "") +
+        " още стои при нас и чака само плащането."),
+      pismoButon(url, "Плащам и започвате"),
+      A("19,90 €. Песента е при теб до 24 часа след плащането — или ти връщаме парите."),
+      A("Ако нещо те спря на плащането, отговори на това писмо или ни звънни по всяко време на " + tel + "."),
+      A("Ако си се отказал, не е нужно да правиш нищо — повече няма да ти пишем за тази поръчка.", "font-size:13px;color:#A9A4C9;")
+    ]) };
   }
-  return {
-    subject: (zaKogo ? "Песента за " + zaKogo : "Песента ти") + " още чака 🎶",
-    html: "<p>Здравей,</p>" +
-      "<p>Прочетохме историята ти и вече се усмихваме: " + (zaKogo ? "песента за " + xmlEscape(zaKogo) : "песента ти") +
-      " ще стане много добра. 🙂</p>" +
-      "<p>Поръчката <strong>" + nomer + "</strong> още не е платена, затова не сме започнали.</p>" +
-      "<p>Имаше ли проблем на плащането? Ако картата не мина, страницата не се отвори или нещо не беше ясно, " +
-      "отговори на това писмо с един ред и ще го оправим. При технически проблем можеш и да ни звъннеш по всяко време на " + NAP_TELEFON + ".</p>" +
-      "<p>Ако всичко е наред, плащането е тук — 19,90 €:</p>" +
-      btn("Плащам и започвате") +
-      (predi ? "<p>Поводът е на " + d[3] + "." + d[2] + "." + d[1] + " — платиш ли днес, песента е при теб навреме.</p>" : "") +
-      "<p>Песента е при теб до 24 часа след плащането — или ти връщаме парите.</p>" +
-      "<p>Песента · pesenta.bg</p>",
-    url
-  };
+  const subject = (zaKogo ? "Песента за " + zaKogo : "Песента ти") + " още чака 🎶";
+  return { subject, url, html: brandPismo(subject, zdr, [
+    A("Прочетохме историята ти и вече се усмихваме: " + (zaKogo ? "песента за " + xmlEscape(zaKogo) : "песента ти") +
+      " ще стане много добра. 🙂"),
+    A("Поръчката <strong>" + nomer + "</strong> още не е платена, затова не сме започнали."),
+    A("Имаше ли проблем на плащането? Ако картата не мина, страницата не се отвори или нещо не беше ясно, " +
+      "отговори на това писмо с един ред и ще го оправим. При технически проблем можеш и да ни звъннеш по всяко време на " + tel + "."),
+    A("Ако всичко е наред, плащането е тук — 19,90 €:"),
+    pismoButon(url, "Плащам и започвате"),
+    (predi ? A("Поводът е на " + d[3] + "." + d[2] + "." + d[1] + " — платиш ли днес, песента е при теб навреме.") : ""),
+    A("Песента е при теб до 24 часа след плащането — или ти връщаме парите.")
+  ]) };
+}
+
+/* Известие до нас за нов разказ (18.11.2026). Досега текстът стигаше само през
+   FormSubmit от браузъра на клиента и се губеше, когато страницата тръгне към
+   касата преди заявката да е минала (PSN-261118-7584). Worker-ът вече го има в
+   базата, затова го праща сам — веднъж, при първото записване. */
+export function brifIzvestieHtml(telo) {
+  const e = (v) => xmlEscape(String(v === undefined || v === null ? "" : v));
+  const red = (ime, v) => (v === undefined || v === null || String(v).trim() === "") ? "" :
+    '<tr><td style="padding:4px 12px 4px 0;color:#666;vertical-align:top;white-space:nowrap;">' + ime +
+    '</td><td style="padding:4px 0;">' + e(v) + "</td></tr>";
+  return '<div style="font-family:Arial,sans-serif;font-size:14px;line-height:1.5;color:#111;">' +
+    "<p><strong>Нов разказ за песен — " + e(telo.order_no) + "</strong> (" + e(telo.vid || "?") + ")</p>" +
+    '<table cellpadding="0" cellspacing="0" border="0">' +
+    red("Повод", telo.povod) + red("Дата на повода", telo.event_date) + red("Получател", telo.recipient) +
+    red("Връзка", telo.relation) + red("Стилове", telo.stilove) + red("Език", telo.ezik) +
+    red("Клиент", telo.ime || telo.name) + red("Имейл", telo.email) + red("Телефон", telo.phone) +
+    red("Снимки", telo.snimki) + red("Пакет", telo.plan) + red("Дошъл от", telo.landing) + "</table>" +
+    '<p style="margin:14px 0 4px 0;color:#666;">Разказ</p>' +
+    '<div style="white-space:pre-wrap;border-left:3px solid #ff4d8d;padding:6px 0 6px 12px;">' + (e(telo.razkaz) || "— празен —") + "</div>" +
+    ["qualities:Качества", "jokes:Шеги и случки", "must_have:Задължително да влезе", "avoid:Да се избягва"].map(function (kv) {
+      const k = kv.split(":"); const v = telo[k[0]];
+      return (v === undefined || v === null || String(v).trim() === "") ? "" :
+        '<p style="margin:14px 0 4px 0;color:#666;">' + k[1] + '</p><div style="white-space:pre-wrap;">' + e(v) + "</div>";
+    }).join("") +
+    '<p style="margin-top:16px;color:#888;font-size:12px;">Пратено от Worker-а при записването в базата, преди плащане. Още не е платено.</p></div>';
 }
 
 async function pratiNapomnyane(env, r, p, email, sega, koe) {
@@ -658,7 +716,7 @@ async function nextDocNumber(env) {
    Тялото е text/plain, а не application/json: sendBeacon с JSON тип би
    поискал preflight, а sendBeacon не може да го направи. Затова четем
    текст и разбираме JSON-а сами. */
-async function handleBrief(request, env) {
+async function handleBrief(request, env, ctx) {
   let telo;
   try {
     const raw = await request.text();
@@ -671,6 +729,9 @@ async function handleBrief(request, env) {
   const orderNo = String((telo && telo.order_no) || "");
   if (!/^PSN-[0-9]{6}-[0-9]{4}$/.test(orderNo)) return json({ error: "невалиден номер" }, 400);
 
+  /* Известието до нас тръгва само при първото записване на поръчката. */
+  const nov = !(await env.DB.prepare("SELECT 1 FROM briefs WHERE order_no = ?").bind(orderNo).first());
+
   /* ON CONFLICT, защото клиентът може да прати два пъти — при повторен
      опит или при два отворени раздела. По-новото печели. */
   await env.DB.prepare(
@@ -678,6 +739,12 @@ async function handleBrief(request, env) {
      VALUES (?,?,?,?,?,?,?,?)
      ON CONFLICT(order_no) DO UPDATE SET ` + BRIEF_UPSERT
   ).bind(orderNo, new Date().toISOString(), ...briefPoleta(telo)).run();
+
+  if (nov) {
+    const izv = pratiVatreshno(env, "Разказ за песен — " + orderNo + (String(telo.razkaz || "").trim() ? "" : " [БЕЗ РАЗКАЗ]"), brifIzvestieHtml(telo))
+      .catch(function () { return null; });
+    if (ctx && ctx.waitUntil) ctx.waitUntil(izv); else await izv;
+  }
 
   return json({ ok: true });
 }

@@ -2,7 +2,7 @@
 // node tools/napomnyane-razpisanie-proba.mjs
 
 const m = await import('../worker/src/index.js');
-const { koeNapomnyane, napomniNeplateni, napomnyanePismo, napomnyaneZaKogo } = m;
+const { koeNapomnyane, napomniNeplateni, napomnyanePismo, napomnyaneZaKogo, napomnyaneIme, brifIzvestieHtml } = m;
 
 let greshki = 0, minali = 0;
 const ok = (ime, uslovie, poluchi) => {
@@ -55,7 +55,7 @@ ok('шега с име', p1.html.includes('песента за Иван Мечо
 ok('въпрос за плащането', p1.html.includes('Имаше ли проблем на плащането?'));
 ok('телефон', p1.html.includes('+359 899 456 326') && p1.html.includes('по всяко време'));
 ok('цена и гаранция', p1.html.includes('19,90 €') && p1.html.includes('или ти връщаме парите'));
-ok('без отстъпка', !/отстъпк|%|промо/i.test(p1.html.replace(/href="[^"]*"/g, '')));
+ok('без отстъпка', !/отстъпк|промо|ds?%s*(off|по-евтино)/i.test(p1.html));
 ok('връзка за плащане', p1.url === 'https://buy.stripe.com/TEST?client_reference_id=PSN-261118-0001&prefilled_email=a%40b.bg&locale=bg', p1.url);
 let p0 = napomnyanePismo(env, red, {}, 'a@b.bg', s('18 12:17'), 1);
 ok('тема без име', p0.subject === 'Песента ти още чака 🎶', p0.subject);
@@ -127,5 +127,20 @@ staraBaza.prepare = (sql) => { const st = prep(sql); if (/napomnyania2 n2/.test(
 rez = await napomniNeplateni({ ...env, DB: staraBaza }, s('18 12:17'));
 ok('стара база: само първото (A), без второ', rez.prateni === 1 && prateni.length === 1 && prateni[0].to[0].email === 'klient@example.com', { rez, n: prateni.length });
 
+// --- Обръщение по име и шаблонът
+ok('име: първата дума', napomnyaneIme({ ime: '  Петя  Иванова ' }) === 'Петя');
+ok('име: празно', napomnyaneIme({}) === '');
+ok('име: с цифри не', napomnyaneIme({ ime: 'Петя 123' }) === '');
+ok('име: имейл не', napomnyaneIme({ ime: 'a@b.bg' }) === '');
+const pi = napomnyanePismo(env, red, { ime: 'Петя Иванова', recipient: 'Мария' }, 'a@b.bg', s('18 12:17'), 1);
+ok('обръщение с име', pi.html.includes('Здравей, Петя,'));
+ok('без име: само Здравей', p0.html.includes('>Здравей,</p>'));
+ok('шаблонът: лого, тъмен фон, бутон', pi.html.includes('logo-mail-v1.png') && pi.html.includes('#12101F') && pi.html.includes('Плащам и започвате') && pi.html.startsWith('<!DOCTYPE html>'));
+ok('второто също е в шаблона и с име', napomnyanePismo(env, red, { ime: 'Петя' }, 'a@b.bg', s('19 12:17'), 2).html.includes('Здравей, Петя,'));
+// --- Известието до нас за нов разказ
+const iz = brifIzvestieHtml({ order_no: 'PSN-261118-0001', vid: 'бърза текстова', povod: 'Юбилей', razkaz: 'Ред 1 <b>x</b>', email: 'k@example.com', phone: '0888', snimki: 1 });
+ok('известие: номер, разказ екраниран, имейл', iz.includes('PSN-261118-0001') && iz.includes('Ред 1 &lt;b&gt;x&lt;/b&gt;') && !iz.includes('<b>x</b>') && iz.includes('k@example.com') && iz.includes('0888'));
+ok('известие: празен разказ се вижда', brifIzvestieHtml({ order_no: 'PSN-261118-0002' }).includes('— празен —'));
+if (process.argv[2]) { const fsx = await import('node:fs'); fsx.writeFileSync(process.argv[2] + '/pismo-1.html', pi.html); fsx.writeFileSync(process.argv[2] + '/pismo-2.html', napomnyanePismo(env, red, { ime: 'Петя', recipient: 'Мария' }, 'a@b.bg', s('19 12:17'), 2).html); fsx.writeFileSync(process.argv[2] + '/izvestie.html', '<meta charset=utf-8>' + iz); }
 console.log(minali + ' минаха, ' + greshki + ' паднаха');
 process.exit(greshki ? 1 : 0);
