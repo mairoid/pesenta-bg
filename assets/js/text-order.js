@@ -791,6 +791,9 @@
     if (!story) { fail(t("Разкажи накратко за кого е песента и повода.", "Tell us briefly who the song is for and the occasion.")); return; }
     var emailEl = document.getElementById("text-email");
     var email = emailEl ? emailEl.value.trim() : "";
+    /* 18.11.2026: телефон по желание — за обаждане, ако поръчката остане неплатена. */
+    var phoneEl = document.getElementById("text-phone");
+    var phone = phoneEl ? phoneEl.value.trim().slice(0, 40) : "";
     if (emailEl) {
       var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
       emailEl.classList.toggle("invalid", !emailOk);
@@ -832,6 +835,7 @@
       "Клиент": vch ? "— получател на ваучер; името е в разказа" : "— името идва от Stripe след плащането",
       "Персонализирано видео": sasVideo() ? "ДА — +5 € (общо 24,90 €)" : "не",
       "Имейл": email || "—",
+      "Телефон": phone || "—",
       "_replyto": email,
       "Повод": occasion || "— не е избран, виж разказа",
       "Дата на повода": eventDate || "— не е посочена",
@@ -905,6 +909,7 @@
         razkaz: (vch ? "[ПЛАТЕНО С ВАУЧЕР " + vchOpis + "]\n" : "") +
                 (glasBlob ? "[ИМА ГЛАСОВ ЗАПИС — glasovo-" + orderNo + "." + glasExt(glasBlob) + ", в отделно писмо; текстът е автоматичен препис]\n" : "") + fields["Разказ"],
         email: email,
+        phone: phone,
         snimki: snimki.length,
         landing: atr("psn_landing"),
         ref_parvi: atr("psn_ref"),

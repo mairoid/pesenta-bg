@@ -389,13 +389,17 @@
         <label for="cust-name">Твоето име * <span class="hint">трябва ни за документа за продажбата</span></label>
         <input type="text" id="cust-name" name="name" autocomplete="name" placeholder="Име и фамилия">
       </div>
+      <div class="field">
+        <label for="cust-phone">Телефон <span class="hint">(по желание) — само ако нещо с поръчката не е наред</span></label>
+        <input type="tel" id="cust-phone" name="phone" autocomplete="tel" inputmode="tel" placeholder="+359 …">
+      </div>
 
       <div class="order-summary" id="order-summary" aria-live="polite">
         <!-- попълва се от order.js -->
       </div>
 
       <details class="more-fields">
-        <summary>Промо код, телефон, бележка <span class="hint">(по желание)</span></summary>
+        <summary>Промо код, бележка <span class="hint">(по желание)</span></summary>
         <div class="more-fields-body">
           <div class="field">
             <label for="promo">Промо код</label>
@@ -404,10 +408,6 @@
               <button type="button" class="btn btn-ghost" id="promo-apply">Приложи</button>
             </div>
             <div class="promo-msg" id="promo-msg" role="status"></div>
-          </div>
-          <div class="field">
-            <label for="cust-phone">Телефон</label>
-            <input type="tel" id="cust-phone" name="phone" autocomplete="tel" placeholder="+359 …">
           </div>
           <div class="field">
             <label for="notes">Още нещо, което да знаем?</label>

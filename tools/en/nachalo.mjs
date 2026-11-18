@@ -191,6 +191,11 @@ export function nachalo() {
               <input type="email" id="text-email" name="email" autocomplete="email" inputmode="email" placeholder="you@example.com" required>
             </div>
 
+            <div class="field">
+              <label for="text-phone">Phone <span class="hint">(optional) — only if something is wrong with your order</span></label>
+              <input type="tel" id="text-phone" name="phone" autocomplete="tel" inputmode="tel" placeholder="+…">
+            </div>
+
             <!-- Съгласието е преводът на българското: отказът от правото на
                  връщане трябва да е изричен и преди плащането (чл. 57, т. 13 ЗЗП /
                  чл. 16, б. „м“ от Директива 2011/83/ЕС). -->

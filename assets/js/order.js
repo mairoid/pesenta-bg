@@ -823,6 +823,8 @@
           /* 15.11.2026: имейлът — без него напомнянето до неплатилите (napomniNeplateni
              в Worker-а) пропуска всяка пълна форма с „без имейл“. text-order.js го праща. */
           email: d.email || "",
+          /* 18.11.2026: телефонът по желание — досега стигаше само до писмото от FormSubmit. */
+          phone: d.phone || "",
           plan: state.plan,
           snimki: snimki.length,
           landing: atr("psn_landing"),
