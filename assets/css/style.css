@@ -191,7 +191,10 @@ html.sait-fon #text-fields:not([hidden]) {
    Бутонът за снега не се показва и докато формата на началната е отворена. */
 body:has(:is(input, textarea, select):focus) .saglasie,
 body:has(:is(input, textarea, select):focus) .koleda-kopche,
-body:has(#text-fields:not([hidden])) .koleda-kopche { display: none !important; }
+body:has(:is(input, textarea, select):focus) .float-contact,
+body:has(#text-fields:not([hidden])) .koleda-kopche,
+/* Снегът изчезва изцяло, щом се натисне „Поръчай песен“ (18.11.2026, Миро). */
+body:has(#text-fields:not([hidden])) .koleda-snyag { display: none !important; }
 @keyframes sait-fon-vlez { from { opacity: 0; } to { opacity: var(--fon-op); } }
 @media (prefers-reduced-motion: reduce) {
   #sait-fon.is-on { animation: none; opacity: var(--fon-op); }
