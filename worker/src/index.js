@@ -273,11 +273,25 @@ export function brandPismo(zaglavie, obrashtenie, redove, lang) {
       '<tr><td bgcolor="#0B0A1A" style="background-color:#0B0A1A;padding:26px 32px 22px 32px;">' +
         '<a href="https://pesenta.bg" style="text-decoration:none;"><img src="https://pesenta.bg/assets/img/logo-mail-v1.png" width="230" height="44" alt="pesenta.bg" ' +
         'style="display:block;width:230px;height:44px;border:0;' + PISMO_F + 'font-size:22px;font-weight:bold;color:#F4F2FF;"></a>' +
+        '<p style="margin:10px 0 0 0;' + PISMO_F + 'font-size:11px;line-height:1.4;color:#8F8AB0;letter-spacing:0.18em;text-transform:uppercase;">' +
+        (lang === "en" ? "A song made for you" : "Песен по поръчка") + "</p>" +
       "</td></tr>" +
       '<tr><td bgcolor="#D2577F" height="3" style="background-color:#D2577F;height:3px;font-size:0;line-height:0;">&nbsp;</td></tr>' +
       td('<p style="margin:0 0 14px 0;' + PISMO_F + 'font-size:20px;line-height:1.3;font-weight:bold;color:#F4F2FF;">' + obrashtenie + "</p>" +
          redove.join(""), "32px 32px 6px 32px") +
-      td(pismoAbzac((lang === "en" ? "Pesenta" : "Песента") + " · pesenta.bg", "font-size:13px;color:#A9A4C9;"), "10px 32px 26px 32px") +
+      /* Подписът е същият като в писмото за готова песен (imeyl-stelche.html), 18.11.2026. */
+      td('<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">' +
+        '<tr><td bgcolor="#2A2640" height="1" style="background-color:#2A2640;height:1px;font-size:0;line-height:0;">&nbsp;</td></tr>' +
+        '<tr><td bgcolor="#12101F" style="background-color:#12101F;padding-top:24px;">' +
+        '<p style="margin:0 0 14px 0;' + PISMO_F + 'font-size:15px;line-height:1.6;color:#D9D5EE;">' + (lang === "en" ? "Best," : "Поздрави,") + "</p>" +
+        '<p style="margin:0 0 3px 0;' + PISMO_F + 'font-size:19px;line-height:1.25;color:#F4F2FF;font-weight:bold;">' + (lang === "en" ? "Miro" : "Миро") + "</p>" +
+        '<a href="https://pesenta.bg" style="text-decoration:none;"><img src="https://pesenta.bg/assets/img/logo-mail-v1-podpis.png" width="150" height="29" alt="pesenta.bg" ' +
+        'style="display:block;width:150px;height:29px;border:0;outline:none;text-decoration:none;margin:4px 0 14px 0;' + PISMO_F + 'font-size:12px;color:#8F8AB0;"></a>' +
+        '<p style="margin:0;' + PISMO_F + 'font-size:14px;line-height:1.85;color:#A9A4C9;">' +
+        '<a href="tel:+359899456326" style="color:#D2577F;text-decoration:none;font-weight:bold;">+359 899 456 326</a><br>' +
+        '<a href="mailto:sales@pesenta.bg" style="color:#A9A4C9;text-decoration:none;">sales@pesenta.bg</a>&nbsp;&middot;&nbsp;' +
+        '<a href="https://pesenta.bg" style="color:#A9A4C9;text-decoration:none;">pesenta.bg</a></p>' +
+        "</td></tr></table>", "20px 32px 30px 32px") +
     "</table></td></tr></table></body></html>";
 }
 
