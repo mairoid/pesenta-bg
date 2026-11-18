@@ -742,7 +742,8 @@ async function handleBrief(request, env, ctx) {
 
   if (nov) {
     const izv = pratiVatreshno(env, "Разказ за песен — " + orderNo + (String(telo.razkaz || "").trim() ? "" : " [БЕЗ РАЗКАЗ]"), brifIzvestieHtml(telo))
-      .catch(function () { return null; });
+      .then(function (r) { if (!r || !r.ok) console.log("brif-izvestie не тръгна", orderNo, r && r.error); return r; })
+      .catch(function (e) { console.log("brif-izvestie грешка", orderNo, String(e && e.message || e)); return null; });
     if (ctx && ctx.waitUntil) ctx.waitUntil(izv); else await izv;
   }
 
