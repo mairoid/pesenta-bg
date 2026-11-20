@@ -3356,5 +3356,15 @@ body.podarak {
     max-width: 300px;
     margin: var(--sp-8) auto 0;
   }
-  body:has(#text-fields:not([hidden])) .hero-photo:has(.hero-video-elfi) { display: none; }
+}
+/* Отворена форма за поръчка = без клипа, на всяка ширина (20.11.2026, Миро): формата е
+   за поръчване, клипът до нея само отвлича. До 20.11 се криеше само под 860 px.
+   Скрит кадър не пресича екрана, затова main.js го спира сам (и звука).
+   На компютър дясната колона остава празна — мрежата става една колона по средата. */
+body:has(#text-fields:not([hidden])) .hero-photo:has(.hero-video-elfi) { display: none; }
+@media (min-width: 861px) {
+  body:has(#text-fields:not([hidden])) .hero-grid {
+    grid-template-columns: minmax(0, 720px);
+    justify-content: center;
+  }
 }
