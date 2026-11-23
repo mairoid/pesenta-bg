@@ -3465,3 +3465,32 @@ body:has(#text-fields:not([hidden])) .hero-photo:has(.hero-video-elfi) { display
 .hero-photo .hero-video-elfi {
   background: radial-gradient(120% 80% at 50% 30%, rgba(255, 77, 141, 0.18), rgba(255, 161, 77, 0.08) 50%, #14132b 80%);
 }
+
+/* Двойно по-едър текст на телефон (23.11.2026, трети преглед по HIG): колоната „1fr“
+   не пада под най-дългата дума, а „Историята“ при 200 % е 511 px на екран 375 —
+   краят на заглавието и абзаца се режеше. minmax(0, 1fr) я държи в екрана, а
+   дълга дума се пренася, вместо да излиза навън. Пренасянето важи за всички заглавия
+   и абзаци: „комбинирай“ в секцията със стиловете също излизаше с 30 px. Действа
+   само когато думата не се побира на реда — при нормален текст нищо не се мести. */
+@media (max-width: 960px) {
+  .hero-grid { grid-template-columns: minmax(0, 1fr); }
+}
+h1, h2, h3, h4, p, li { overflow-wrap: break-word; }
+/* Същото на вътрешните страници (пак при 200 %): картите в Новини стигаха 567 px,
+   подвалът и цените — по 15–20 px навън. Колоните без шаблон или с „1fr“ растат по
+   най-широкото съдържание; minmax(0, 1fr) ги държи в ширината на екрана. */
+.news-grid { grid-template-columns: minmax(0, 1fr); }
+@media (max-width: 768px) {
+  .footer-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 640px) {
+  .pricing-grid, .pricing-grid.pricing-single { grid-template-columns: minmax(0, 1fr); }
+}
+/* poruchka.html няма бутон в шапката, затова правилото с :has(.btn) не я хваща и след
+   уеднаквяването на менюто на телефон се виждаха 4 връзки, а логото се свиваше до 42 px.
+   Тук крием само новите връзки от менюто; „Цени“ и „Ваучер“ остават. */
+@media (max-width: 960px) {
+  .main-nav[style*="position:static"] a[href$="#demo"],
+  .main-nav[style*="position:static"] a[href$="#povodi"],
+  .main-nav[style*="position:static"] a[href$="novini/"] { display: none; }
+}
