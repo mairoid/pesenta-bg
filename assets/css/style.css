@@ -3508,3 +3508,42 @@ h1, h2, h3, h4, p, li { overflow-wrap: break-word; }
      плъзгане встрани, отколкото шапка без име. */
   .site-header .logo { min-width: 96px; }
 }
+
+/* Менюто ☰ на вътрешните страници (23.11.2026, четвърти преглед по HIG).
+   Досега шапката на телефон държеше лого + текстови връзки + бутон. При 200 % текст
+   това не се побираше (до 515 px на екран 375), а на поверителността свиваше логото.
+   Сега е като на началната: лого, кратък бутон „Поръчай“ и ☰ с цялото меню.
+   Вграденият стил на <nav> остава за компютър; тук го побеждаваме с !important,
+   само на страници с бутон ☰. */
+.nav-cta { display: none; }
+@media (max-width: 960px) {
+  .site-header:has(.nav-toggle) .main-nav[style*="position:static"] {
+    display: none !important;
+    position: absolute !important;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--sp-4);
+    padding: var(--sp-4) 4vw var(--sp-6) !important;
+    background: #0b0a1a !important;
+    border-bottom: 1px solid var(--border) !important;
+    box-shadow: 0 24px 40px rgba(0, 0, 0, 0.5) !important;
+  }
+  .site-header:has(.nav-toggle) .main-nav[style*="position:static"].open { display: flex !important; }
+  /* В падащото меню се виждат всички връзки и пълният текст на бутона —
+     правилата по-горе ги криеха, докато живееха в реда на шапката. */
+  .site-header:has(.nav-toggle) .main-nav.open a:not(.btn) { display: block !important; }
+  .site-header:has(.nav-toggle) .main-nav.open .btn-dop { display: inline !important; }
+  /* ☰ и „Поръчай“ отиват вдясно, логото остава вляво. */
+  .site-header:has(.nav-toggle) .nav-toggle { margin-left: auto; }
+  .site-header:has(.nav-cta) .nav-toggle { margin-left: 0; }
+  .nav-cta { margin-left: auto; padding-left: var(--sp-4); padding-right: var(--sp-4); }
+}
+/* Краткият бутон се показва само ако се побира. Мярката е в rem (body е в px, затова
+   em не би реагирал): при нормален шрифт 20rem = 320 px (стига за 360 и 375), при 200 % — 640 px, тоест
+   на телефон бутонът се скрива и остават логото и ☰. */
+.header-in { container-type: inline-size; }
+@media (max-width: 960px) {
+  @container (min-width: 20rem) {
+    .nav-cta { display: inline-flex; }
+  }
+}
