@@ -76,7 +76,17 @@
     toggle.appendChild(znak);
     toggle.appendChild(text);
     document.body.appendChild(canvas);
-    document.body.appendChild(toggle);
+    // Бутонът е в долния ред на подвала, не плаващ (23.11.2026, преглед по HIG): долу
+    // вляво на първия екран лягаше върху „В последния момент?“ и пробата на песента.
+    // Снегът вече е зад текста, затова не се налага да се спира от всяко място.
+    // Страница без подвал го получава плаващ, както преди.
+    var podval = document.querySelector('.site-footer .footer-bottom');
+    if (podval) {
+      toggle.classList.add('koleda-kopche--podval');
+      podval.appendChild(toggle);
+    } else {
+      document.body.appendChild(toggle);
+    }
 
     var context = canvas.getContext('2d');
     if (!context) { canvas.remove(); toggle.remove(); return; }

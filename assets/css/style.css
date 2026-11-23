@@ -128,7 +128,10 @@ body {
    картина, за да не се брои за LCP (виж там). Стои преди #prah-bg и #noti-bg,
    затова прахът и нотите остават отгоре. */
 #sait-fon {
-  --fon-op: 0.24;
+  /* 0.24 → 0.15 (23.11.2026, преглед по HIG): светлите петна от снимката (лампи,
+     неонът „pesenta.bg“) сваляха сивия текст до около 3,2:1 там, където минаваше
+     над тях. На 0.15 студиото се усеща, но не спори с абзаците. */
+  --fon-op: 0.15;
   position: fixed;
   inset: 0;
   width: 100%;
@@ -153,7 +156,7 @@ body {
    подскачаше, щом лентата се скрие или покаже. */
 @media (max-width: 767px) {
   #sait-fon {
-    --fon-op: 0.3;
+    --fon-op: 0.15;  /* беше 0.3 — виж бележката горе (23.11.2026) */
     inset: auto;
     /* Закачен ДОЛУ: лентата с адреса е горе и когато се скрие, горният ръб
        на екрана се мести с нея, а долният — не. Закачен горе, фонът се
@@ -190,9 +193,9 @@ html.sait-fon #text-fields:not([hidden]) {
    полето за разказа. Скриват се, докато поле е на фокус, и се връщат след това.
    Бутонът за снега не се показва и докато формата на началната е отворена. */
 body:has(:is(input, textarea, select):focus) .saglasie,
-body:has(:is(input, textarea, select):focus) .koleda-kopche,
+body:has(:is(input, textarea, select):focus) .koleda-kopche:not(.koleda-kopche--podval),
 body:has(:is(input, textarea, select):focus) .float-contact,
-body:has(#text-fields:not([hidden])) .koleda-kopche,
+body:has(#text-fields:not([hidden])) .koleda-kopche:not(.koleda-kopche--podval),
 /* Снегът изчезва изцяло, щом се натисне „Поръчай песен“ (18.11.2026, Миро). */
 body:has(#text-fields:not([hidden])) .koleda-snyag { display: none !important; }
 @keyframes sait-fon-vlez { from { opacity: 0; } to { opacity: var(--fon-op); } }
@@ -2706,8 +2709,10 @@ a.style-chip { text-decoration: none; color: inherit; }
    touch-action: none е задължително — иначе браузърът смята влаченето за
    скрол на страницата и отнема събитията по средата на движението. */
 .track-row .progress {
-  height: 22px;
-  padding: 6px 0;
+  /* 22 → 28 (23.11.2026): 28 е долната граница за цел за пръст. Видимата ивица
+     остава 10 px — растат само прозрачните полета отгоре и отдолу. */
+  height: 28px;
+  padding: 9px 0;
   background: none;
   border-radius: 0;
   overflow: visible;
@@ -2717,13 +2722,13 @@ a.style-chip { text-decoration: none; color: inherit; }
 .track-row .progress::before {
   content: "";
   position: absolute;
-  inset: 6px 0;
+  inset: 9px 0;
   background: rgba(11, 10, 26, 0.55);
   backdrop-filter: blur(2px);
   border-radius: 0 0 14px 14px;
 }
 .track-row .progress-fill {
-  inset: 6px 100% 6px 0;
+  inset: 9px 100% 9px 0;
   border-radius: 0;
   z-index: 1;
 }
@@ -3220,7 +3225,7 @@ body.podarak {
   border-radius: 999px;
   background: var(--pink);
   color: var(--ink);
-  font-size: 10.5px;
+  font-size: 11px;  /* беше 10.5 — под долната граница от 11 (23.11.2026) */
   font-weight: 800;
   letter-spacing: 0.08em;
   line-height: 1.4;
@@ -3250,24 +3255,18 @@ body.podarak {
   .main-nav[style*="position:static"] a.nav-vaucher { display: none; }
   .main-nav a.nav-vaucher .novo-znak { margin-left: 8px; }
 }
+/* 961–1180 на началната (23.11.2026, преглед по HIG): вместо ☰ менюто се вижда, но
+   без най-рядко ползваните връзки — те остават в подвала. Мерено на 1024 px: всичките
+   девет искат 899 px и смачкват логото до 27 px; без „Новини“ и „Въпроси“ — 731 px и
+   логото е цяло (164 px). Под 1040 px отпада и „Поводи“ (651 px), защото контейнерът
+   там е под 960. */
 @media (min-width: 961px) and (max-width: 1180px) {
   .novo-lenta.na-glavnata { display: flex; }
-  .main-nav:not([style]) {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    z-index: 60;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: var(--sp-4) 4vw var(--sp-6);
-    background: #0b0a1a;
-    border-bottom: 1px solid var(--border);
-    box-shadow: 0 24px 40px rgba(0, 0, 0, 0.5);
-  }
-  .main-nav:not([style]).open { display: flex; }
-  .nav-toggle { display: block; }
+  .main-nav:not([style]) a[href="novini/"],
+  .main-nav:not([style]) a[href="#vaprosi"] { display: none; }
+}
+@media (min-width: 961px) and (max-width: 1040px) {
+  .main-nav:not([style]) a[href="#povodi"] { display: none; }
 }
 
 /* Образецът на ваучера на vaucher.html (15.10.2026) — истинският PDF, примерни имена */
@@ -3367,4 +3366,44 @@ body:has(#text-fields:not([hidden])) .hero-photo:has(.hero-video-elfi) { display
     grid-template-columns: minmax(0, 720px);
     justify-content: center;
   }
+}
+
+/* ============================================================
+   Преглед по Apple HIG (23.11.2026) — цели за пръст, отметки, отзиви
+   ============================================================ */
+
+/* Цели за пръст: връзките в текста бяха 17–19 px високи (под 28 px, долната
+   граница). Поле отгоре и отдолу с отрицателен margin — редът не помръдва. */
+.hero-late a { display: inline-block; padding: 13px 0; margin: -13px 0; }
+.track-info > span a { display: inline-block; padding: 10px 0; margin: -10px 0; }
+
+/* Отметките във формата бяха бели квадратчета от 18 px върху тъмната карта:
+   accent-color оцветява само отметнатата, неотметнатата Chrome рисува светла.
+   color-scheme: dark я прави тъмна с рамка, 22 px — като .toggle-row. */
+.consent input,
+.toggle-row input[type="checkbox"] { width: 22px; height: 22px; flex: none; color-scheme: dark; accent-color: var(--pink); }
+.consent input { margin-top: 2px; }
+
+/* Два отзива под демо песните (виж index.html, #demo) */
+.demo-otzivi {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-4);
+  margin-top: var(--sp-8);
+}
+.demo-otziv {
+  margin: 0;
+  padding: var(--sp-5);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+}
+.demo-otziv blockquote { margin: 0 0 var(--sp-3); font-size: var(--fs-lg); line-height: 1.5; color: var(--text); }
+.demo-otziv blockquote::before { content: "„"; color: var(--pink); font-weight: 800; }
+.demo-otziv blockquote::after { content: "“"; color: var(--pink); font-weight: 800; }
+.demo-otziv figcaption { color: var(--muted); font-size: var(--fs-sm); font-weight: 600; }
+.demo-otzivi-vrazka { grid-column: 1 / -1; margin: 0; text-align: center; font-size: var(--fs-sm); }
+.demo-otzivi-vrazka a { display: inline-block; padding: 12px 0; color: var(--orange); text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 640px) {
+  .demo-otzivi { grid-template-columns: 1fr; gap: var(--sp-3); margin-top: var(--sp-6); }
 }

@@ -251,7 +251,6 @@ export function nachalo() {
     <div class="container">
       <div class="section-head reveal">
         <span class="section-eyebrow">
-          <span class="sec-no" aria-hidden="true">01</span>
           <span class="kicker">Listen first</span>
         </span>
         <h2>Songs that already made someone's day</h2>
@@ -268,7 +267,6 @@ ${DEMO_EN.map((k) => demoRed(k)).join("\n")}
     <div class="container">
       <div class="section-head reveal">
         <span class="section-eyebrow">
-          <span class="sec-no" aria-hidden="true">02</span>
           <span class="kicker">What people order songs for</span>
         </span>
         <h2>Got an occasion? Got a song.</h2>
@@ -286,7 +284,6 @@ ${karti}
     <div class="container">
       <div class="section-head reveal">
         <span class="section-eyebrow">
-          <span class="sec-no" aria-hidden="true">03</span>
           <span class="kicker">It's simple</span>
         </span>
         <h2>How it works</h2>
@@ -304,7 +301,6 @@ ${karti}
     <div class="container">
       <div class="section-head reveal">
         <span class="section-eyebrow">
-          <span class="sec-no" aria-hidden="true">04</span>
           <span class="kicker">You choose the sound</span>
         </span>
         <h2>19 styles, 14 languages — mix freely</h2>
@@ -350,7 +346,6 @@ ${karti}
     <div class="container">
       <div class="section-head reveal">
         <span class="section-eyebrow">
-          <span class="sec-no" aria-hidden="true">05</span>
           <span class="kicker">One clear price</span>
         </span>
         <h2>One song, one price</h2>
@@ -383,7 +378,6 @@ ${karti}
     <div class="container">
       <div class="section-head reveal">
         <span class="section-eyebrow">
-          <span class="sec-no" aria-hidden="true">06</span>
           <span class="kicker">Ask away</span>
         </span>
         <h2>Frequently asked questions</h2>
@@ -401,7 +395,6 @@ ${faq.map(([q, a]) => `        <details class="faq-item">
     <div class="container">
       <div class="section-head reveal">
         <span class="section-eyebrow">
-          <span class="sec-no" aria-hidden="true">07</span>
           <span class="kicker">Behind the scenes</span>
         </span>
         <h2>How the songs are born</h2>

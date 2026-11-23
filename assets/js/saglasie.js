@@ -153,11 +153,17 @@
       "background:var(--bg-soft,#14132b);color:var(--text,#f4f2ff);border:1px solid var(--border,rgba(255,255,255,.1));" +
       "border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.35);font-size:.78rem;line-height:1.3}" +
       ".saglasie p{margin:0;flex:1 1 auto}" +
-      ".saglasie a{color:var(--orange,#ffa14d);text-decoration:underline}" +
+      /* Цели за пръст (23.11.2026, преглед по HIG): бутоните бяха 32 px, връзката 17.
+         Бутоните стават 44; връзката получава поле отгоре и отдолу, което с
+         отрицателния margin не мести реда. */
+      ".saglasie a{color:var(--orange,#ffa14d);text-decoration:underline;display:inline-block;padding:13px 0;margin:-13px 0}" +
       ".saglasie-btn{display:flex;gap:6px;flex:0 0 auto}" +
-      ".saglasie-btn button{min-height:32px;padding:0 10px;font:inherit;font-weight:700;cursor:pointer;" +
+      ".saglasie-btn button{min-height:44px;padding:0 12px;font:inherit;font-weight:700;cursor:pointer;" +
       "color:var(--text,#f4f2ff);background:var(--surface-strong,rgba(255,255,255,.08));" +
-      "border:1px solid var(--border,rgba(255,255,255,.1));border-radius:8px}";
+      "border:1px solid var(--border,rgba(255,255,255,.1));border-radius:8px}" +
+      /* Докато лентата е на екрана, краят на страницата не бива да остава под нея —
+         иначе закриваше „Бисквитки“ в подвала. 72 px = лентата (≈58) + 8 отдолу + малко въздух. */
+      "body:has(.saglasie){padding-bottom:72px}";
     document.head.appendChild(s);
   }
 
