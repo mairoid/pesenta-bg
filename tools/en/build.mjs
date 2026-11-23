@@ -122,7 +122,7 @@ function hedar(p) {
     <nav class="main-nav open" aria-label="Main navigation" style="display:flex;position:static;padding:0;background:none;border:none;box-shadow:none;">
       <a href="./">Home</a>
       ${bgLink}
-      <a class="btn btn-primary" href="${p.poruchka || "./#order"}">Order a song</a>
+      <a class="btn btn-primary" href="${p.poruchka || "./#order"}" aria-label="Order a song"><span>Order<span class="btn-dop"> a song</span></span></a>
     </nav>
   </div>
 </header>

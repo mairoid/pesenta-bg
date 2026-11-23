@@ -3494,3 +3494,17 @@ h1, h2, h3, h4, p, li { overflow-wrap: break-word; }
   .main-nav[style*="position:static"] a[href$="#povodi"],
   .main-nav[style*="position:static"] a[href$="novini/"] { display: none; }
 }
+
+/* Кратък бутон в шапката на телефон (23.11.2026, решение на Миро): „Поръчай песен“
+   става „Поръчай“ („Order“, „Купи“). Логото, EN и пълният бутон едва се побираха
+   в 375 px — логото се свиваше до 103 px, а при 200 % текст шапката изтласкваше
+   страницата встрани. Пълният текст остава в aria-label на връзката. */
+@media (max-width: 960px) {
+  .main-nav .btn-dop { display: none; }
+  /* За една дума полетата от 32 px отстрани са много: „Поръчай“ беше 119 px широк.
+     С 16 px логото, EN и бутонът влизат в 375 px без свиване на логото. */
+  .main-nav[style*="position:static"] .btn { padding-left: var(--sp-4); padding-right: var(--sp-4); }
+  /* При 200 % текст логото се свиваше до 0 px. Долна граница: по-добре малко
+     плъзгане встрани, отколкото шапка без име. */
+  .site-header .logo { min-width: 96px; }
+}
