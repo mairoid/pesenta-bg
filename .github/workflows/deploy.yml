@@ -45,6 +45,11 @@ jobs:
       # компресиран. Lighthouse локално (телефон): 85 → 88, FCP 2,12 → 1,69 s. JS не се пипа.
       - name: Strip comments from HTML and CSS
         run: node tools/bez-komentari.mjs .
+      # 23.11.2026: style.css, main.js и saglasie.js нямаха ?v= и кешът (10 мин) пазеше
+      # стария CSS до новия HTML — менюто ☰ тръгна счупено за посетители със стар кеш.
+      # Отпечатъкът се слага тук, СЛЕД махането на коментарите, от файла както се качва.
+      - name: Version CSS and JS references
+        run: node tools/otpechatak.mjs .
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

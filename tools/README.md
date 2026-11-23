@@ -98,6 +98,14 @@ mousedown и mouseup“, нито през pointer capture — а точно т�
 > Коментарите се махат **преди** търсенето. Веднъж вече си вдигнах фалшива
 > тревога, защото в моите собствени коментари стояха точно забранените образци.
 
+**При качването (сами, в deploy.yml)** — върху копието на runner-а, не в repo-то:
+1. `bez-komentari.mjs` маха коментарите от HTML и CSS;
+2. `otpechatak.mjs` слага `?v=` (8 знака SHA-256 от качения файл) на всеки адрес
+   към `assets/css/*.css` и `assets/js/*.js` в HTML-а и на `"/assets/js/…"` в JS
+   (main.js → saglasie.js). Затова в repo-то style.css и main.js нямат отпечатък,
+   а на сайта имат — и сменен CSS никога не тръгва със стар HTML от кеша (23.11.2026).
+   Проба на ръка: `node tools/otpechatak.mjs <копие> --proba`.
+
 ## 6. Страницата на телефон
 
 **`telefon-snimka.js`** — `node tools/telefon-snimka.js <url> [представка] [папка]`.
