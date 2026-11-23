@@ -3375,7 +3375,7 @@ body:has(#text-fields:not([hidden])) .hero-photo:has(.hero-video-elfi) { display
 /* Цели за пръст: връзките в текста бяха 17–19 px високи (под 28 px, долната
    граница). Поле отгоре и отдолу с отрицателен margin — редът не помръдва. */
 .hero-late a { display: inline-block; padding: 13px 0; margin: -13px 0; }
-.track-info > span a { display: inline-block; padding: 10px 0; margin: -10px 0; }
+.track-info > span a { display: inline-block; padding: 12px 0; margin: -12px 0; }  /* 12 → 44 px; с 10 бяха 40 */
 
 /* Отметките във формата бяха бели квадратчета от 18 px върху тъмната карта:
    accent-color оцветява само отметнатата, неотметнатата Chrome рисува светла.
@@ -3449,4 +3449,19 @@ body:has(#text-fields:not([hidden])) .hero-photo:has(.hero-video-elfi) { display
   z-index: -1;
   background: radial-gradient(closest-side, rgba(11, 10, 26, 0.85), rgba(11, 10, 26, 0.6) 70%, rgba(11, 10, 26, 0));
   pointer-events: none;
+}
+
+/* Дребните от втория преглед (23.11.2026) */
+
+/* Долният ред на подвала на компютър: „Бисквитки“ и „Откажете се от договора тук“
+   бяха 19 px високи — под 20 px за курсор. Полето отгоре и отдолу не мести реда. */
+@media (hover: hover) {
+  .footer-bottom a { display: inline-block; padding: 5px 0; margin: -5px 0; }
+}
+
+/* Кадърът с елфите получава постера от JS, когато наближи екрана (за да не тежи на
+   LCP). Дотогава беше празна черна рамка; сега е тъмен преливащ фон в цветовете
+   на сайта, така че не изглежда счупено. */
+.hero-photo .hero-video-elfi {
+  background: radial-gradient(120% 80% at 50% 30%, rgba(255, 77, 141, 0.18), rgba(255, 161, 77, 0.08) 50%, #14132b 80%);
 }

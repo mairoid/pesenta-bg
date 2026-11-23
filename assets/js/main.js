@@ -977,6 +977,10 @@
       var d = folds[i];
       if (mq.matches) d.open = true;
       else if (!d.hasAttribute("data-tap")) d.open = false;
+      /* На компютър summary не прави нищо, а Tab спираше на него — празна стъпка
+         за човек с клавиатура (23.11.2026, преглед по HIG). На телефон пак е бутон. */
+      var s = d.querySelector("summary");
+      if (s) { if (mq.matches) s.setAttribute("tabindex", "-1"); else s.removeAttribute("tabindex"); }
     }
   }
   for (var j = 0; j < folds.length; j++) {
