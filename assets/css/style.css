@@ -3407,3 +3407,46 @@ body:has(#text-fields:not([hidden])) .hero-photo:has(.hero-video-elfi) { display
 @media (max-width: 640px) {
   .demo-otzivi { grid-template-columns: 1fr; gap: var(--sp-3); margin-top: var(--sp-6); }
 }
+
+/* ============================================================
+   Втори преглед по Apple HIG (23.11.2026)
+   ============================================================ */
+
+/* Меню на вътрешните страници: вече е една и съща редица навсякъде
+   (Демо песни · Поводи · Цени · Новини · Ваучер). Под 960 px текстовите връзки
+   и без това се крият (виж правилата за [style*="position:static"] по-горе).
+   Между 961 и 1180 px редицата не се побира до логото, затова отпадат същите
+   връзки като на началната: първо „Новини“, а под 1040 px и „Поводи“. */
+@media (min-width: 961px) and (max-width: 1180px) {
+  .main-nav[style*="position:static"] a[href$="novini/"],
+  .main-nav[style*="position:static"] a[href="index.html"]:not(.logo) { display: none; }
+}
+@media (min-width: 961px) and (max-width: 1040px) {
+  .main-nav[style*="position:static"] a[href$="#povodi"] { display: none; }
+}
+
+/* Дължина на реда в статиите: колоната е 780 px, а при 16 px шрифт това са
+   ~95–100 знака на ред. 68ch е в удобните 60–75; заглавията и картинките остават
+   на цялата ширина. */
+.article p, .article li { max-width: 68ch; }
+
+/* Знакът „НОВО“/„КОЛЕДА“ беше плътно розов — същият цвят като главния бутон и
+   думата „песен“ в заглавието. Розовото остава за тях; знакът става неутрален.
+   Текст #f4f2ff върху ≈#262536: над 12:1. */
+.novo-znak {
+  background: rgba(244, 242, 255, 0.12);
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px rgba(244, 242, 255, 0.22);
+}
+
+/* Снегът е зад съдържанието, но хиро текстът няма фон и снежинките минаваха точно
+   зад заглавието и абзаца. Мека тъмна сянка зад текста ги приглушава само там. */
+#hero-intro { position: relative; isolation: isolate; }
+#hero-intro::before {
+  content: "";
+  position: absolute;
+  inset: -24px -32px;
+  z-index: -1;
+  background: radial-gradient(closest-side, rgba(11, 10, 26, 0.85), rgba(11, 10, 26, 0.6) 70%, rgba(11, 10, 26, 0));
+  pointer-events: none;
+}
