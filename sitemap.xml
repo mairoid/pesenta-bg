@@ -291,11 +291,17 @@
   </url>
   <url>
     <loc>https://pesenta.bg/novini/</loc>
-    <lastmod>2026-11-19</lastmod>
+    <lastmod>2026-11-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <!-- NOVINI:SITEMAP — новите статии се добавят непосредствено под този ред -->
+  <url>
+    <loc>https://pesenta.bg/novini/pesen-za-nova-godina-tsyalata-masa.html</loc>
+    <lastmod>2026-11-24</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
   <url>
     <loc>https://pesenta.bg/novini/elfite-pishat-pesni-koleden-podarak.html</loc>
     <lastmod>2026-11-19</lastmod>
