@@ -51,6 +51,9 @@
     .garancia-red svg { flex: none; color: var(--ok); margin-top: 2px; }
     .garancia-red p { margin: 0; color: var(--muted); }
     .garancia-red strong { color: var(--text); }
+    /* 24.11.2026: тук .consent е обикновен абзац (без отметка от 16.11). Общият стил е
+       flex за „отметка + текст“ и чупеше изречението на пет тесни колони. */
+    .stapki .consent:not([hidden]) { display: block; }
     .stapki .consent { font-size: var(--fs-sm); }
     /* Лентата с бутоните стои на дъното на екрана: „Напред“ е винаги на едно
        място, колкото и дълъг да е екранът. */
