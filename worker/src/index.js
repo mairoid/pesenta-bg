@@ -30,7 +30,7 @@ import {
   REF_RE as VCH_RE, generirajKod, normKod, vLimita, chetiTelo, vjson, esc,
   handleVaucherNov, handleVaucherProverka, noviRef, vaucherBlokHtml
 } from "./vaucher.js";
-import { handleSnimki } from "./snimki.js";
+import { handleSnimki, handleSnimkiPregled } from "./snimki.js";
 import { handleOtkaz, otkazCron } from "./otkaz.js";
 import { handleMagnit } from "./magnit.js";
 
@@ -106,7 +106,12 @@ export default {
        (вграденият браузър на ChatGPT) мълчаливо ги губи. Виж snimki.js. */
     if (url.pathname === "/snimki") {
       if (request.method === "OPTIONS") return cors(new Response(null, { status: 204 }), env);
-      if (request.method === "POST") return cors(await handleSnimki(request, env), env);
+      if (request.method === "POST") return cors(await handleSnimki(request, env, { snimkiUrl }), env);
+    }
+    /* Запазените в R2 снимки (28.11.2026) — страница и файл, с подпис в адреса. */
+    const snMatch = url.pathname.match(/^\/snimki\/(PSN-[0-9]{6}-[0-9]{4})(?:\/(snimka-PSN-[0-9]{6}-[0-9]{4}-[0-9]{1,2}\.jpg))?$/);
+    if (snMatch && request.method === "GET") {
+      return handleSnimkiPregled(request, env, snMatch[1], snMatch[2] || "", { signedToken, timingSafeEqual });
     }
 
     /* Анонимни събития от сайта (14.10.2026): кое е натиснато, на коя страница.
@@ -952,6 +957,12 @@ async function kartichkaUrl(env, orderNo) {
   return env.PUBLIC_BASE + "/kartichka/" + encodeURIComponent(orderNo) +
          "?t=" + (await kartichkaToken(orderNo, env.AUDIT_TOKEN));
 }
+/* Страницата със запазените снимки към поръчката (snimki.js, 28.11.2026). */
+async function snimkiUrl(env, orderNo) {
+  if (!env.AUDIT_TOKEN || !env.PUBLIC_BASE || !env.SNIMKI) return null;
+  return env.PUBLIC_BASE + "/snimki/" + encodeURIComponent(orderNo) +
+         "?t=" + (await signedToken("snimki", orderNo, env.AUDIT_TOKEN));
+}
 async function pesenUrl(env, orderNo) {
   if (!env.AUDIT_TOKEN || !env.PUBLIC_BASE) return null;
   return env.PUBLIC_BASE + "/p/" + encodeURIComponent(orderNo) +
@@ -1202,6 +1213,12 @@ export async function notifyVatreshno(env, n) {
             " (1–5 от " + dop.snimki + ")“ и следващите, по до 5 в писмо. Ако някое липсва, поискай липсващите от клиента.</p>"
           : ".</strong> Те идват САМО в отделно писмо „Снимки за обложката — " +
             xmlEscape(String(n.order_no)) + "“. Ако то липсва, поискай ги от клиента.</p>");
+      /* 28.11.2026: снимките се пазят и в R2 — връзката работи и без онова писмо. */
+      var snUrl = await snimkiUrl(env, String(n.order_no));
+      if (snUrl) {
+        trevogi += "<p style=\"background:#EAF2FB;border-left:4px solid #2E6DA4;padding:10px 14px\">" +
+          "Копие на снимките на сървъра: <a href=\"" + snUrl + "\">отвори ги оттук</a>.</p>";
+      }
     }
 
     var razkazBlok = "";

@@ -13,6 +13,14 @@ binding = "DB"
 database_name = "pesenta-nap"
 database_id = "7afeafa5-87c9-4cd8-ae48-c1fc1dca7d9f"
 
+# Снимките за обложката (28.11.2026) — частна кофа в ЕС, без публичен адрес.
+# Четат се само през /snimki/PSN-…?t=<подпис>. От командния ред:
+#   wrangler r2 object get pesenta-snimki/PSN-…/snimka-PSN-…-1.jpg --remote --jurisdiction eu --file x.jpg
+[[r2_buckets]]
+binding = "SNIMKI"
+bucket_name = "pesenta-snimki"
+jurisdiction = "eu"
+
 # Публични стойности — стоят тук нарочно, за да се виждат при преглед на кода.
 # Всички са вече публични в NAP-PLAN.md или в самия одиторски файл.
 [vars]
