@@ -43,7 +43,9 @@ const IMENA = {
   spryana: "спряна преди пращане",
   otkaz: "за ръчна обработка",
   rachna: "за ръчна обработка",
-  greshka: "грешка"
+  greshka: "грешка",
+  generira: "генерира се в момента",
+  zaseknata: "спряна от автомата"
 };
 
 /* Преходите — чиста логика върху D1, без Telegram. Връща
@@ -290,6 +292,68 @@ export async function handlePismoPregled(request, env, orderNo, { signedToken, t
   });
 }
 
+/* ---------------- Бележка от Мирослав: отговор на съобщението на поръчката ----------------
+   (28.11.2026) Текст или гласово като Reply на съобщение, в което стои номерът PSN-….
+   Бележката се записва в odobrenia.belezhka и поръчката минава в „nanovo“; задачата на
+   компютъра я чете при следващото генериране. Редовете са по опити: „[опит N] …“ —
+   втора бележка за същия опит заменя първата (поправка на грешно чуто). */
+const PSN_V_TEKST = /PSN-[0-9]{6}-[0-9]{4}/;
+const BELEZHKA_MAX = 1500;
+const GLAS_MAX_SEK = 180;
+const GLAS_MODEL = "@cf/openai/whisper-large-v3-turbo";
+
+export async function prilozhiBelezhka(db, orderNo, tekst, nowIso) {
+  const chist = String(tekst || "").replace(/\s+/g, " ").trim().slice(0, BELEZHKA_MAX);
+  if (!chist) return { ok: false, otgovor: "Празна бележка — нищо не записах." };
+  const red = await db.prepare("SELECT status, opiti, belezhka FROM odobrenia WHERE order_no=?").bind(orderNo).first();
+  if (!red) return { ok: false, otgovor: "Няма поръчка " + orderNo + " в одобренията." };
+  if (red.status !== "chaka_izbor" && red.status !== "nanovo") {
+    return { ok: false, otgovor: orderNo + " е „" + (IMENA[red.status] || red.status) + "“. Бележка приемам само докато чака избор на версия." };
+  }
+  const etiket = "[опит " + red.opiti + "] ";
+  const redove = red.belezhka ? String(red.belezhka).split("\n") : [];
+  if (redove.length && redove[redove.length - 1].startsWith(etiket)) redove.pop();
+  redove.push(etiket + chist);
+  const r = await db.prepare(
+    "UPDATE odobrenia SET status='nanovo', belezhka=?, belezhka_at=?, updated_at=? WHERE order_no=? AND status IN ('chaka_izbor','nanovo')"
+  ).bind(redove.join("\n"), nowIso, nowIso, orderNo).run();
+  if (!(r.meta && r.meta.changes > 0)) return { ok: false, otgovor: orderNo + ": състоянието се смени междувременно, не записах." };
+  return { ok: true, tekst: chist, opit: red.opiti };
+}
+
+async function glasVTekst(env, glas) {
+  if (!env.AI) throw new Error("разпознаването на глас не е включено");
+  if ((glas.duration || 0) > GLAS_MAX_SEK) throw new Error("гласовото е над " + (GLAS_MAX_SEK / 60) + " минути");
+  const f = await tg(env, "getFile", { file_id: glas.file_id });
+  if (!f.ok || !f.result || !f.result.file_path) throw new Error("не мога да взема файла от Telegram");
+  const r = await fetch("https://api.telegram.org/file/bot" + env.TELEGRAM_TOKEN + "/" + f.result.file_path);
+  if (!r.ok) throw new Error("файлът не се сваля (" + r.status + ")");
+  const u8 = new Uint8Array(await r.arrayBuffer());
+  const out = await env.AI.run(GLAS_MODEL, { audio: u8.toBase64(), language: "bg", task: "transcribe" });
+  return String((out && out.text) || "").trim();
+}
+
+async function handleSaobshtenie(env, m) {
+  const chat = m.chat.id;
+  const kazhi = (text) => tg(env, "sendMessage", { chat_id: chat, text, reply_parameters: { message_id: m.message_id, allow_sending_without_reply: true } });
+  const otg = m.reply_to_message;
+  const nomer = otg && PSN_V_TEKST.exec(String(otg.text || otg.caption || ""));
+  const glas = m.voice || m.audio;
+  if (!nomer || (!m.text && !glas)) {
+    return kazhi("За бележка към песен: отговори (Reply) на съобщението на поръчката — с текст или с гласово. Иначе не знам за коя поръчка е.");
+  }
+  let tekst = m.text || "";
+  if (glas) {
+    try { tekst = await glasVTekst(env, glas); }
+    catch (e) { return kazhi("⚠ Гласовото не стана: " + String(e && e.message || e) + ". Напиши го с текст."); }
+    if (!tekst) return kazhi("⚠ Не разбрах нищо от гласовото. Опитай пак или го напиши.");
+  }
+  const rez = await prilozhiBelezhka(env.DB, nomer[0], tekst, new Date().toISOString());
+  if (!rez.ok) return kazhi("⚠ " + rez.otgovor);
+  return kazhi((glas ? "🎙 Чух: " : "📝 Записах: ") + "„" + rez.tekst + "“\n\n↻ " + nomer[0] +
+    ": нови версии с тази бележка, тръгват след 2 минути (нови кредити в Suno). Ако съм разбрал грешно, отговори пак — важи последното.");
+}
+
 export async function handleTelegram(request, env, pom) {
   const { timingSafeEqual } = pom;
   if (!env.TELEGRAM_TOKEN || !env.TELEGRAM_WEBHOOK_SECRET || !env.TELEGRAM_CHAT_ID) {
@@ -308,7 +372,7 @@ export async function handleTelegram(request, env, pom) {
     if (!cq) {
       const m = upd.message;
       if (m && String(m.chat && m.chat.id) === moyChat) {
-        await tg(env, "sendMessage", { chat_id: moyChat, text: "Тук работят само бутоните под поръчките." });
+        await handleSaobshtenie(env, m);
       }
       return new Response("ok");
     }

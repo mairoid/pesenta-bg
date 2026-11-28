@@ -270,7 +270,11 @@ CREATE TABLE IF NOT EXISTS odobrenia (
   created_at      TEXT NOT NULL,
   updated_at      TEXT NOT NULL,
   izbrano_at      TEXT,
-  izprateno_at    TEXT
+  izprateno_at    TEXT,
+  -- Бележки от Мирослав за следващото генериране (отговор в Telegram, текст или глас).
+  -- По един ред на опит: „[опит N] …“. На живо: ALTER TABLE odobrenia ADD COLUMN … (28.11.2026).
+  belezhka        TEXT,
+  belezhka_at     TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_odobrenia_status ON odobrenia(status);
 -- В D1 (еднократно): командата е в log.md на THIRD BRAIN от 28.11.2026.

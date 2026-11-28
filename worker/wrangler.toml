@@ -30,6 +30,11 @@ binding = "PESNI"
 bucket_name = "pesenta-pesni"
 jurisdiction = "eu"
 
+# Workers AI (28.11.2026) — Whisper превръща гласовите бележки от Telegram в текст
+# (telegram.js, glasVTekst). Стои ПРЕДИ [vars]: всичко след таблица ѝ принадлежи.
+[ai]
+binding = "AI"
+
 # Публични стойности — стоят тук нарочно, за да се виждат при преглед на кода.
 # Всички са вече публични в NAP-PLAN.md или в самия одиторски файл.
 [vars]

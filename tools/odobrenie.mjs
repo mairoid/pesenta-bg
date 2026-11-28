@@ -35,6 +35,9 @@ const FAIL_RE = /^[a-z0-9-]{1,80}\.mp3$/;
 // Колко минути след плащането да не се пипа поръчката — снимките идват
 // на групи по 5 и последната може да е на път.
 const MIN_VAZRAST = 15;
+// Колко минути след гласова/текстова бележка в Telegram да не тръгва новото генериране —
+// време Мирослав да поправи грешно чуто (ботът му връща какво е разбрал).
+const BELEZHKA_CHAKANE_MIN = 2;
 
 function tayna(ime) {
   const f = path.join(os.homedir(), ime);
@@ -164,9 +167,11 @@ async function novi() {
 
 async function chakashti() {
   const redove = sql(`SELECT order_no, status, izbrana, suno_v1, suno_v2, tekst, kie_task,
-      opiti, tg_msg1, tg_msg2, updated_at, greshka
+      opiti, tg_msg1, tg_msg2, updated_at, greshka, belezhka, belezhka_at
     FROM odobrenia
-    WHERE status IN ('izbrana', 'nanovo')
+    WHERE (status = 'izbrana'
+       -- Бележка от Мирослав по-нова от 2 минути още може да бъде поправена — изчакваме.
+       OR (status = 'nanovo' AND (belezhka_at IS NULL OR belezhka_at < ${lit(new Date(Date.now() - BELEZHKA_CHAKANE_MIN * 60e3).toISOString())})))
        OR (status = 'generira' AND updated_at < ${lit(new Date(Date.now() - 2 * 3600e3).toISOString())})
     ORDER BY updated_at`);
   console.log(JSON.stringify(redove.map((r) => ({
