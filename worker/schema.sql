@@ -241,3 +241,37 @@ CREATE INDEX IF NOT EXISTS idx_magnit_email ON magnit_zapisi(email, magnit, crea
 -- В D1 (еднократно, ПРЕДИ deploy — без таблицата /magnit връща грешка):
 --   npx wrangler d1 execute pesenta-nap --remote --command "CREATE TABLE IF NOT EXISTS magnit_zapisi (id INTEGER PRIMARY KEY AUTOINCREMENT, magnit TEXT NOT NULL, email TEXT NOT NULL, marketing INTEGER NOT NULL DEFAULT 0, ip_hash TEXT NOT NULL, ot TEXT, created_at TEXT NOT NULL, pismo_at TEXT, pismo_greshka TEXT, otpisan_at TEXT); CREATE INDEX IF NOT EXISTS idx_magnit_ip ON magnit_zapisi(ip_hash, created_at); CREATE INDEX IF NOT EXISTS idx_magnit_email ON magnit_zapisi(email, magnit, created_at)"
 -- Връщане: DROP TABLE magnit_zapisi; (имейлите са със съгласие — първо ги изнеси)
+
+-- Одобрение на песента през Telegram (28.11.2026). По един ред на поръчка.
+-- Задачата на компютъра пише текста, генерира в Suno и прави илюстрацията;
+-- ботът @pesenta_odobrenie_bot праща двете версии; Мирослав избира с бутон;
+-- след второто натискане („Изпрати“) Worker-ът праща писмото през Brevo.
+-- status: chaka_izbor → izbrana → chaka_izprashtane → izpratena
+--         (+ nanovo, otkaz, rachna, greshka)
+CREATE TABLE IF NOT EXISTS odobrenia (
+  order_no        TEXT PRIMARY KEY,
+  status          TEXT NOT NULL,
+  suno_v1         TEXT,                      -- id на клипа в Suno, версия 1
+  suno_v2         TEXT,                      -- версия 2
+  izbrana         INTEGER,                   -- 1 или 2, след натискането
+  tekst           TEXT,                      -- текстът за клиента (не този за Suno)
+  kie_task        TEXT,                      -- taskId на илюстрацията в KIE
+  kie_prompt      TEXT,                      -- промптът, показан в Telegram
+  ilyustracia_r2  TEXT,                      -- ключ в R2
+  mp3_r2          TEXT,                      -- ключ в R2 на изчистеното MP3 (след сваляне)
+  page_url        TEXT,                      -- страницата на песента, когато е готова
+  tg_msg1         INTEGER,                   -- message_id на съобщението с версиите
+  tg_msg2         INTEGER,                   -- message_id на съобщението „Изпрати“
+  opiti           INTEGER NOT NULL DEFAULT 1, -- колко пъти е генерирано в Suno
+  krediti_suno    INTEGER,
+  krediti_kie     REAL,
+  brevo_id        TEXT,                      -- messageId от Brevo след пращане
+  greshka         TEXT,
+  created_at      TEXT NOT NULL,
+  updated_at      TEXT NOT NULL,
+  izbrano_at      TEXT,
+  izprateno_at    TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_odobrenia_status ON odobrenia(status);
+-- В D1 (еднократно): командата е в log.md на THIRD BRAIN от 28.11.2026.
+-- Връщане: DROP TABLE odobrenia; (празна е, докато веригата не тръгне)

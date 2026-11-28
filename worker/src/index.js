@@ -16,6 +16,9 @@
      GET  /vaucher/pdf/<ref>?t=… — ваучер за песен (vaucher.js; 15.10.2026)
      POST /otkaz               — отказ от договора по чл. 52а ЗЗП (otkaz.js; 03.11.2026)
      POST /snimki              — снимките за обложката → писмо с прикачени (snimki.js; 20.10.2026)
+     POST /telegram            — бутоните за одобрение на песента (telegram.js; 28.11.2026)
+     POST /odobrenie/gotova    — задачата на компютъра: писмото е готово → второто съобщение (иска ODOBRENIE_KEY)
+     GET  /pesen-fail/PSN-…/<име>.mp3?t=… — MP3-то за Brevo; GET /pismo-pregled/PSN-…?t=… — прегледът
 
    Тайните се задават с `wrangler secret put`, никога в кода — виж README.md.
    ───────────────────────────────────────────────────────────────────── */
@@ -33,6 +36,7 @@ import {
 import { handleSnimki, handleSnimkiPregled } from "./snimki.js";
 import { handleOtkaz, otkazCron } from "./otkaz.js";
 import { handleMagnit } from "./magnit.js";
+import { handleTelegram, handleGotova, handlePesenFail, handlePismoPregled } from "./telegram.js";
 
 export default {
   async fetch(request, env, ctx) {
@@ -113,6 +117,18 @@ export default {
     if (snMatch && request.method === "GET") {
       return handleSnimkiPregled(request, env, snMatch[1], snMatch[2] || "", { signedToken, timingSafeEqual });
     }
+
+    /* Одобрение на песента — натисканията в бота @pesenta_odobrenie_bot (28.11.2026). */
+    if (url.pathname === "/telegram" && request.method === "POST") {
+      return handleTelegram(request, env, { timingSafeEqual, signedToken });
+    }
+    if (url.pathname === "/odobrenie/gotova" && request.method === "POST") {
+      return handleGotova(request, env, { timingSafeEqual, signedToken });
+    }
+    const pfMatch = url.pathname.match(/^\/pesen-fail\/(PSN-[0-9]{6}-[0-9]{4})\/([a-z0-9-]{1,80}\.mp3)$/);
+    if (pfMatch && request.method === "GET") return handlePesenFail(request, env, pfMatch[1], pfMatch[2], { signedToken, timingSafeEqual });
+    const ppMatch = url.pathname.match(/^\/pismo-pregled\/(PSN-[0-9]{6}-[0-9]{4})$/);
+    if (ppMatch && request.method === "GET") return handlePismoPregled(request, env, ppMatch[1], { signedToken, timingSafeEqual });
 
     /* Анонимни събития от сайта (14.10.2026): кое е натиснато, на коя страница.
        Plausible е махнат на 18.08 и кликовете не се броят никъде. Тук няма IP,

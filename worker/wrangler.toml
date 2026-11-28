@@ -21,6 +21,15 @@ binding = "SNIMKI"
 bucket_name = "pesenta-snimki"
 jurisdiction = "eu"
 
+# Песните и писмата за връчване (28.11.2026) — частна кофа в ЕС. Задачата на
+# компютъра качва PSN-…/pismo.json и PSN-…/<песен>.mp3; Worker-ът ги праща
+# през Brevo след „Изпрати“ в Telegram (telegram.js). Brevo тегли MP3-то от
+# /pesen-fail/PSN-…/<име>.mp3?t=<подпис>.
+[[r2_buckets]]
+binding = "PESNI"
+bucket_name = "pesenta-pesni"
+jurisdiction = "eu"
+
 # Публични стойности — стоят тук нарочно, за да се виждат при преглед на кода.
 # Всички са вече публични в NAP-PLAN.md или в самия одиторски файл.
 [vars]
